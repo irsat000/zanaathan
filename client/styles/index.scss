@@ -1,0 +1,109 @@
+
+
+
+// Colors
+html[data-colorset-1] {
+    --button1-color-hover: #ffffff;
+    --button1-border-hover: #5997cd;
+    --button1-bg-hover: #5997cd;
+}
+
+
+
+
+
+
+main {
+    padding: 0 4%;
+}
+
+.intro {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    padding: 40px 0;
+    gap: 20px;
+
+    .customer,
+    .freelancer {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        h2 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            font-family: 'Fira Sans', sans-serif;
+            font-weight: 400;
+
+            span{
+                font-size: 0.6em;
+            }
+        }
+
+        p {
+            text-indent: 14px;
+            font-size: 1em;
+            margin-bottom: 14px;
+            font-family: 'Fira Sans', sans-serif;
+            font-weight: 300;
+        }
+
+        button {
+            margin-top: auto;
+            border: 1px solid var(--primary-color);
+            background-color: var(--primary-bg-color);
+            border-radius: 20px;
+            padding: 7px 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-family: 'Fira Sans', sans-serif;
+            font-weight: 300;
+            transition: all 0.1s ease-in-out;
+
+            &:hover {
+                color: var(--button1-color-hover);
+                border: 1px solid var(--button1-border-hover);
+                background-color: var(--button1-bg-hover);
+            }
+        }
+    }
+}
+
+
+
+
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+    main {
+        padding: 0 5%;
+    }
+
+    .intro {
+        font-size: 18px;
+        flex-direction: row;
+        justify-content: space-around;
+
+        .customer,
+        .freelancer {
+            width: 40%;
+        }
+    }
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+    .intro {
+        font-size: 20px;
+    }
+}
+
+// X-Large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {}
+
+// XX-Large devices (larger desktops, 1400px and up)
+@media (min-width: 1400px) {}

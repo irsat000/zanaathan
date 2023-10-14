@@ -1,0 +1,81 @@
+html[data-colorset-1] {
+  --button1-color-hover: #ffffff;
+  --button1-border-hover: #5997cd;
+  --button1-bg-hover: #5997cd;
+}
+
+main {
+  padding: 0 4%;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  padding: 40px 0;
+  gap: 20px;
+}
+.intro .customer,
+.intro .freelancer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.intro .customer h2,
+.intro .freelancer h2 {
+  font-size: 1.4em;
+  margin-bottom: 10px;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 400;
+}
+.intro .customer h2 span,
+.intro .freelancer h2 span {
+  font-size: 0.6em;
+}
+.intro .customer p,
+.intro .freelancer p {
+  text-indent: 14px;
+  font-size: 1em;
+  margin-bottom: 14px;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+}
+.intro .customer button,
+.intro .freelancer button {
+  margin-top: auto;
+  border: 1px solid var(--primary-color);
+  background-color: var(--primary-bg-color);
+  border-radius: 20px;
+  padding: 7px 20px;
+  font-size: 1.1em;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.intro .customer button:hover,
+.intro .freelancer button:hover {
+  color: var(--button1-color-hover);
+  border: 1px solid var(--button1-border-hover);
+  background-color: var(--button1-bg-hover);
+}
+
+@media (min-width: 768px) {
+  main {
+    padding: 0 5%;
+  }
+  .intro {
+    font-size: 18px;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  .intro .customer,
+  .intro .freelancer {
+    width: 40%;
+  }
+}
+@media (min-width: 992px) {
+  .intro {
+    font-size: 20px;
+  }
+}/*# sourceMappingURL=index.css.map */
