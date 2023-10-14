@@ -50,7 +50,6 @@ header > .header-container {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--primary-color);
 }
 header > .header-container .site-logo-wrapper span {
   font-family: "Cinzel", serif;
@@ -126,10 +125,6 @@ header > .header-container .user-container .user-wrapper .signin-button:hover {
   color: var(--login-color-hover);
   border: 1px solid var(--login-border-hover);
   background-color: var(--login-bg-hover);
-}
-
-main {
-  height: 500px;
 }
 
 footer {

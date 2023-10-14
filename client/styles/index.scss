@@ -1,6 +1,3 @@
-
-
-
 // Colors
 html[data-colorset-1] {
     --button1-color-hover: #ffffff;
@@ -21,11 +18,14 @@ main {
     display: flex;
     flex-direction: column;
     font-size: 16px;
-    padding: 40px 0;
+    margin: 30px 0;
     gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10%;
 
-    .customer,
-    .freelancer {
+    .intro-content {
+        flex-grow: 1;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -36,7 +36,7 @@ main {
             font-family: 'Fira Sans', sans-serif;
             font-weight: 400;
 
-            span{
+            span {
                 font-size: 0.6em;
             }
         }
@@ -47,6 +47,12 @@ main {
             margin-bottom: 14px;
             font-family: 'Fira Sans', sans-serif;
             font-weight: 300;
+        }
+
+        .intro-buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
         }
 
         button {
@@ -68,6 +74,20 @@ main {
             }
         }
     }
+
+    .intro-image {
+        flex-shrink: 0;
+        display: none;
+        max-width: 40%;
+        max-height: 300px;
+        width: auto;
+        height: auto;
+
+        border-top-left-radius: 50% 40%;
+        border-top-right-radius: 30% 60%;
+        border-bottom-left-radius: 30% 30%;
+        border-bottom-right-radius: 50% 40%;
+    }
 }
 
 
@@ -85,12 +105,11 @@ main {
 
     .intro {
         font-size: 18px;
+        margin: 40px 0;
         flex-direction: row;
-        justify-content: space-around;
 
-        .customer,
-        .freelancer {
-            width: 40%;
+        .intro-image {
+            display: flex;
         }
     }
 }

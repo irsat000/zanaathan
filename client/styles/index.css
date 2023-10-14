@@ -12,36 +12,40 @@ main {
   display: flex;
   flex-direction: column;
   font-size: 16px;
-  padding: 40px 0;
+  margin: 30px 0;
   gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10%;
 }
-.intro .customer,
-.intro .freelancer {
+.intro .intro-content {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
-.intro .customer h2,
-.intro .freelancer h2 {
+.intro .intro-content h2 {
   font-size: 1.4em;
   margin-bottom: 10px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 400;
 }
-.intro .customer h2 span,
-.intro .freelancer h2 span {
+.intro .intro-content h2 span {
   font-size: 0.6em;
 }
-.intro .customer p,
-.intro .freelancer p {
+.intro .intro-content p {
   text-indent: 14px;
   font-size: 1em;
   margin-bottom: 14px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 300;
 }
-.intro .customer button,
-.intro .freelancer button {
+.intro .intro-content .intro-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+.intro .intro-content button {
   margin-top: auto;
   border: 1px solid var(--primary-color);
   background-color: var(--primary-bg-color);
@@ -53,11 +57,22 @@ main {
   font-weight: 300;
   transition: all 0.1s ease-in-out;
 }
-.intro .customer button:hover,
-.intro .freelancer button:hover {
+.intro .intro-content button:hover {
   color: var(--button1-color-hover);
   border: 1px solid var(--button1-border-hover);
   background-color: var(--button1-bg-hover);
+}
+.intro .intro-image {
+  flex-shrink: 0;
+  display: none;
+  max-width: 40%;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  border-top-left-radius: 50% 40%;
+  border-top-right-radius: 30% 60%;
+  border-bottom-left-radius: 30% 30%;
+  border-bottom-right-radius: 50% 40%;
 }
 
 @media (min-width: 768px) {
@@ -66,12 +81,11 @@ main {
   }
   .intro {
     font-size: 18px;
+    margin: 40px 0;
     flex-direction: row;
-    justify-content: space-around;
   }
-  .intro .customer,
-  .intro .freelancer {
-    width: 40%;
+  .intro .intro-image {
+    display: flex;
   }
 }
 @media (min-width: 992px) {
