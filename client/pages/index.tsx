@@ -1,6 +1,7 @@
 
 import Template from '@/pages/components/template'
 import Image from 'next/image'
+import { CheckLg } from 'react-bootstrap-icons'
 
 
 export default function Home() {
@@ -19,6 +20,22 @@ export default function Home() {
             </div>
           </div>
           <Image src={require('./assets/site/painter2.jpg')} className='intro-image' alt={''} />
+        </div>
+
+        <div className="categories">
+          {[...Array(10)].map((a, i) => {
+            return (
+              <div className='category-card' key={i}>
+                <div className="category-image">
+                  <Image src={require('./assets/site/painter2.jpg')} alt={''} />
+                </div>
+                <div className="category-details">
+                  <span className="category-title">Boya Badana</span>
+                  <div className="category-statistics"><span>25</span><CheckLg /></div>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </>
     </Template>

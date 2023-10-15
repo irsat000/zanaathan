@@ -54,6 +54,7 @@ header > .header-container {
 header > .header-container .site-logo-wrapper span {
   font-family: "Cinzel", serif;
   font-size: 2rem;
+  padding-top: 4px;
   display: none;
   color: var(--primary-color);
 }
@@ -125,6 +126,11 @@ header > .header-container .user-container .user-wrapper .signin-button:hover {
   color: var(--login-color-hover);
   border: 1px solid var(--login-border-hover);
   background-color: var(--login-bg-hover);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
 }
 
 footer {

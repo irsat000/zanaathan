@@ -64,6 +64,7 @@ header>.header-container {
         span {
             font-family: 'Cinzel', serif;
             font-size: 2rem;
+            padding-top: 4px;
             display: none;
             color: var(--primary-color);
 
@@ -153,7 +154,8 @@ header>.header-container {
 }
 
 main {
-    
+    display: flex;
+    flex-direction: column;
 }
 
 footer {
