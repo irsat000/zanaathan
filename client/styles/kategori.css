@@ -1,0 +1,112 @@
+.category-page {
+  display: flex;
+  flex-direction: column;
+  padding: var(--site-padding);
+  align-items: center;
+}
+.category-page .listing-options {
+  width: 100%;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.category-page .listing-options .filter-button {
+  border-radius: 6px;
+  padding: 6px 20px;
+  border: 1px solid var(--primary-color);
+  background-color: var(--primary-bg-color);
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.category-page .listing-options .filter-button:hover {
+  color: #ffffff;
+  border: 1px solid #636363;
+  background-color: #636363;
+}
+.category-page .listing-options .sort-by {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+.category-page .listing-options .sort-by span {
+  font-size: 1.2rem;
+}
+.category-page .listing-options .sort-by select {
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.category-page .listing-options .sort-by select:hover {
+  transform: scale(1.04);
+}
+.category-page .listing {
+  width: 100%;
+  display: grid;
+  gap: 30px 3%;
+  grid-template-columns: repeat(1, 1fr);
+  padding: 10px 0;
+}
+.category-page .listing .post {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+.category-page .listing .post:hover .title {
+  text-decoration: underline;
+}
+.category-page .listing .post .post-image-carousel {
+  margin-bottom: 6px;
+  position: relative;
+}
+.category-page .listing .post .post-image-carousel img {
+  width: 100%;
+  height: auto;
+  -o-object-fit: contain;
+     object-fit: contain;
+  border-radius: 8px;
+}
+.category-page .listing .post .title {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+.category-page .listing .post span.date {
+  font-size: 0.8rem;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.category-page .listing .post p.description {
+  font-size: 0.9rem;
+  font-weight: 300;
+  text-indent: 6px;
+}
+
+@media (min-width: 400px) {
+  .category-page .listing {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .category-page .listing-options .sort-by {
+    gap: 20px;
+  }
+}
+@media (min-width: 768px) {
+  .category-page .listing {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1200px) {
+  .category-page .listing {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}/*# sourceMappingURL=kategori.css.map */

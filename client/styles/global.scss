@@ -19,6 +19,11 @@ p {
     padding: 0;
     margin: 0;
     text-decoration: none;
+    color: unset;
+}
+
+:root {
+    --site-padding: 0 4%;
 }
 
 // Colors
@@ -26,9 +31,8 @@ html[data-colorset-1] {
     --primary-color: #303030;
     --primary-bg-color: #ffffff;
 
-    --login-color-hover: #ffffff;
-    --login-border-hover: #5997cd;
-    --login-bg-hover: #5997cd;
+    --button1-border-hover: #5997cd;
+    --button1-bg-hover: #5997cd;
 }
 
 
@@ -42,6 +46,8 @@ html {
 body {
     color: var(--primary-color);
     background-color: var(--primary-bg-color);
+    font-family: 'Fira Sans', sans-serif;
+    font-weight: 400;
 }
 
 .page-content {
@@ -66,7 +72,6 @@ header>.header-container {
             font-size: 2rem;
             padding-top: 4px;
             display: none;
-            color: var(--primary-color);
 
             b {
                 color: #307fca;
@@ -132,7 +137,6 @@ header>.header-container {
             align-items: center;
 
             .signin-button {
-                color: var(--primary-color);
                 border: 1px solid var(--primary-color);
                 background-color: var(--primary-bg-color);
                 border-radius: 20px;
@@ -144,9 +148,9 @@ header>.header-container {
                 transition: all 0.1s ease-in-out;
 
                 &:hover {
-                    color: var(--login-color-hover);
-                    border: 1px solid var(--login-border-hover);
-                    background-color: var(--login-bg-hover);
+                    color: #ffffff;
+                    border: 1px solid var(--button1-border-hover);
+                    background-color: var(--button1-bg-hover);
                 }
             }
         }
@@ -156,9 +160,38 @@ header>.header-container {
 main {
     display: flex;
     flex-direction: column;
+    min-height: 500px; // TEMP
+
+    .breadcrumb-trail-container {
+        align-self: flex-start;
+        padding: 20px 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 1.1rem;
+        color: #8c8c8c;
+
+        span {
+            svg {
+                display: flex;
+            }
+        }
+
+        a {
+            padding: 5px 12px;
+            border-radius: 20px;
+
+            &:hover {
+                background-color: #ededed;
+            }
+        }
+    }
 }
 
 footer {
+    margin-top: 200px;
     height: 400px;
     background-color: #424242;
 }

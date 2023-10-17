@@ -1,14 +1,5 @@
-html[data-colorset-1] {
-  --button1-color-hover: #ffffff;
-  --button1-border-hover: #5997cd;
-  --button1-bg-hover: #5997cd;
-}
-
-main {
-  padding: 0 4%;
-}
-
 .intro {
+  padding: var(--site-padding);
   display: flex;
   flex-direction: column;
   font-size: 16px;
@@ -24,20 +15,30 @@ main {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  position: relative;
+  /*&:before {
+      background-image: url(../paint2.png);
+      background-position: 20% 20%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      content: "";
+      opacity: 0.6;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: -1;
+  }*/
 }
 .intro .intro-content h2 {
   font-size: 1.4em;
   margin-bottom: 16px;
-  font-family: "Fira Sans", sans-serif;
   font-weight: 400;
-}
-.intro .intro-content h2 span {
-  font-size: 0.6em;
 }
 .intro .intro-content p {
   font-size: 1em;
   margin-bottom: 20px;
-  font-family: "Fira Sans", sans-serif;
   font-weight: 300;
 }
 .intro .intro-content .intro-buttons {
@@ -58,7 +59,7 @@ main {
   transition: all 0.1s ease-in-out;
 }
 .intro .intro-content button:hover {
-  color: var(--button1-color-hover);
+  color: #ffffff;
   border: 1px solid var(--button1-border-hover);
   background-color: var(--button1-bg-hover);
 }
@@ -75,8 +76,22 @@ main {
   border-bottom-right-radius: 50% 40%;
 }
 
-.categories {
-  margin-bottom: 40px;
+.category-list-heading-container {
+  padding: var(--site-padding);
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 1200px;
+  align-self: center;
+  text-align: center;
+}
+.category-list-heading-container h2 {
+  padding: 0 16px;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.category-list {
+  padding: var(--site-padding);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   width: 100%;
@@ -84,58 +99,62 @@ main {
   max-width: 1200px;
   align-self: center;
 }
-.categories .category-card {
+.category-list .category-card {
   display: flex;
   flex-direction: column;
   padding: 10px;
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0px 0px 6px -2px rgba(121, 128, 224, 0.6);
+  transition: all 0.1s ease-in-out;
 }
-.categories .category-card:hover {
-  box-shadow: 0px 0px 8px -1px rgba(121, 128, 224, 0.8);
+.category-list .category-card:hover {
+  /*-webkit-box-shadow: 0px 0px 8px -1px rgb(121, 128, 224, 0.8);
+  -moz-box-shadow: 0px 0px 8px -1px rgb(121, 128, 224, 0.8);
+  box-shadow: 0px 0px 8px -1px rgb(121, 128, 224, 0.8);*/
+  transform: scale(1.03);
 }
-.categories .category-card .category-image {
+.category-list .category-card .category-image {
   margin-bottom: 6px;
 }
-.categories .category-card .category-image img {
+.category-list .category-card .category-image img {
   width: 100%;
   height: auto;
   -o-object-fit: contain;
      object-fit: contain;
   border-radius: 8px;
 }
-.categories .category-card .category-details {
+.category-list .category-card .category-details {
   display: flex;
   padding: 0 6px;
   flex-direction: column;
   gap: 4px;
 }
-.categories .category-card .category-details .category-title {
+.category-list .category-card .category-details .category-title {
   font-size: 1rem;
   font-family: "Poppins", sans-serif;
   font-weight: bold;
 }
-.categories .category-card .category-details .category-statistics {
+.category-list .category-card .category-details .category-statistics {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 4px;
 }
-.categories .category-card .category-details .category-statistics span {
+.category-list .category-card .category-details .category-statistics span {
   font-size: 1rem;
   font-family: "Poppins", sans-serif;
   font-weight: 400;
 }
-.categories .category-card .category-details .category-statistics svg {
+.category-list .category-card .category-details .category-statistics svg {
   display: flex;
   font-size: 1.2rem;
   color: #18d212;
 }
 
 @media (min-width: 768px) {
-  main {
-    padding: 0 5%;
+  :root {
+    --site-padding: 0 5%;
   }
   .intro {
     font-size: 18px;
@@ -145,10 +164,13 @@ main {
   .intro .intro-image {
     display: flex;
   }
-  .categories {
+  .category-list-heading-container {
+    text-align: left;
+  }
+  .category-list {
     grid-template-columns: repeat(3, 1fr);
   }
-  .categories .category-card .category-details {
+  .category-list .category-card .category-details {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -158,7 +180,7 @@ main {
   .intro {
     font-size: 20px;
   }
-  .categories {
+  .category-list {
     grid-template-columns: repeat(4, 1fr);
   }
 }/*# sourceMappingURL=index.css.map */
