@@ -33,6 +33,8 @@ html[data-colorset-1] {
 
     --button1-border-hover: #5997cd;
     --button1-bg-hover: #5997cd;
+    --button2-bg: #589b49;
+    --button2-bg-hover: #5eb64a;
 }
 
 
@@ -130,27 +132,100 @@ header>.header-container {
             }
         }
 
-        .user-wrapper {
+
+        @keyframes show-signup-button {
+            from {
+                padding: 0;
+                width: 0;
+            }
+
+            to {
+                width: calc(1.1rem + 28px);
+            }
+        }
+
+        @keyframes hide-signup-button {
+            from {
+                display: flex;
+                width: calc(1.1rem + 28px);
+            }
+
+            to {
+                padding: 0;
+                width: 0;
+                display: none;
+            }
+        }
+
+        .user-auth-buttons {
             display: flex;
             flex-direction: row;
-            gap: 14px;
-            align-items: center;
+
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: var(--primary-bg-color);
+            border: 1px solid var(--primary-color);
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                border: unset;
+
+                .signin-button {
+                    border: 1px solid var(--primary-color);
+                }
+
+                .signup-button {
+                    display: flex;
+                    border: 1px solid var(--primary-color);
+                }
+            }
+
+            &:not(:hover) {
+                .signup-button {
+                    animation: hide-signup-button 0.2s forwards;
+                }
+            }
 
             .signin-button {
-                border: 1px solid var(--primary-color);
-                background-color: var(--primary-bg-color);
-                border-radius: 20px;
+                cursor: pointer;
+                border: unset;
                 padding: 5px 14px;
                 font-size: 1.1rem;
-                cursor: pointer;
+                border-radius: 20px 0 0 20px;
                 font-family: 'Fira Sans', sans-serif;
                 font-weight: 300;
-                transition: all 0.1s ease-in-out;
+                border-right: unset !important;
+                background-color: var(--primary-bg-color);
+                transition: all 0.2s ease-in-out;
 
                 &:hover {
                     color: #ffffff;
-                    border: 1px solid var(--button1-border-hover);
                     background-color: var(--button1-bg-hover);
+                    border: 1px solid var(--button1-bg-hover);
+                }
+            }
+
+            .signup-button {
+                cursor: pointer;
+                border: unset;
+                display: none;
+                font-size: 1.1rem;
+                border-radius: 0 20px 20px 0;
+                align-items: center;
+                justify-content: center;
+                border-left: unset !important;
+
+                padding: 0 14px;
+                width: calc(1.1rem + 28px); // Guarantee same width with animation
+                animation: show-signup-button 0.3s forwards;
+
+                background-color: var(--primary-bg-color);
+                transition: all 0.2s ease-in-out;
+
+                &:hover {
+                    color: #ffffff;
+                    background-color: var(--button2-bg-hover);
+                    border: 1px solid var(--button2-bg-hover);
                 }
             }
         }
@@ -236,7 +311,7 @@ footer {
 @media (min-width: 1200px) {
     header>.header-container {
         .user-container {
-            .user-wrapper {
+            .user-auth-buttons {
                 .signin-button {
                     font-size: 1.2rem;
                 }
