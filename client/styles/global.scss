@@ -135,23 +135,21 @@ header>.header-container {
 
         @keyframes show-signup-button {
             from {
-                padding: 0;
                 width: 0;
             }
 
             to {
-                width: calc(1.1rem + 28px);
+                width: calc(1.3rem + 28px);
             }
         }
 
         @keyframes hide-signup-button {
             from {
                 display: flex;
-                width: calc(1.1rem + 28px);
+                width: calc(1.3rem + 28px);
             }
 
             to {
-                padding: 0;
                 width: 0;
                 display: none;
             }
@@ -167,23 +165,21 @@ header>.header-container {
             border: 1px solid var(--primary-color);
             transition: all 0.2s ease-in-out;
 
-            &:hover {
-                border: unset;
-
-                .signin-button {
-                    border: 1px solid var(--primary-color);
-                }
-
-                .signup-button {
-                    display: flex;
-                    border: 1px solid var(--primary-color);
-                }
+            &:hover .signup-button {
+                display: flex;
             }
 
-            &:not(:hover) {
-                .signup-button {
-                    animation: hide-signup-button 0.2s forwards;
-                }
+            &:has(.signin-button:hover) {
+                border: 1px solid var(--button1-bg-hover);
+            }
+
+            &:has(.signup-button:hover) {
+                border: 1px solid var(--button2-bg-hover);
+            }
+
+            &:not(:hover) .signup-button {
+                animation: hide-signup-button 0.2s forwards;
+
             }
 
             .signin-button {
@@ -194,29 +190,26 @@ header>.header-container {
                 border-radius: 20px 0 0 20px;
                 font-family: 'Fira Sans', sans-serif;
                 font-weight: 300;
-                border-right: unset !important;
                 background-color: var(--primary-bg-color);
                 transition: all 0.2s ease-in-out;
 
                 &:hover {
                     color: #ffffff;
                     background-color: var(--button1-bg-hover);
-                    border: 1px solid var(--button1-bg-hover);
                 }
             }
 
             .signup-button {
+                padding: 0;
                 cursor: pointer;
                 border: unset;
                 display: none;
-                font-size: 1.1rem;
+                font-size: 1.3rem;
                 border-radius: 0 20px 20px 0;
                 align-items: center;
                 justify-content: center;
-                border-left: unset !important;
 
-                padding: 0 14px;
-                width: calc(1.1rem + 28px); // Guarantee same width with animation
+                width: calc(1.3rem + 28px); // Guarantee same width with animation
                 animation: show-signup-button 0.3s forwards;
 
                 background-color: var(--primary-bg-color);
@@ -225,7 +218,6 @@ header>.header-container {
                 &:hover {
                     color: #ffffff;
                     background-color: var(--button2-bg-hover);
-                    border: 1px solid var(--button2-bg-hover);
                 }
             }
         }

@@ -6,7 +6,7 @@
 
     .listing-options {
         width: 100%;
-        padding: 20px 0;
+        margin-top: 20px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -59,6 +59,7 @@
 
     .listing {
         width: 100%;
+        margin-top: 20px;
         display: grid;
         gap: 30px 3%;
         grid-template-columns: repeat(1, 1fr);
@@ -67,28 +68,34 @@
         .post {
             display: flex;
             flex-direction: column;
-            cursor: pointer;
 
-            &:hover .title {
-                text-decoration: underline;
-            }
-
-            .post-image-carousel {
-                margin-bottom: 6px;
+            .post-link {
+                display: flex;
+                flex-direction: column;
+                cursor: pointer;
                 position: relative;
 
-                img {
-                    width: 100%;
-                    height: auto;
-                    object-fit: contain;
-                    border-radius: 8px;
+                &:hover .title {
+                    text-decoration: underline;
                 }
-            }
 
-            .title {
-                font-size: 1.1rem;
-                font-weight: 400;
-                margin-bottom: 4px;
+                .post-image-carousel {
+                    margin-bottom: 6px;
+                    position: relative;
+
+                    img {
+                        width: 100%;
+                        height: auto;
+                        object-fit: contain;
+                        border-radius: 8px;
+                    }
+                }
+
+                .title {
+                    font-size: 1.1rem;
+                    font-weight: 400;
+                    margin-bottom: 4px;
+                }
             }
 
             span.date {
@@ -101,6 +108,8 @@
                 font-size: 0.9rem;
                 font-weight: 300;
                 text-indent: 6px;
+                max-height: 350px;
+                overflow: hidden;
             }
         }
     }

@@ -6,7 +6,7 @@
 }
 .category-page .listing-options {
   width: 100%;
-  padding: 20px 0;
+  margin-top: 20px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -52,6 +52,7 @@
 }
 .category-page .listing {
   width: 100%;
+  margin-top: 20px;
   display: grid;
   gap: 30px 3%;
   grid-template-columns: repeat(1, 1fr);
@@ -60,23 +61,28 @@
 .category-page .listing .post {
   display: flex;
   flex-direction: column;
-  cursor: pointer;
 }
-.category-page .listing .post:hover .title {
+.category-page .listing .post .post-link {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  position: relative;
+}
+.category-page .listing .post .post-link:hover .title {
   text-decoration: underline;
 }
-.category-page .listing .post .post-image-carousel {
+.category-page .listing .post .post-link .post-image-carousel {
   margin-bottom: 6px;
   position: relative;
 }
-.category-page .listing .post .post-image-carousel img {
+.category-page .listing .post .post-link .post-image-carousel img {
   width: 100%;
   height: auto;
   -o-object-fit: contain;
      object-fit: contain;
   border-radius: 8px;
 }
-.category-page .listing .post .title {
+.category-page .listing .post .post-link .title {
   font-size: 1.1rem;
   font-weight: 400;
   margin-bottom: 4px;
@@ -90,6 +96,8 @@
   font-size: 0.9rem;
   font-weight: 300;
   text-indent: 6px;
+  max-height: 350px;
+  overflow: hidden;
 }
 
 @media (min-width: 400px) {

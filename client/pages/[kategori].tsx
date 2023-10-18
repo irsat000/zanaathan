@@ -35,10 +35,12 @@ export default function Home() {
         <div className="listing">
           {[...Array(10)].map((a, i) =>
             <div className="post" key={i}>
-              <div className="post-image-carousel">
-                <Image src={require('../assets/site/painter2.jpg')} alt={''} />
-              </div>
-              <h4 className='title'>Tüm evin badanaya ihtiyacı var!</h4>
+              <Link href={'/ilan/' + i} className='post-link'>
+                <div className="post-image-carousel">
+                  <Image src={require('../assets/site/painter2.jpg')} alt={''} />
+                </div>
+                <h4 className='title'>Tüm evin badanaya ihtiyacı var!</h4>
+              </Link>
               <span className="date">1 gün önce</span>
               <p className='description'>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur ullam culpa quaerat commodi necessitatibus dolore beatae eius voluptatem rem veniam exercitationem vel amet, nesciunt ipsa dignissimos alias ratione fuga labore.

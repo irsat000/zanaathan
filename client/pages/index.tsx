@@ -8,7 +8,7 @@ import { CheckLg } from 'react-bootstrap-icons'
 export default function Home() {
   return (
     <Template>
-      <>
+      <div className='index-page'>
         <div className="intro">
           <div className="intro-content">
             <h2>Zanaat sanattır, ödemesini bilmeli.</h2>
@@ -28,7 +28,7 @@ export default function Home() {
         <div className="category-list">
           {[...Array(10)].map((a, i) => {
             return (
-              <Link href={'/kategori'} className='category-card' key={i}>
+              <Link href={'/kategori-' + i} className='category-card' key={i}>
                 <div className="category-image">
                   <Image src={require('../assets/site/painter2.jpg')} alt={''} />
                 </div>
@@ -40,7 +40,7 @@ export default function Home() {
             )
           })}
         </div>
-      </>
+      </div>
     </Template>
   )
 }
