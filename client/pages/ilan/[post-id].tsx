@@ -2,10 +2,13 @@
 import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
-import { CheckLg } from 'react-bootstrap-icons'
+import { useState } from 'react';
+import { ChevronCompactLeft, ChevronCompactRight } from 'react-bootstrap-icons'
 
 
 export default function Ilan() {
+
+	const [activeImage, setActiveImage] = useState(0);
 
 	return (
 		<Template>
@@ -15,12 +18,24 @@ export default function Ilan() {
 						<div className="gallery-main">
 							<Image src={require('@/assets/site/painter2.jpg')} alt={''} />
 						</div>
-						<div className="thumbnail-carousel">
-							{[...Array(8)].map((a, i) =>
-								<div className="thumbnail-wrapper" key={i}>
-									<Image src={require('@/assets/site/painter2.jpg')} alt={''} />
-								</div>
-							)}
+						<div className="thumbnail-carousel-container">
+							<button className='thumbnail-previous' onClick={() => {
+
+							}}><ChevronCompactLeft /></button>
+							<div className="thumbnail-carousel">
+								{[...Array(8)].map((a, i) =>
+									<div className={`thumbnail-wrapper ${i === activeImage && 'active'}`}
+										key={i}
+										onClick={() => setActiveImage(i)}
+									>
+										<Image src={require('@/assets/site/painter2.jpg')} alt={''} />
+										<span className='active-sign'></span>
+									</div>
+								)}
+							</div>
+							<button className='thumbnail-next' onClick={() => {
+
+							}}><ChevronCompactRight /></button>
 						</div>
 					</div>
 					<div className="post-description">
