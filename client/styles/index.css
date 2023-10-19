@@ -90,7 +90,7 @@
 .index-page .category-list-heading-container h2 {
   padding: 0 16px;
   font-size: 1.8rem;
-  font-weight: bold;
+  font-weight: 500;
 }
 .index-page .category-list {
   display: grid;

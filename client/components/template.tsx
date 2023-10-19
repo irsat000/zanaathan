@@ -42,13 +42,13 @@ const Template: React.FC<{
 				</div>
 				<header>
 					<div className="header-container">
+						<div className='search-bar'>
+							<input type='text' placeholder='Hizmetleri hızlıca ara' />
+						</div>
 						<Link href='/' className="site-logo-wrapper">
 							<span className='m'>Z<b>.</b>H</span>
 							<span className='d'>Zanaat<b>.</b>Han</span>
 						</Link>
-						<div className='search-bar'>
-							<input type='text' placeholder='Hizmetleri hızlıca ara' />
-						</div>
 						<button className='drawer-button'>
 							<List />
 						</button>
@@ -65,7 +65,7 @@ const Template: React.FC<{
 							</> : <>
 								<div className="user-auth-buttons">
 									<button className='signin-button' onClick={handleLoginModalActive}>Giriş yap</button>
-									<button className='signup-button'><PersonPlus /></button>
+									<Link href={'/kayit'} className='signup-button'><PersonPlus /></Link>
 								</div>
 							</>}
 						</div>

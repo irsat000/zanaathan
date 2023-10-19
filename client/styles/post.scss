@@ -144,8 +144,15 @@
             .description {
                 text-indent: 10px;
                 font-size: 1.1rem;
-                margin-bottom: 10px;
+                margin-bottom: 14px;
                 font-weight: 300;
+            }
+
+            .location{
+                font-size: 1rem;
+                text-align: center;
+                font-weight: 400;
+                margin-bottom: 10px;
             }
 
             .author-container {
@@ -185,6 +192,26 @@
                         border: 1px solid #636363;
                         background-color: #636363;
                     }
+                }
+            }
+
+            .report-button{
+                margin-top: 16px;
+                align-self: center;
+                border: 1px solid var(--primary-color);
+                background-color: var(--primary-bg-color);
+                border-radius: 20px;
+                padding: 8px 20px;
+                font-size: 1.1rem;
+                cursor: pointer;
+                font-family: "Fira Sans", sans-serif;
+                font-weight: 300;
+                transition: all 0.1s ease-in-out;
+
+                &:hover {
+                    color: #ffffff;
+                    border: 1px solid #636363;
+                    background-color: #636363;
                 }
             }
         }

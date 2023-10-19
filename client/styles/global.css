@@ -98,6 +98,7 @@ body {
   position: relative;
   border-radius: 10px;
   max-width: 260px;
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
 }
 .login-modal .login-form .close-login-button {
   all: unset;
@@ -137,7 +138,7 @@ body {
 }
 .login-modal .login-form .login-button-container .login-button {
   border-radius: 20px;
-  padding: 6px 20px;
+  padding: 6px 30px;
   border: 1px solid var(--primary-color);
   background-color: var(--primary-bg-color);
   font-size: 1.1rem;
@@ -204,6 +205,9 @@ header > .header-container {
   align-items: center;
   justify-content: space-between;
 }
+header > .header-container .site-logo-wrapper {
+  order: 0;
+}
 header > .header-container .site-logo-wrapper span {
   font-family: "Cinzel", serif;
   font-size: 2rem;
@@ -217,10 +221,13 @@ header > .header-container .site-logo-wrapper span.m {
   display: block;
 }
 header > .header-container .search-bar {
+  order: 1;
   flex-grow: 1;
   padding: 0 20px;
+  transition: all 0.1s ease-in-out;
 }
 header > .header-container .search-bar input {
+  transition: width 0.1s ease-in-out;
   width: 96%;
   max-width: 600px;
   font-size: 1.2rem;
@@ -232,10 +239,12 @@ header > .header-container .search-bar input {
 }
 header > .header-container .drawer-button {
   all: unset;
+  order: 2;
   display: flex;
   font-size: 2.6rem;
 }
 header > .header-container .user-container {
+  order: 3;
   display: none;
   flex-direction: row;
   gap: 20px;
@@ -256,77 +265,47 @@ header > .header-container .user-container .shortcut-wrapper button {
 header > .header-container .user-container .shortcut-wrapper button:hover {
   transform: scale(1.1);
 }
-@keyframes show-signup-button {
-  from {
-    width: 0;
-  }
-  to {
-    width: calc(1.3rem + 28px);
-  }
-}
-@keyframes hide-signup-button {
-  from {
-    display: flex;
-    width: calc(1.3rem + 28px);
-  }
-  to {
-    width: 0;
-    display: none;
-  }
-}
 header > .header-container .user-container .user-auth-buttons {
   display: flex;
   flex-direction: row;
-  border-radius: 20px;
-  overflow: hidden;
-  background-color: var(--primary-bg-color);
-  border: 1px solid var(--primary-color);
-  transition: all 0.2s ease-in-out;
-}
-header > .header-container .user-container .user-auth-buttons:hover .signup-button {
-  display: flex;
-}
-header > .header-container .user-container .user-auth-buttons:has(.signin-button:hover) {
-  border: 1px solid var(--button1-bg-hover);
-}
-header > .header-container .user-container .user-auth-buttons:has(.signup-button:hover) {
-  border: 1px solid var(--button2-bg-hover);
-}
-header > .header-container .user-container .user-auth-buttons:not(:hover) .signup-button {
-  animation: hide-signup-button 0.2s forwards;
 }
 header > .header-container .user-container .user-auth-buttons .signin-button {
   cursor: pointer;
-  border: unset;
   padding: 5px 14px;
   font-size: 1.1rem;
   border-radius: 20px 0 0 20px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 300;
+  border: 1px solid var(--primary-color);
+  border-right: 1px solid transparent;
   background-color: var(--primary-bg-color);
   transition: all 0.2s ease-in-out;
 }
 header > .header-container .user-container .user-auth-buttons .signin-button:hover {
   color: #ffffff;
   background-color: var(--button1-bg-hover);
+  border: 1px solid var(--button1-bg-hover);
+}
+header > .header-container .user-container .user-auth-buttons .signin-button:hover + .signup-button {
+  border-left: 1px solid transparent;
 }
 header > .header-container .user-container .user-auth-buttons .signup-button {
   padding: 0;
   cursor: pointer;
-  border: unset;
-  display: none;
+  display: flex;
   font-size: 1.3rem;
   border-radius: 0 20px 20px 0;
   align-items: center;
   justify-content: center;
-  width: calc(1.3rem + 28px);
-  animation: show-signup-button 0.3s forwards;
+  padding: 5px 14px;
+  border: 1px solid var(--primary-color);
   background-color: var(--primary-bg-color);
   transition: all 0.2s ease-in-out;
 }
 header > .header-container .user-container .user-auth-buttons .signup-button:hover {
   color: #ffffff;
   background-color: var(--button2-bg-hover);
+  border: 1px solid var(--button2-bg-hover);
 }
 
 main {
@@ -400,5 +379,19 @@ footer {
   }
   header > .header-container .user-container .user-auth-buttons .signin-button {
     font-size: 1.2rem;
+  }
+}
+@media (max-width: 767.98px) {
+  header > .header-container > .search-bar:focus-within {
+    padding: 0;
+  }
+  header > .header-container > .search-bar:focus-within ~ .site-logo-wrapper {
+    display: none;
+  }
+  header > .header-container > .search-bar:focus-within ~ .drawer-button {
+    display: none;
+  }
+  header > .header-container > .search-bar:focus-within input {
+    width: 100%;
   }
 }/*# sourceMappingURL=global.css.map */
