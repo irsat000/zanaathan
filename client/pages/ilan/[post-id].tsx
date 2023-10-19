@@ -2,13 +2,26 @@
 import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ChevronCompactLeft, ChevronCompactRight } from 'react-bootstrap-icons'
 
 
 export default function Ilan() {
 
 	const [activeImage, setActiveImage] = useState(0);
+	const carouselRef = useRef<HTMLDivElement | null>(null);
+
+	// Scroll left or right with buttons
+	const scrollCarousel = (direction: string) => {
+		const carousel = carouselRef.current;
+		if (carousel) {
+			if (direction === 'left') {
+				carousel.scrollBy({ left: -200, behavior: 'smooth' });
+			} else {
+				carousel.scrollBy({ left: 200, behavior: 'smooth' });
+			}
+		}
+	}
 
 	return (
 		<Template>
@@ -19,10 +32,10 @@ export default function Ilan() {
 							<Image src={require('@/assets/site/painter2.jpg')} alt={''} />
 						</div>
 						<div className="thumbnail-carousel-container">
-							<button className='thumbnail-previous' onClick={() => {
-
-							}}><ChevronCompactLeft /></button>
-							<div className="thumbnail-carousel">
+							<button className='thumbnail-previous' onClick={() => scrollCarousel('left')}>
+								<ChevronCompactLeft />
+							</button>
+							<div className="thumbnail-carousel" ref={carouselRef}>
 								{[...Array(8)].map((a, i) =>
 									<div className={`thumbnail-wrapper ${i === activeImage && 'active'}`}
 										key={i}
@@ -33,14 +46,15 @@ export default function Ilan() {
 									</div>
 								)}
 							</div>
-							<button className='thumbnail-next' onClick={() => {
-
-							}}><ChevronCompactRight /></button>
+							<button className='thumbnail-next' onClick={() => scrollCarousel('right')}>
+								<ChevronCompactRight />
+							</button>
 						</div>
 					</div>
 					<div className="post-description">
-						<h2 className='description-heading'>Açıklama</h2>
-						<p>
+						<h2 className='title'>Tüm evin badanaya ihtiyacı var!</h2>
+						<span className="date">1 gün önce</span>
+						<p className='description'>
 							Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aperiam dolorem mollitia quaerat magni voluptatem? Natus itaque maxime, earum doloribus temporibus rem vero neque beatae. Odio molestias adipisci ipsa rerum tempore? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam aut cumque nisi sit molestiae debitis consequatur consequuntur nam minus doloremque quis possimus, nemo facilis id sapiente voluptas impedit expedita animi.
 						</p>
 						<div className="author-container">

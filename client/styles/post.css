@@ -110,12 +110,17 @@
   display: flex;
   flex-direction: column;
 }
-.post-page .post-container .post-description .description-heading {
+.post-page .post-container .post-description .title {
   font-size: 1.4rem;
   margin-bottom: 10px;
   font-weight: 400;
 }
-.post-page .post-container .post-description p {
+.post-page .post-container .post-description .date {
+  font-size: 0.8rem;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.post-page .post-container .post-description .description {
   text-indent: 10px;
   font-size: 1.1rem;
   margin-bottom: 10px;

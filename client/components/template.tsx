@@ -2,13 +2,18 @@
 import { ReactNode, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { Bell, ChevronDown, List, PersonAdd, PersonPlus, PlusSquare } from 'react-bootstrap-icons'
+import { Bell, ChevronDown, List, PersonAdd, PersonPlus, PlusSquare, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 
 const Template: React.FC<{
 	children: ReactNode
 }> = ({ children }) => {
 	const [loggedIn, setLoggedIn] = useState(false);
+	const [loginModalActive, setLoginModalActive] = useState(false);
+
+	const handleLoginModalActive = () => {
+		setLoginModalActive(!loginModalActive);
+	}
 
 	return (
 		<>
@@ -19,6 +24,22 @@ const Template: React.FC<{
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<div className='page-content'>
+				<div className={`login-modal ${loginModalActive && 'active'}`} onClick={handleLoginModalActive}>
+					<form className='login-form' onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}>
+						<button type='button' className='close-login-button' onClick={handleLoginModalActive}><XLg /></button>
+						<span className='login-header'>Giriş Yap</span>
+						<input type='text' placeholder='Kullanıcı Adı' className='login-input' />
+						<input type='password' placeholder='Şifre' className='login-input' />
+						<div className="login-button-container">
+							<button type='submit' className='login-button'>Giriş</button>
+							<Link href={'/'}>Unuttum</Link>
+						</div>
+						<span className='or-seperator'>Ya da</span>
+						<button type='button' className='google-button-temp'>Google ile</button>
+						<span className='line-seperator'></span>
+						<span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>
+					</form>
+				</div>
 				<header>
 					<div className="header-container">
 						<Link href='/' className="site-logo-wrapper">
@@ -43,7 +64,7 @@ const Template: React.FC<{
 								</div>
 							</> : <>
 								<div className="user-auth-buttons">
-									<button className='signin-button'>Giriş yap</button>
+									<button className='signin-button' onClick={handleLoginModalActive}>Giriş yap</button>
 									<button className='signup-button'><PersonPlus /></button>
 								</div>
 							</>}
