@@ -35,10 +35,14 @@ p {
 html[data-colorset-1] {
   --primary-color: #303030;
   --primary-bg-color: #ffffff;
-  --button1-border-hover: #5997cd;
-  --button1-bg-hover: #5997cd;
-  --button2-bg: #589b49;
-  --button2-bg-hover: #5eb64a;
+  --button-white: #ffffff;
+  --button-white-border: #303030;
+  --button1-1: #5997cd;
+  --button2-1: #589b49;
+  --button2-2: #5eb64a;
+  --button3-1: #e05353;
+  --button3-2: #d12e2e;
+  --button4-1: #636363;
   --link-color: #307fca;
 }
 
@@ -58,11 +62,11 @@ body {
   flex-direction: column;
 }
 
-.login-modal.active {
+.login-modal-container.active {
   display: flex;
 }
 
-.login-modal {
+.login-modal-container {
   padding-top: 20vh;
   padding-bottom: 16px;
   z-index: 200;
@@ -87,20 +91,20 @@ body {
     opacity: 1;
   }
 }
-.login-modal .login-form {
+.login-modal-container .login-modal {
   opacity: 1;
   animation: show-login 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: calc(36px + 1rem) 24px 20px;
+  padding: calc(40px + 1rem) 24px 20px;
   background-color: var(--primary-bg-color);
   position: relative;
   border-radius: 10px;
   max-width: 260px;
   box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
 }
-.login-modal .login-form .close-login-button {
+.login-modal-container .login-modal .close-login-button {
   all: unset;
   display: flex;
   border-radius: 50%;
@@ -111,63 +115,150 @@ body {
   right: 18px;
   font-size: 1rem;
 }
-.login-modal .login-form .close-login-button:hover {
+.login-modal-container .login-modal .close-login-button:hover {
   box-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.3);
 }
-.login-modal .login-form .login-header {
-  font-size: 1.3rem;
-  font-weight: 400;
+.login-modal-container .login-modal .login-tab-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
   margin-bottom: 16px;
 }
-.login-modal .login-form .login-input {
+.login-modal-container .login-modal .login-tab-buttons > span {
+  font-size: 1.2rem;
+  font-weight: 400;
+  padding: 10px 10px 10px;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  position: relative;
+}
+@keyframes inactive-login-tab-hover {
+  0% {
+    width: 0px;
+  }
+  100% {
+    width: 16px;
+  }
+}
+@keyframes inactive-login-tab-unhover {
+  0% {
+    width: 16px;
+  }
+  100% {
+    width: 0px;
+  }
+}
+.login-modal-container .login-modal .login-tab-buttons > span.inactive::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #424242;
+  margin: 0 auto;
+  height: 1px;
+  width: 16px;
+  animation: inactive-login-tab-unhover 0.1s ease-in-out forwards;
+}
+.login-modal-container .login-modal .login-tab-buttons > span.inactive:hover::before {
+  animation: inactive-login-tab-hover 0.1s ease-in-out forwards;
+}
+@keyframes login-tab-active {
+  0% {
+    width: 20px;
+  }
+  100% {
+    width: 100%;
+  }
+}
+.login-modal-container .login-modal .login-tab-buttons > span.active::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #424242;
+  margin: 0 auto;
+  height: 1px;
+  width: 100%;
+  animation: login-tab-active 0.1s ease-in-out;
+}
+.login-modal-container .login-modal .login-form,
+.login-modal-container .login-modal .register-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.login-modal-container .login-modal .login-form .form-input,
+.login-modal-container .login-modal .register-form .form-input {
   font-size: 1.1rem;
   padding: 10px 12px;
   border-radius: 6px;
-  margin-bottom: 14px;
   font-family: "Fira Sans", sans-serif;
   color: var(--primary-color);
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--button-white-border);
 }
-.login-modal .login-form .login-button-container {
-  width: 100%;
+.login-modal-container .login-modal .login-form .login-button-container,
+.login-modal-container .login-modal .login-form .register-button-container,
+.login-modal-container .login-modal .register-form .login-button-container,
+.login-modal-container .login-modal .register-form .register-button-container {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
 }
-.login-modal .login-form .login-button-container .login-button {
+.login-modal-container .login-modal .login-form .login-button-container .submit-button,
+.login-modal-container .login-modal .login-form .register-button-container .submit-button,
+.login-modal-container .login-modal .register-form .login-button-container .submit-button,
+.login-modal-container .login-modal .register-form .register-button-container .submit-button {
   border-radius: 20px;
   padding: 6px 30px;
-  border: 1px solid var(--primary-color);
-  background-color: var(--primary-bg-color);
+  border: 1px solid var(--button-white-border);
+  background-color: var(--button-white);
   font-size: 1.1rem;
   cursor: pointer;
   font-family: "Fira Sans", sans-serif;
   font-weight: 300;
   transition: all 0.1s ease-in-out;
 }
-.login-modal .login-form .login-button-container .login-button:hover {
+.login-modal-container .login-modal .login-form .login-button-container .submit-button:hover,
+.login-modal-container .login-modal .login-form .register-button-container .submit-button:hover,
+.login-modal-container .login-modal .register-form .login-button-container .submit-button:hover,
+.login-modal-container .login-modal .register-form .register-button-container .submit-button:hover {
   color: #ffffff;
-  border: 1px solid var(--button2-bg-hover);
-  background-color: var(--button2-bg-hover);
+  border: 1px solid var(--button2-2);
+  background-color: var(--button2-2);
 }
-.login-modal .login-form .login-button-container a {
+.login-modal-container .login-modal .login-form .login-button-container a,
+.login-modal-container .login-modal .login-form .register-button-container a,
+.login-modal-container .login-modal .register-form .login-button-container a,
+.login-modal-container .login-modal .register-form .register-button-container a {
   font-size: 0.9rem;
   font-weight: 300;
   color: var(--link-color);
 }
-.login-modal .login-form .login-button-container a:hover {
+.login-modal-container .login-modal .login-form .login-button-container a:hover,
+.login-modal-container .login-modal .login-form .register-button-container a:hover,
+.login-modal-container .login-modal .register-form .login-button-container a:hover,
+.login-modal-container .login-modal .register-form .register-button-container a:hover {
   text-decoration: underline;
 }
-.login-modal .login-form .or-seperator {
+.login-modal-container .login-modal .login-form .register-button-container,
+.login-modal-container .login-modal .register-form .register-button-container {
+  justify-content: center;
+}
+.login-modal-container .login-modal .or-seperator {
   margin-bottom: 14px;
 }
-.login-modal .login-form .google-button-temp {
+.login-modal-container .login-modal .google-button-temp {
   border-radius: 20px;
   padding: 6px 20px;
-  border: 1px solid var(--primary-color);
-  background-color: var(--primary-bg-color);
+  border: 1px solid var(--button-white-border);
+  background-color: var(--button-white);
   font-size: 1.1rem;
   cursor: pointer;
   font-family: "Fira Sans", sans-serif;
@@ -175,24 +266,24 @@ body {
   transition: all 0.1s ease-in-out;
   margin-bottom: 14px;
 }
-.login-modal .login-form .google-button-temp:hover {
+.login-modal-container .login-modal .google-button-temp:hover {
   color: #ffffff;
-  border: 1px solid var(--button1-bg-hover);
-  background-color: var(--button1-bg-hover);
+  border: 1px solid var(--button1-1);
+  background-color: var(--button1-1);
 }
-.login-modal .login-form .line-seperator {
+.login-modal-container .login-modal .line-seperator {
   width: 90%;
   border-bottom: 1px solid #b4b4b4;
   margin-bottom: 14px;
 }
-.login-modal .login-form .signup-instead {
+.login-modal-container .login-modal .signup-instead {
   font-weight: 300;
 }
-.login-modal .login-form .signup-instead a {
+.login-modal-container .login-modal .signup-instead a {
   margin-left: 4px;
   color: var(--link-color);
 }
-.login-modal .login-form .signup-instead a:hover {
+.login-modal-container .login-modal .signup-instead a:hover {
   text-decoration: underline;
 }
 
@@ -232,7 +323,7 @@ header > .header-container .search-bar input {
   max-width: 600px;
   font-size: 1.2rem;
   padding: 8px 10px;
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--button-white-border);
   border-radius: 4px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 300;
@@ -276,21 +367,20 @@ header > .header-container .user-container .user-auth-buttons .signin-button {
   border-radius: 20px 0 0 20px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 300;
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--button-white-border);
   border-right: 1px solid transparent;
-  background-color: var(--primary-bg-color);
+  background-color: var(--button-white);
   transition: all 0.2s ease-in-out;
 }
 header > .header-container .user-container .user-auth-buttons .signin-button:hover {
   color: #ffffff;
-  background-color: var(--button1-bg-hover);
-  border: 1px solid var(--button1-bg-hover);
+  background-color: var(--button1-1);
+  border: 1px solid var(--button1-1);
 }
 header > .header-container .user-container .user-auth-buttons .signin-button:hover + .signup-button {
   border-left: 1px solid transparent;
 }
 header > .header-container .user-container .user-auth-buttons .signup-button {
-  padding: 0;
   cursor: pointer;
   display: flex;
   font-size: 1.3rem;
@@ -298,14 +388,14 @@ header > .header-container .user-container .user-auth-buttons .signup-button {
   align-items: center;
   justify-content: center;
   padding: 5px 14px;
-  border: 1px solid var(--primary-color);
-  background-color: var(--primary-bg-color);
+  border: 1px solid var(--button-white-border);
+  background-color: var(--button-white);
   transition: all 0.2s ease-in-out;
 }
 header > .header-container .user-container .user-auth-buttons .signup-button:hover {
   color: #ffffff;
-  background-color: var(--button2-bg-hover);
-  border: 1px solid var(--button2-bg-hover);
+  background-color: var(--button2-2);
+  border: 1px solid var(--button2-2);
 }
 
 main {
@@ -342,7 +432,7 @@ footer {
 }
 
 @media (min-width: 576px) {
-  .login-modal .login-form {
+  .login-modal-container .login-modal {
     max-width: 360px;
   }
 }
@@ -350,10 +440,10 @@ footer {
   html {
     font-size: 16px;
   }
-  .login-modal {
+  .login-modal-container {
     padding-top: 10vh;
   }
-  .login-modal .login-form {
+  .login-modal-container .login-modal {
     max-width: 500px;
   }
   header > .header-container {
@@ -374,7 +464,7 @@ footer {
   }
 }
 @media (min-width: 1200px) {
-  .login-modal {
+  .login-modal-container {
     padding-top: 20vh;
   }
   header > .header-container .user-container .user-auth-buttons .signin-button {

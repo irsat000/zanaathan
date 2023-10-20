@@ -9,11 +9,7 @@ const Template: React.FC<{
 	children: ReactNode
 }> = ({ children }) => {
 	const [loggedIn, setLoggedIn] = useState(false);
-	const [loginModalActive, setLoginModalActive] = useState(false);
-
-	const handleLoginModalActive = () => {
-		setLoginModalActive(!loginModalActive);
-	}
+	const [loginModalActive, setLoginModalActive] = useState('none');
 
 	return (
 		<>
@@ -24,21 +20,37 @@ const Template: React.FC<{
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<div className='page-content'>
-				<div className={`login-modal ${loginModalActive && 'active'}`} onClick={handleLoginModalActive}>
-					<form className='login-form' onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}>
-						<button type='button' className='close-login-button' onClick={handleLoginModalActive}><XLg /></button>
-						<span className='login-header'>Giriş Yap</span>
-						<input type='text' placeholder='Kullanıcı Adı' className='login-input' />
-						<input type='password' placeholder='Şifre' className='login-input' />
-						<div className="login-button-container">
-							<button type='submit' className='login-button'>Giriş</button>
-							<Link href={'/'}>Unuttum</Link>
+				<div className={`login-modal-container ${loginModalActive !== 'none' && 'active'}`} onClick={() => setLoginModalActive('none')}>
+					<div className='login-modal' onClick={(e) => { e.stopPropagation() }}>
+						<button type='button' className='close-login-button' onClick={() => setLoginModalActive('none')}><XLg /></button>
+						<div className="login-tab-buttons">
+							<span className={`login-tab-button ${loginModalActive === 'signin' ? 'active' : 'inactive'}`}
+								onClick={() => setLoginModalActive('signin')}>Giriş Yap</span>
+							<span className={`register-tab-button ${loginModalActive === 'signup' ? 'active' : 'inactive'}`}
+								onClick={() => setLoginModalActive('signup')}>Kayıt Ol</span>
 						</div>
+						{loginModalActive === 'signin' ?
+							<form className='login-form' onSubmit={(e) => { e.preventDefault() }}>
+								<input type='text' placeholder='Kullanıcı Adı' className='form-input' />
+								<input type='password' placeholder='Şifre' className='form-input' />
+								<div className="login-button-container">
+									<button type='submit' className='submit-button'>Giriş</button>
+									<Link href={'/'}>Unuttum</Link>
+								</div>
+							</form> :
+							<form className='register-form' onSubmit={(e) => { e.preventDefault() }}>
+								<input type='text' placeholder='E-Posta' className='form-input' />
+								<input type='text' placeholder='Kullanıcı Adı' className='form-input' />
+								<input type='password' placeholder='Şifre' className='form-input' />
+								<div className="register-button-container">
+									<button type='submit' className='submit-button'>Kayıt ol</button>
+								</div>
+							</form>}
 						<span className='or-seperator'>Ya da</span>
 						<button type='button' className='google-button-temp'>Google ile</button>
 						<span className='line-seperator'></span>
 						<span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>
-					</form>
+					</div>
 				</div>
 				<header>
 					<div className="header-container">
@@ -64,8 +76,8 @@ const Template: React.FC<{
 								</div>
 							</> : <>
 								<div className="user-auth-buttons">
-									<button className='signin-button' onClick={handleLoginModalActive}>Giriş yap</button>
-									<Link href={'/kayit'} className='signup-button'><PersonPlus /></Link>
+									<button type='button' className='signin-button' onClick={() => setLoginModalActive('signin')}>Giriş yap</button>
+									<button type='button' className='signup-button' onClick={() => setLoginModalActive('signup')}><PersonPlus /></button>
 								</div>
 							</>}
 						</div>

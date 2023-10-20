@@ -105,35 +105,28 @@
 .post-page .post-container .gallery-container .thumbnail-carousel-container .thumbnail-carousel .thumbnail-wrapper.active .active-sign {
   width: 12px;
 }
-.post-page .post-container .post-description {
+.post-page .post-container .post-details {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
-.post-page .post-container .post-description .title {
+.post-page .post-container .post-details .title {
+  margin-top: 20px;
   font-size: 1.4rem;
   margin-bottom: 10px;
   font-weight: 400;
 }
-.post-page .post-container .post-description .date {
+.post-page .post-container .post-details .date {
   font-size: 0.8rem;
   font-weight: 400;
   margin-bottom: 8px;
 }
-.post-page .post-container .post-description .description {
-  text-indent: 10px;
-  font-size: 1.1rem;
-  margin-bottom: 14px;
-  font-weight: 300;
-}
-.post-page .post-container .post-description .location {
+.post-page .post-container .post-details .location {
   font-size: 1rem;
-  text-align: center;
   font-weight: 400;
   margin-bottom: 10px;
 }
-.post-page .post-container .post-description .author-container {
-  margin-top: 20px;
+.post-page .post-container .post-details .author-container {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -143,17 +136,21 @@
   border: 1px solid #000;
   border-radius: 10px;
 }
-.post-page .post-container .post-description .author-container .author-name {
+.post-page .post-container .post-details .author-container .author-name {
   font-size: 1.2rem;
   font-weight: 400;
 }
-.post-page .post-container .post-description .author-container .phone-number {
+.post-page .post-container .post-details .author-container .phone-number {
   font-size: 1.1rem;
   font-weight: 300;
 }
-.post-page .post-container .post-description .author-container .message-request {
-  border: 1px solid var(--primary-color);
-  background-color: var(--primary-bg-color);
+.post-page .post-container .post-details .author-container .author-actions {
+  display: flex;
+  gap: 14px;
+}
+.post-page .post-container .post-details .author-container .author-actions .message-request,
+.post-page .post-container .post-details .author-container .author-actions .report-button {
+  border: unset;
   border-radius: 20px;
   padding: 8px 20px;
   font-size: 1.1rem;
@@ -162,28 +159,36 @@
   font-weight: 300;
   transition: all 0.1s ease-in-out;
 }
-.post-page .post-container .post-description .author-container .message-request:hover {
-  color: #ffffff;
-  border: 1px solid #636363;
-  background-color: #636363;
+.post-page .post-container .post-details .author-container .author-actions .message-request {
+  background-color: var(--button-white);
+  border: 1px solid var(--button4-1);
 }
-.post-page .post-container .post-description .report-button {
-  margin-top: 16px;
-  align-self: center;
-  border: 1px solid var(--primary-color);
-  background-color: var(--primary-bg-color);
-  border-radius: 20px;
-  padding: 8px 20px;
+.post-page .post-container .post-details .author-container .author-actions .message-request:hover {
+  color: #ffffff;
+  background-color: var(--button4-1);
+}
+.post-page .post-container .post-details .author-container .author-actions .report-button {
+  color: #ffffff;
+  background-color: var(--button3-1);
+}
+.post-page .post-container .post-details .author-container .author-actions .report-button:hover {
+  background-color: var(--button3-2);
+}
+.post-page .post-description {
+  margin-top: 30px;
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.post-page .post-description .description-heading {
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+.post-page .post-description .description {
+  margin-bottom: 14px;
   font-size: 1.1rem;
-  cursor: pointer;
-  font-family: "Fira Sans", sans-serif;
   font-weight: 300;
-  transition: all 0.1s ease-in-out;
-}
-.post-page .post-container .post-description .report-button:hover {
-  color: #ffffff;
-  border: 1px solid #636363;
-  background-color: #636363;
 }
 
 @media (min-width: 768px) {

@@ -51,21 +51,26 @@ export default function Ilan() {
 							</button>
 						</div>
 					</div>
-					<div className="post-description">
-						<h2 className='title'>Tüm evin badanaya ihtiyacı var!</h2>
-						<span className="date">1 gün önce</span>
-						<p className='description'>
-							Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aperiam dolorem mollitia quaerat magni voluptatem? Natus itaque maxime, earum doloribus temporibus rem vero neque beatae. Odio molestias adipisci ipsa rerum tempore? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam aut cumque nisi sit molestiae debitis consequatur consequuntur nam minus doloremque quis possimus, nemo facilis id sapiente voluptas impedit expedita animi.
-						</p>
-						<span className="location">Osmangazi Mah. / Yıldırım / Bursa</span>
-						<div className="author-container">
+					<div className='post-details'>
+						<div className='author-container'>
 							<h2 className='author-name'>Muhammed İrşat Akdeniz</h2>
 							<span className='phone-number'>0 (555) 555 55 55 - Cep</span>
 							<span className='phone-number'>0 (555) 555 55 55 - İş</span>
-							<button className="message-request">Mesaj Gönder</button>
+							<div className='author-actions'>
+								<button className='message-request'>Mesaj Gönder</button>
+								<button className='report-button'>Şikayet et</button>
+							</div>
 						</div>
-						<button className="report-button">Şikayet et</button>
+						<h2 className='title'>Tüm evin badanaya ihtiyacı var!</h2>
+						<span className="date">1 gün önce</span>
+						<span className='location'>Osmangazi Mah. / Yıldırım / Bursa</span>
 					</div>
+				</div>
+				<div className='post-description'>
+					<h2 className='description-heading'>Açıklama</h2>
+					<p className='description'>
+						Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aperiam dolorem mollitia quaerat magni voluptatem? Natus itaque maxime, earum doloribus temporibus rem vero neque beatae. Odio molestias adipisci ipsa rerum tempore? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam aut cumque nisi sit molestiae debitis consequatur consequuntur nam minus doloremque quis possimus, nemo facilis id sapiente voluptas impedit expedita animi.
+					</p>
 				</div>
 			</div>
 		</Template>

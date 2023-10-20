@@ -62,8 +62,8 @@ html[data-colorset-1] {}
 
             button {
                 margin-top: auto;
-                border: 1px solid var(--primary-color);
-                background-color: var(--primary-bg-color);
+                border: 1px solid var(--button-white-border);
+                background-color: var(--button-white);
                 border-radius: 20px;
                 padding: 7px 20px;
                 font-size: 1.1em;
@@ -74,8 +74,8 @@ html[data-colorset-1] {}
 
                 &:hover {
                     color: #ffffff;
-                    border: 1px solid var(--button1-border-hover);
-                    background-color: var(--button1-bg-hover);
+                    border: 1px solid var(--button1-1);
+                    background-color: var(--button1-1);
                 }
             }
         }
