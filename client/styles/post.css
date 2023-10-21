@@ -146,6 +146,7 @@
 }
 .post-page .post-container .post-details .author-container .author-actions {
   display: flex;
+  align-items: center;
   gap: 14px;
 }
 .post-page .post-container .post-details .author-container .author-actions .message-request,

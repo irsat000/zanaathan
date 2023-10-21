@@ -26,6 +26,7 @@ p {
   margin: 0;
   text-decoration: none;
   color: unset;
+  list-style-type: none;
 }
 
 :root {
@@ -56,12 +57,25 @@ body {
   font-family: "Fira Sans", sans-serif;
   font-weight: 400;
 }
+body button,
+body input,
+body select {
+  color: var(--primary-color);
+}
 
 .page-content {
   display: flex;
   flex-direction: column;
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .login-modal-container.active {
   display: flex;
 }
@@ -199,7 +213,6 @@ body {
   padding: 10px 12px;
   border-radius: 6px;
   font-family: "Fira Sans", sans-serif;
-  color: var(--primary-color);
   border: 1px solid var(--button-white-border);
 }
 .login-modal-container .login-modal .login-form .login-button-container,
@@ -302,7 +315,6 @@ header > .header-container .site-logo-wrapper {
 header > .header-container .site-logo-wrapper span {
   font-family: "Cinzel", serif;
   font-size: 2rem;
-  padding-top: 4px;
   display: none;
 }
 header > .header-container .site-logo-wrapper span b {
@@ -316,6 +328,7 @@ header > .header-container .search-bar {
   flex-grow: 1;
   padding: 0 20px;
   transition: all 0.1s ease-in-out;
+  position: relative;
 }
 header > .header-container .search-bar input {
   transition: width 0.1s ease-in-out;
@@ -327,6 +340,38 @@ header > .header-container .search-bar input {
   border-radius: 4px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 300;
+}
+header > .header-container .search-bar input:focus ~ .search-recommendations {
+  display: block;
+}
+header > .header-container .search-bar .search-recommendations {
+  padding: 0 20px;
+  display: none;
+  width: 100%;
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 199;
+}
+header > .header-container .search-bar .search-recommendations ul {
+  width: 96%;
+  animation: fade-in 0.1s ease-in-out;
+  padding-top: 10px;
+  max-width: 600px;
+  background-color: var(--primary-bg-color);
+  box-shadow: 0px 0px 10px -3px rgba(0, 0, 0, 0.3);
+  border-radius: 4px 4px 8px 8px;
+  overflow: hidden;
+}
+header > .header-container .search-bar .search-recommendations ul li {
+  width: 100%;
+  padding: 8px 10px;
+  transition: background-color 0.1s ease-in-out;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+header > .header-container .search-bar .search-recommendations ul li:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 header > .header-container .drawer-button {
   all: unset;
@@ -482,6 +527,12 @@ footer {
     display: none;
   }
   header > .header-container > .search-bar:focus-within input {
+    width: 100%;
+  }
+  header > .header-container > .search-bar:focus-within .search-recommendations {
+    padding: 0;
+  }
+  header > .header-container > .search-bar:focus-within .search-recommendations ul {
     width: 100%;
   }
 }/*# sourceMappingURL=global.css.map */

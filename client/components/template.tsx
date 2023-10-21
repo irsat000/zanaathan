@@ -56,6 +56,13 @@ const Template: React.FC<{
 					<div className="header-container">
 						<div className='search-bar'>
 							<input type='text' placeholder='Hizmetleri hızlıca ara' />
+							<div className="search-recommendations">
+								<ul>
+									<li>Boya Badana</li>
+									<li>Sıhhi Tesisat</li>
+									<li>Fayans İşçiliği</li>
+								</ul>
+							</div>
 						</div>
 						<Link href='/' className="site-logo-wrapper">
 							<span className='m'>Z<b>.</b>H</span>
