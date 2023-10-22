@@ -89,6 +89,8 @@ body select {
   bottom: 0;
   left: 0;
   right: 0;
+  height: 100vh;
+  width: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   -webkit-backdrop-filter: blur(3px);
           backdrop-filter: blur(3px);
@@ -300,6 +302,71 @@ body select {
   text-decoration: underline;
 }
 
+.drawer-container.active {
+  display: block;
+}
+
+.drawer-container {
+  display: none;
+  z-index: 198;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(3px);
+          backdrop-filter: blur(3px);
+  overflow: hidden;
+}
+@keyframes slide-drawer {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.drawer-container .drawer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  height: 100vh;
+  width: 70%;
+  animation: slide-drawer 0.2s ease-in-out;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-bg-color);
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+  text-align: right;
+}
+.drawer-container .drawer .drawer-site-logo {
+  padding: 10px 6px 10px;
+  margin: 20px 0 24px;
+  font-size: 2rem;
+  text-align: center;
+  font-family: "Cinzel", serif;
+}
+.drawer-container .drawer .drawer-list {
+  display: flex;
+  flex-direction: column;
+}
+.drawer-container .drawer .drawer-list > a {
+  font-size: 1.6rem;
+  padding: 12px 20px;
+  border-top: 1px solid #dddddd;
+}
+.drawer-container .drawer .drawer-list > a:last-child {
+  border-bottom: 1px solid #dddddd;
+}
+.drawer-container .drawer .drawer-list > a:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 header > .header-container {
   height: 60px;
   width: 100%;
@@ -315,6 +382,7 @@ header > .header-container .site-logo-wrapper {
 header > .header-container .site-logo-wrapper span {
   font-family: "Cinzel", serif;
   font-size: 2rem;
+  padding-top: 4px;
   display: none;
 }
 header > .header-container .site-logo-wrapper span b {

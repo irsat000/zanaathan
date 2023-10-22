@@ -10,6 +10,14 @@ const Template: React.FC<{
 }> = ({ children }) => {
 	const [loggedIn, setLoggedIn] = useState(false);
 	const [loginModalActive, setLoginModalActive] = useState('none');
+	const [drawerActive, setDrawerActive] = useState(false);
+
+	const handleLoginModal = (type: string) => {
+		if (drawerActive) {
+			setDrawerActive(false);
+		}
+		setLoginModalActive(type);
+	}
 
 	return (
 		<>
@@ -52,6 +60,15 @@ const Template: React.FC<{
 						<span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>
 					</div>
 				</div>
+				<div className={`drawer-container ${drawerActive && 'active'}`} onClick={() => setDrawerActive(false)}>
+					<div className="drawer" onClick={(e) => { e.stopPropagation() }}>
+						<Link href={'/'} className='drawer-site-logo'>Zanaat.Han</Link>
+						<div className="drawer-list">
+							<a className='drawer-button' onClick={() => handleLoginModal('signin')}>Giriş yap</a>
+							<a className='drawer-button' onClick={() => handleLoginModal('signup')}>Kayıt ol</a>
+						</div>
+					</div>
+				</div>
 				<header>
 					<div className="header-container">
 						<div className='search-bar'>
@@ -68,7 +85,7 @@ const Template: React.FC<{
 							<span className='m'>Z<b>.</b>H</span>
 							<span className='d'>Zanaat<b>.</b>Han</span>
 						</Link>
-						<button className='drawer-button'>
+						<button className='drawer-button' onClick={() => setDrawerActive(true)}>
 							<List />
 						</button>
 						<div className="user-container">
