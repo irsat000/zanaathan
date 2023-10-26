@@ -1,11 +1,13 @@
+import { useUser } from '@/context/userContext';
 import Link from 'next/link';
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
 
 const AuthModal: React.FC<{
     authModalActive: string,
     setAuthModalActive: (v: string) => void
 }> = ({ authModalActive, setAuthModalActive }) => {
+    const { setUserData } = useUser();
 
     const [authModalWarning, setAuthModalWarning] = useState<string | null>(null);
     const [authModalSuccess, setAuthModalSuccess] = useState<string | null>(null);
