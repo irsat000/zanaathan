@@ -88,11 +88,11 @@ body {
 
 
 
-.login-modal-container.active {
+.auth-modal-container.active {
     display: flex;
 }
 
-.login-modal-container {
+.auth-modal-container {
     padding-top: 20vh;
     padding-bottom: 16px;
     z-index: 200;
@@ -121,7 +121,7 @@ body {
     }
 
 
-    .login-modal {
+    .auth-modal {
         opacity: 1;
         animation: show-login 0.3s ease-in-out;
         display: flex;
@@ -144,7 +144,7 @@ body {
         -moz-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
         box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
 
-        .close-login-button {
+        .close-auth-modal-button {
             all: unset;
             display: flex;
             border-radius: 50%;
@@ -163,7 +163,7 @@ body {
             }
         }
 
-        .login-tab-buttons {
+        .auth-tab-buttons {
             width: 100%;
             display: flex;
             flex-direction: row;
@@ -179,10 +179,6 @@ body {
                 transition: all 0.1s ease-in-out;
                 position: relative;
             }
-
-            .login-tab-button {}
-
-            .register-tab-button {}
 
             @keyframes inactive-login-tab-hover {
                 0% {
@@ -245,13 +241,19 @@ body {
             }
         }
 
+        .login-form.active,
+        .register-form.active {
+            display: flex;
+        }
+
         .login-form,
         .register-form {
             width: 100%;
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 14px;
             margin-bottom: 14px;
+            animation: fade-in 0.1s ease-in-out forwards;
 
             .form-input {
                 font-size: 1.1rem;
@@ -486,7 +488,7 @@ header>.header-container {
 
             ul {
                 width: 96%;
-                animation: fade-in 0.1s ease-in-out;
+                animation: fade-in 0.1s ease-in-out forwards;
                 padding-top: 10px;
                 max-width: 600px;
                 background-color: var(--primary-bg-color);
@@ -636,7 +638,7 @@ footer {
 
 // Small devices (landscape phones, 576px and up)
 @media (min-width: 576px) {
-    .login-modal-container .login-modal {
+    .auth-modal-container .auth-modal {
         max-width: 360px;
     }
 }
@@ -647,10 +649,10 @@ footer {
         font-size: 16px;
     }
 
-    .login-modal-container {
+    .auth-modal-container {
         padding-top: 10vh;
 
-        .login-modal {
+        .auth-modal {
             max-width: 500px;
         }
     }
@@ -684,7 +686,7 @@ footer {
 
 // X-Large devices (large desktops, 1200px and up)
 @media (min-width: 1200px) {
-    .login-modal-container {
+    .auth-modal-container {
         padding-top: 20vh;
     }
 

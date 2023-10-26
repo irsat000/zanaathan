@@ -76,11 +76,11 @@ body select {
     opacity: 1;
   }
 }
-.login-modal-container.active {
+.auth-modal-container.active {
   display: flex;
 }
 
-.login-modal-container {
+.auth-modal-container {
   padding-top: 20vh;
   padding-bottom: 16px;
   z-index: 200;
@@ -107,7 +107,7 @@ body select {
     opacity: 1;
   }
 }
-.login-modal-container .login-modal {
+.auth-modal-container .auth-modal {
   opacity: 1;
   animation: show-login 0.3s ease-in-out;
   display: flex;
@@ -120,7 +120,7 @@ body select {
   max-width: 260px;
   box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
 }
-.login-modal-container .login-modal .close-login-button {
+.auth-modal-container .auth-modal .close-auth-modal-button {
   all: unset;
   display: flex;
   border-radius: 50%;
@@ -131,10 +131,10 @@ body select {
   right: 18px;
   font-size: 1rem;
 }
-.login-modal-container .login-modal .close-login-button:hover {
+.auth-modal-container .auth-modal .close-auth-modal-button:hover {
   box-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.3);
 }
-.login-modal-container .login-modal .login-tab-buttons {
+.auth-modal-container .auth-modal .auth-tab-buttons {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -142,7 +142,7 @@ body select {
   text-align: center;
   margin-bottom: 16px;
 }
-.login-modal-container .login-modal .login-tab-buttons > span {
+.auth-modal-container .auth-modal .auth-tab-buttons > span {
   font-size: 1.2rem;
   font-weight: 400;
   padding: 10px 10px 10px;
@@ -166,7 +166,7 @@ body select {
     width: 0px;
   }
 }
-.login-modal-container .login-modal .login-tab-buttons > span.inactive::before {
+.auth-modal-container .auth-modal .auth-tab-buttons > span.inactive::before {
   content: "";
   position: absolute;
   bottom: 0;
@@ -178,7 +178,7 @@ body select {
   width: 16px;
   animation: inactive-login-tab-unhover 0.1s ease-in-out forwards;
 }
-.login-modal-container .login-modal .login-tab-buttons > span.inactive:hover::before {
+.auth-modal-container .auth-modal .auth-tab-buttons > span.inactive:hover::before {
   animation: inactive-login-tab-hover 0.1s ease-in-out forwards;
 }
 @keyframes login-tab-active {
@@ -189,7 +189,7 @@ body select {
     width: 100%;
   }
 }
-.login-modal-container .login-modal .login-tab-buttons > span.active::before {
+.auth-modal-container .auth-modal .auth-tab-buttons > span.active::before {
   content: "";
   position: absolute;
   bottom: 0;
@@ -201,35 +201,40 @@ body select {
   width: 100%;
   animation: login-tab-active 0.1s ease-in-out;
 }
-.login-modal-container .login-modal .login-form,
-.login-modal-container .login-modal .register-form {
-  width: 100%;
+.auth-modal-container .auth-modal .login-form.active,
+.auth-modal-container .auth-modal .register-form.active {
   display: flex;
+}
+.auth-modal-container .auth-modal .login-form,
+.auth-modal-container .auth-modal .register-form {
+  width: 100%;
+  display: none;
   flex-direction: column;
   gap: 14px;
   margin-bottom: 14px;
+  animation: fade-in 0.1s ease-in-out forwards;
 }
-.login-modal-container .login-modal .login-form .form-input,
-.login-modal-container .login-modal .register-form .form-input {
+.auth-modal-container .auth-modal .login-form .form-input,
+.auth-modal-container .auth-modal .register-form .form-input {
   font-size: 1.1rem;
   padding: 10px 12px;
   border-radius: 6px;
   font-family: "Fira Sans", sans-serif;
   border: 1px solid var(--button-white-border);
 }
-.login-modal-container .login-modal .login-form .login-button-container,
-.login-modal-container .login-modal .login-form .register-button-container,
-.login-modal-container .login-modal .register-form .login-button-container,
-.login-modal-container .login-modal .register-form .register-button-container {
+.auth-modal-container .auth-modal .login-form .login-button-container,
+.auth-modal-container .auth-modal .login-form .register-button-container,
+.auth-modal-container .auth-modal .register-form .login-button-container,
+.auth-modal-container .auth-modal .register-form .register-button-container {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
-.login-modal-container .login-modal .login-form .login-button-container .submit-button,
-.login-modal-container .login-modal .login-form .register-button-container .submit-button,
-.login-modal-container .login-modal .register-form .login-button-container .submit-button,
-.login-modal-container .login-modal .register-form .register-button-container .submit-button {
+.auth-modal-container .auth-modal .login-form .login-button-container .submit-button,
+.auth-modal-container .auth-modal .login-form .register-button-container .submit-button,
+.auth-modal-container .auth-modal .register-form .login-button-container .submit-button,
+.auth-modal-container .auth-modal .register-form .register-button-container .submit-button {
   border-radius: 20px;
   padding: 6px 30px;
   border: 1px solid var(--button-white-border);
@@ -240,36 +245,36 @@ body select {
   font-weight: 300;
   transition: all 0.1s ease-in-out;
 }
-.login-modal-container .login-modal .login-form .login-button-container .submit-button:hover,
-.login-modal-container .login-modal .login-form .register-button-container .submit-button:hover,
-.login-modal-container .login-modal .register-form .login-button-container .submit-button:hover,
-.login-modal-container .login-modal .register-form .register-button-container .submit-button:hover {
+.auth-modal-container .auth-modal .login-form .login-button-container .submit-button:hover,
+.auth-modal-container .auth-modal .login-form .register-button-container .submit-button:hover,
+.auth-modal-container .auth-modal .register-form .login-button-container .submit-button:hover,
+.auth-modal-container .auth-modal .register-form .register-button-container .submit-button:hover {
   color: #ffffff;
   border: 1px solid var(--button2-2);
   background-color: var(--button2-2);
 }
-.login-modal-container .login-modal .login-form .login-button-container a,
-.login-modal-container .login-modal .login-form .register-button-container a,
-.login-modal-container .login-modal .register-form .login-button-container a,
-.login-modal-container .login-modal .register-form .register-button-container a {
+.auth-modal-container .auth-modal .login-form .login-button-container a,
+.auth-modal-container .auth-modal .login-form .register-button-container a,
+.auth-modal-container .auth-modal .register-form .login-button-container a,
+.auth-modal-container .auth-modal .register-form .register-button-container a {
   font-size: 0.9rem;
   font-weight: 300;
   color: var(--link-color);
 }
-.login-modal-container .login-modal .login-form .login-button-container a:hover,
-.login-modal-container .login-modal .login-form .register-button-container a:hover,
-.login-modal-container .login-modal .register-form .login-button-container a:hover,
-.login-modal-container .login-modal .register-form .register-button-container a:hover {
+.auth-modal-container .auth-modal .login-form .login-button-container a:hover,
+.auth-modal-container .auth-modal .login-form .register-button-container a:hover,
+.auth-modal-container .auth-modal .register-form .login-button-container a:hover,
+.auth-modal-container .auth-modal .register-form .register-button-container a:hover {
   text-decoration: underline;
 }
-.login-modal-container .login-modal .login-form .register-button-container,
-.login-modal-container .login-modal .register-form .register-button-container {
+.auth-modal-container .auth-modal .login-form .register-button-container,
+.auth-modal-container .auth-modal .register-form .register-button-container {
   justify-content: center;
 }
-.login-modal-container .login-modal .or-seperator {
+.auth-modal-container .auth-modal .or-seperator {
   margin-bottom: 14px;
 }
-.login-modal-container .login-modal .google-button-temp {
+.auth-modal-container .auth-modal .google-button-temp {
   border-radius: 20px;
   padding: 6px 20px;
   border: 1px solid var(--button-white-border);
@@ -281,24 +286,24 @@ body select {
   transition: all 0.1s ease-in-out;
   margin-bottom: 14px;
 }
-.login-modal-container .login-modal .google-button-temp:hover {
+.auth-modal-container .auth-modal .google-button-temp:hover {
   color: #ffffff;
   border: 1px solid var(--button1-1);
   background-color: var(--button1-1);
 }
-.login-modal-container .login-modal .line-seperator {
+.auth-modal-container .auth-modal .line-seperator {
   width: 90%;
   border-bottom: 1px solid #b4b4b4;
   margin-bottom: 14px;
 }
-.login-modal-container .login-modal .signup-instead {
+.auth-modal-container .auth-modal .signup-instead {
   font-weight: 300;
 }
-.login-modal-container .login-modal .signup-instead a {
+.auth-modal-container .auth-modal .signup-instead a {
   margin-left: 4px;
   color: var(--link-color);
 }
-.login-modal-container .login-modal .signup-instead a:hover {
+.auth-modal-container .auth-modal .signup-instead a:hover {
   text-decoration: underline;
 }
 
@@ -423,7 +428,7 @@ header > .header-container .search-bar .search-recommendations {
 }
 header > .header-container .search-bar .search-recommendations ul {
   width: 96%;
-  animation: fade-in 0.1s ease-in-out;
+  animation: fade-in 0.1s ease-in-out forwards;
   padding-top: 10px;
   max-width: 600px;
   background-color: var(--primary-bg-color);
@@ -545,7 +550,7 @@ footer {
 }
 
 @media (min-width: 576px) {
-  .login-modal-container .login-modal {
+  .auth-modal-container .auth-modal {
     max-width: 360px;
   }
 }
@@ -553,10 +558,10 @@ footer {
   html {
     font-size: 16px;
   }
-  .login-modal-container {
+  .auth-modal-container {
     padding-top: 10vh;
   }
-  .login-modal-container .login-modal {
+  .auth-modal-container .auth-modal {
     max-width: 500px;
   }
   header > .header-container {
@@ -577,7 +582,7 @@ footer {
   }
 }
 @media (min-width: 1200px) {
-  .login-modal-container {
+  .auth-modal-container {
     padding-top: 20vh;
   }
   header > .header-container .user-container .user-auth-buttons .signin-button {

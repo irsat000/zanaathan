@@ -46,7 +46,7 @@ exports.signin = (req: Request, res: Response) => {
             // Authenticate
             bcrypt.compare(password, user.Password, (bErr: any, isMatch: boolean) => {
                 if (bErr) {
-                    return res.status(500).json({ error: 'Password comparison error' });
+                    return res.status(500).json({ error: 'Bcrypt compare error' });
                 }
 
                 if (isMatch) {
@@ -77,6 +77,22 @@ exports.signup = (req: Request, res: Response) => {
         const email = body.email;
         const password = body.password;
 
+        // Check value lengths
+        if (username.trim().length < 3 || email.trim().length || password.trim().length < 5) {
+            return res.status(400).json({ error: 'Form data is not good enough' });
+        }
+
+        // Check if username or verified account already exists
+        const checkExistingQuery = 'SELECT * FROM Account WHERE Username = ? OR (Email = ? AND IsEmailValid = 1)';
+        pool.query(checkExistingQuery, [username, email], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+            if (results.length > 0) {
+                return res.status(409).json({ error: 'Username in use or email has verified account' });
+            }
+        });
+
         // Hash the password
         bcrypt.hash(password, 10, (bErr: any, hash: string) => {
             if (bErr) {
@@ -84,8 +100,8 @@ exports.signup = (req: Request, res: Response) => {
             }
 
             // Run the query
-            const query = "INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar) VALUES (?, ?, ?, ?, ?, NULL);";
-            pool.query(query, [username, fullname, email, 0, hash], (qErr: any, results: any) => {
+            const signUpQuery = "INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar) VALUES (?, ?, ?, ?, ?, NULL);";
+            pool.query(signUpQuery, [username, fullname, email, 0, hash], (qErr: any, results: any) => {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error' });
                 }
