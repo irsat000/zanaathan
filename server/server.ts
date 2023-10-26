@@ -1,11 +1,15 @@
 const express = require('express');
+const cors = require('cors')
 import { Request, Response } from 'express';
 const app = express();
 const PORT = 8080;
 
-
 // MIDDLEWARES
 app.use(express.json());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}));
 // - Route middlewares
 const userRoutes = require('./routes/userRoutes');
 app.use('/api', userRoutes);

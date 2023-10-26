@@ -304,6 +304,23 @@ body {
             }
         }
 
+        .warning-text,
+        .success-text {
+            margin-bottom: 14px;
+            min-width: 100%;
+            width: min-content;
+            text-align: center;
+        }
+
+        .warning-text {
+            font-weight: 300;
+            color: #d12e2e;
+        }
+
+        .success-text {
+            color: #34c532;
+        }
+
         .or-seperator {
             margin-bottom: 14px;
         }

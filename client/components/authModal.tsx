@@ -7,6 +7,9 @@ const AuthModal: React.FC<{
     setAuthModalActive: (v: string) => void
 }> = ({ authModalActive, setAuthModalActive }) => {
 
+    const [authModalWarning, setAuthModalWarning] = useState<string | null>(null);
+    const [authModalSuccess, setAuthModalSuccess] = useState<string | null>(null);
+
     const [loginFormData, setLoginFormData] = useState({
         username: '',
         password: ''
@@ -19,6 +22,11 @@ const AuthModal: React.FC<{
         fullname: ''
     });
 
+    const handleAuthModal = (state: string) => {
+        setAuthModalWarning(null);
+        setAuthModalSuccess(null);
+        setAuthModalActive(state);
+    }
 
     const handleLoginFormChange = (e: any) => {
         const { name, value } = e.target;
@@ -40,59 +48,50 @@ const AuthModal: React.FC<{
         e.preventDefault();
         await fetch('http://localhost:8080/api/sign-in', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
             body: JSON.stringify(loginFormData)
-        }).then(res => {
-            switch (res.status) {
-                case 404:
-                    return Promise.reject(`Kullanıcı bulunamadı`);
-                case 400:
-                case 401:
-                    return Promise.reject(`Kullanıcı adı veya şifre hatalı`);
-                case 200:
-                    return res.json();
-                default:
-                    return Promise.reject(`HTTP error! status: ${res.status}`);
-            }
-        }).then(data => {
-            console.log(data.JWT);
-        }).catch(err => console.error(`Sunucuyla bağlantıda hata.`))
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(data => {
+                console.log(data.JWT);
+                setAuthModalWarning(null);
+                setAuthModalSuccess('Giriş başarılı!');
+            })
+            .catch((res) => {
+                if ([400, 401, 404].includes(res.status)) setAuthModalWarning('*Kullanıcı adı veya şifre hatalı*');
+                else console.log('Sunucuyla bağlantıda hata')
+            });
     }
 
     const handleRegisterFormSubmit = async (e: any) => {
         e.preventDefault();
         await fetch('http://localhost:8080/api/sign-up', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
             body: JSON.stringify(registerFormData)
-        }).then(res => {
-            switch (res.status) {
-                case 400:
-                    return Promise.reject(`Form bilgileri yetersiz`);
-                case 409:
-                    return Promise.reject(`Bu kullanıcı adı ya da eposta ile zaten kullanıcı var`);
-                case 200:
-                    return res.json();
-                default:
-                    return Promise.reject(`HTTP error! status: ${res.status}`);
-            }
-        }).then(data => {
-            console.log(data.JWT);
-        }).catch(err => console.error(`Sunucuyla bağlantıda hata.`))
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(data => {
+                console.log(data.JWT);
+                setAuthModalWarning(null);
+                setAuthModalSuccess('kayıt başarılı!');
+            })
+            .catch((res) => {
+                if (res.status === 400) setAuthModalWarning('*Form bilgileri yetersiz*');
+                else if (res.status === 409) setAuthModalWarning('Bu kullanıcı adı ya da eposta kullanılıyor');
+                else console.log('Sunucuyla bağlantıda hata')
+            });
     }
+
     return (
-        <div className={`auth-modal-container ${authModalActive !== 'none' && 'active'}`} onClick={() => setAuthModalActive('none')}>
-            <div className='auth-modal' onClick={(e) => { e.stopPropagation() }}>
-                <button type='button' className='close-auth-modal-button' onClick={() => setAuthModalActive('none')}><XLg /></button>
+        <div className={`auth-modal-container ${authModalActive !== 'none' && 'active'}`} onMouseDown={() => handleAuthModal('none')}>
+            <div className='auth-modal' onMouseDown={(e) => { e.stopPropagation() }}>
+                <button type='button' className='close-auth-modal-button' onClick={() => handleAuthModal('none')}><XLg /></button>
                 <div className="auth-tab-buttons">
                     <span className={`login-tab-button ${authModalActive === 'signin' ? 'active' : 'inactive'}`}
-                        onClick={() => setAuthModalActive('signin')}>Giriş Yap</span>
+                        onClick={() => handleAuthModal('signin')}>Giriş Yap</span>
                     <span className={`register-tab-button ${authModalActive === 'signup' ? 'active' : 'inactive'}`}
-                        onClick={() => setAuthModalActive('signup')}>Kayıt Ol</span>
+                        onClick={() => handleAuthModal('signup')}>Kayıt Ol</span>
                 </div>
                 <form className={`login-form ${authModalActive === 'signin' && 'active'}`} onSubmit={handleLoginFormSubmit}>
                     <input type='text' placeholder='Kullanıcı Adı' className='form-input' name='username' onChange={handleLoginFormChange} />
@@ -111,6 +110,11 @@ const AuthModal: React.FC<{
                         <button type='submit' className='submit-button'>Kayıt ol</button>
                     </div>
                 </form>
+                {authModalSuccess ?
+                    <span className='success-text'>{authModalSuccess}</span>
+                    : authModalWarning &&
+                    <span className='warning-text'>{authModalWarning}</span>
+                }
                 <span className='or-seperator'>Ya da</span>
                 <button type='button' className='google-button-temp'>Google ile</button>
                 <span className='line-seperator'></span>
