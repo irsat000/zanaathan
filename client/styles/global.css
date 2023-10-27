@@ -11,6 +11,17 @@ button {
           user-select: none;
 }
 
+button,
+input[type=submit],
+input[type=reset] {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
 h1,
 h2,
 h3,
@@ -217,7 +228,7 @@ body select {
 .auth-modal-container .auth-modal .login-form .form-input,
 .auth-modal-container .auth-modal .register-form .form-input {
   font-size: 1.1rem;
-  padding: 10px 12px;
+  padding: 10px 12px 8px;
   border-radius: 6px;
   font-family: "Fira Sans", sans-serif;
   border: 1px solid var(--button-white-border);
@@ -473,6 +484,7 @@ header > .header-container .user-container {
   flex-direction: row;
   gap: 20px;
   align-items: center;
+  position: relative;
 }
 header > .header-container .user-container .shortcut-wrapper {
   display: flex;
@@ -503,6 +515,81 @@ header > .header-container .user-container .user-menu-button img {
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
+}
+header > .header-container .user-container .user-menu.active {
+  display: flex;
+}
+@keyframes show-user-menu {
+  from {
+    opacity: 0;
+    top: 60px;
+  }
+}
+@keyframes slide-user-menu-before {
+  from {
+    width: 0px;
+    right: 20px;
+  }
+}
+header > .header-container .user-container .user-menu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  min-height: 300px;
+  border-radius: 8px 0 8px 8px;
+  background-color: var(--primary-bg-color);
+  box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.2);
+  z-index: 197;
+  animation: show-user-menu 0.2s ease-in-out forwards;
+  overflow: hidden;
+}
+header > .header-container .user-container .user-menu::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 36px;
+  height: 6px;
+  background-color: #31a73d;
+  animation: slide-user-menu-before 0.2s ease-in-out forwards;
+}
+header > .header-container .user-container .user-menu .user-menu-close {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  width: 36px;
+  display: flex;
+  justify-content: center;
+}
+header > .header-container .user-container .user-menu .user-menu-close button {
+  padding: 4px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  font-size: 0.7rem;
+  display: flex;
+}
+header > .header-container .user-container .user-menu .user-menu-close button:hover {
+  transform: scale(1.05);
+}
+header > .header-container .user-container .user-menu .um-username {
+  padding: 12px 46px 10px 14px;
+}
+header > .header-container .user-container .user-menu .sign-out-button {
+  margin: auto 20px 14px;
+  align-self: center;
+  padding: 4px 14px;
+  font-size: 0.8rem;
+  font-weight: 300;
+  border-radius: 18px;
+  color: #ffffff;
+  background-color: var(--button3-1);
+  transition: background-color 0.1s ease-in-out;
+  font-family: "Poppins", sans-serif;
+}
+header > .header-container .user-container .user-menu .sign-out-button:hover {
+  background-color: var(--button3-2);
 }
 header > .header-container .user-container .user-auth-buttons {
   display: flex;

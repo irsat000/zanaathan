@@ -60,6 +60,9 @@ const AuthModal: React.FC<{
                 setUserData(decodedJwt(data.JWT));
                 setAuthModalWarning(null);
                 setAuthModalSuccess('Giriş başarılı!');
+                setTimeout(() => {
+                    handleAuthModal('none');
+                }, 1000);
             })
             .catch((res) => {
                 if ([400, 401, 404].includes(res.status)) setAuthModalWarning('*Kullanıcı adı veya şifre hatalı*');
@@ -80,6 +83,9 @@ const AuthModal: React.FC<{
                 setUserData(decodedJwt(data.JWT));
                 setAuthModalWarning(null);
                 setAuthModalSuccess('Kayıt başarılı!');
+                setTimeout(() => {
+                    handleAuthModal('none');
+                }, 1000);
             })
             .catch((res) => {
                 if (res.status === 400) setAuthModalWarning('*Form bilgileri yetersiz*');

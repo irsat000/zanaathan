@@ -31,3 +31,7 @@ export const readJwtCookie = () => {
     Cookies.remove('jwtToken');
     return undefined;
 }
+
+export const removeJwtCookie = () => {
+    Cookies.remove('jwtToken');
+}

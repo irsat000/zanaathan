@@ -1,12 +1,12 @@
 
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { Bell, ChatDots, ChevronDown, List, PersonAdd, PersonPlus, PlusSquare, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 import AuthModal from './authModal'
 import { useUser } from '@/context/userContext'
-import { readJwtCookie } from '@/utils/userUtils'
+import { readJwtCookie, removeJwtCookie } from '@/utils/userUtils'
 
 const Template: React.FC<{
 	children: ReactNode
@@ -20,8 +20,14 @@ const Template: React.FC<{
 		}
 	}, []);
 
+	const handleSignOut = () => {
+		setUserData(null);
+		removeJwtCookie();
+	}
+
 	const [authModalActive, setAuthModalActive] = useState('none');
 	const [drawerActive, setDrawerActive] = useState(false);
+	const [userMenuActive, setUserMenuActive] = useState(false);
 
 	const handleLoginModal = (type: string) => {
 		if (drawerActive) {
@@ -29,6 +35,24 @@ const Template: React.FC<{
 		}
 		setAuthModalActive(type);
 	}
+
+	// Handle clicking outside user-menu
+	const userMenuRef = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+		const handleDocumentClick = (e: any) => {
+			// Check if the click target is outside of the user-menu dropdown div and user-menu button
+			if (userMenuActive && !userMenuRef.current?.contains(e.target) && !e.target.closest('.user-menu-button')) {
+				setUserMenuActive(false);
+			}
+		};
+
+		// Record clicks
+		document.addEventListener("click", handleDocumentClick);
+
+		return () => {
+			document.removeEventListener("click", handleDocumentClick);
+		};
+	}, [userMenuActive]);
 
 
 	return (
@@ -82,9 +106,16 @@ const Template: React.FC<{
 										<Bell />
 									</button>
 								</div>
-								<button type='button' className='user-menu-button'>
+								<button type='button' className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>
 									<Image src={require('@/assets/site/user.png')} alt={userData.username} />
 								</button>
+								<div className={`user-menu ${userMenuActive && 'active'}`} ref={userMenuRef}>
+									<div className='user-menu-close'>
+										<button type='button' onClick={() => setUserMenuActive(false)}><XLg /></button>
+									</div>
+									<span className='um-username'>{userData.fullName ?? userData.username}</span>
+									<button type='button' className='sign-out-button' onClick={handleSignOut}>Çıkış yap</button>
+								</div>
 							</> : <>
 								<div className="user-auth-buttons">
 									<button type='button' className='signin-button' onClick={() => setAuthModalActive('signin')}>Giriş yap</button>
