@@ -477,17 +477,32 @@ header > .header-container .user-container {
 header > .header-container .user-container .shortcut-wrapper {
   display: flex;
   flex-direction: row;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
 }
 header > .header-container .user-container .shortcut-wrapper button {
   all: unset;
   display: flex;
-  font-size: 2rem;
+  font-size: 1.4rem;
   cursor: pointer;
+  padding: 6px;
 }
 header > .header-container .user-container .shortcut-wrapper button:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
+}
+header > .header-container .user-container .user-menu-button {
+  all: unset;
+  cursor: pointer;
+  overflow: hidden;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+header > .header-container .user-container .user-menu-button img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 header > .header-container .user-container .user-auth-buttons {
   display: flex;

@@ -14,7 +14,7 @@ interface SigninBody {
 }
 interface SignupBody {
     username: string;
-    fullname: string | null;
+    fullName: string | null;
     email: string;
     password: string;
 }
@@ -51,7 +51,12 @@ exports.signin = (req: Request, res: Response) => {
 
                 if (isMatch) {
                     // Generate JWT
-                    const JWT = createJwt(results.insertId);
+                    const JWT = createJwt({
+                        id: user.Id,
+                        username: user.Username,
+                        fullName: user.FullName,
+                        email: user.Email
+                    });
                     return res.status(200).json({ JWT });
                 } else {
                     return res.status(401).json({ error: 'Invalid email or password' });
@@ -73,7 +78,7 @@ exports.signup = (req: Request, res: Response) => {
         }
 
         const username = body.username;
-        const fullname = body.fullname;
+        const fullName = body.fullName;
         const email = body.email;
         const password = body.password;
 
@@ -101,13 +106,18 @@ exports.signup = (req: Request, res: Response) => {
 
             // Run the query
             const signUpQuery = "INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar) VALUES (?, ?, ?, ?, ?, NULL);";
-            pool.query(signUpQuery, [username, fullname, email, 0, hash], (qErr: any, results: any) => {
+            pool.query(signUpQuery, [username, fullName, email, 0, hash], (qErr: any, results: any) => {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error' });
                 }
 
                 // Generate JWT
-                const JWT = createJwt(results.insertId);
+                const JWT = createJwt({
+                    id: results.insertId,
+                    username: username,
+                    fullName: fullName,
+                    email: email
+                });
                 return res.status(200).json({ JWT });
             });
         });

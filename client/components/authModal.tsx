@@ -1,4 +1,5 @@
 import { useUser } from '@/context/userContext';
+import { decodedJwt, storeJwt } from '@/utils/userUtils';
 import Link from 'next/link';
 import { useContext, useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
@@ -21,7 +22,7 @@ const AuthModal: React.FC<{
         email: '',
         username: '',
         password: '',
-        fullname: ''
+        fullName: ''
     });
 
     const handleAuthModal = (state: string) => {
@@ -55,7 +56,8 @@ const AuthModal: React.FC<{
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
-                console.log(data.JWT);
+                storeJwt(data.JWT);
+                setUserData(decodedJwt(data.JWT));
                 setAuthModalWarning(null);
                 setAuthModalSuccess('Giriş başarılı!');
             })
@@ -74,9 +76,10 @@ const AuthModal: React.FC<{
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
-                console.log(data.JWT);
+                storeJwt(data.JWT);
+                setUserData(decodedJwt(data.JWT));
                 setAuthModalWarning(null);
-                setAuthModalSuccess('kayıt başarılı!');
+                setAuthModalSuccess('Kayıt başarılı!');
             })
             .catch((res) => {
                 if (res.status === 400) setAuthModalWarning('*Form bilgileri yetersiz*');
@@ -107,7 +110,7 @@ const AuthModal: React.FC<{
                     <input type='text' placeholder='E-Posta' className='form-input' name='email' onChange={handleRegisterFormChange} />
                     <input type='text' placeholder='Kullanıcı Adı' className='form-input' name='username' onChange={handleRegisterFormChange} />
                     <input type='password' placeholder='Şifre' className='form-input' name='password' onChange={handleRegisterFormChange} />
-                    <input type='text' placeholder='İsim (isteğe bağlı)' className='form-input' name='fullname' onChange={handleRegisterFormChange} />
+                    <input type='text' placeholder='İsim (isteğe bağlı)' className='form-input' name='fullName' onChange={handleRegisterFormChange} />
                     <div className="register-button-container">
                         <button type='submit' className='submit-button'>Kayıt ol</button>
                     </div>

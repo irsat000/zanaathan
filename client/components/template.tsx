@@ -1,15 +1,25 @@
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { Bell, ChevronDown, List, PersonAdd, PersonPlus, PlusSquare, XLg } from 'react-bootstrap-icons'
+import { Bell, ChatDots, ChevronDown, List, PersonAdd, PersonPlus, PlusSquare, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 import AuthModal from './authModal'
+import { useUser } from '@/context/userContext'
+import { readJwtCookie } from '@/utils/userUtils'
 
 const Template: React.FC<{
 	children: ReactNode
 }> = ({ children }) => {
-	const [loggedIn, setLoggedIn] = useState(false);
+	const { userData, setUserData } = useUser();
+
+	useEffect(() => {
+		const info = readJwtCookie();
+		if (info) {
+			setUserData(info);
+		}
+	}, []);
+
 	const [authModalActive, setAuthModalActive] = useState('none');
 	const [drawerActive, setDrawerActive] = useState(false);
 
@@ -60,15 +70,21 @@ const Template: React.FC<{
 							<List />
 						</button>
 						<div className="user-container">
-							{loggedIn ? <>
+							{userData ? <>
 								<div className="shortcut-wrapper">
 									<button onClick={() => alert("Hii!")}>
 										<PlusSquare />
+									</button>
+									<button onClick={() => alert("Hii!")}>
+										<ChatDots />
 									</button>
 									<button onClick={() => alert("Hi!")}>
 										<Bell />
 									</button>
 								</div>
+								<button type='button' className='user-menu-button'>
+									<Image src={require('@/assets/site/user.png')} alt={userData.username} />
+								</button>
 							</> : <>
 								<div className="user-auth-buttons">
 									<button type='button' className='signin-button' onClick={() => setAuthModalActive('signin')}>Giriş yap</button>

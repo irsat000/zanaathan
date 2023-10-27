@@ -547,19 +547,35 @@ header>.header-container {
         .shortcut-wrapper {
             display: flex;
             flex-direction: row;
-            gap: 16px;
+            gap: 12px;
             align-items: center;
 
             button {
                 all: unset;
                 display: flex;
-                font-size: 2rem;
+                font-size: 1.4rem;
                 cursor: pointer;
                 //transition: transform 0.1s ease-in-out;
+                padding: 6px;
 
                 &:hover {
-                    transform: scale(1.1);
+                    transform: scale(1.05);
                 }
+            }
+        }
+        .user-menu-button{
+            all: unset;
+            cursor: pointer;
+            overflow: hidden;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+
+
+            img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
         }
 
