@@ -2,17 +2,21 @@
 import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
-import { CheckLg, ChevronRight } from 'react-bootstrap-icons'
+import { ChevronRight } from 'react-bootstrap-icons'
+import categoryList from '@/assets/site/categories.json'
+import { getCategoryInfo } from '@/utils/helperUtils';
 
 
 export default function Home() {
+  const { categoryCode, categoryName } = getCategoryInfo(categoryList);
+
   return (
     <Template>
       <div className='category-page'>
         <div className="breadcrumb-trail-container">
           <Link href={'/'}>Anasayfa</Link>
           <span><ChevronRight /></span>
-          <Link href={'/kategori-1'}>Boya Badana</Link>
+          <Link href={'/' + categoryCode}>{categoryName}</Link>
         </div>
         <div className='listing-options'>
           <button className='filter-button'>Filtrele</button>

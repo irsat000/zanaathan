@@ -53,7 +53,6 @@ CREATE TABLE `ContactInformation` (
     CONSTRAINT `FK_ContactInformation_ContactType` FOREIGN KEY (`ContactTypeId`) REFERENCES `ContactType`(`Id`)
 );
 
-
 CREATE TABLE `Chat` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `AccountId` INT NOT NULL,
@@ -87,7 +86,21 @@ CREATE TABLE `Message` (
 
 CREATE TABLE `Category` (
 	`Id` INT NOT NULL,
-    `Code` VARCHAR(255) NOT NULL,
+    `Code` VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `SubCategory` (
+	`Id` INT NOT NULL,
+    `Name` VARCHAR(255) NOT NULL,
+    `CategoryId` INT NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_SubCategory_Category` FOREIGN KEY (`CategoryId`) REFERENCES `Category`(`Id`)
+);
+
+CREATE TABLE `CurrentStatus` (
+	`Id` INT NOT NULL,
+    `Body` VARCHAR(64) NOT NULL,
     PRIMARY KEY (`Id`)
 );
 
@@ -97,8 +110,12 @@ CREATE TABLE `JobPosting` (
     `CreatedAt` DATETIME NOT NULL,
     `Description` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     `DistrictId` INT NOT NULL,
+    `SubCategoryId` INT NOT NULL,
+    `CurrentStatusId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_JobPosting_District` FOREIGN KEY (`DistrictId`) REFERENCES `District`(`Id`)
+    CONSTRAINT `FK_JobPosting_District` FOREIGN KEY (`DistrictId`) REFERENCES `District`(`Id`),
+    CONSTRAINT `FK_JobPosting_SubCategory` FOREIGN KEY (`SubCategoryId`) REFERENCES `SubCategory`(`Id`),
+    CONSTRAINT `FK_JobPosting_CurrentStatus` FOREIGN KEY (`CurrentStatusId`) REFERENCES `CurrentStatus`(`Id`)
 );
 
 CREATE TABLE `JobPostingImages` (
@@ -108,4 +125,38 @@ CREATE TABLE `JobPostingImages` (
     `JobPostingId` INT NOT NULL,
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_JobPostingImages_JobPosting` FOREIGN KEY (`JobPostingId`) REFERENCES `JobPosting`(`Id`)
+);
+
+DROP TABLE `JobPostingImages`;
+DROP TABLE `JobPosting`;
+DROP TABLE `SubCategory`;
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE `AdminId` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `Username` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `Password` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `BanLog` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `BannedAt` DATETIME NOT NULL,
+    `LiftDate` DATETIME NOT NULL,
+    `Reason` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `AccountId` INT NOT NULL,
+    `AdminId` INT NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_BannedAccount_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
+    CONSTRAINT `FK_BannedAccount_Admin` FOREIGN KEY (`AdminId`) REFERENCES `Admin`(`Id`)
 );
