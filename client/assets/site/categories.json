@@ -1,0 +1,74 @@
+[
+    {
+        "Id": 1,
+        "Name": "Boya Badana",
+        "Code": "boya-badana",
+        "Image": "boya-badana.webp"
+    },
+    {
+        "Id": 2,
+        "Name": "Tesisat",
+        "Code": "tesisat",
+        "Image": "tesisat.jpg"
+    },
+    {
+        "Id": 3,
+        "Name": "Nakliye ve Taşıma",
+        "Code": "nakliye-ve-tasima",
+        "Image": "nakliye-ve-tasima.webp"
+    },
+    {
+        "Id": 4,
+        "Name": "Elektrik",
+        "Code": "elektrik",
+        "Image": "elektrik.jpg"
+    },
+    {
+        "Id": 5,
+        "Name": "Marangozluk",
+        "Code": "marangozluk",
+        "Image": "marangozluk.jpg"
+    },
+    {
+        "Id": 6,
+        "Name": "Temizlik",
+        "Code": "temizlik",
+        "Image": "temizlik.jpg"
+    },
+    {
+        "Id": 7,
+        "Name": "İnşaat ve Tadilat",
+        "Code": "insaat-ve-tadilat",
+        "Image": "insaat-ve-tadilat.jpg"
+    },
+    {
+        "Id": 8,
+        "Name": "Hava Soğutma ve Isıtma",
+        "Code": "hava-sogutma-ve-isitma",
+        "Image": "hava-sogutma-ve-isitma.jpg"
+    },
+    {
+        "Id": 9,
+        "Name": "Bahçe Bakımı",
+        "Code": "bahce-bakimi",
+        "Image": "bahce-bakimi.jpg"
+    },
+    {
+        "Id": 10,
+        "Name": "Beyaz Eşya Tamiri",
+        "Code": "beyaz-esya-tamiri",
+        "Image": "beyaz-esya-tamiri.jpg"
+    },
+    {
+        "Id": 11,
+        "Name": "Elektronik Onarımı",
+        "Code": "elektronik-onarimi",
+        "Image": "elektronik-onarimi.jpg"
+    },
+    {
+        "Id": 11,
+        "Name": "Diğer",
+        "Code": "diger",
+        "Image": "diger.jpg"
+    }
+]

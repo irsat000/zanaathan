@@ -11,8 +11,10 @@ import { readJwtCookie, removeJwtCookie } from '@/utils/userUtils'
 const Template: React.FC<{
 	children: ReactNode
 }> = ({ children }) => {
+	// User context
 	const { userData, setUserData } = useUser();
 
+	// Decode jwt and login if token is still there
 	useEffect(() => {
 		const info = readJwtCookie();
 		if (info) {
@@ -20,15 +22,18 @@ const Template: React.FC<{
 		}
 	}, []);
 
+	// Logout function
+	// Empties the user context and removes the cookie
 	const handleSignOut = () => {
 		setUserData(null);
 		removeJwtCookie();
 	}
 
-	const [authModalActive, setAuthModalActive] = useState('none');
-	const [drawerActive, setDrawerActive] = useState(false);
-	const [userMenuActive, setUserMenuActive] = useState(false);
+	const [authModalActive, setAuthModalActive] = useState('none'); // Login/Register modal = auth modal
+	const [drawerActive, setDrawerActive] = useState(false); // Drawer for mobile
+	const [userMenuActive, setUserMenuActive] = useState(false); // User menu drop down
 
+	// Will close the drawer and open auth modal
 	const handleLoginModal = (type: string) => {
 		if (drawerActive) {
 			setDrawerActive(false);

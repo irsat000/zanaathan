@@ -3,6 +3,7 @@ import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
 import { CheckLg } from 'react-bootstrap-icons'
+import categoryList from '@/assets/site/categories.json'
 
 
 export default function Home() {
@@ -20,20 +21,20 @@ export default function Home() {
               <button>İş ara</button>
             </div>
           </div>
-          <Image src={require('../assets/site/painter2.jpg')} className='intro-image' alt={''} />
+          <Image src={require('@/assets/site/painter2.jpg')} className='intro-image' alt={''} />
         </div>
         <div className='category-list-heading-container'>
           <h2>Hizmetler</h2>
         </div>
         <div className="category-list">
-          {[...Array(10)].map((a, i) => {
+          {categoryList.map((cate, i) => {
             return (
-              <Link href={'/kategori-' + i} className='category-card' key={i}>
+              <Link href={'/' + cate.Code} className='category-card' key={i}>
                 <div className="category-image">
-                  <Image src={require('../assets/site/painter2.jpg')} alt={''} />
+                  <Image src={require('@/assets/categoryImages/' + cate.Image)} alt={cate.Name} />
                 </div>
                 <div className="category-details">
-                  <span className="category-title">Boya Badana</span>
+                  <span className="category-title">{cate.Name}</span>
                   <div className="category-statistics"><span>0</span><CheckLg /></div>
                 </div>
               </Link>

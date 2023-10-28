@@ -8,7 +8,8 @@ export const decodedJwt = (token: string) => {
 }
 
 export const storeJwt = (token: string) => {
-    Cookies.set('jwtToken', token, { secure: true, sameSite: 'strict' });
+    const date = new Date();
+    Cookies.set('jwtToken', token, { secure: true, sameSite: 'strict', expires: date.getDate() + 7 });
 }
 
 export const fetchJwt = () => {

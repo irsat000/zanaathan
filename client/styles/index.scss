@@ -111,13 +111,13 @@ html[data-colorset-1] {}
 
     .category-list {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(1, 1fr);
         width: 100%;
         gap: 20px 3%;
         max-width: 1200px;
         align-self: center;
         align-items: start;
-        
+
 
         .category-card {
             display: flex;
@@ -138,12 +138,12 @@ html[data-colorset-1] {}
             }
 
             .category-image {
-                margin-bottom: 6px;
+                margin-bottom: 10px;
 
                 img {
                     width: 100%;
-                    height: auto;
-                    object-fit: contain;
+                    height: 100%;
+                    object-fit: cover;
                     border-radius: 8px;
                 }
             }
@@ -188,9 +188,25 @@ html[data-colorset-1] {}
 
 
 
+// Most phones
+@media (min-width: 340px) {
+    .index-page {
+        .category-list {
+            grid-template-columns: repeat(2, 1fr);
+
+            .category-card .category-image {
+
+                img {
+                    aspect-ratio: 1.4/1;
+                }
+            }
+        }
+    }
+}
 
 // Small devices (landscape phones, 576px and up)
-@media (min-width: 576px) {}
+@media (min-width: 576px) {
+}
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) {

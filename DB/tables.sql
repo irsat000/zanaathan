@@ -16,13 +16,14 @@ CREATE TABLE `District` (
     CONSTRAINT `FK_District_City` FOREIGN KEY (`CityId`) REFERENCES `City`(`Id`)
 );
 
+/* NOT NECESSARY
 CREATE TABLE `Neighborhood` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `Name` VARCHAR(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     `DistrictId` INT NOT NULL,
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_Hood_District` FOREIGN KEY (`DistrictId`) REFERENCES `District`(`Id`)
-);
+);*/
 
 
 CREATE TABLE `Account` (
@@ -86,7 +87,7 @@ CREATE TABLE `Message` (
 
 CREATE TABLE `Category` (
 	`Id` INT NOT NULL,
-    `Name` VARCHAR(255) NOT NULL,
+    `Code` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`Id`)
 );
 
@@ -95,9 +96,9 @@ CREATE TABLE `JobPosting` (
     `Title` VARCHAR(255) NOT NULL,
     `CreatedAt` DATETIME NOT NULL,
     `Description` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `NeighborhoodId` INT NOT NULL,
+    `DistrictId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_JobPosting_Hood` FOREIGN KEY (`NeighborhoodId`) REFERENCES `Neighborhood`(`Id`)
+    CONSTRAINT `FK_JobPosting_District` FOREIGN KEY (`DistrictId`) REFERENCES `District`(`Id`)
 );
 
 CREATE TABLE `JobPostingImages` (
@@ -108,5 +109,3 @@ CREATE TABLE `JobPostingImages` (
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_JobPostingImages_JobPosting` FOREIGN KEY (`JobPostingId`) REFERENCES `JobPosting`(`Id`)
 );
-
-
