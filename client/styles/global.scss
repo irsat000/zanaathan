@@ -97,15 +97,7 @@ body {
 }
 
 
-
-
-.auth-modal-container.active {
-    display: flex;
-}
-
-.auth-modal-container {
-    padding-top: 20vh;
-    padding-bottom: 16px;
+.modal-container {
     z-index: 200;
     position: fixed;
     top: 0;
@@ -121,32 +113,42 @@ body {
     align-items: flex-start;
     overflow-y: auto;
 
-    @keyframes show-login {
-        from {
-            opacity: 0;
-        }
+    .close-modal-button {
+        all: unset;
+        display: flex;
+        border-radius: 50%;
+        padding: 6px;
+        cursor: pointer;
 
-        to {
-            opacity: 1;
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        font-size: 1rem;
+
+        &:hover {
+            -webkit-box-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.3);
+            -moz-box-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.3);
+            box-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.3);
         }
     }
+}
 
+
+.modal-container.active {
+    display: flex;
+}
+
+.auth-modal-container {
+    padding-top: 20vh;
+    padding-bottom: 16px;
 
     .auth-modal {
         opacity: 1;
-        animation: show-login 0.3s ease-in-out;
+        animation: fade-in 0.3s ease-in-out;
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: calc(12px
-                /*padding*/
-                + 18px
-                /*position*/
-                + 10px
-                /*space*/
-                + 1rem
-                /*itself*/
-            ) 24px 20px;
+        padding: 50px 24px 20px;
         background-color: var(--primary-bg-color);
         position: relative;
         border-radius: 10px;
@@ -154,25 +156,6 @@ body {
         -webkit-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
         -moz-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
         box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
-
-        .close-auth-modal-button {
-            all: unset;
-            display: flex;
-            border-radius: 50%;
-            padding: 6px;
-            cursor: pointer;
-
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            font-size: 1rem;
-
-            &:hover {
-                -webkit-box-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.3);
-                -moz-box-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.3);
-                box-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.3);
-            }
-        }
 
         .auth-tab-buttons {
             width: 100%;

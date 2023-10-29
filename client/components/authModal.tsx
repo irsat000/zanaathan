@@ -95,9 +95,9 @@ const AuthModal: React.FC<{
     }
 
     return (
-        <div className={`auth-modal-container ${authModalActive !== 'none' && 'active'}`} onMouseDown={() => handleAuthModal('none')}>
+        <div className={`auth-modal-container modal-container ${authModalActive !== 'none' && 'active'}`} onMouseDown={() => handleAuthModal('none')}>
             <div className='auth-modal' onMouseDown={(e) => { e.stopPropagation() }}>
-                <button type='button' className='close-auth-modal-button' onClick={() => handleAuthModal('none')}><XLg /></button>
+                <button type='button' className='close-modal-button' onClick={() => handleAuthModal('none')}><XLg /></button>
                 <div className="auth-tab-buttons">
                     <span className={`login-tab-button ${authModalActive === 'signin' ? 'active' : 'inactive'}`}
                         onClick={() => handleAuthModal('signin')}>Giriş Yap</span>

@@ -2,7 +2,7 @@
 import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronRight } from 'react-bootstrap-icons'
+import { ChevronRight, XLg } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -10,7 +10,14 @@ import { useRouter } from 'next/router'
 
 export default function Home() {
   const router = useRouter();
-  const [categoryInfo, setCategoryInfo] = useState<{ code: string | null, name: string | null }>({ code: null, name: null });
+  const [categoryInfo, setCategoryInfo] = useState<{
+    code: string | null,
+    name: string | null,
+    subCates: Array<{
+      Id: number;
+      Name: string;
+    }>
+  }>({ code: null, name: null, subCates: [] });
 
   useEffect(() => {
     // Run only when router is ready, otherwise router.asPath will be initially "/[kategori]"
@@ -22,12 +29,33 @@ export default function Home() {
     const category = categoryList.find(cat => cat.Code === code);
     if (category) {
       const name = category.Name;
-      setCategoryInfo({ code, name });
+      const subCates = category.SubCategories;
+      setCategoryInfo({ code, name, subCates });
     }
   }, [router.isReady]);
 
+  const [filterModalActive, setFilterModalActive] = useState(false);
+
   return (
     <Template>
+      <div className={`filter-modal-container modal-container ${filterModalActive && 'active'}`} onMouseDown={() => setFilterModalActive(false)}>
+        <div className="filter-modal" onMouseDown={(e) => { e.stopPropagation() }}>
+          <button type='button' className='close-modal-button' onClick={() => setFilterModalActive(false)}><XLg /></button>
+          <span className='modal-heading'>Filtrele</span>
+          <span className="f-heading">Alt Kategoriler</span>
+          <div className="f-container">
+            <label className='sub-category-label'><input type='checkbox' onChange={(e) => {
+
+            }} /><span>Hepsi</span></label>
+            {categoryInfo.subCates.map((c, i) => {
+              return <label key={i} className='sub-category-label'><input type='checkbox' /><span>{c.Name}</span></label>;
+            })}
+          </div>
+          <span className="f-heading">Bölge Seç</span>
+          <div className="f-container">
+          </div>
+        </div>
+      </div>
       <div className='category-page'>
         <div className="breadcrumb-trail-container">
           <Link href={'/'}>Anasayfa</Link>
@@ -35,7 +63,7 @@ export default function Home() {
           <Link href={'/' + categoryInfo.code}>{categoryInfo.name}</Link>
         </div>
         <div className='listing-options'>
-          <button className='filter-button'>Filtrele</button>
+          <button className='filter-button' onClick={() => setFilterModalActive(true)}>Filtrele</button>
           <div className='sort-by'>
             <span>Sırala</span>
             <select>
