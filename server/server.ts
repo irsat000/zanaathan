@@ -12,7 +12,9 @@ app.use(cors({
 }));
 // - Route middlewares
 const userRoutes = require('./routes/userRoutes');
+const postRoutes = require('./routes/postRoutes');
 app.use('/api', userRoutes);
+app.use('/api', postRoutes);
 
 
 

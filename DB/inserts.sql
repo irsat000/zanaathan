@@ -1,9 +1,11 @@
 
 USE ZanaatHan;
 
-INSERT INTO `ContactType`(`Id`, `Body`) VALUES(1, 'İş Telefonu');
-INSERT INTO `ContactType`(`Id`, `Body`) VALUES(2, 'Cep Telefonu');
-INSERT INTO `ContactType`(`Id`, `Body`) VALUES(3, 'E-Posta');
+INSERT INTO `ContactType`(`Id`, `Body`) VALUES(1, 'Cep Telefonu');
+INSERT INTO `ContactType`(`Id`, `Body`) VALUES(2, 'İş Telefonu');
+INSERT INTO `ContactType`(`Id`, `Body`) VALUES(3, 'Ev Telefonu');
+INSERT INTO `ContactType`(`Id`, `Body`) VALUES(4, 'E-Posta');
+INSERT INTO `ContactType`(`Id`, `Body`) VALUES(5, 'İnstagram');
 
 
 INSERT INTO `Category`(`Id`, `Code`) VALUES(1, 'boya-badana');
@@ -94,8 +96,9 @@ INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(4, 'Kaldırıldı');
 
 
 SET SQL_SAFE_UPDATES = 0;
-DELETE FROM `Category`;
+DELETE FROM `ContactType`;
 SET SQL_SAFE_UPDATES = 1;
 
 select * from category;
+select * from SubCategory;
 select * from CurrentStatus;

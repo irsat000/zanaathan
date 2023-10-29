@@ -1,7 +1,7 @@
 CREATE DATABASE ZanaatHan;
 USE ZanaatHan;
 
-
+/*
 CREATE TABLE `City` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `Name` VARCHAR(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -15,6 +15,7 @@ CREATE TABLE `District` (
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_District_City` FOREIGN KEY (`CityId`) REFERENCES `City`(`Id`)
 );
+*/
 
 /* NOT NECESSARY
 CREATE TABLE `Neighborhood` (
