@@ -2,7 +2,7 @@
 import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronRight, XLg } from 'react-bootstrap-icons'
+import { ChevronDown, ChevronRight, Search, XLg } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -34,13 +34,55 @@ export default function Home() {
     }
   }, [router.isReady]);
 
+  // Filter values
   const [filterModalActive, setFilterModalActive] = useState(false);
+  const [citySelectActive, setCitySelectActive] = useState(false);
+  const [districtSelectActive, setDistrictSelectActive] = useState(false);
+
+
+  // Close selects
+  const closeSelects = () => {
+    if (citySelectActive) {
+      setCitySelectActive(false);
+    }
+    if (districtSelectActive) {
+      setDistrictSelectActive(false);
+    }
+  }
+
+  // Toggle selects
+  const toggleCitySelect = () => {
+    closeSelects();
+    setCitySelectActive(!citySelectActive);
+  }
+  const toggleDistrictSelect = () => {
+    closeSelects();
+    setDistrictSelectActive(!districtSelectActive);
+  }
+
+  // Upon closing filter modal
+  const handleFilterModalClose = () => {
+    setFilterModalActive(false);
+    closeSelects();
+  }
+
+  // Detect click on the filter modal
+  const handleFilterModalClick = (e: any) => {
+    if (!e.target.closest('.select2')) {
+      closeSelects();
+    }
+  }
 
   return (
     <Template>
-      <div className={`filter-modal-container modal-container ${filterModalActive && 'active'}`} onMouseDown={() => setFilterModalActive(false)}>
-        <div className="filter-modal" onMouseDown={(e) => { e.stopPropagation() }}>
-          <button type='button' className='close-modal-button' onClick={() => setFilterModalActive(false)}><XLg /></button>
+      <div className={`filter-modal-container modal-container ${filterModalActive && 'active'}`} onMouseDown={handleFilterModalClose}>
+        <div className="filter-modal" onMouseDown={(e) => {
+          e.stopPropagation();
+          // On mouse down to prevent accidental swipe to outside option-container
+          // SAME AS ALL OUTSIDE CLICKS
+          handleFilterModalClick(e);
+        }}>
+          <button type='button' className='close-modal-button' onClick={handleFilterModalClose}><XLg /></button>
           <span className='modal-heading'>Filtrele</span>
           <span className="f-heading">Alt Kategoriler</span>
           <div className="f-container">
@@ -53,6 +95,40 @@ export default function Home() {
           </div>
           <span className="f-heading">Bölge Seç</span>
           <div className="f-container">
+            <div className={`select2 ${citySelectActive && 'list-active'}`}>
+              <span className='s2-chosen' onClick={toggleCitySelect}>Şehir seç<ChevronDown /></span>
+              <div className='option-container'>
+                <div className='option-search-container'>
+                  <input type='text' placeholder='Ara' className='option-search' />
+                  <Search />
+                </div>
+                <ul className="option-list">
+                  <li>Adana</li>
+                  <li>Antalya</li>
+                  <li>Balıkesir</li>
+                  <li>Bursa</li>
+                  <li>İstanbul</li>
+                  <li>Muş</li>
+                  <li>Kahramanmaraş</li>
+                </ul>
+              </div>
+            </div>
+            <div className={`select2 ${districtSelectActive && 'list-active'}`}>
+              <span className='s2-chosen' onClick={toggleDistrictSelect}>İlçe seç<ChevronDown /></span>
+              <div className='option-container'>
+                <div className='option-search-container'>
+                  <input type='text' placeholder='Ara' className='option-search' />
+                  <Search />
+                </div>
+                <ul className="option-list">
+                  <li>Yıldırım</li>
+                  <li>Osmangazi</li>
+                  <li>Orhangazi</li>
+                  <li>İnegöl</li>
+                  <li>Nilüfer</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>

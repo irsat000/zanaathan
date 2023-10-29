@@ -50,6 +50,7 @@ html[data-colorset-1] {
   --button-white: #ffffff;
   --button-white-border: #303030;
   --button1-1: #5997cd;
+  --button1-2: #0389ff;
   --button2-1: #589b49;
   --button2-2: #5eb64a;
   --button3-1: #e05353;
@@ -87,6 +88,87 @@ body select {
     opacity: 1;
   }
 }
+.select2.list-active .s2-chosen {
+  border: 1px solid var(--button1-2);
+}
+.select2.list-active .option-container {
+  display: flex;
+}
+
+.select2 {
+  position: relative;
+  width: 100%;
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+}
+.select2 .s2-chosen {
+  width: 100%;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 12px;
+  border-radius: 6px;
+  background-color: var(--button-white);
+  border: 1px solid var(--button4-1);
+  height: 2.4rem;
+}
+.select2 .option-container {
+  display: none;
+  width: 100%;
+  position: absolute;
+  top: 2.7rem;
+  left: 0;
+  right: 0;
+  border-radius: 6px;
+  background-color: var(--button-white);
+  border: 1px solid var(--button4-1);
+  flex-direction: column;
+  z-index: 201;
+}
+.select2 .option-container .option-search-container {
+  position: relative;
+  margin: 10px 8px;
+}
+.select2 .option-container .option-search-container .option-search {
+  outline: transparent;
+  width: 100%;
+  padding: 8px calc(20px + 1.1rem) 8px 12px;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  background-color: var(--button-white);
+  border: 1px solid var(--button4-1);
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+}
+.select2 .option-container .option-search-container .option-search:focus {
+  border: 1px solid var(--button1-2);
+}
+.select2 .option-container .option-search-container svg {
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+}
+.select2 .option-container .option-list {
+  overflow-y: auto;
+  max-height: 140px;
+  padding-bottom: 10px;
+}
+.select2 .option-container .option-list li {
+  padding: 7px 12px;
+  cursor: pointer;
+}
+.select2 .option-container .option-list li:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 .modal-container {
   z-index: 200;
   position: fixed;
