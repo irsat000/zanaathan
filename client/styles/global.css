@@ -50,12 +50,13 @@ html[data-colorset-1] {
   --button-white: #ffffff;
   --button-white-border: #303030;
   --button1-1: #5997cd;
-  --button1-2: #0389ff;
+  --focus-border: #0389ff;
   --button2-1: #589b49;
   --button2-2: #5eb64a;
   --button3-1: #e05353;
   --button3-2: #d12e2e;
   --button4-1: #636363;
+  --focus-border: #0389ff;
   --link-color: #307fca;
 }
 
@@ -89,7 +90,7 @@ body select {
   }
 }
 .select2.list-active .s2-chosen {
-  border: 1px solid var(--button1-2);
+  border: 1px solid var(--focus-border);
 }
 .select2.list-active .option-container {
   display: flex;
@@ -146,7 +147,7 @@ body select {
   font-weight: 300;
 }
 .select2 .option-container .option-search-container .option-search:focus {
-  border: 1px solid var(--button1-2);
+  border: 1px solid var(--focus-border);
 }
 .select2 .option-container .option-search-container svg {
   position: absolute;
@@ -569,14 +570,14 @@ header > .header-container .user-container .shortcut-wrapper {
   gap: 12px;
   align-items: center;
 }
-header > .header-container .user-container .shortcut-wrapper button {
+header > .header-container .user-container .shortcut-wrapper a, header > .header-container .user-container .shortcut-wrapper button {
   all: unset;
   display: flex;
   font-size: 1.4rem;
   cursor: pointer;
   padding: 6px;
 }
-header > .header-container .user-container .shortcut-wrapper button:hover {
+header > .header-container .user-container .shortcut-wrapper a:hover, header > .header-container .user-container .shortcut-wrapper button:hover {
   transform: scale(1.05);
 }
 header > .header-container .user-container .user-menu-button {

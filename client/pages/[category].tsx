@@ -20,7 +20,7 @@ export default function Home() {
   }>({ code: null, name: null, subCates: [] });
 
   useEffect(() => {
-    // Run only when router is ready, otherwise router.asPath will be initially "/[kategori]"
+    // Run only when router is ready, otherwise router.asPath will be initially "/[category]"
     if (!router.isReady) return;
     // Get category code from path
     const code = router.asPath.split('/')[1];

@@ -1,0 +1,176 @@
+.new-post-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--site-padding);
+
+    .new-post-heading{
+        width: 100%;
+        max-width: 1200px;
+        font-weight: 300;
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+        margin-top: 20px;
+    }
+
+    .new-post-form {
+        width: 100%;
+        max-width: 1200px;
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+        gap: 0 4%;
+        margin-top: 20px;
+
+        .np-primary {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+            gap: 14px;
+
+            .np-title,
+            .np-description {
+                border-radius: 6px;
+                border: 1px solid var(--button-white-border);
+            }
+
+            .np-title {
+                font-family: 'Poppins', sans-serif;
+                font-size: 1.1rem;
+                padding: 8px 14px;
+            }
+
+            .np-description {
+                font-family: 'Poppins', sans-serif;
+                font-size: 1.1rem;
+                font-weight: 300;
+                padding: 8px 14px;
+                min-height: 200px;
+            }
+
+            .np-thumbnail-wrapper {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .np-image-upload {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                align-self: flex-start;
+                cursor: pointer;
+                padding: 6px 10px;
+
+                input {
+                    visibility: hidden;
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                }
+
+                .icon {
+                    display: flex;
+                    position: relative;
+
+                    :nth-child(1) {
+                        font-size: 40px;
+                    }
+
+                    :nth-child(2) {
+                        position: absolute;
+                        top: 2px;
+                        right: 0;
+                        font-size: 16px;
+                        z-index: 1;
+                        color: #ffffff;
+                        overflow: hidden;
+                    }
+                }
+
+                .text {
+                    font-size: 1.1rem;
+                    font-weight: 300;
+                }
+            }
+        }
+
+        .np-secondary {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+
+            select {
+                outline: transparent;
+                padding: 6px 14px 6px 8px;
+                font-size: 1.1rem;
+                border-radius: 6px;
+                width: 300px;
+                max-width: 100%;
+                border: 1px solid var(--button-white-border);
+                font-family: 'Poppins', sans-serif;
+                font-weight: 300;
+
+                &:focus {
+                    border-color: var(--focus-border);
+                }
+            }
+
+            .submit-button {
+                margin-top: 20px;
+                align-self: center;
+                min-width: 80%;
+                padding: 8px 18px;
+                border-radius: 4px;
+                background-color: var(--button2-1);
+                color: #ffffff;
+                transition: background-color 0.1s ease-in-out;
+                font-family: 'Poppins', sans-serif;
+                font-weight: 300;
+                font-size: 1.2rem;
+
+                &:hover {
+                    background-color: var(--button2-2);
+                }
+            }
+
+            .reset-button{
+                align-self: center;
+                margin-top: 20px;
+                color: var(--button3-2);
+
+                &:hover{
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}
+
+
+// Bigger phones (400px and up)
+@media (min-width: 400px) {}
+
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+    .new-post-page {
+        .new-post-form {
+            flex-direction: row;
+        }
+    }
+}
+
+// X-Large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {}
+
+// XX-Large devices (larger desktops, 1400px and up)
+@media (min-width: 1400px) {}

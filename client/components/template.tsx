@@ -101,9 +101,9 @@ const Template: React.FC<{
 						<div className="user-container">
 							{userData ? <>
 								<div className="shortcut-wrapper">
-									<button onClick={() => alert("Hii!")}>
+									<Link href={'/yeni-ilan'}>
 										<PlusSquare />
-									</button>
+									</Link>
 									<button onClick={() => alert("Hii!")}>
 										<ChatDots />
 									</button>
