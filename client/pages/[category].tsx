@@ -26,7 +26,7 @@ export default function Home() {
     const code = router.asPath.split('/')[1];
     // Get name by searching with code in category list from categories.json file
     // and assign both to categoryInfo
-    const category = categoryList.find(cat => cat.Code === code);
+    const category = categoryList.find(cate => cate.Code === code);
     if (category) {
       const name = category.Name;
       const subCates = category.SubCategories;

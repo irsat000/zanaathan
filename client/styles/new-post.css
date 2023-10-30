@@ -56,7 +56,14 @@
   gap: 8px;
   align-self: flex-start;
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 6px 40px 6px 12px;
+  border-top: 1px solid var(--button-white-border);
+}
+.new-post-page .new-post-form .np-primary .np-image-upload:hover .icon {
+  transform: scale(0.9);
+}
+.new-post-page .new-post-form .np-primary .np-image-upload:hover .text {
+  text-decoration: underline;
 }
 .new-post-page .new-post-form .np-primary .np-image-upload input {
   visibility: hidden;
@@ -67,6 +74,7 @@
 .new-post-page .new-post-form .np-primary .np-image-upload .icon {
   display: flex;
   position: relative;
+  transition: all 0.1s ease-in-out;
 }
 .new-post-page .new-post-form .np-primary .np-image-upload .icon :nth-child(1) {
   font-size: 40px;

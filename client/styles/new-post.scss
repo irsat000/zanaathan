@@ -4,7 +4,7 @@
     align-items: center;
     padding: var(--site-padding);
 
-    .new-post-heading{
+    .new-post-heading {
         width: 100%;
         max-width: 1200px;
         font-weight: 300;
@@ -61,7 +61,17 @@
                 gap: 8px;
                 align-self: flex-start;
                 cursor: pointer;
-                padding: 6px 10px;
+                padding: 6px 40px 6px 12px;
+                border-top: 1px solid var(--button-white-border);
+
+                &:hover {
+                    .icon{
+                        transform: scale(0.9);
+                    }
+                    .text {
+                        text-decoration: underline;
+                    }
+                }
 
                 input {
                     visibility: hidden;
@@ -73,6 +83,7 @@
                 .icon {
                     display: flex;
                     position: relative;
+                    transition: all 0.1s ease-in-out;
 
                     :nth-child(1) {
                         font-size: 40px;
@@ -136,12 +147,12 @@
                 }
             }
 
-            .reset-button{
+            .reset-button {
                 align-self: center;
                 margin-top: 20px;
                 color: var(--button3-2);
 
-                &:hover{
+                &:hover {
                     text-decoration: underline;
                 }
             }

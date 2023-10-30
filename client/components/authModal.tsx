@@ -3,6 +3,7 @@ import { decodedJwt, storeJwt } from '@/utils/userUtils';
 import Link from 'next/link';
 import { useContext, useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const AuthModal: React.FC<{
     authModalActive: string,
@@ -47,9 +48,9 @@ const AuthModal: React.FC<{
         }));
     };
 
-    const handleLoginFormSubmit = async (e: any) => {
+    const handleLoginFormSubmit = (e: any) => {
         e.preventDefault();
-        await fetch('http://localhost:8080/api/sign-in', {
+        fetch(`${apiUrl}/api/sign-in`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
             body: JSON.stringify(loginFormData)
@@ -70,9 +71,9 @@ const AuthModal: React.FC<{
             });
     }
 
-    const handleRegisterFormSubmit = async (e: any) => {
+    const handleRegisterFormSubmit = (e: any) => {
         e.preventDefault();
-        await fetch('http://localhost:8080/api/sign-up', {
+        fetch(`${apiUrl}/api/sign-up`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
             body: JSON.stringify(registerFormData)

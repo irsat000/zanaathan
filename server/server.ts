@@ -1,8 +1,8 @@
 const express = require('express');
-const cors = require('cors')
+const cors = require('cors');
 import { Request, Response } from 'express';
 const app = express();
-const PORT = 8080;
+const PORT = 8081;
 
 // MIDDLEWARES
 app.use(express.json());
