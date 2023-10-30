@@ -18,14 +18,13 @@
   align-self: center;
   display: flex;
   flex-direction: column;
-  gap: 0 4%;
+  gap: 30px 4%;
   margin-top: 20px;
 }
 .new-post-page .new-post-form .np-primary {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
   gap: 14px;
 }
 .new-post-page .new-post-form .np-primary .np-title,
@@ -97,6 +96,12 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+.new-post-page .new-post-form .np-secondary .seperator {
+  border-bottom: 1px solid var(--button-white-border);
+  width: 50%;
+  align-self: center;
+  margin: 6px 0;
 }
 .new-post-page .new-post-form .np-secondary select {
   outline: transparent;

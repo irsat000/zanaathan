@@ -22,11 +22,6 @@ interface District {
   Name: string;
 }
 
-interface DistrictCache {
-  Id: number;
-  Districts: District[]
-}
-
 export default function NewPost() {
   // Create post payload
   const [formData, setFormData] = useState({
@@ -43,61 +38,6 @@ export default function NewPost() {
     city: '0'
   });
 
-  // Sub categories depending on category Id
-  const [subCategories, setSubCategories] = useState<SubCategory[] | null>(null);
-
-  // Get cities
-  const [fetchedCities, setFetchedCities] = useState<City[] | null>(null);
-  useEffect(() => {
-    fetch(`${apiUrl}/api/get-cities`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then((data) => {
-        setFetchedCities(data.cities);
-      })
-      .catch((res) => console.log('Sunucuda hata'));
-  }, []);
-
-  // Districts depending on City Id
-  const [districtsCache, setDistrictsCache] = useState<DistrictCache[]>([]);
-
-  // Get districts
-  // Get only the selected city's districts and cache them with DistrictCache model
-  const fetchDistricts = (cityId: string) => {
-    // Ignore if city is cached or default value of '0'
-    if (cityId === '0') return;
-    else if (districtsCache.find((cache) => cache.Id.toString() === cityId)) return;
-
-    fetch(`${apiUrl}/api/get-districts?city_id=${cityId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then((data) => {
-        // Create a new DistrictCache object for the city and add it to the existing array
-        const newDistrictCache = {
-          Id: Number(cityId),
-          Districts: data.districts
-        };
-
-        // Update the state by adding the new DistrictCache object
-        setDistrictsCache((prev) => [...prev, newDistrictCache]);
-      })
-      .catch((res) => console.log('Sunucuda hata'));
-  }
-
-
-
-
-
-  // Send form
-  const handleNewPostSubmit = (e: any) => {
-    e.preventDefault();
-
-  }
-
   // Change the payload
   const handleFormChange = (e: any) => {
     setFormData({
@@ -113,6 +53,86 @@ export default function NewPost() {
     }));
   }
 
+  // Sub categories depending on category Id
+  const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
+
+  // Get cities
+  const [fetchedCities, setFetchedCities] = useState<City[]>([]);
+  useEffect(() => {
+    // Check if the data is already cached in local storage
+    const cachedCities = localStorage.getItem('cachedCities');
+
+    if (cachedCities) {
+      // If cached data exists, parse it and set it in the state
+      setFetchedCities(JSON.parse(cachedCities));
+    } else {
+      fetch(`${apiUrl}/api/get-cities`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      })
+        .then(res => res.ok ? res.json() : Promise.reject(res))
+        .then((data) => {
+          // Set the data in the state
+          setFetchedCities(data.cities);
+          // Cache the data in local storage for future use
+          localStorage.setItem('cachedCities', JSON.stringify(data.cities));
+        })
+        .catch((res) => console.log('Sunucuda hata'));
+    }
+  }, []);
+
+  // Districts depending on City Id
+  const [districtsAll, setDistrictsAll] = useState<Map<number, District[]>>(new Map());
+
+  // District caching
+  useEffect(() => {
+
+  }, [districtsAll])
+
+  // Get the selected city's districts, keep the previously fetched districts for future use
+  const fetchDistricts = (cityId: string) => {
+    // Ignore if city is set or default value of '0'
+    if (cityId === '0') return;
+    else if (districtsAll.has(Number(cityId))) return;
+
+    // Check if the data is in localStorage this time
+    const cachedData = localStorage.getItem(`cachedDistricts_${cityId}`);
+    if (cachedData) {
+      // If data is found in localStorage, update the state with the cached data
+      const parsedData = JSON.parse(cachedData);
+      const updatedDistrictsAll = new Map(districtsAll);
+      updatedDistrictsAll.set(Number(cityId), parsedData);
+      setDistrictsAll(updatedDistrictsAll);
+    } else {
+      fetch(`${apiUrl}/api/get-districts?city_id=${cityId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      })
+        .then(res => res.ok ? res.json() : Promise.reject(res))
+        .then((data) => {
+          // Make a copy
+          const updatedDistrictsAll = new Map(districtsAll);
+          // Assign the new values
+          updatedDistrictsAll.set(Number(cityId), data.districts);
+          // Update the state
+          setDistrictsAll(updatedDistrictsAll);
+          // Update the cache in localStorage
+          localStorage.setItem(`cachedDistricts_${cityId}`, JSON.stringify(data.districts));
+        })
+        .catch((res) => console.log('Sunucuda hata'));
+    }
+  }
+
+
+
+
+
+  // Send form
+  const handleNewPostSubmit = (e: any) => {
+    e.preventDefault();
+
+  }
+
   // Resets all values
   const resetForm = () => {
     setFormData({
@@ -125,7 +145,7 @@ export default function NewPost() {
       category: '0',
       city: '0'
     });
-    setSubCategories(null);
+    setSubCategories([]);
   };
 
   return (
@@ -151,25 +171,26 @@ export default function NewPost() {
               handleExtraChange(e); // For reset
               // We change sub categories here with the latest value
               const category = categoryList.find(cate => cate.Id.toString() === e.target.value);
-              setSubCategories(category?.SubCategories ?? null);
+              setSubCategories(category?.SubCategories ?? []);
             }}>
               <option value={'0'}>Kategori</option>
               {categoryList.map((cate, i) => <option key={i} value={cate.Id}>{cate.Name}</option>)};
             </select>
-            <select name='subCategory' onChange={handleFormChange} disabled={!subCategories}>
+            <select name='subCategory' onChange={handleFormChange} disabled={subCategories.length === 0}>
               <option value={'0'}>Alt kategori</option>
-              {subCategories && subCategories.map((sub, i) => <option key={i} value={sub.Id}>{sub.Name}</option>)}
+              {subCategories.map((sub, i) => <option key={i} value={sub.Id}>{sub.Name}</option>)}
             </select>
+            <span className='seperator'></span>
             <select name='city' onChange={(e) => {
               handleExtraChange(e);
               fetchDistricts(e.target.value);
             }}>
               <option value={'0'}>Şehir</option>
-              {fetchedCities && fetchedCities.map((city, i) => <option key={i} value={city.Id}>{city.Name}</option>)}
+              {fetchedCities.map((city, i) => <option key={i} value={city.Id}>{city.Name}</option>)}
             </select>
             <select name='district' onChange={handleFormChange} disabled={extraData.city === '0'}>
               <option value={'0'}>İlçe</option>
-              {districtsCache.find((cache) => cache.Id.toString() === extraData.city)?.Districts.map((district, i) =>
+              {districtsAll.get(Number(extraData.city))?.map((district, i) =>
                 <option key={i} value={district.Id}>{district.Name}</option>
               )}
             </select>

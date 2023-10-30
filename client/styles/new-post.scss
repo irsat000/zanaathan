@@ -19,14 +19,13 @@
         align-self: center;
         display: flex;
         flex-direction: column;
-        gap: 0 4%;
+        gap: 30px 4%;
         margin-top: 20px;
 
         .np-primary {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            margin-bottom: 16px;
             gap: 14px;
 
             .np-title,
@@ -112,6 +111,13 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
+
+            .seperator{
+                border-bottom: 1px solid var(--button-white-border);
+                width: 50%;
+                align-self: center;
+                margin: 6px 0;
+            }
 
             select {
                 outline: transparent;
