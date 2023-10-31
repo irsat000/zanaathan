@@ -3,7 +3,7 @@ const express = require('express');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 import { Request, Response } from 'express';
-import { isNullOrEmpty } from '../utils/helperMethods';
+import { isNullOrEmpty } from '../utils/helperUtils';
 import { createJwt } from '../utils/userUtils';
 
 const pool = require('../db/db');

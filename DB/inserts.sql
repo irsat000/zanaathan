@@ -102,3 +102,12 @@ SET SQL_SAFE_UPDATES = 1;
 select * from category;
 select * from SubCategory;
 select * from CurrentStatus;
+
+
+
+
+
+
+
+
+INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId) VALUES ("aasdf", NOW(), "asdf", "5", "5", 1);

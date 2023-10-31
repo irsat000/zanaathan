@@ -66,7 +66,7 @@ export default function NewPost() {
       // If cached data exists, parse it and set it in the state
       setFetchedCities(JSON.parse(cachedCities));
     } else {
-      fetch(`${apiUrl}/api/get-cities`, {
+      fetch(`${apiUrl}/get-cities`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
       })
@@ -84,11 +84,6 @@ export default function NewPost() {
   // Districts depending on City Id
   const [districtsAll, setDistrictsAll] = useState<Map<number, District[]>>(new Map());
 
-  // District caching
-  useEffect(() => {
-
-  }, [districtsAll])
-
   // Get the selected city's districts, keep the previously fetched districts for future use
   const fetchDistricts = (cityId: string) => {
     // Ignore if city is set or default value of '0'
@@ -104,7 +99,7 @@ export default function NewPost() {
       updatedDistrictsAll.set(Number(cityId), parsedData);
       setDistrictsAll(updatedDistrictsAll);
     } else {
-      fetch(`${apiUrl}/api/get-districts?city_id=${cityId}`, {
+      fetch(`${apiUrl}/get-districts?city_id=${cityId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
       })
@@ -131,6 +126,22 @@ export default function NewPost() {
   const handleNewPostSubmit = (e: any) => {
     e.preventDefault();
 
+    fetch(`${apiUrl}/create-post`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify(formData)
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then((data) => {
+        console.log(data.postId);
+      })
+      .catch((res) => {
+        if (res.status === 400) {
+          alert("Geçersiz form verisi")
+        } else console.log('Sunucuyla bağlantıda hata')
+      });
   }
 
   // Resets all values

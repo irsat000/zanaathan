@@ -50,7 +50,7 @@ const AuthModal: React.FC<{
 
     const handleLoginFormSubmit = (e: any) => {
         e.preventDefault();
-        fetch(`${apiUrl}/api/sign-in`, {
+        fetch(`${apiUrl}/sign-in`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
             body: JSON.stringify(loginFormData)
@@ -73,7 +73,7 @@ const AuthModal: React.FC<{
 
     const handleRegisterFormSubmit = (e: any) => {
         e.preventDefault();
-        fetch(`${apiUrl}/api/sign-up`, {
+        fetch(`${apiUrl}/sign-up`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
             body: JSON.stringify(registerFormData)

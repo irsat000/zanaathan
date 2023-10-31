@@ -106,7 +106,7 @@ CREATE TABLE `CurrentStatus` (
 );
 
 CREATE TABLE `JobPosting` (
-	`Id` INT NOT NULL,
+	`Id` INT NOT NULL AUTO_INCREMENT,
     `Title` VARCHAR(255) NOT NULL,
     `CreatedAt` DATETIME NOT NULL,
     `Description` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE `JobPosting` (
 );
 
 CREATE TABLE `JobPostingImages` (
-	`Id` INT NOT NULL,
+	`Id` INT NOT NULL AUTO_INCREMENT,
     `Body` VARCHAR(255) NOT NULL,
     `ImgIndex` INT NOT NULL,
     `JobPostingId` INT NOT NULL,
@@ -128,9 +128,9 @@ CREATE TABLE `JobPostingImages` (
     CONSTRAINT `FK_JobPostingImages_JobPosting` FOREIGN KEY (`JobPostingId`) REFERENCES `JobPosting`(`Id`)
 );
 
+USE ZanaatHan;
 DROP TABLE `JobPostingImages`;
 DROP TABLE `JobPosting`;
-DROP TABLE `SubCategory`;
 
 
 

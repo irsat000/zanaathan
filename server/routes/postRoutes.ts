@@ -9,5 +9,7 @@ router.get('/get-posts', postController.getPosts);
 router.get('/get-cities', postController.getCities);
 // To get districts of a specific city
 router.get('/get-districts', postController.getDistricts);
+// To create a new post
+router.post('/create-post', postController.createPost);
 
 module.exports = router;

@@ -6,9 +6,16 @@ import { ChevronDown, ChevronRight, Search, XLg } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { formatSecondsAgo } from '@/utils/helperUtils'
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+interface Post {
+  Id: number;
+  Title: string;
+  SecondsAgo: number;
+}
 
-export default function Home() {
+export default function Category() {
   const router = useRouter();
   const [categoryInfo, setCategoryInfo] = useState<{
     code: string | null,
@@ -33,6 +40,20 @@ export default function Home() {
       setCategoryInfo({ code, name, subCates });
     }
   }, [router.isReady]);
+
+
+  const [postList, setPostList] = useState<Post[]>([]);
+  useEffect(() => {
+    fetch(`${apiUrl}/get-posts`, {
+      method: "GET",
+      headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then((data) => {
+        setPostList(data.posts);
+      })
+      .catch((res) => console.log('Sunucuda hata'));
+  }, [])
 
   // Filter values
   const [filterModalActive, setFilterModalActive] = useState(false);
@@ -157,18 +178,15 @@ export default function Home() {
         </div>
 
         <div className="listing">
-          {[...Array(10)].map((a, i) =>
+          {postList.map((post, i) =>
             <div className="post" key={i}>
-              <Link href={`/${categoryInfo.code}/${i}`} className='post-link'>
+              <Link href={`/${categoryInfo.code}/${post.Id}`} className='post-link'>
                 <div className="post-image-carousel">
                   <Image src={require('../assets/site/painter2.jpg')} alt={''} />
                 </div>
-                <h4 className='title'>Tüm evin badanaya ihtiyacı var!</h4>
+                <h4 className='title'>{post.Title}</h4>
               </Link>
-              <span className="date">1 gün önce</span>
-              <p className='description'>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur ullam culpa quaerat commodi necessitatibus dolore beatae eius voluptatem rem veniam exercitationem vel amet, nesciunt ipsa dignissimos alias ratione fuga labore.
-              </p>
+              <span className="date">{formatSecondsAgo(post.SecondsAgo)}</span>
             </div>
           )}
         </div>

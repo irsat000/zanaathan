@@ -13,8 +13,10 @@ app.use(cors({
 // - Route middlewares
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
+const imageRoutes = require('./routes/imageRoutes');
 app.use('/api', userRoutes);
 app.use('/api', postRoutes);
+app.use('/api', imageRoutes);
 
 
 

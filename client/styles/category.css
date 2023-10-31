@@ -111,6 +111,14 @@
 .category-page .listing .post {
   display: flex;
   flex-direction: column;
+  /* DEPRECATED
+  p.description {
+      font-size: 0.9rem;
+      font-weight: 300;
+      text-indent: 6px;
+      max-height: 350px;
+      overflow: hidden;
+  }*/
 }
 .category-page .listing .post .post-link {
   display: flex;
@@ -141,13 +149,6 @@
   font-size: 0.8rem;
   font-weight: 400;
   margin-bottom: 8px;
-}
-.category-page .listing .post p.description {
-  font-size: 0.9rem;
-  font-weight: 300;
-  text-indent: 6px;
-  max-height: 350px;
-  overflow: hidden;
 }
 
 @media (min-width: 400px) {

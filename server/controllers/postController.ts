@@ -1,17 +1,18 @@
 
 import { Request, Response } from 'express';
+import { dateToMysqlDate, isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
 
 const pool = require('../db/db');
 
 exports.getPosts = (req: Request, res: Response) => {
     try {
-        const query = "SELECT * FROM JobPosting;";
+        // SUBSTRING(Description, 1, 200)
+        const query = "SELECT Id, Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo FROM JobPosting;";
         pool.query(query, (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
             }
-            // If there are no posts
-            // Might return empty instead!
+            // If there are no posts we can return empty instead of error
             /*if (results.length === 0) {
                 return res.status(404).json({ error: 'No post found' });
             }*/
@@ -55,7 +56,43 @@ exports.getDistricts = (req: Request, res: Response) => {
 }
 
 
+interface CreatePost {
+    title: string;
+    description: string;
+    subCategory: string; // Id
+    district: string; // Id
+}
 
+exports.createPost = (req: Request, res: Response) => {
+    try {
+        const body: CreatePost = req.body;
+        const title = sanatizeInputString(body.title);
+        const description = body.description.trim();
+        const subCategory = body.subCategory;
+        const district = body.district;
+
+        // Check the inputs
+        if (title.length < 5 || title.length > 255
+            || description.length < 50 || description.length > 2000
+            || !isPositiveNumeric(subCategory) || !isPositiveNumeric(district)) {
+            return res.status(400).json({ error: 'Bad payload' });
+        }
+
+        //const dateNow = dateToMysqlDate(new Date()); // I will use NOW() of mysql instead
+
+        const query = "INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId) VALUES (?, NOW(), ?, ?, ?, 1);";
+        pool.query(query, [title, description, district, subCategory], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            return res.status(200).json({ postId: results.insertId });
+            // TODO: Will add images with insertId
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
 
 
 
@@ -73,6 +110,7 @@ exports.asdf = (req: Request, res: Response) => {
                 return res.status(500).json({ error: 'Query error' });
             }
 
+            return res.status(200).json({});
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
