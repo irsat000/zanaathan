@@ -1,8 +1,10 @@
 
 import { Request, Response } from 'express';
-import { dateToMysqlDate, isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
+import { isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
 
 const pool = require('../db/db');
+
+
 
 exports.getPosts = (req: Request, res: Response) => {
     try {
@@ -65,6 +67,14 @@ interface CreatePost {
 
 exports.createPost = (req: Request, res: Response) => {
     try {
+        const files = req.files;
+        if (!files || !Array.isArray(files)) {
+            return res.status(400).json({ error: 'No image uploaded' });
+        }
+        const imageNameList = files.map(file => file.filename);
+        return res.status(200).json({ imageNameList, body: req.body  });
+
+
         const body: CreatePost = req.body;
         const title = sanatizeInputString(body.title);
         const description = body.description.trim();

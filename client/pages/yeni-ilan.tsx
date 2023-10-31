@@ -24,11 +24,18 @@ interface District {
 
 export default function NewPost() {
   // Create post payload
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string,
+    description: string,
+    subCategory: string,
+    district: string,
+    selectedImages: File[]
+  }>({
     title: '',
     description: '',
     subCategory: '0',
     district: '0',
+    selectedImages: []
   });
 
   // Extra data that's used for user experience.
@@ -45,6 +52,20 @@ export default function NewPost() {
       [e.target.name]: e.target.value
     });
   }
+  // Change the selectedAmages from formData
+  const handleImageChange = (e: any) => {
+    const newImages: File[] = [];
+    for (let i = 0; i < e.target.files.length; i++) {
+      const file = e.target.files[i];
+      if (file) {
+        newImages.push(file);
+      }
+    }
+    setFormData({
+      ...formData,
+      selectedImages: [...formData.selectedImages, ...newImages]
+    });
+  };
   // Change the dependencies of payload
   const handleExtraChange = (e: any) => {
     setExtraData((prev) => ({
@@ -126,12 +147,21 @@ export default function NewPost() {
   const handleNewPostSubmit = (e: any) => {
     e.preventDefault();
 
+    const multiPartFormData = new FormData();
+    multiPartFormData.append('title', formData.title);
+    multiPartFormData.append('description', formData.description);
+    multiPartFormData.append('subCategory', formData.subCategory);
+    multiPartFormData.append('district', formData.district);
+    [...Array(10)].forEach((image, index) => {
+      multiPartFormData.append(`images[${index}]`, image);
+    });
+
     fetch(`${apiUrl}/create-post`, {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json; charset=utf-8'
+        'Content-Type': 'multipart/form-data'
       },
-      body: JSON.stringify(formData)
+      body: multiPartFormData
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then((data) => {
@@ -151,12 +181,46 @@ export default function NewPost() {
       description: '',
       subCategory: '0',
       district: '0',
+      selectedImages: []
     });
     setExtraData({
       category: '0',
       city: '0'
     });
     setSubCategories([]);
+  };
+
+  // Drag information
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  // Drag starts and sets the dragged object's index
+  const handleDragStart = (e: any, index: number) => {
+    setDraggedIndex(index);
+  };
+
+  // Sets the index that's hovered upon to find where it's dropped
+  const handleDragEnter = (e: any, index: number) => {
+    setHoverIndex(index);
+  };
+
+  // Get the dragged index and replace the hovered index
+  const handleDragEnd = (e: any, index: number) => {
+    if (hoverIndex == null) return;
+    // Make copy
+    const updatedImages = [...formData.selectedImages];
+    // Get the dragged image
+    const [draggedImage] = updatedImages.splice(index, 1);
+    // Update the copy
+    updatedImages.splice(hoverIndex, 0, draggedImage);
+    // Update the formData
+    setFormData({
+      ...formData,
+      selectedImages: updatedImages
+    });
+    // Reset drag information
+    setHoverIndex(null);
+    setDraggedIndex(null);
   };
 
   return (
@@ -167,9 +231,26 @@ export default function NewPost() {
           <div className="np-primary">
             <input className='np-title' type='text' name='title' placeholder='Başlık' onChange={handleFormChange} />
             <textarea className='np-description' name='description' placeholder='Açıklama' onChange={handleFormChange}></textarea>
-            <div className="np-thumbnail-wrapper"></div>
+            <div className="np-thumbnail-wrapper">
+              {formData.selectedImages.length > 0 ? formData.selectedImages.map((image, index) => (
+                <>
+                  {hoverIndex === index && <span className='drag-indicator'></span>}
+                  <div key={index} className={`image-thumbnail ${draggedIndex == index && 'dragged'}`}
+                    draggable="true"
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragEnter={(e) => handleDragEnter(e, index)}
+                    onDragEnd={(e) => handleDragEnd(e, index)}
+                  >
+                    <img src={URL.createObjectURL(new Blob([image]))} alt={`Image ${index}`} />
+                  </div>
+                </>
+              )) : <span className='choose-image-warning'>Fotoğraf yok</span>}
+            </div>
             <label className='np-image-upload'>
-              {/*<input type='file' />*/}
+              <input type='file'
+                accept="image/*"
+                multiple
+                onChange={handleImageChange} />
               <span className='icon'>
                 <ImageFillIcon />
                 <PlusSquareFill />
