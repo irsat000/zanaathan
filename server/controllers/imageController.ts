@@ -1,8 +1,8 @@
 
 import { Request, Response } from 'express';
 import multer from 'multer';
-const { dirname, path } = require('path');
-const appDir = dirname(require.main?.filename);
+const path = require('path');
+const appDir = path.dirname(require.main?.filename);
 
 
 
@@ -14,7 +14,7 @@ const postImageStorage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         // Define the filename for the uploaded image
-        cb(null, Date.now() + path.extname(file.originalname));
+        cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
     },
 });
 

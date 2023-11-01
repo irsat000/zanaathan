@@ -5,6 +5,8 @@ import { ImageFill as ImageFillIcon, PlusSquareFill } from 'react-bootstrap-icon
 import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
+import throttle from 'lodash/throttle';
+import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 interface City {
@@ -24,13 +26,7 @@ interface District {
 
 export default function NewPost() {
   // Create post payload
-  const [formData, setFormData] = useState<{
-    title: string,
-    description: string,
-    subCategory: string,
-    district: string,
-    selectedImages: File[]
-  }>({
+  const [formData, setFormData] = useState<NPFormData>({
     title: '',
     description: '',
     subCategory: '0',
@@ -152,15 +148,12 @@ export default function NewPost() {
     multiPartFormData.append('description', formData.description);
     multiPartFormData.append('subCategory', formData.subCategory);
     multiPartFormData.append('district', formData.district);
-    [...Array(10)].forEach((image, index) => {
-      multiPartFormData.append(`images[${index}]`, image);
+    formData.selectedImages.forEach((pic, index) => {
+      multiPartFormData.append(`postImages`, pic);
     });
 
     fetch(`${apiUrl}/create-post`, {
       method: "POST",
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
       body: multiPartFormData
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
@@ -190,38 +183,15 @@ export default function NewPost() {
     setSubCategories([]);
   };
 
-  // Drag information
-  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-
   // Drag starts and sets the dragged object's index
-  const handleDragStart = (e: any, index: number) => {
+  /*const handleDragStart = (index: number) => {
     setDraggedIndex(index);
-  };
+  };*/
 
   // Sets the index that's hovered upon to find where it's dropped
-  const handleDragEnter = (e: any, index: number) => {
+  /*const handleDragEnter = throttle((index: number) => {
     setHoverIndex(index);
-  };
-
-  // Get the dragged index and replace the hovered index
-  const handleDragEnd = (e: any, index: number) => {
-    if (hoverIndex == null) return;
-    // Make copy
-    const updatedImages = [...formData.selectedImages];
-    // Get the dragged image
-    const [draggedImage] = updatedImages.splice(index, 1);
-    // Update the copy
-    updatedImages.splice(hoverIndex, 0, draggedImage);
-    // Update the formData
-    setFormData({
-      ...formData,
-      selectedImages: updatedImages
-    });
-    // Reset drag information
-    setHoverIndex(null);
-    setDraggedIndex(null);
-  };
+  }, 200);*/
 
   return (
     <Template>
@@ -231,21 +201,7 @@ export default function NewPost() {
           <div className="np-primary">
             <input className='np-title' type='text' name='title' placeholder='Başlık' onChange={handleFormChange} />
             <textarea className='np-description' name='description' placeholder='Açıklama' onChange={handleFormChange}></textarea>
-            <div className="np-thumbnail-wrapper">
-              {formData.selectedImages.length > 0 ? formData.selectedImages.map((image, index) => (
-                <>
-                  {hoverIndex === index && <span className='drag-indicator'></span>}
-                  <div key={index} className={`image-thumbnail ${draggedIndex == index && 'dragged'}`}
-                    draggable="true"
-                    onDragStart={(e) => handleDragStart(e, index)}
-                    onDragEnter={(e) => handleDragEnter(e, index)}
-                    onDragEnd={(e) => handleDragEnd(e, index)}
-                  >
-                    <img src={URL.createObjectURL(new Blob([image]))} alt={`Image ${index}`} />
-                  </div>
-                </>
-              )) : <span className='choose-image-warning'>Fotoğraf yok</span>}
-            </div>
+            <NP_Thumbnails formData={formData} setFormData={setFormData} />
             <label className='np-image-upload'>
               <input type='file'
                 accept="image/*"
@@ -257,6 +213,7 @@ export default function NewPost() {
               </span>
               <span className='text'>Fotoğraf Ekle</span>
             </label>
+            <span className='image-upload-note'>Not: İlk sıradaki birincil fotoğraf olarak seçilir. Sürükleyip fotoğraf sırasını değiştirebilirsiniz.</span>
           </div>
           <div className="np-secondary">
             <select name='category' onChange={(e) => {

@@ -74,7 +74,6 @@ exports.createPost = (req: Request, res: Response) => {
         const imageNameList = files.map(file => file.filename);
         return res.status(200).json({ imageNameList, body: req.body  });
 
-
         const body: CreatePost = req.body;
         const title = sanatizeInputString(body.title);
         const description = body.description.trim();
