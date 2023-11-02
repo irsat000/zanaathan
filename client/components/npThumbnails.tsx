@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 
 
@@ -54,4 +55,4 @@ export const NP_Thumbnails: React.FC<{
             )) : <span className='choose-image-warning'>Fotoğraf yok</span>}
         </div>
     )
-}
+};

@@ -1,6 +1,5 @@
 
-const express = require('express');
-const mysql = require('mysql');
+
 const bcrypt = require('bcrypt');
 import { Request, Response } from 'express';
 import { isNullOrEmpty } from '../utils/helperUtils';

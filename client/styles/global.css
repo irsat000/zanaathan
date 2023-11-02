@@ -45,7 +45,7 @@ p {
 }
 
 html[data-colorset-1] {
-  --primary-color: #303030;
+  --primary-color: #3d3d3d;
   --primary-bg-color: #ffffff;
   --button-white: #ffffff;
   --button-white-border: #303030;

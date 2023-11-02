@@ -5,7 +5,6 @@ import { ImageFill as ImageFillIcon, PlusSquareFill } from 'react-bootstrap-icon
 import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
-import throttle from 'lodash/throttle';
 import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 

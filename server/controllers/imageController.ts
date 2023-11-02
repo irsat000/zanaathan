@@ -6,6 +6,11 @@ const appDir = path.dirname(require.main?.filename);
 
 
 
+
+// NEEDS FURTHER WORK
+// Clearing the metadata
+// Changing extension may be necessary
+
 // Define storage for uploaded files
 const postImageStorage = multer.diskStorage({
     destination: function (req, file, cb) {
