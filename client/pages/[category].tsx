@@ -6,13 +6,15 @@ import { ChevronDown, ChevronRight, Search, XLg } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { formatSecondsAgo } from '@/utils/helperUtils'
+import { formatSecondsAgo, imageLink } from '@/utils/helperUtils'
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 interface Post {
   Id: number;
   Title: string;
   SecondsAgo: number;
+  MainImage: string | null;
+  MainImageError: undefined | boolean;
 }
 
 export default function Category() {
@@ -179,10 +181,32 @@ export default function Category() {
 
         <div className="listing">
           {postList.map((post, i) =>
-            <div className="post" key={i}>
+            <div className="post" key={post.Id}>
               <Link href={`/${categoryInfo.code}/${post.Id}`} className='post-link'>
                 <div className="post-image-carousel">
-                  <Image src={require('../assets/site/painter2.jpg')} alt={''} />
+                  {post.MainImage && !post.MainImageError ?
+                    <Image
+                      loader={() => imageLink(post.MainImage!)}
+                      unoptimized={true}
+                      priority={true}
+                      src={imageLink(post.MainImage)}
+                      alt={`${i++}. ilanın birincil fotoğrafı`}
+                      width={0}
+                      height={0}
+                      onError={() => {
+                        // Set MainImageError to true if the image is not found
+                        const updatedPostList = postList.map((p) => {
+                          if (p.Id === post.Id) {
+                            return { ...p, MainImageError: true };
+                          }
+                          return p;
+                        });
+                        setPostList(updatedPostList);
+                      }}
+                    />
+                    :
+                    <div className="image-error"><span>Fotoğraf yok</span></div>
+                  }
                 </div>
                 <h4 className='title'>{post.Title}</h4>
               </Link>

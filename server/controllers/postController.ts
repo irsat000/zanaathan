@@ -20,7 +20,8 @@ exports.getPosts = (req: Request, res: Response) => {
                 WHERE JP.Id = JPI.JobPostingId
                 ORDER BY JPI.ImgIndex
                 LIMIT 1
-            ) AS FirstImage FROM JobPosting JP;`;
+            ) AS MainImage FROM JobPosting JP
+            ORDER BY SecondsAgo DESC;`;
         pool.query(query, (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });

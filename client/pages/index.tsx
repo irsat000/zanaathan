@@ -21,7 +21,7 @@ export default function Home() {
               <button>İş ara</button>
             </div>
           </div>
-          <Image src={require('@/assets/site/painter2.jpg')} className='intro-image' alt={'Intro image'} />
+          <Image src={require('@/assets/site/painter2.jpg')} priority={true} className='intro-image' alt={'Intro image'} />
         </div>
         <div className='category-list-heading-container'>
           <h2>Hizmetler</h2>

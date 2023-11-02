@@ -1,6 +1,7 @@
 
 import { Request, Response } from 'express';
 import multer from 'multer';
+import * as fs from 'fs';
 const path = require('path');
 const appDir = path.dirname(require.main?.filename);
 
@@ -31,7 +32,15 @@ export const uploadPostImage = multer({ storage: postImageStorage });
 
 
 // To serve images
+// /api/images/[name].[ext]
 exports.serveImage = (req: Request, res: Response) => {
     const imageName = req.params.imageName;
-    return res.sendFile(appDir + `/uploaded/post/${imageName}`);
+    const imagePath = appDir + `/uploaded/post/${imageName}`;
+    if (fs.existsSync(imagePath)) {
+        // The file exists, so you can send it
+        return res.sendFile(imagePath);
+    } else {
+        // The file doesn't exist, so you can send an error response or handle it as needed
+        return res.status(404).send('File not found');
+    }
 };

@@ -132,13 +132,28 @@
 .category-page .listing .post .post-link .post-image-carousel {
   margin-bottom: 6px;
   position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .category-page .listing .post .post-link .post-image-carousel img {
   width: 100%;
-  height: auto;
-  -o-object-fit: contain;
-     object-fit: contain;
-  border-radius: 8px;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: center;
+     object-position: center;
+}
+.category-page .listing .post .post-link .post-image-carousel .image-error {
+  text-align: center;
+}
+.category-page .listing .post .post-link .post-image-carousel .image-error span {
+  font-weight: 300;
+  font-size: 1.2rem;
 }
 .category-page .listing .post .post-link .title {
   font-size: 1.1rem;

@@ -54,7 +54,7 @@
                 }
             }
 
-            
+
         }
     }
 }
@@ -143,12 +143,28 @@
                 .post-image-carousel {
                     margin-bottom: 6px;
                     position: relative;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 200px;
+                    background-color: rgba(0, 0, 0, 0.1);
 
                     img {
                         width: 100%;
-                        height: auto;
-                        object-fit: contain;
-                        border-radius: 8px;
+                        height: 100%;
+                        object-fit: cover;
+                        object-position: center; // browser default
+                    }
+
+                    .image-error {
+                        text-align: center;
+
+                        span {
+                            font-weight: 300;
+                            font-size: 1.2rem;
+                        }
                     }
                 }
 
@@ -164,6 +180,7 @@
                 font-weight: 400;
                 margin-bottom: 8px;
             }
+
             /* DEPRECATED
             p.description {
                 font-size: 0.9rem;
