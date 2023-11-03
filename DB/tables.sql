@@ -113,10 +113,12 @@ CREATE TABLE `JobPosting` (
     `DistrictId` INT NOT NULL,
     `SubCategoryId` INT NOT NULL,
     `CurrentStatusId` INT NOT NULL,
+    `AccountId` INT NOT NULL,
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_JobPosting_District` FOREIGN KEY (`DistrictId`) REFERENCES `District`(`Id`),
     CONSTRAINT `FK_JobPosting_SubCategory` FOREIGN KEY (`SubCategoryId`) REFERENCES `SubCategory`(`Id`),
-    CONSTRAINT `FK_JobPosting_CurrentStatus` FOREIGN KEY (`CurrentStatusId`) REFERENCES `CurrentStatus`(`Id`)
+    CONSTRAINT `FK_JobPosting_CurrentStatus` FOREIGN KEY (`CurrentStatusId`) REFERENCES `CurrentStatus`(`Id`),
+    CONSTRAINT `FK_JobPosting_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`)
 );
 
 CREATE TABLE `JobPostingImages` (

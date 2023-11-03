@@ -7,7 +7,7 @@ const appDir = path.dirname(require.main?.filename);
 
 const pool = require('../db/db');
 
-
+// TODO: USE PROCEDURES INSTEAD
 
 exports.getPosts = (req: Request, res: Response) => {
     try {
@@ -28,6 +28,41 @@ exports.getPosts = (req: Request, res: Response) => {
             }
 
             return res.status(200).json({ posts: results });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+
+exports.getPostDetails = (req: Request, res: Response) => {
+    try {
+        const postId = req.params.postId;
+        const query =
+            `SELECT
+                JP.Id,
+                JP.Title,
+                TIMESTAMPDIFF(SECOND, JP.CreatedAt, NOW()) AS SecondsAgo,
+                JP.Description,
+                GROUP_CONCAT(DISTINCT JPI.Body ORDER BY JPI.ImgIndex) AS Images,
+                A.Id AS A_Id,
+                A.Username AS A_Username,
+                A.FullName AS A_FullName,
+                A.Avatar AS A_Avatar,
+                GROUP_CONCAT(DISTINCT CONCAT(CI.Body, ' / ', CT.Body) ORDER BY CI.Id) AS ContactInfo
+            FROM JobPosting JP
+            LEFT JOIN JobPostingImages JPI ON JP.Id = JPI.JobPostingId
+            LEFT JOIN Account A ON JP.AccountId = A.Id
+            LEFT JOIN ContactInformation CI ON A.Id = CI.AccountId
+            LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
+            WHERE JP.Id = ?
+            GROUP BY JP.Id;`;
+        pool.query(query, [postId], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            return res.status(200).json({ postDetails: results });
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
@@ -76,17 +111,18 @@ interface CreatePost {
 exports.createPost = (req: Request, res: Response) => {
     try {
         // Get uploaded file list
+        // We already check this in fileFilter
         const files = req.files;
-        if (!files || !Array.isArray(files)) {
+        if (!files || !Array.isArray(files) || files.length === 0) {
             return res.status(400).json({ error: 'No image uploaded' });
         }
         const imageNameList = files.map(file => file.filename);
 
         // Deletes the images uploaded when called
         const deleteUploadedOnError = () => {
-            imageNameList.map((name) => {
-                fs.unlink(appDir + '/uploaded/post/' + name, (err) => { /* Do nothing */ });
-            });
+            files.forEach((uploadedFile) =>
+                fs.existsSync(uploadedFile.path) && fs.unlinkSync(uploadedFile.path)
+            );
         }
 
         // Get inputs

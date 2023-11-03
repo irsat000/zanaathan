@@ -2,11 +2,24 @@
 import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronCompactLeft, ChevronCompactRight } from 'react-bootstrap-icons'
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
-export default function Ilan() {
+export default function PostDetails() {
+
+	useEffect(() => {
+		fetch(`${apiUrl}/get-post-details/1`, {
+		  method: "GET",
+		  headers: { 'Content-Type': 'application/json; charset=utf-8' }
+		})
+		  .then(res => res.ok ? res.json() : Promise.reject(res))
+		  .then((data) => {
+			console.log(data);
+		  })
+		  .catch((res) => console.log('Sunucuda hata'));
+	}, [])
 
 	const [activeImage, setActiveImage] = useState(0);
 	const carouselRef = useRef<HTMLDivElement | null>(null);
@@ -22,6 +35,7 @@ export default function Ilan() {
 			}
 		}
 	}
+
 
 	return (
 		<Template>
@@ -63,7 +77,7 @@ export default function Ilan() {
 						</div>
 						<h2 className='title'>Tüm evin badanaya ihtiyacı var!</h2>
 						<span className="date">1 gün önce</span>
-						<span className='location'>Osmangazi Mah. / Yıldırım / Bursa</span>
+						<span className='location'>Yıldırım / Bursa</span>
 					</div>
 				</div>
 				<div className='post-description'>

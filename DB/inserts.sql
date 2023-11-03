@@ -1,6 +1,8 @@
 
 USE ZanaatHan;
 
+# SETTINGS
+
 INSERT INTO `ContactType`(`Id`, `Body`) VALUES(1, 'Cep Telefonu');
 INSERT INTO `ContactType`(`Id`, `Body`) VALUES(2, 'İş Telefonu');
 INSERT INTO `ContactType`(`Id`, `Body`) VALUES(3, 'Ev Telefonu');
@@ -106,33 +108,5 @@ select * from CurrentStatus;
 
 
 
-
-
-
-
-INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId) VALUES ("aasdf", NOW(), "asdf", "5", "5", 1);
-
-
-USE ZanaatHan;
-INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES ("000asdfasdf.jpg", 0, 1);
-INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES ("111asdfasdf.jpg", 1, 1);
-INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES ("222asdfasdf.jpg", 2, 1);
-
-# Get posts with their first image
-SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
-(
-	SELECT JPI.Body
-	FROM JobPostingImages JPI
-	WHERE JP.Id = JPI.JobPostingId
-	ORDER BY JPI.ImgIndex
-    LIMIT 1
-) AS FirstImage FROM JobPosting JP;
-
-# Get posts with all their images in a column
-SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, JP.CreatedAt, NOW()) AS SecondsAgo,
-	GROUP_CONCAT(JPI.Body) AS Images
-FROM JobPosting JP
-LEFT JOIN JobPostingImages JPI ON JP.Id = JPI.JobPostingId
-GROUP BY JP.Id;
 
 

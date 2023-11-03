@@ -1,0 +1,15 @@
+
+
+INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId) VALUES ("aasdf", NOW(), "asdf", "5", "5", 1);
+
+
+USE ZanaatHan;
+INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES ("000asdfasdf.jpg", 0, 1);
+INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES ("111asdfasdf.jpg", 1, 1);
+INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES ("222asdfasdf.jpg", 2, 1);
+
+
+
+INSERT INTO ContactInformation(Body, AccountId, ContactTypeId) VALUES ("0 (555) 555 55 55", 11, 1);
+INSERT INTO ContactInformation(Body, AccountId, ContactTypeId) VALUES ("irsat@gmail.com", 11, 4);
+INSERT INTO ContactInformation(Body, AccountId, ContactTypeId) VALUES ("@irsatirsat", 11, 5);

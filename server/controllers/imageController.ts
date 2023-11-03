@@ -25,7 +25,27 @@ const postImageStorage = multer.diskStorage({
 });
 
 // Create an instance of multer
-export const uploadPostImage = multer({ storage: postImageStorage });
+export const uploadPostImage = multer({
+    storage: postImageStorage,
+    fileFilter: (req, file, cb) => {
+        const files = req.files;
+        if (!files || !Array.isArray(files) || files.length === 0) {
+            return cb(new Error('No image uploaded'));
+        }
+        // Reject the file if it's too large, > 5mb
+        // Reducing file size will be in client side
+        else if (file.size > 5000000) {
+            // Delete the uploaded files
+            files.forEach((uploadedFile) =>
+                fs.existsSync(uploadedFile.path) && fs.unlinkSync(uploadedFile.path)
+            );
+            return cb(new Error('File size is too large'));
+        }
+
+        // If no error is detected, accept the file
+        cb(null, true);
+    }
+});
 
 
 
