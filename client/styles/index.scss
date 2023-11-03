@@ -7,7 +7,6 @@ html[data-colorset-1] {}
     display: flex;
     flex-direction: column;
     padding: var(--site-padding);
-    align-items: center;
 
     .intro {
         display: flex;
@@ -97,10 +96,6 @@ html[data-colorset-1] {}
 
     .category-list-heading-container {
         margin-bottom: 20px;
-        width: 100%;
-        max-width: 1200px;
-        align-self: center;
-        text-align: center;
 
         h2 {
             padding: 0 16px;
@@ -112,9 +107,7 @@ html[data-colorset-1] {}
     .category-list {
         display: grid;
         grid-template-columns: repeat(1, 1fr);
-        width: 100%;
         gap: 20px 3%;
-        max-width: 1200px;
         align-self: center;
         align-items: start;
 

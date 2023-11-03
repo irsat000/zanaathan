@@ -117,12 +117,12 @@
   font-weight: 400;
 }
 .post-page .post-container .post-details .date {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 400;
   margin-bottom: 8px;
 }
 .post-page .post-container .post-details .location {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 400;
   margin-bottom: 10px;
 }
@@ -140,7 +140,7 @@
   font-size: 1.2rem;
   font-weight: 400;
 }
-.post-page .post-container .post-details .author-container .phone-number {
+.post-page .post-container .post-details .author-container .contact-information {
   font-size: 1.1rem;
   font-weight: 300;
 }

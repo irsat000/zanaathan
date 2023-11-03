@@ -1,5 +1,6 @@
 
 import Template from '@/components/template'
+import { formatSecondsAgo, isNullOrEmpty } from '@/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react';
@@ -7,19 +8,48 @@ import { ChevronCompactLeft, ChevronCompactRight } from 'react-bootstrap-icons'
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
+interface PostDetails {
+	Id: number;
+	Title: string;
+	Description: string;
+	SecondsAgo: number;
+	Images: string[];
+	A_Id: number;
+	A_Username: string;
+	A_FullName: string;
+	ContactInfo: string[];
+}
+
 export default function PostDetails() {
+
+
+	const [postDetails, setPostDetails] = useState<PostDetails | null>(null);
 
 	useEffect(() => {
 		fetch(`${apiUrl}/get-post-details/1`, {
-		  method: "GET",
-		  headers: { 'Content-Type': 'application/json; charset=utf-8' }
+			method: "GET",
+			headers: { 'Content-Type': 'application/json; charset=utf-8' }
 		})
-		  .then(res => res.ok ? res.json() : Promise.reject(res))
-		  .then((data) => {
-			console.log(data);
-		  })
-		  .catch((res) => console.log('Sunucuda hata'));
-	}, [])
+			.then(res => res.ok ? res.json() : Promise.reject(res))
+			.then((data) => {
+				// Sanatize contact information array
+				const contactInfoString = data.postDetails.ContactInfo;
+				console.log(data.postDetails)
+				const contactInfoArray = !isNullOrEmpty(contactInfoString) ? contactInfoString.split(';') : [];
+				// Sanatize image links array
+				const imagesString = data.postDetails.Images;
+				const imagesArray = !isNullOrEmpty(imagesString) ? imagesString.split(';') : [];
+
+				// Create the sanatized object
+				const sanatizedPostDetails = { ...data.postDetails };
+				sanatizedPostDetails.ContactInfo = contactInfoArray;
+				sanatizedPostDetails.Images = imagesArray;
+
+				// Update the postDetails
+				setPostDetails(sanatizedPostDetails);
+			})
+			.catch((res) => console.log('Sunucuda hata'));
+	}, []);
 
 	const [activeImage, setActiveImage] = useState(0);
 	const carouselRef = useRef<HTMLDivElement | null>(null);
@@ -67,23 +97,24 @@ export default function PostDetails() {
 					</div>
 					<div className='post-details'>
 						<div className='author-container'>
-							<h2 className='author-name'>Muhammed İrşat Akdeniz</h2>
-							<span className='phone-number'>0 (555) 555 55 55 - Cep</span>
-							<span className='phone-number'>0 (555) 555 55 55 - İş</span>
+							<h2 className='author-name'>{postDetails?.A_FullName ?? postDetails?.A_Username}</h2>
+							{postDetails?.ContactInfo.map((info, i) =>
+								<span key={i} className='contact-information'>{info}</span>
+							)}
 							<div className='author-actions'>
 								<button className='message-request'>Mesaj Gönder</button>
 								<button className='report-button'>Şikayet et</button>
 							</div>
 						</div>
-						<h2 className='title'>Tüm evin badanaya ihtiyacı var!</h2>
-						<span className="date">1 gün önce</span>
+						<h2 className='title'>{postDetails?.Title}</h2>
+						<span className="date">{postDetails ? formatSecondsAgo(postDetails.SecondsAgo) : <></>}</span>
 						<span className='location'>Yıldırım / Bursa</span>
 					</div>
 				</div>
 				<div className='post-description'>
 					<h2 className='description-heading'>Açıklama</h2>
 					<p className='description'>
-						Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aperiam dolorem mollitia quaerat magni voluptatem? Natus itaque maxime, earum doloribus temporibus rem vero neque beatae. Odio molestias adipisci ipsa rerum tempore? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam aut cumque nisi sit molestiae debitis consequatur consequuntur nam minus doloremque quis possimus, nemo facilis id sapiente voluptas impedit expedita animi.
+						{postDetails?.Description}
 					</p>
 				</div>
 			</div>

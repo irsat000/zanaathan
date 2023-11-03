@@ -2,6 +2,13 @@
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
+export const isNullOrEmpty = (value: any): boolean => {
+  if (!value || !value.trim()) {
+      return true;
+  }
+  return false;
+}
+
 export const replaceTurkishCharacters = (text: string) => {
   const replacements: { [key: string]: string } = {
     'ü': 'u',

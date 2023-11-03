@@ -44,12 +44,11 @@ exports.getPostDetails = (req: Request, res: Response) => {
                 JP.Title,
                 TIMESTAMPDIFF(SECOND, JP.CreatedAt, NOW()) AS SecondsAgo,
                 JP.Description,
-                GROUP_CONCAT(DISTINCT JPI.Body ORDER BY JPI.ImgIndex) AS Images,
+                GROUP_CONCAT(DISTINCT JPI.Body ORDER BY JPI.ImgIndex SEPARATOR ';') AS Images,
                 A.Id AS A_Id,
                 A.Username AS A_Username,
                 A.FullName AS A_FullName,
-                A.Avatar AS A_Avatar,
-                GROUP_CONCAT(DISTINCT CONCAT(CI.Body, ' / ', CT.Body) ORDER BY CI.Id) AS ContactInfo
+                GROUP_CONCAT(DISTINCT CONCAT(CI.Body, ' - ', CT.Body) ORDER BY CI.Id SEPARATOR ';') AS ContactInfo
             FROM JobPosting JP
             LEFT JOIN JobPostingImages JPI ON JP.Id = JPI.JobPostingId
             LEFT JOIN Account A ON JP.AccountId = A.Id
@@ -62,7 +61,7 @@ exports.getPostDetails = (req: Request, res: Response) => {
                 return res.status(500).json({ error: 'Query error' });
             }
 
-            return res.status(200).json({ postDetails: results });
+            return res.status(200).json({ postDetails: results[0] });
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
