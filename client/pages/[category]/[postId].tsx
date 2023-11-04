@@ -3,6 +3,7 @@ import Template from '@/components/template'
 import { formatSecondsAgo, imageLink, isNullOrEmpty } from '@/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronCompactLeft, ChevronCompactRight } from 'react-bootstrap-icons'
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -16,6 +17,7 @@ interface PostDetails {
 	Images: {
 		Link: string;
 		ImageError: undefined | boolean;
+		Loaded: undefined | boolean;
 	}[];
 	A_Id: number;
 	A_Username: string;
@@ -24,12 +26,13 @@ interface PostDetails {
 }
 
 export default function PostDetails() {
-
+	const router = useRouter();
+	const { category, postId } = router.query;
 
 	const [postDetails, setPostDetails] = useState<PostDetails | null>(null);
 
 	useEffect(() => {
-		fetch(`${apiUrl}/get-post-details/3`, {
+		fetch(`${apiUrl}/get-post-details/${postId}`, {
 			method: "GET",
 			headers: { 'Content-Type': 'application/json; charset=utf-8' }
 		})
@@ -89,7 +92,13 @@ export default function PostDetails() {
 									onError={() => {
 										// Set ImageError to true if the image is not found
 										const updatedPostDetails = { ...postDetails };
-										updatedPostDetails.Images.splice(i, 1);
+										updatedPostDetails.Images[i].ImageError = true;
+										setPostDetails(updatedPostDetails);
+									}}
+									onLoad={() => {
+										// Set Loaded to true if the image is found
+										const updatedPostDetails = { ...postDetails };
+										updatedPostDetails.Images[i].Loaded = true;
 										setPostDetails(updatedPostDetails);
 									}} />
 								: null
@@ -100,7 +109,7 @@ export default function PostDetails() {
 								<ChevronCompactLeft />
 							</button>
 							<div className="thumbnail-carousel" ref={carouselRef}>
-								{postDetails?.Images.map((img, i) => img && !img.ImageError ?
+								{postDetails?.Images.map((img, i) => img && img.Loaded && !img.ImageError ?
 									<div className={`thumbnail-wrapper ${i === activeImage && 'active'}`}
 										key={i}
 										onClick={() => setActiveImage(i)}
@@ -108,7 +117,7 @@ export default function PostDetails() {
 										<Image
 											loader={() => imageLink(img.Link)}
 											unoptimized={true}
-											priority={true}
+											priority={false}
 											src={imageLink(img.Link)}
 											alt={`İlanın ${i + 1}. mini fotoğrafı`}
 											width={0}

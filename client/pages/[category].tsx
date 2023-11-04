@@ -19,6 +19,8 @@ interface Post {
 
 export default function Category() {
   const router = useRouter();
+  const { category } = router.query;
+
   const [categoryInfo, setCategoryInfo] = useState<{
     code: string | null,
     name: string | null,
@@ -29,19 +31,16 @@ export default function Category() {
   }>({ code: null, name: null, subCates: [] });
 
   useEffect(() => {
-    // Run only when router is ready, otherwise router.asPath will be initially "/[category]"
-    if (!router.isReady) return;
-    // Get category code from path
-    const code = router.asPath.split('/')[1];
     // Get name by searching with code in category list from categories.json file
     // and assign both to categoryInfo
-    const category = categoryList.find(cate => cate.Code === code);
-    if (category) {
-      const name = category.Name;
-      const subCates = category.SubCategories;
+    const categoryObj = categoryList.find(cate => cate.Code === category);
+    if (categoryObj) {
+      const code = categoryObj.Code;
+      const name = categoryObj.Name;
+      const subCates = categoryObj.SubCategories;
       setCategoryInfo({ code, name, subCates });
     }
-  }, [router.isReady]);
+  }, []);
 
 
   const [postList, setPostList] = useState<Post[]>([]);
