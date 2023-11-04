@@ -14,7 +14,7 @@ interface Post {
   Title: string;
   SecondsAgo: number;
   MainImage: string | null;
-  MainImageError: undefined | boolean;
+  ImageError: undefined | boolean;
 }
 
 export default function Category() {
@@ -184,20 +184,20 @@ export default function Category() {
             <div className="post" key={post.Id}>
               <Link href={`/${categoryInfo.code}/${post.Id}`} className='post-link'>
                 <div className="post-image-carousel">
-                  {post.MainImage && !post.MainImageError ?
+                  {post.MainImage && !post.ImageError ?
                     <Image
                       loader={() => imageLink(post.MainImage!)}
                       unoptimized={true}
                       priority={true}
                       src={imageLink(post.MainImage)}
-                      alt={`${i++}. ilanın birincil fotoğrafı`}
+                      alt={`${i + 1}. ilanın birincil fotoğrafı`}
                       width={0}
                       height={0}
                       onError={() => {
-                        // Set MainImageError to true if the image is not found
+                        // Set ImageError to true if the image is not found
                         const updatedPostList = postList.map((p) => {
                           if (p.Id === post.Id) {
-                            return { ...p, MainImageError: true };
+                            return { ...p, ImageError: true };
                           }
                           return p;
                         });

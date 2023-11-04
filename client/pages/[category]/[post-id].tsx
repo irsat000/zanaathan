@@ -1,6 +1,6 @@
 
 import Template from '@/components/template'
-import { formatSecondsAgo, isNullOrEmpty } from '@/utils/helperUtils';
+import { formatSecondsAgo, imageLink, isNullOrEmpty } from '@/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react';
@@ -13,7 +13,10 @@ interface PostDetails {
 	Title: string;
 	Description: string;
 	SecondsAgo: number;
-	Images: string[];
+	Images: {
+		Link: string;
+		ImageError: undefined | boolean;
+	}[];
 	A_Id: number;
 	A_Username: string;
 	A_FullName: string;
@@ -26,7 +29,7 @@ export default function PostDetails() {
 	const [postDetails, setPostDetails] = useState<PostDetails | null>(null);
 
 	useEffect(() => {
-		fetch(`${apiUrl}/get-post-details/1`, {
+		fetch(`${apiUrl}/get-post-details/3`, {
 			method: "GET",
 			headers: { 'Content-Type': 'application/json; charset=utf-8' }
 		})
@@ -34,11 +37,10 @@ export default function PostDetails() {
 			.then((data) => {
 				// Sanatize contact information array
 				const contactInfoString = data.postDetails.ContactInfo;
-				console.log(data.postDetails)
 				const contactInfoArray = !isNullOrEmpty(contactInfoString) ? contactInfoString.split(';') : [];
 				// Sanatize image links array
 				const imagesString = data.postDetails.Images;
-				const imagesArray = !isNullOrEmpty(imagesString) ? imagesString.split(';') : [];
+				const imagesArray = !isNullOrEmpty(imagesString) ? imagesString.split(';').map((link: string) => ({ Link: link })) : [];
 
 				// Create the sanatized object
 				const sanatizedPostDetails = { ...data.postDetails };
@@ -73,21 +75,48 @@ export default function PostDetails() {
 				<div className="post-container">
 					<div className="gallery-container">
 						<div className="gallery-main">
-							<Image src={require('@/assets/site/painter2.jpg')} alt={''} />
+							{postDetails?.Images.map((img, i) => img && !img.ImageError ?
+								<Image
+									className={`${activeImage === i ? 'active' : ''}`}
+									loader={() => imageLink(img.Link)}
+									unoptimized={true}
+									priority={true}
+									src={imageLink(img.Link)}
+									alt={`İlanın ${i + 1}. fotoğrafı`}
+									width={0}
+									height={0}
+									key={i}
+									onError={() => {
+										// Set ImageError to true if the image is not found
+										const updatedPostDetails = { ...postDetails };
+										updatedPostDetails.Images.splice(i, 1);
+										setPostDetails(updatedPostDetails);
+									}} />
+								: null
+							)}
 						</div>
 						<div className="thumbnail-carousel-container">
 							<button className='thumbnail-previous' onClick={() => scrollCarousel('left')}>
 								<ChevronCompactLeft />
 							</button>
 							<div className="thumbnail-carousel" ref={carouselRef}>
-								{[...Array(8)].map((a, i) =>
+								{postDetails?.Images.map((img, i) => img && !img.ImageError ?
 									<div className={`thumbnail-wrapper ${i === activeImage && 'active'}`}
 										key={i}
 										onClick={() => setActiveImage(i)}
 									>
-										<Image src={require('@/assets/site/painter2.jpg')} alt={''} />
+										<Image
+											loader={() => imageLink(img.Link)}
+											unoptimized={true}
+											priority={true}
+											src={imageLink(img.Link)}
+											alt={`İlanın ${i + 1}. mini fotoğrafı`}
+											width={0}
+											height={0}
+										/>
 										<span className='active-sign'></span>
 									</div>
+									: null
 								)}
 							</div>
 							<button className='thumbnail-next' onClick={() => scrollCarousel('right')}>
