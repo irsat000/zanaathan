@@ -39,14 +39,8 @@
      object-fit: contain;
   animation: fade-in 0.1s ease-in-out forwards;
 }
-.post-page .post-container .gallery-container .thumbnail-carousel-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
 .post-page .post-container .gallery-container .thumbnail-carousel-container .thumbnail-carousel {
+  width: 100%;
   display: flex;
   flex-direction: row;
   gap: 10px;
@@ -112,23 +106,6 @@
 .post-page .post-container .gallery-container .thumbnail-carousel-container .thumbnail-carousel::-webkit-scrollbar-track {
   border-radius: 10px;
   background-color: #e9e9e9;
-}
-.post-page .post-container .gallery-container .thumbnail-carousel-container > button {
-  all: unset;
-  display: none;
-  height: 80px;
-  padding: 0 4px;
-  align-items: center;
-  font-size: 1.8rem;
-  transition: all 0.1s ease-in-out;
-  cursor: pointer;
-  border-radius: 8px;
-}
-.post-page .post-container .gallery-container .thumbnail-carousel-container .thumbnail-previous:hover {
-  box-shadow: -6px 0px 13px -5px rgba(0, 0, 0, 0.2);
-}
-.post-page .post-container .gallery-container .thumbnail-carousel-container .thumbnail-next:hover {
-  box-shadow: 6px 0px 13px -5px rgba(0, 0, 0, 0.2);
 }
 .post-page .post-container .post-details {
   width: 100%;
@@ -227,14 +204,12 @@
     width: 60%;
     max-width: 700px;
   }
-  .post-page .post-container .gallery-container .thumbnail-carousel-container > button {
-    display: flex;
-  }
   .post-page .post-container .gallery-container .thumbnail-carousel-container .thumbnail-carousel {
     gap: 16px;
+    flex-wrap: wrap;
   }
   .post-page .post-container .gallery-container .thumbnail-carousel-container .thumbnail-carousel .thumbnail-wrapper {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
   }
 }/*# sourceMappingURL=post.css.map */

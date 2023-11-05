@@ -476,6 +476,103 @@ body select {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+.chatbot-container.active {
+  display: block;
+}
+
+.chatbot-container {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 5vw;
+  z-index: 196;
+}
+.chatbot-container .chatbot {
+  height: 80vh;
+  background-color: var(--primary-bg-color);
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: row;
+}
+.chatbot-container .chatbot .chatbot-shortcut-button {
+  display: flex;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  padding: 4px;
+}
+.chatbot-container .chatbot .chatbot-shortcut-button:hover {
+  transform: scale(1.2);
+}
+.chatbot-container .chatbot .chatbot-menu {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--primary-color);
+  width: 20vw;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-menu-header {
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--primary-color);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-menu-header h5 {
+  font-weight: 500;
+  font-family: "Fira-sans", sans-serif;
+  font-size: 1.2rem;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-menu-header .chatbot-add-user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  padding: 3px 12px;
+  border-radius: 12px;
+  background-color: var(--button-white);
+  border: 1px solid var(--button-white-border);
+  transition: all 0.1s ease-in-out;
+  font-size: 1rem;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-menu-header .chatbot-add-user svg {
+  font-size: 1.1rem;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-menu-header .chatbot-add-user:hover {
+  background-color: var(--button4-1);
+  color: #ffffff;
+}
+.chatbot-container .chatbot .chatbot-body {
+  display: flex;
+  flex-direction: column;
+  width: 50vw;
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header {
+  padding: 10px 10px 10px 10px;
+  border-bottom: 1px solid var(--primary-color);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header h5 {
+  font-weight: 300;
+  font-family: "Poppins", sans-serif;
+  font-size: 1.1rem;
+  max-width: 200px;
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts {
+  outline: transparent;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts .fullscreen-button:hover {
+  transform: scale(1.1);
+}
 header > .header-container {
   height: 60px;
   width: 100%;
@@ -570,14 +667,16 @@ header > .header-container .user-container .shortcut-wrapper {
   gap: 12px;
   align-items: center;
 }
-header > .header-container .user-container .shortcut-wrapper a, header > .header-container .user-container .shortcut-wrapper button {
+header > .header-container .user-container .shortcut-wrapper a,
+header > .header-container .user-container .shortcut-wrapper button {
   all: unset;
   display: flex;
   font-size: 1.4rem;
   cursor: pointer;
   padding: 6px;
 }
-header > .header-container .user-container .shortcut-wrapper a:hover, header > .header-container .user-container .shortcut-wrapper button:hover {
+header > .header-container .user-container .shortcut-wrapper a:hover,
+header > .header-container .user-container .shortcut-wrapper button:hover {
   transform: scale(1.05);
 }
 header > .header-container .user-container .user-menu-button {

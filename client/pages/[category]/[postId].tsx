@@ -23,6 +23,7 @@ interface PostDetails {
 	A_Username: string;
 	A_FullName: string;
 	ContactInfo: string[];
+	Location: string;
 }
 
 export default function PostDetails() {
@@ -32,6 +33,8 @@ export default function PostDetails() {
 	const [postDetails, setPostDetails] = useState<PostDetails | null>(null);
 
 	useEffect(() => {
+		if (!postId) return;
+
 		fetch(`${apiUrl}/get-post-details/${postId}`, {
 			method: "GET",
 			headers: { 'Content-Type': 'application/json; charset=utf-8' }
@@ -54,10 +57,12 @@ export default function PostDetails() {
 				setPostDetails(sanatizedPostDetails);
 			})
 			.catch((res) => console.log('Sunucuda hata'));
-	}, []);
+	}, [postId]);
 
 	const [activeImage, setActiveImage] = useState(0);
-	const carouselRef = useRef<HTMLDivElement | null>(null);
+
+
+	/*const carouselRef = useRef<HTMLDivElement | null>(null);
 
 	// Scroll left or right with buttons
 	const scrollCarousel = (direction: string) => {
@@ -69,7 +74,7 @@ export default function PostDetails() {
 				carousel.scrollBy({ left: 200, behavior: 'smooth' });
 			}
 		}
-	}
+	}*/
 
 
 	return (
@@ -105,10 +110,7 @@ export default function PostDetails() {
 							)}
 						</div>
 						<div className="thumbnail-carousel-container">
-							<button className='thumbnail-previous' onClick={() => scrollCarousel('left')}>
-								<ChevronCompactLeft />
-							</button>
-							<div className="thumbnail-carousel" ref={carouselRef}>
+							<div className="thumbnail-carousel">
 								{postDetails?.Images.map((img, i) => img && img.Loaded && !img.ImageError ?
 									<div className={`thumbnail-wrapper ${i === activeImage && 'active'}`}
 										key={i}
@@ -128,9 +130,6 @@ export default function PostDetails() {
 									: null
 								)}
 							</div>
-							<button className='thumbnail-next' onClick={() => scrollCarousel('right')}>
-								<ChevronCompactRight />
-							</button>
 						</div>
 					</div>
 					<div className='post-details'>
@@ -146,7 +145,7 @@ export default function PostDetails() {
 						</div>
 						<h2 className='title'>{postDetails?.Title}</h2>
 						<span className="date">{postDetails ? formatSecondsAgo(postDetails.SecondsAgo) : <></>}</span>
-						<span className='location'>Yıldırım / Bursa</span>
+						<span className='location'>{postDetails?.Location}</span>
 					</div>
 				</div>
 				<div className='post-description'>

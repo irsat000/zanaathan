@@ -5,9 +5,11 @@ import { useContext, useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+export type AuthModalState = 'signin' | 'signup' | 'none';
+
 const AuthModal: React.FC<{
-    authModalActive: string,
-    setAuthModalActive: (v: string) => void
+    authModalActive: AuthModalState,
+    setAuthModalActive: (v: AuthModalState) => void
 }> = ({ authModalActive, setAuthModalActive }) => {
     const { setUserData } = useUser();
 
@@ -26,7 +28,7 @@ const AuthModal: React.FC<{
         fullName: ''
     });
 
-    const handleAuthModal = (state: string) => {
+    const handleAuthModal = (state: AuthModalState) => {
         setAuthModalWarning(null);
         setAuthModalSuccess(null);
         setAuthModalActive(state);

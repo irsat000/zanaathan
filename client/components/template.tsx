@@ -2,11 +2,13 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { Bell, ChatDots, ChevronDown, List, PersonAdd, PersonPlus, PlusSquare, XLg } from 'react-bootstrap-icons'
+import { Bell, ChatDots, Fullscreen, List, PersonPlus, PlusLg, PlusSquare, ThreeDots, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
-import AuthModal from './authModal'
+import AuthModal, { AuthModalState } from './authModal'
 import { useUser } from '@/context/userContext'
 import { readJwtCookie, removeJwtCookie } from '@/utils/userUtils'
+import Chatbot from './chatbot'
+
 
 const Template: React.FC<{
 	children: ReactNode
@@ -29,12 +31,13 @@ const Template: React.FC<{
 		removeJwtCookie();
 	}
 
-	const [authModalActive, setAuthModalActive] = useState('none'); // Login/Register modal = auth modal
+	const [authModalActive, setAuthModalActive] = useState<AuthModalState>('none'); // Login/Register modal = auth modal
 	const [drawerActive, setDrawerActive] = useState(false); // Drawer for mobile
 	const [userMenuActive, setUserMenuActive] = useState(false); // User menu drop down
+	const [chatbotActive, setChatbotActive] = useState(false); // Chat bot
 
 	// Will close the drawer and open auth modal
-	const handleLoginModal = (type: string) => {
+	const handleLoginModal = (type: AuthModalState) => {
 		if (drawerActive) {
 			setDrawerActive(false);
 		}
@@ -69,6 +72,7 @@ const Template: React.FC<{
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<div className='page-content'>
+				<Chatbot chatbotActive={chatbotActive} setChatbotActive={setChatbotActive} />
 				<AuthModal authModalActive={authModalActive} setAuthModalActive={setAuthModalActive} />
 				<div className={`drawer-container ${drawerActive && 'active'}`} onClick={() => setDrawerActive(false)}>
 					<div className="drawer" onClick={(e) => { e.stopPropagation() }}>
@@ -104,7 +108,7 @@ const Template: React.FC<{
 									<Link href={'/yeni-ilan'}>
 										<PlusSquare />
 									</Link>
-									<button onClick={() => alert("Hii!")}>
+									<button onClick={() => setChatbotActive(true)}>
 										<ChatDots />
 									</button>
 									<button onClick={() => alert("Hi!")}>

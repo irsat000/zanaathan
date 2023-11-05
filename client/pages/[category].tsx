@@ -31,6 +31,8 @@ export default function Category() {
   }>({ code: null, name: null, subCates: [] });
 
   useEffect(() => {
+    if (!category) return;
+    
     // Get name by searching with code in category list from categories.json file
     // and assign both to categoryInfo
     const categoryObj = categoryList.find(cate => cate.Code === category);
@@ -40,11 +42,13 @@ export default function Category() {
       const subCates = categoryObj.SubCategories;
       setCategoryInfo({ code, name, subCates });
     }
-  }, []);
+  }, [category]);
 
 
   const [postList, setPostList] = useState<Post[]>([]);
   useEffect(() => {
+    if (!category) return;
+
     fetch(`${apiUrl}/get-posts`, {
       method: "GET",
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
@@ -54,7 +58,7 @@ export default function Category() {
         setPostList(data.posts);
       })
       .catch((res) => console.log('Sunucuda hata'));
-  }, [])
+  }, [category])
 
   // Filter values
   const [filterModalActive, setFilterModalActive] = useState(false);
