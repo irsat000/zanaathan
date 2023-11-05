@@ -47,6 +47,7 @@ p {
 html[data-colorset-1] {
   --primary-color: #3d3d3d;
   --primary-bg-color: #ffffff;
+  --primary-light-border: #bcbcbc;
   --button-white: #ffffff;
   --button-white-border: #303030;
   --button1-1: #5997cd;
@@ -490,8 +491,8 @@ body select {
 .chatbot-container .chatbot {
   height: 80vh;
   background-color: var(--primary-bg-color);
-  border-radius: 6px 6px 0 0;
-  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0px 0px 16px -6px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: row;
 }
@@ -507,12 +508,12 @@ body select {
 .chatbot-container .chatbot .chatbot-menu {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--primary-color);
+  border-right: 1px solid var(--primary-light-border);
   width: 20vw;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-menu-header {
   padding: 10px 10px;
-  border-bottom: 1px solid var(--primary-color);
+  border-bottom: 1px solid var(--primary-light-border);
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -526,22 +527,84 @@ body select {
 .chatbot-container .chatbot .chatbot-menu .chatbot-menu-header .chatbot-add-user {
   display: flex;
   align-items: center;
-  gap: 6px;
   font-family: "Poppins", sans-serif;
   font-weight: 300;
   padding: 3px 12px;
   border-radius: 12px;
   background-color: var(--button-white);
-  border: 1px solid var(--button-white-border);
-  transition: all 0.1s ease-in-out;
+  border: 1px solid var(--primary-light-border);
   font-size: 1rem;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-menu-header .chatbot-add-user svg {
+  transform: translateX(300%);
   font-size: 1.1rem;
+  width: 0;
+  transition: all 0.1s ease-in-out;
 }
-.chatbot-container .chatbot .chatbot-menu .chatbot-menu-header .chatbot-add-user:hover {
-  background-color: var(--button4-1);
-  color: #ffffff;
+.chatbot-container .chatbot .chatbot-menu .chatbot-menu-header .chatbot-add-user:hover svg {
+  margin-left: 4px;
+  width: 1.1rem;
+  transform: unset;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts {
+  display: flex;
+  flex-direction: column;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item.active {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item.default:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .profile-picture {
+  padding: 8px;
+  display: flex;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .profile-picture img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .body {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px 0 2px;
+  overflow: hidden;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .body .person-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  gap: 10px;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .body .person-header .name {
+  font-size: 1rem;
+  font-weight: 300;
+  font-family: "Poppins", sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .body .person-header .last-contact {
+  font-size: 0.8rem;
+  font-weight: 300;
+  font-family: "Poppins", sans-serif;
+  white-space: nowrap;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .body .last-message {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 0.9rem;
+  font-weight: 300;
 }
 .chatbot-container .chatbot .chatbot-body {
   display: flex;
@@ -550,7 +613,7 @@ body select {
 }
 .chatbot-container .chatbot .chatbot-body .chatbot-body-header {
   padding: 10px 10px 10px 10px;
-  border-bottom: 1px solid var(--primary-color);
+  border-bottom: 1px solid var(--primary-light-border);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -562,6 +625,7 @@ body select {
   font-family: "Poppins", sans-serif;
   font-size: 1.1rem;
   max-width: 200px;
+  padding-top: 2px;
 }
 .chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts {
   outline: transparent;

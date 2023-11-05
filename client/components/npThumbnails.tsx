@@ -10,6 +10,7 @@ export interface NPFormData {
     selectedImages: File[]
 }
 
+// np = new post
 export const NP_Thumbnails: React.FC<{
     formData: NPFormData,
     setFormData: (value: NPFormData) => void

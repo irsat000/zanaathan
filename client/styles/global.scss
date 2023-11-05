@@ -47,6 +47,7 @@ p {
 html[data-colorset-1] {
     --primary-color: #3d3d3d;
     --primary-bg-color: #ffffff;
+    --primary-light-border: #bcbcbc;
 
     --button-white: #ffffff;
     --button-white-border: #303030;
@@ -547,10 +548,10 @@ body {
     .chatbot {
         height: 80vh;
         background-color: var(--primary-bg-color);
-        border-radius: 6px 6px 0 0;
-        -webkit-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
-        -moz-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
-        box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+        border-radius: 12px 12px 0 0;
+        -webkit-box-shadow: 0px 0px 16px -6px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 0px 0px 16px -6px rgba(0, 0, 0, 0.5);
+        box-shadow: 0px 0px 16px -6px rgba(0, 0, 0, 0.5);
         display: flex;
         flex-direction: row;
 
@@ -568,12 +569,12 @@ body {
         .chatbot-menu {
             display: flex;
             flex-direction: column;
-            border-right: 1px solid var(--primary-color);
+            border-right: 1px solid var(--primary-light-border);
             width: 20vw;
 
             .chatbot-menu-header {
                 padding: 10px 10px;
-                border-bottom: 1px solid var(--primary-color);
+                border-bottom: 1px solid var(--primary-light-border);
                 display: flex;
                 flex-direction: row;
                 align-items: center;
@@ -588,29 +589,98 @@ body {
                 .chatbot-add-user {
                     display: flex;
                     align-items: center;
-                    gap: 6px;
                     font-family: 'Poppins', sans-serif;
                     font-weight: 300;
                     padding: 3px 12px;
                     border-radius: 12px;
                     background-color: var(--button-white);
-                    border: 1px solid var(--button-white-border);
-                    transition: all 0.1s ease-in-out;
+                    border: 1px solid var(--primary-light-border);
                     font-size: 1rem;
 
                     svg {
+                        transform: translateX(300%);
                         font-size: 1.1rem;
+                        width: 0;
+                        transition: all 0.1s ease-in-out;
                     }
 
-                    &:hover {
-                        background-color: var(--button4-1);
-                        color: #ffffff;
+                    &:hover svg {
+                        margin-left: 4px;
+                        width: 1.1rem;
+                        transform: unset;
                     }
                 }
             }
 
-            .chatbot-network {
-                // Styles for .chatbot-network
+            .chatbot-contacts {
+                display: flex;
+                flex-direction: column;
+
+                .contact-item.active {
+                    background-color: rgba(0, 0, 0, 0.06);
+                }
+
+                .contact-item.default:hover {
+                    background-color: rgba(0, 0, 0, 0.03);
+                }
+
+                .contact-item {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    cursor: pointer;
+                    padding: 4px 0;
+
+                    .profile-picture {
+                        padding: 8px;
+                        display: flex;
+
+                        img {
+                            width: 44px;
+                            height: 44px;
+                            border-radius: 50%;
+                        }
+                    }
+
+                    .body {
+                        display: flex;
+                        flex-direction: column;
+                        padding: 0 8px 0 2px;
+                        overflow: hidden;
+
+                        .person-header {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: space-between;
+                            margin-bottom: 4px;
+                            gap: 10px;
+
+                            .name {
+                                font-size: 1rem;
+                                font-weight: 300;
+                                font-family: 'Poppins', sans-serif;
+                                white-space: nowrap;
+                                overflow: hidden;
+                            }
+
+                            .last-contact {
+                                font-size: 0.8rem;
+                                font-weight: 300;
+                                font-family: 'Poppins', sans-serif;
+                                white-space: nowrap;
+                            }
+                        }
+
+                        .last-message {
+                            width: 100%;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            font-size: 0.9rem;
+                            font-weight: 300;
+                        }
+                    }
+                }
             }
         }
 
@@ -621,7 +691,7 @@ body {
 
             .chatbot-body-header {
                 padding: 10px 10px 10px 10px;
-                border-bottom: 1px solid var(--primary-color);
+                border-bottom: 1px solid var(--primary-light-border);
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
@@ -633,6 +703,7 @@ body {
                     font-family: 'Poppins', sans-serif;
                     font-size: 1.1rem;
                     max-width: 200px;
+                    padding-top: 2px;
                 }
 
                 .chatbot-shortcuts {
