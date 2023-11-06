@@ -108,7 +108,7 @@ const Template: React.FC<{
 									<Link href={'/yeni-ilan'}>
 										<PlusSquare />
 									</Link>
-									<button className='open-chatbot-button' onClick={() => setChatbotActive(true)}>
+									<button className='open-chatbot-button' onClick={() => setChatbotActive(!chatbotActive)}>
 										<ChatDots />
 									</button>
 									<button onClick={() => alert("Hi!")}>

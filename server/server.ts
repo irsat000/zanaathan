@@ -11,9 +11,11 @@ app.use(cors({
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 // - Route middlewares
+const chatRoutes = require('./routes/chatRoutes');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const imageRoutes = require('./routes/imageRoutes');
+app.use('/api', chatRoutes);
 app.use('/api', userRoutes);
 app.use('/api', postRoutes);
 app.use('/api', imageRoutes);

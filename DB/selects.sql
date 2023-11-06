@@ -48,3 +48,59 @@ SELECT * FROM Account;
 
 
 
+
+
+
+USE ZanaatHan;
+# Get contacts
+
+
+
+
+
+
+
+# Without the names of the others
+SELECT
+  Message.Id, Message.CreatedAt, Message.Body, Account.Username AS LastMessagerName
+FROM Message
+INNER JOIN Account ON Message.AccountId = Account.Id
+WHERE ( Message.Id in 
+        (SELECT MAX(Message.Id)
+         FROM MThreadParticipant AS TP
+         INNER JOIN Message ON TP.ThreadId = Message.ThreadId
+         WHERE TP.AccountId = 9
+         GROUP BY TP.ThreadId)
+      )
+ORDER BY Message.CreatedAt DESC;
+
+
+
+# With the receiver's name and avatar
+SELECT
+  DISTINCT Message.Id AS LastMessageId,
+  Message.CreatedAt AS LastMessageDate,
+  Message.Body AS LastMessage,
+  Account.Username AS ReceiverUsername,
+  Account.FullName AS ReceiverFullName,
+  Account.Avatar AS ReceiverAvatar
+FROM Message
+INNER JOIN MThreadParticipant AS TP1 ON TP1.ThreadId = Message.ThreadId
+INNER JOIN Account ON Account.Id = (
+	SELECT MAX(A.Id)
+    FROM Account A
+    INNER JOIN MThreadParticipant TP2 ON A.Id = TP2.AccountId
+    WHERE TP2.ThreadId = TP1.ThreadId AND A.Id != 9
+)
+WHERE (Message.Id IN 
+        (SELECT MAX(Message.Id)
+         FROM MThreadParticipant AS TP3
+         INNER JOIN Message ON TP3.ThreadId = Message.ThreadId
+         WHERE TP3.AccountId = 9
+         GROUP BY TP3.ThreadId)
+      )
+ORDER BY LastMessageDate DESC;
+
+
+
+

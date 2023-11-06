@@ -54,21 +54,19 @@ CREATE TABLE `ContactInformation` (
     CONSTRAINT `FK_ContactInformation_ContactType` FOREIGN KEY (`ContactTypeId`) REFERENCES `ContactType`(`Id`)
 );
 
-CREATE TABLE `Chat` (
+CREATE TABLE `MThread` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
-    `AccountId` INT NOT NULL,
-    PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Inbox_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`)
+    PRIMARY KEY (`Id`)
 );
 
-CREATE TABLE `Chat_Account`(
+CREATE TABLE `MThreadParticipant` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
-    `LastSeen` DATETIME NOT NULL,
+    `LastSeenAt` DATETIME NOT NULL,
     `AccountId` INT NOT NULL,
-    `ChatId` INT NOT NULL,
+    `ThreadId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Chat_Account_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_Chat_Account_Chat` FOREIGN KEY (`ChatId`) REFERENCES `Account`(`Id`)
+    CONSTRAINT `FK_MTParticipant_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
+    CONSTRAINT `FK_MTParticipant_Thread` FOREIGN KEY (`ThreadId`) REFERENCES `MThreadParticipant`(`Id`)
 );
 
 CREATE TABLE `Message` (
@@ -77,10 +75,10 @@ CREATE TABLE `Message` (
     `CreatedAt` DATETIME NOT NULL,
     `IsDeleted` BOOLEAN NOT NULL,
     `AccountId` INT NOT NULL,
-    `ChatId` INT NOT NULL,
+    `ThreadId` INT NOT NULL,
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_Message_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_Message_Chat` FOREIGN KEY (`ChatId`) REFERENCES `Chat`(`Id`)
+    CONSTRAINT `FK_Message_Thread` FOREIGN KEY (`ThreadId`) REFERENCES `MThreadParticipant`(`Id`)
 );
 
 

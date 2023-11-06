@@ -1,6 +1,6 @@
 
 import Template from '@/components/template'
-import { formatSecondsAgo, imageLink, isNullOrEmpty } from '@/utils/helperUtils';
+import { formatSecondsAgo, imageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters } from '@/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
@@ -145,7 +145,7 @@ export default function PostDetails() {
 						</div>
 						<h2 className='title'>{postDetails?.Title}</h2>
 						<span className="date">{postDetails ? formatSecondsAgo(postDetails.SecondsAgo) : <></>}</span>
-						<span className='location'>{postDetails?.Location}</span>
+						<span className='location'>{lowerCaseAllWordsExceptFirstLetters(postDetails?.Location ?? "")}</span>
 					</div>
 				</div>
 				<div className='post-description'>

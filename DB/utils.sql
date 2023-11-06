@@ -13,3 +13,34 @@ INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES ("222asdfasdf.
 INSERT INTO ContactInformation(Body, AccountId, ContactTypeId) VALUES ("0 (555) 555 55 55", 11, 1);
 INSERT INTO ContactInformation(Body, AccountId, ContactTypeId) VALUES ("irsat@gmail.com", 11, 4);
 INSERT INTO ContactInformation(Body, AccountId, ContactTypeId) VALUES ("@irsatirsat", 11, 5);
+
+
+
+
+
+
+# MESSAGING
+USE ZanaatHan;
+
+INSERT INTO MThread() VALUES();
+
+INSERT INTO MThreadParticipant(LastSeenAt, AccountId, ThreadId) VALUES(NOW(), 9, 1);
+INSERT INTO MThreadParticipant(LastSeenAt, AccountId, ThreadId) VALUES(NOW(), 11, 1);
+
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('Helloooo!', NOW(), 0, 9, 1);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('Hi, how are you? What are you up to?', NOW(), 0, 11, 1);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('Just working on a project.', NOW(), 0, 9, 1);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('No money?', NOW(), 0, 11, 1);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('No money...', NOW(), 0, 9, 1);
+
+
+
+
+
+
+
+
+
+
+
+

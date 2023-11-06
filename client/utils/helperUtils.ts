@@ -4,7 +4,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const isNullOrEmpty = (value: any): boolean => {
   if (!value || !value.trim()) {
-      return true;
+    return true;
   }
   return false;
 }
@@ -59,4 +59,10 @@ export const formatSecondsAgo = (secondsDifference: number) => {
 
 export const imageLink = (name: string) => {
   return `${apiUrl}/images/${name}`;
+}
+
+export const lowerCaseAllWordsExceptFirstLetters = (string: string) => {
+  return string.replace(/\S*/g, (word) =>
+    `${word.slice(0, 1)}${word.slice(1).toLocaleLowerCase("tr-TR")}`
+  );
 }
