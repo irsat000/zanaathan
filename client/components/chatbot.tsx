@@ -2,7 +2,7 @@ import { useUser } from '@/context/userContext';
 import Link from 'next/link';
 import Image from 'next/image'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { Fullscreen, PlusLg, ThreeDots, XLg } from 'react-bootstrap-icons';
+import { Fullscreen, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
@@ -74,8 +74,20 @@ const Chatbot: React.FC<{
                             <button type='button' className='chatbot-shortcut-button' onClick={() => setChatbotActive(false)}><XLg /></button>
                         </div>
                     </div>
-                    <div className="chatbot-messages">
-
+                    <div className="message-box">
+                        <div className="messages">
+                            {[...Array(10)].map((j, i) =>
+                                <div className={`message-item ${i % 2 === 0 ? 'receiver' : 'you'}`}>
+                                    <p>
+                                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Impedit deleniti quibusdam natus veniam sapiente odit, consequuntur illo necessitatibus cupiditate nihil praesentium et saepe perspiciatis, quod delectus aperiam magni nobis! Quo.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="send-message-container">
+                        <input type='text' placeholder='Mesaj gönder...' className='message-input' />
+                        <button className='send'><Send /></button>
                     </div>
                 </div>
             </div>
