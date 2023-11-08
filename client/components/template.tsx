@@ -2,30 +2,23 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { Bell, ChatDots, Fullscreen, List, PersonPlus, PlusLg, PlusSquare, ThreeDots, XLg } from 'react-bootstrap-icons'
+import { Bell, ChatDots, List, PersonPlus, PlusSquare, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 import AuthModal, { AuthModalState } from './authModal'
 import { useUser } from '@/context/userContext'
-import { fetchJwt, readJwtCookie, removeJwtCookie } from '@/utils/userUtils'
-import Chatbot from './chatbot'
-import { apiUrl } from '@/utils/helperUtils'
+import { readJwtCookie, removeJwtCookie } from '@/utils/userUtils'
+import Chatbot, { UserContacts } from './chatbot'
 
 
-export interface UserContacts {
-	ThreadId: number;
-	LastMessage: string | null;
-	LastMessageDate: string | null;
-	ReceiverAvatar: string | null;
-	ReceiverFullName: string | null;
-	ReceiverUsername: string;
-}
 
 const Template: React.FC<{
 	children: ReactNode
 }> = ({ children }) => {
+	// Get contacts for messaging
+	const [userContacts, setUserContacts] = useState<UserContacts[]>([]);
+
 	// User context
 	const { userData, setUserData } = useUser();
-
 	// Decode jwt and login if token is still there
 	useEffect(() => {
 		const info = readJwtCookie();
@@ -33,37 +26,13 @@ const Template: React.FC<{
 			setUserData(info);
 		}
 	}, []);
-
 	// Logout function
 	// Empties the user context and removes the cookie
 	const handleSignOut = () => {
 		setUserData(null);
 		removeJwtCookie();
+		setUserContacts([]);
 	}
-
-	// Get contacts for messaging
-	const [userContacts, setUserContacts] = useState<UserContacts[]>([]);
-	useEffect(() => {
-		// Check jwt
-		const jwt = fetchJwt();
-		if (!jwt) return;
-
-		fetch(`${apiUrl}/chat/get-contacts`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json; charset=utf-8',
-				'Authorization': `Bearer ${jwt}`
-			}
-		})
-			.then(res => res.ok ? res.json() : Promise.reject(res))
-			.then(data => {
-				setUserContacts(data.threadList);
-				// todo: cache in session
-			})
-			.catch((res) => {
-				console.log('Sunucuyla bağlantıda hata');
-			});
-	}, []);
 
 	const [authModalActive, setAuthModalActive] = useState<AuthModalState>('none'); // Login/Register modal = auth modal
 	const [drawerActive, setDrawerActive] = useState(false); // Drawer for mobile
@@ -111,7 +80,10 @@ const Template: React.FC<{
 					chatbotActive={chatbotActive} setChatbotActive={setChatbotActive}
 					userContacts={userContacts} setUserContacts={setUserContacts}
 				/>
-				<AuthModal authModalActive={authModalActive} setAuthModalActive={setAuthModalActive} />
+				<AuthModal
+					authModalActive={authModalActive} setAuthModalActive={setAuthModalActive}
+					setUserContacts={setUserContacts}
+				/>
 				<div className={`drawer-container ${drawerActive && 'active'}`} onClick={() => setDrawerActive(false)}>
 					<div className="drawer" onClick={(e) => { e.stopPropagation() }}>
 						<Link href={'/'} className='drawer-site-logo'>Zanaat.Han</Link>

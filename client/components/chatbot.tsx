@@ -4,8 +4,16 @@ import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { Fullscreen, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
 import { imageLink, toShortLocal } from '@/utils/helperUtils';
-import { UserContacts } from './template';
+import { fetchUserContacts } from '@/utils/userUtils';
 
+export interface UserContacts {
+    ThreadId: number;
+    LastMessage: string | null;
+    LastMessageDate: string | null;
+    ReceiverAvatar: string | null;
+    ReceiverFullName: string | null;
+    ReceiverUsername: string;
+}
 
 const Chatbot: React.FC<{
     chatbotActive: boolean,
@@ -13,6 +21,10 @@ const Chatbot: React.FC<{
     userContacts: UserContacts[],
     setUserContacts: (v: UserContacts[]) => void,
 }> = ({ chatbotActive, setChatbotActive, userContacts, setUserContacts }) => {
+    // Fetch thread list for messaging (PART OF THE TEMPLATE, MOUNTS ONCE)
+    useEffect(() => {
+        fetchUserContacts(setUserContacts);
+    }, []);
 
     // Handle clicking outside chatbot
     const chatbotRef = useRef<HTMLDivElement>(null);
@@ -32,6 +44,7 @@ const Chatbot: React.FC<{
         };
     }, [chatbotActive]);
 
+    // Switch between contacts/threads.
     const [activeContact, setActiveContact] = useState(0);
 
     return (

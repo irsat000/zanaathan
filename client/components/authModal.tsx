@@ -1,26 +1,28 @@
 import { useUser } from '@/context/userContext';
 import { apiUrl } from '@/utils/helperUtils';
-import { decodedJwt, storeJwt } from '@/utils/userUtils';
+import { decodedJwt, fetchUserContacts, storeJwt } from '@/utils/userUtils';
 import Link from 'next/link';
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
+import { UserContacts } from './chatbot';
 
 export type AuthModalState = 'signin' | 'signup' | 'none';
 
 const AuthModal: React.FC<{
     authModalActive: AuthModalState,
-    setAuthModalActive: (v: AuthModalState) => void
-}> = ({ authModalActive, setAuthModalActive }) => {
+    setAuthModalActive: (v: AuthModalState) => void,
+    setUserContacts: (v: UserContacts[]) => void,
+}> = ({ authModalActive, setAuthModalActive, setUserContacts }) => {
+    // Get user context
     const { setUserData } = useUser();
-
+    // Auth modal - informing the user
     const [authModalWarning, setAuthModalWarning] = useState<string | null>(null);
     const [authModalSuccess, setAuthModalSuccess] = useState<string | null>(null);
-
+    // Form data states
     const [loginFormData, setLoginFormData] = useState({
         username: '',
         password: ''
     });
-
     const [registerFormData, setRegisterFormData] = useState({
         email: '',
         username: '',
@@ -28,12 +30,14 @@ const AuthModal: React.FC<{
         fullName: ''
     });
 
+    // On and off auth modal by value
     const handleAuthModal = (state: AuthModalState) => {
         setAuthModalWarning(null);
         setAuthModalSuccess(null);
         setAuthModalActive(state);
     }
 
+    // Update login form values
     const handleLoginFormChange = (e: any) => {
         const { name, value } = e.target;
         setLoginFormData((prevData: any) => ({
@@ -42,6 +46,7 @@ const AuthModal: React.FC<{
         }));
     };
 
+    // Update register form values
     const handleRegisterFormChange = (e: any) => {
         const { name, value } = e.target;
         setRegisterFormData((prevData: any) => ({
@@ -59,13 +64,18 @@ const AuthModal: React.FC<{
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
+                // store jwt in cookies
                 storeJwt(data.JWT);
+                // set user data in user context
                 setUserData(decodedJwt(data.JWT));
+                // remove warning on modal if there is any
                 setAuthModalWarning(null);
+                // inform the user about successful login
                 setAuthModalSuccess('Giriş başarılı!');
-                setTimeout(() => {
-                    handleAuthModal('none');
-                }, 1000);
+                // fetch user contacts/thread list for messaging feature
+                fetchUserContacts(setUserContacts);
+                // close modal after a second
+                setTimeout(() => handleAuthModal('none'), 1000);
             })
             .catch((res) => {
                 if ([400, 401, 404].includes(res.status)) setAuthModalWarning('*Kullanıcı adı veya şifre hatalı*');
@@ -82,13 +92,16 @@ const AuthModal: React.FC<{
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
+                // store jwt in cookies
                 storeJwt(data.JWT);
+                // set user data in user context
                 setUserData(decodedJwt(data.JWT));
+                // remove warning on modal if there is any
                 setAuthModalWarning(null);
+                // inform the user about successful register
                 setAuthModalSuccess('Kayıt başarılı!');
-                setTimeout(() => {
-                    handleAuthModal('none');
-                }, 1000);
+                // close modal after a second
+                setTimeout(() => handleAuthModal('none'), 1000);
             })
             .catch((res) => {
                 if (res.status === 400) setAuthModalWarning('*Form bilgileri yetersiz*');

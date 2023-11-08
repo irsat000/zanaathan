@@ -26,9 +26,10 @@ interface PostDetails {
 }
 
 export default function PostDetails() {
+	// Get path
 	const router = useRouter();
 	const { category, postId } = router.query;
-
+	// Details for the current post
 	const [postDetails, setPostDetails] = useState<PostDetails | null>(null);
 
 	useEffect(() => {

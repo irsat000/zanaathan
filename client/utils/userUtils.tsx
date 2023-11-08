@@ -1,5 +1,7 @@
 
 import Cookies from 'js-cookie';
+import { apiUrl } from './helperUtils';
+import { UserContacts } from '@/components/chatbot';
 const jwt = require('jsonwebtoken');
 
 export const decodedJwt = (token: string) => {
@@ -35,4 +37,28 @@ export const readJwtCookie = () => {
 
 export const removeJwtCookie = () => {
     Cookies.remove('jwtToken');
+}
+
+
+
+export const fetchUserContacts = (setUserContacts: (v: UserContacts[]) => void) => {
+    // Check jwt
+    const jwt = fetchJwt();
+    if (!jwt) return;
+
+    fetch(`${apiUrl}/chat/get-contacts`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Authorization': `Bearer ${jwt}`
+        }
+    })
+        .then(res => res.ok ? res.json() : Promise.reject(res))
+        .then(data => {
+            setUserContacts(data.threadList);
+            // todo: cache in session
+        })
+        .catch((res) => {
+            console.log('Sunucuyla bağlantıda hata');
+        });
 }

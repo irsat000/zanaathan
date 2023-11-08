@@ -17,9 +17,11 @@ interface Post {
 }
 
 export default function Category() {
+  // Get category from path
   const router = useRouter();
   const { category } = router.query;
 
+  // This state is for filters
   const [categoryInfo, setCategoryInfo] = useState<{
     code: string | null,
     name: string | null,
@@ -29,9 +31,10 @@ export default function Category() {
     }>
   }>({ code: null, name: null, subCates: [] });
 
+  // Get category info by category code
   useEffect(() => {
     if (!category) return;
-    
+
     // Get name by searching with code in category list from categories.json file
     // and assign both to categoryInfo
     const categoryObj = categoryList.find(cate => cate.Code === category);
@@ -43,7 +46,7 @@ export default function Category() {
     }
   }, [category]);
 
-
+  // Fetch posts
   const [postList, setPostList] = useState<Post[]>([]);
   useEffect(() => {
     if (!category) return;
