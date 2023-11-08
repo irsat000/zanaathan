@@ -1,9 +1,9 @@
 import { useUser } from '@/context/userContext';
+import { apiUrl } from '@/utils/helperUtils';
 import { decodedJwt, storeJwt } from '@/utils/userUtils';
 import Link from 'next/link';
 import { useContext, useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export type AuthModalState = 'signin' | 'signup' | 'none';
 

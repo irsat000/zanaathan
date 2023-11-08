@@ -14,10 +14,10 @@ exports.getContacts = (req: Request, res: Response) => {
     try {
         const query = `
             SELECT
-                DISTINCT
-                Account.Username AS ReceiverUsername,
+                DISTINCT Message.ThreadId AS ThreadId,
                 Message.CreatedAt AS LastMessageDate,
                 Message.Body AS LastMessage,
+                Account.Username AS ReceiverUsername,
                 Account.FullName AS ReceiverFullName,
                 Account.Avatar AS ReceiverAvatar
             FROM Message

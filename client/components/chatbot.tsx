@@ -1,25 +1,18 @@
 import { useUser } from '@/context/userContext';
 import Link from 'next/link';
 import Image from 'next/image'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Fullscreen, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
-import { imageLink } from '@/utils/helperUtils';
-import { fetchJwt } from '@/utils/userUtils';
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+import { imageLink, toShortLocal } from '@/utils/helperUtils';
+import { UserContacts } from './template';
 
-
-interface MyContacts {
-    LastMessage: string | null;
-    LastMessageDate: string | null;
-    ReceiverAvatar: string | null;
-    ReceiverFullName: string | null;
-    ReceiverUsername: string;
-}
 
 const Chatbot: React.FC<{
     chatbotActive: boolean,
-    setChatbotActive: (v: boolean) => void
-}> = ({ chatbotActive, setChatbotActive }) => {
+    setChatbotActive: (v: boolean) => void,
+    userContacts: UserContacts[],
+    setUserContacts: (v: UserContacts[]) => void,
+}> = ({ chatbotActive, setChatbotActive, userContacts, setUserContacts }) => {
 
     // Handle clicking outside chatbot
     const chatbotRef = useRef<HTMLDivElement>(null);
@@ -39,31 +32,6 @@ const Chatbot: React.FC<{
         };
     }, [chatbotActive]);
 
-    const [myContacts, setMyContacts] = useState<MyContacts[]>([]);
-
-    // Must be in template depending on UserContext
-    useEffect(() => {
-        // Check jwt
-        const jwt = fetchJwt();
-        if (!jwt) return;
-
-        fetch(`${apiUrl}/chat/get-contacts`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Authorization': `Bearer ${jwt}`
-            }
-        })
-            .then(res => res.ok ? res.json() : Promise.reject(res))
-            .then(data => {
-                setMyContacts(data.threadList);
-                // todo: cache in session
-            })
-            .catch((res) => {
-                console.log('Sunucuyla bağlantıda hata');
-            });
-    }, []);
-
     const [activeContact, setActiveContact] = useState(0);
 
     return (
@@ -75,11 +43,14 @@ const Chatbot: React.FC<{
                         <button type='button' className='chatbot-add-user'>Yeni<PlusLg /></button>
                     </div>
                     <div className="chatbot-contacts">
-                        {myContacts && myContacts.length > 0 ?
-                            myContacts.map((contact, i) =>
+                        {userContacts && userContacts.length > 0 ?
+                            userContacts.map((contact, i) =>
                                 <div key={i}
                                     className={`contact-item ${i === activeContact ? 'active' : 'default'}`}
-                                    onClick={() => setActiveContact(i)}
+                                    onClick={() => {
+                                        setActiveContact(i)
+                                        // Todo: fetch messages by thread id
+                                    }}
                                 >
                                     <div className="profile-picture">
                                         {contact.ReceiverAvatar ?
@@ -95,7 +66,10 @@ const Chatbot: React.FC<{
                                     <div className="body">
                                         <div className="person-header">
                                             <span className='name'>{contact.ReceiverFullName ?? contact.ReceiverUsername}</span>
-                                            <span className="last-contact">{contact.LastMessageDate}</span>
+                                            {contact.LastMessageDate ?
+                                                <span className="last-contact">{toShortLocal(contact.LastMessageDate)}</span>
+                                                : <></>
+                                            }
                                         </div>
                                         <span className='last-message'>{contact.ReceiverFullName ?? contact.ReceiverUsername}: {contact.LastMessage}</span>
                                     </div>

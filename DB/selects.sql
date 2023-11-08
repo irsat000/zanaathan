@@ -78,7 +78,7 @@ ORDER BY Message.CreatedAt DESC;
 
 # With the receiver's name and avatar
 SELECT
-  DISTINCT Message.Id AS LastMessageId,
+  DISTINCT Message.ThreadId AS ThreadId,
   Message.CreatedAt AS LastMessageDate,
   Message.Body AS LastMessage,
   Account.Username AS ReceiverUsername,

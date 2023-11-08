@@ -6,9 +6,19 @@ import { Bell, ChatDots, Fullscreen, List, PersonPlus, PlusLg, PlusSquare, Three
 import Link from 'next/link'
 import AuthModal, { AuthModalState } from './authModal'
 import { useUser } from '@/context/userContext'
-import { readJwtCookie, removeJwtCookie } from '@/utils/userUtils'
+import { fetchJwt, readJwtCookie, removeJwtCookie } from '@/utils/userUtils'
 import Chatbot from './chatbot'
+import { apiUrl } from '@/utils/helperUtils'
 
+
+export interface UserContacts {
+	ThreadId: number;
+	LastMessage: string | null;
+	LastMessageDate: string | null;
+	ReceiverAvatar: string | null;
+	ReceiverFullName: string | null;
+	ReceiverUsername: string;
+}
 
 const Template: React.FC<{
 	children: ReactNode
@@ -30,6 +40,30 @@ const Template: React.FC<{
 		setUserData(null);
 		removeJwtCookie();
 	}
+
+	// Get contacts for messaging
+	const [userContacts, setUserContacts] = useState<UserContacts[]>([]);
+	useEffect(() => {
+		// Check jwt
+		const jwt = fetchJwt();
+		if (!jwt) return;
+
+		fetch(`${apiUrl}/chat/get-contacts`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json; charset=utf-8',
+				'Authorization': `Bearer ${jwt}`
+			}
+		})
+			.then(res => res.ok ? res.json() : Promise.reject(res))
+			.then(data => {
+				setUserContacts(data.threadList);
+				// todo: cache in session
+			})
+			.catch((res) => {
+				console.log('Sunucuyla bağlantıda hata');
+			});
+	}, []);
 
 	const [authModalActive, setAuthModalActive] = useState<AuthModalState>('none'); // Login/Register modal = auth modal
 	const [drawerActive, setDrawerActive] = useState(false); // Drawer for mobile
@@ -58,6 +92,7 @@ const Template: React.FC<{
 		document.addEventListener("click", handleDocumentClick);
 
 		return () => {
+			// Probably won't go here because this is from the template
 			document.removeEventListener("click", handleDocumentClick);
 		};
 	}, [userMenuActive]);
@@ -72,7 +107,10 @@ const Template: React.FC<{
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<div className='page-content'>
-				<Chatbot chatbotActive={chatbotActive} setChatbotActive={setChatbotActive} />
+				<Chatbot
+					chatbotActive={chatbotActive} setChatbotActive={setChatbotActive}
+					userContacts={userContacts} setUserContacts={setUserContacts}
+				/>
 				<AuthModal authModalActive={authModalActive} setAuthModalActive={setAuthModalActive} />
 				<div className={`drawer-container ${drawerActive && 'active'}`} onClick={() => setDrawerActive(false)}>
 					<div className="drawer" onClick={(e) => { e.stopPropagation() }}>

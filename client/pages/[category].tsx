@@ -6,8 +6,7 @@ import { ChevronDown, ChevronRight, Search, XLg } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { formatSecondsAgo, imageLink } from '@/utils/helperUtils'
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+import { apiUrl, formatSecondsAgo, imageLink } from '@/utils/helperUtils'
 
 interface Post {
   Id: number;

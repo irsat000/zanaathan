@@ -1,5 +1,5 @@
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+export const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
 export const isNullOrEmpty = (value: any): boolean => {
@@ -65,4 +65,28 @@ export const lowerCaseAllWordsExceptFirstLetters = (string: string) => {
   return string.replace(/\S*/g, (word) =>
     `${word.slice(0, 1)}${word.slice(1).toLocaleLowerCase("tr-TR")}`
   );
+}
+
+
+export const toShortLocal = (dateString: string) => {
+  const locale = 'tr-TR';
+  const utcDate = new Date(dateString);
+  const currentDate = new Date();
+
+  if (currentDate.toDateString() === utcDate.toDateString()) {
+    // Today
+    return utcDate.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+  } else if (
+    utcDate >= new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) &&
+    utcDate < new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 7)
+  ) {
+    // This week
+    return utcDate.toLocaleDateString(locale, { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+  } else if (utcDate.getFullYear() === currentDate.getFullYear()) {
+    // Within the year
+    return utcDate.toLocaleDateString(locale, { day: '2-digit', month: 'short' });
+  } else {
+    // Past years
+    return utcDate.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
+  }
 }

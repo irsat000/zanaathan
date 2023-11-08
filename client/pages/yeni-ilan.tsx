@@ -6,7 +6,7 @@ import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+import { apiUrl } from '@/utils/helperUtils'
 
 interface City {
   Id: number;
