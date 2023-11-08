@@ -76,10 +76,10 @@ const Template: React.FC<{
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<div className='page-content'>
-				<Chatbot
+				{userData ? <Chatbot
 					chatbotActive={chatbotActive} setChatbotActive={setChatbotActive}
 					userContacts={userContacts} setUserContacts={setUserContacts}
-				/>
+				/> : <></>}
 				<AuthModal
 					authModalActive={authModalActive} setAuthModalActive={setAuthModalActive}
 					setUserContacts={setUserContacts}

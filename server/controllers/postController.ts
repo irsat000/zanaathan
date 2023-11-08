@@ -38,6 +38,8 @@ exports.getPosts = (req: Request, res: Response) => {
 exports.getPostDetails = (req: Request, res: Response) => {
     try {
         const postId = req.params.postId;
+        if(!postId) res.status(400).json({ error: 'Bad request' });
+        
         const query =
             `SELECT
                 JP.Id,

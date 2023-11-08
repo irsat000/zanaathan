@@ -2,8 +2,8 @@ import { useUser } from '@/context/userContext';
 import Link from 'next/link';
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { Fullscreen, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
-import { imageLink, toShortLocal } from '@/utils/helperUtils';
+import { Fullscreen, Person, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
+import { apiUrl, imageLink, toShortLocal } from '@/utils/helperUtils';
 import { fetchUserContacts } from '@/utils/userUtils';
 
 export interface UserContacts {
@@ -15,16 +15,44 @@ export interface UserContacts {
     ReceiverUsername: string;
 }
 
+interface ThreadMessage {
+    Id: number;
+    Body: string;
+    AccountId: number;
+    CreatedAt: string;
+}
+
 const Chatbot: React.FC<{
     chatbotActive: boolean,
     setChatbotActive: (v: boolean) => void,
     userContacts: UserContacts[],
     setUserContacts: (v: UserContacts[]) => void,
 }> = ({ chatbotActive, setChatbotActive, userContacts, setUserContacts }) => {
+    // User context
+    const { userData, setUserData } = useUser();
+
     // Fetch thread list for messaging (PART OF THE TEMPLATE, MOUNTS ONCE)
     useEffect(() => {
         fetchUserContacts(setUserContacts);
     }, []);
+
+    // Function for fetching a thread's messages
+    const fetchThreadMessages = (threadId: number) => {
+        //const threadId = userContacts.length > 0 ? userContacts[activeContact]?.ThreadId : null;
+        //if (!threadId) return;
+
+        fetch(`${apiUrl}/chat/get-thread/${threadId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(data => {
+                setThreadMessages(data.messages);
+            })
+            .catch((res) => {
+                console.log('Sunucuyla bağlantıda hata');
+            });
+    };
 
     // Handle clicking outside chatbot
     const chatbotRef = useRef<HTMLDivElement>(null);
@@ -44,8 +72,10 @@ const Chatbot: React.FC<{
         };
     }, [chatbotActive]);
 
-    // Switch between contacts/threads.
-    const [activeContact, setActiveContact] = useState(0);
+    // Switch between contacts.
+    const [activeContact, setActiveContact] = useState<number | null>(null);
+    // Keeps thread messages
+    const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
 
     return (
         <div className={`chatbot-container ${chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
@@ -56,39 +86,37 @@ const Chatbot: React.FC<{
                         <button type='button' className='chatbot-add-user'>Yeni<PlusLg /></button>
                     </div>
                     <div className="chatbot-contacts">
-                        {userContacts && userContacts.length > 0 ?
-                            userContacts.map((contact, i) =>
-                                <div key={i}
-                                    className={`contact-item ${i === activeContact ? 'active' : 'default'}`}
-                                    onClick={() => {
-                                        setActiveContact(i)
-                                        // Todo: fetch messages by thread id
-                                    }}
-                                >
-                                    <div className="profile-picture">
-                                        {contact.ReceiverAvatar ?
-                                            <Image
-                                                loader={() => imageLink(contact.ReceiverAvatar!)}
-                                                src={imageLink(contact.ReceiverAvatar)}
-                                                alt={''}
-                                                width={0}
-                                                height={0}
-                                            /> : <></>
+                        {userContacts.length > 0 ? userContacts.map((contact, i) =>
+                            <div key={i}
+                                className={`contact-item ${i === activeContact ? 'active' : 'default'}`}
+                                onClick={() => {
+                                    setActiveContact(i);
+                                    fetchThreadMessages(contact.ThreadId);
+                                }}
+                            >
+                                <div className="profile-picture">
+                                    {contact.ReceiverAvatar ?
+                                        <Image
+                                            loader={() => imageLink(contact.ReceiverAvatar!)}
+                                            src={imageLink(contact.ReceiverAvatar)}
+                                            alt={''}
+                                            width={0}
+                                            height={0}
+                                        /> : <Person className='no-ppic' />
+                                    }
+                                </div>
+                                <div className="body">
+                                    <div className="person-header">
+                                        <span className='name'>{contact.ReceiverFullName ?? contact.ReceiverUsername}</span>
+                                        {contact.LastMessageDate ?
+                                            <span className="last-contact">{toShortLocal(contact.LastMessageDate)}</span>
+                                            : <></>
                                         }
                                     </div>
-                                    <div className="body">
-                                        <div className="person-header">
-                                            <span className='name'>{contact.ReceiverFullName ?? contact.ReceiverUsername}</span>
-                                            {contact.LastMessageDate ?
-                                                <span className="last-contact">{toShortLocal(contact.LastMessageDate)}</span>
-                                                : <></>
-                                            }
-                                        </div>
-                                        <span className='last-message'>{contact.ReceiverFullName ?? contact.ReceiverUsername}: {contact.LastMessage}</span>
-                                    </div>
+                                    <span className='last-message'>{contact.ReceiverFullName ?? contact.ReceiverUsername}: {contact.LastMessage}</span>
                                 </div>
-                            ) : <></>
-                        }
+                            </div>
+                        ) : <></>}
                     </div>
                 </div>
                 <div className="chatbot-body">
@@ -102,13 +130,15 @@ const Chatbot: React.FC<{
                     </div>
                     <div className="message-box">
                         <div className="messages">
-                            {[...Array(10)].map((j, i) =>
-                                <div key={i} className={`message-item ${i % 2 === 0 ? 'receiver' : 'you'}`}>
-                                    <p>
-                                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Impedit deleniti quibusdam natus veniam sapiente odit, consequuntur illo necessitatibus cupiditate nihil praesentium et saepe perspiciatis, quod delectus aperiam magni nobis! Quo.
-                                    </p>
-                                </div>
-                            )}
+                            {threadMessages.length > 0 ? threadMessages.map((message, i) => {
+                                return (
+                                    <div key={i} className={`message-item ${message.AccountId === userData.sub ? 'you' : 'receiver'}`}>
+                                        <p>
+                                            {message.Body}
+                                        </p>
+                                    </div>)
+                            }
+                            ) : <span className='no-thread-selected'>Mesaj görüntülemek için menüden kişi seçiniz.</span>}
                         </div>
                     </div>
                     <div className="send-message-container">

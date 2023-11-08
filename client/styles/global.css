@@ -569,11 +569,18 @@ body select {
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .profile-picture {
   padding: 8px;
   display: flex;
+  width: 60px;
+  height: 60px;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .profile-picture img {
   width: 44px;
   height: 44px;
   border-radius: 50%;
+}
+.chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .profile-picture .no-ppic {
+  font-size: 44px;
+  display: flex;
+  opacity: 0.2;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .body {
   flex-grow: 1;
@@ -647,6 +654,7 @@ body select {
   overflow: hidden;
   font-size: 1.1rem;
   font-weight: 300;
+  flex-grow: 1;
 }
 .chatbot-container .chatbot .chatbot-body .message-box .messages {
   display: flex;
@@ -654,6 +662,12 @@ body select {
   gap: 10px;
   padding: 14px 10px;
   overflow-y: auto;
+  flex-grow: 1;
+}
+.chatbot-container .chatbot .chatbot-body .message-box .messages .no-thread-selected {
+  margin: auto 0;
+  text-align: center;
+  font-size: 1.2rem;
 }
 .chatbot-container .chatbot .chatbot-body .message-box .messages .message-item {
   display: flex;
@@ -672,7 +686,6 @@ body select {
   border-radius: 10px 10px 0 10px;
 }
 .chatbot-container .chatbot .chatbot-body .send-message-container {
-  margin-top: auto;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

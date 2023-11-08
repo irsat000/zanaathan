@@ -32,9 +32,24 @@ INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('Hi,
 INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('Just working on a project.', NOW(), 0, 9, 1);
 INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('No money?', NOW(), 0, 11, 1);
 INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('No money...', NOW(), 0, 9, 1);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('But I have some time.', NOW(), 0, 9, 1);
+
+# second - This is a TEST, will not create an another thread with the same two users
+
+INSERT INTO MThreadParticipant(LastSeenAt, AccountId, ThreadId) VALUES(NOW(), 9, 2);
+INSERT INTO MThreadParticipant(LastSeenAt, AccountId, ThreadId) VALUES(NOW(), 11, 2);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('1111111!', NOW(), 0, 9, 2);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('2222222222222', NOW(), 0, 11, 2);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('33333333', NOW(), 0, 11, 2);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('44444444444444444444', NOW(), 0, 11, 2);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('55555555555', NOW(), 0, 9, 2);
+INSERT INTO Message(Body, CreatedAt, IsDeleted, AccountId, ThreadId) VALUES('666666666666666666666', NOW(), 0, 9, 2);
 
 
 
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM `Message`;
+SET SQL_SAFE_UPDATES = 1;
 
 
 

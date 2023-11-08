@@ -1,11 +1,21 @@
 import React, { useContext, useState } from 'react';
 
-/*
+/* DEPRECATED
 export interface IUserData {
+    id: number;
     username: string;
     email: string;
     full_name: string | null;
 }*/
+
+/* Example;
+    email: "aasf@gmail.com"
+    exp: 1700076515069
+    fullName: "İrşat Akdeniz" | null
+    iat: 1699471715
+    sub: 11    ---> id becomes sub in jwt
+    username: "lala1"
+*/
 
 export const UserData = React.createContext({} as any);
 

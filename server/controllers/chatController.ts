@@ -52,3 +52,47 @@ exports.getContacts = (req: Request, res: Response) => {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
 }
+
+
+// TODO: Check if person is authorized by checking if they are participated in the thread
+exports.getThread = (req: Request, res: Response) => {
+    try {
+        const threadId = req.params.threadId;
+        if (!threadId) res.status(400).json({ error: 'Bad request' });
+
+        const query = `
+            SELECT M.Id, M.Body, M.AccountId, M.CreatedAt
+            FROM Message AS M
+            INNER JOIN MThread T ON M.ThreadId = T.Id
+            WHERE M.IsDeleted = 0 AND M.ThreadId = ?
+            ORDER BY CreatedAt;
+        `;
+        pool.query(query, [threadId], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            return res.status(200).json({ messages: results });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+
+
+
+exports.asdf = (req: Request, res: Response) => {
+    try {
+        const query = "";
+        pool.query(query, (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            return res.status(200).json({});
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}

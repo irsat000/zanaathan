@@ -54,12 +54,6 @@ SELECT * FROM Account;
 USE ZanaatHan;
 # Get contacts
 
-
-
-
-
-
-
 # Without the names of the others
 SELECT
   Message.Id, Message.CreatedAt, Message.Body, Account.Username AS LastMessagerName
@@ -73,9 +67,6 @@ WHERE ( Message.Id in
          GROUP BY TP.ThreadId)
       )
 ORDER BY Message.CreatedAt DESC;
-
-
-
 # With the receiver's name and avatar
 SELECT
   DISTINCT Message.ThreadId AS ThreadId,
@@ -103,4 +94,13 @@ ORDER BY LastMessageDate DESC;
 
 
 
+
+
+USE ZanaatHan;
+# Get message thread
+SELECT M.Id, M.Body, M.AccountId, M.CreatedAt
+FROM Message AS M
+INNER JOIN MThread T ON M.ThreadId = T.Id
+WHERE M.IsDeleted = 0 AND M.ThreadId = 1
+ORDER BY CreatedAt;
 
