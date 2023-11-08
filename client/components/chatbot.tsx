@@ -3,8 +3,18 @@ import Link from 'next/link';
 import Image from 'next/image'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Fullscreen, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
+import { imageLink } from '@/utils/helperUtils';
+import { fetchJwt } from '@/utils/userUtils';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+
+interface MyContacts {
+    LastMessage: string | null;
+    LastMessageDate: string | null;
+    ReceiverAvatar: string | null;
+    ReceiverFullName: string | null;
+    ReceiverUsername: string;
+}
 
 const Chatbot: React.FC<{
     chatbotActive: boolean,
@@ -29,6 +39,31 @@ const Chatbot: React.FC<{
         };
     }, [chatbotActive]);
 
+    const [myContacts, setMyContacts] = useState<MyContacts[]>([]);
+
+    // Must be in template depending on UserContext
+    useEffect(() => {
+        // Check jwt
+        const jwt = fetchJwt();
+        if (!jwt) return;
+
+        fetch(`${apiUrl}/chat/get-contacts`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${jwt}`
+            }
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(data => {
+                setMyContacts(data.threadList);
+                // todo: cache in session
+            })
+            .catch((res) => {
+                console.log('Sunucuyla bağlantıda hata');
+            });
+    }, []);
+
     const [activeContact, setActiveContact] = useState(0);
 
     return (
@@ -40,29 +75,33 @@ const Chatbot: React.FC<{
                         <button type='button' className='chatbot-add-user'>Yeni<PlusLg /></button>
                     </div>
                     <div className="chatbot-contacts">
-                        {[...Array(10)].map((j, i) =>
-                            <div
-                                className={`contact-item ${i === activeContact ? 'active' : 'default'}`}
-                                onClick={() => setActiveContact(i)}
-                            >
-                                <div className="profile-picture">
-                                    <Image
-                                        loader={() => 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
-                                        src={'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
-                                        alt={''}
-                                        width={0}
-                                        height={0}
-                                    />
-                                </div>
-                                <div className="body">
-                                    <div className="person-header">
-                                        <span className='name'>İrşat Akdeniz</span>
-                                        <span className="last-contact">12 Ağus</span>
+                        {myContacts && myContacts.length > 0 ?
+                            myContacts.map((contact, i) =>
+                                <div key={i}
+                                    className={`contact-item ${i === activeContact ? 'active' : 'default'}`}
+                                    onClick={() => setActiveContact(i)}
+                                >
+                                    <div className="profile-picture">
+                                        {contact.ReceiverAvatar ?
+                                            <Image
+                                                loader={() => imageLink(contact.ReceiverAvatar!)}
+                                                src={imageLink(contact.ReceiverAvatar)}
+                                                alt={''}
+                                                width={0}
+                                                height={0}
+                                            /> : <></>
+                                        }
                                     </div>
-                                    <span className='last-message'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Omnis eveniet ipsum.</span>
+                                    <div className="body">
+                                        <div className="person-header">
+                                            <span className='name'>{contact.ReceiverFullName ?? contact.ReceiverUsername}</span>
+                                            <span className="last-contact">{contact.LastMessageDate}</span>
+                                        </div>
+                                        <span className='last-message'>{contact.ReceiverFullName ?? contact.ReceiverUsername}: {contact.LastMessage}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            ) : <></>
+                        }
                     </div>
                 </div>
                 <div className="chatbot-body">
@@ -77,7 +116,7 @@ const Chatbot: React.FC<{
                     <div className="message-box">
                         <div className="messages">
                             {[...Array(10)].map((j, i) =>
-                                <div className={`message-item ${i % 2 === 0 ? 'receiver' : 'you'}`}>
+                                <div key={i} className={`message-item ${i % 2 === 0 ? 'receiver' : 'you'}`}>
                                     <p>
                                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Impedit deleniti quibusdam natus veniam sapiente odit, consequuntur illo necessitatibus cupiditate nihil praesentium et saepe perspiciatis, quod delectus aperiam magni nobis! Quo.
                                     </p>
