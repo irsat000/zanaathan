@@ -26,6 +26,34 @@ CREATE TABLE `Neighborhood` (
     CONSTRAINT `FK_Hood_District` FOREIGN KEY (`DistrictId`) REFERENCES `District`(`Id`)
 );*/
 
+/* CHANGED MY MIND
+CREATE TABLE `MThread` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `MThreadParticipant` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `LastSeenAt` DATETIME NOT NULL,
+    `AccountId` INT NOT NULL,
+    `ThreadId` INT NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_MTParticipant_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
+    CONSTRAINT `FK_MTParticipant_Thread` FOREIGN KEY (`ThreadId`) REFERENCES `MThreadParticipant`(`Id`)
+);
+
+CREATE TABLE `Message` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `Body` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `CreatedAt` DATETIME NOT NULL,
+    `IsDeleted` BOOLEAN NOT NULL,
+    `AccountId` INT NOT NULL,
+    `ThreadId` INT NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Message_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
+    CONSTRAINT `FK_Message_Thread` FOREIGN KEY (`ThreadId`) REFERENCES `MThreadParticipant`(`Id`)
+);*/
+
 
 CREATE TABLE `Account` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
@@ -54,31 +82,16 @@ CREATE TABLE `ContactInformation` (
     CONSTRAINT `FK_ContactInformation_ContactType` FOREIGN KEY (`ContactTypeId`) REFERENCES `ContactType`(`Id`)
 );
 
-CREATE TABLE `MThread` (
-	`Id` INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (`Id`)
-);
-
-CREATE TABLE `MThreadParticipant` (
-	`Id` INT NOT NULL AUTO_INCREMENT,
-    `LastSeenAt` DATETIME NOT NULL,
-    `AccountId` INT NOT NULL,
-    `ThreadId` INT NOT NULL,
-    PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_MTParticipant_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_MTParticipant_Thread` FOREIGN KEY (`ThreadId`) REFERENCES `MThreadParticipant`(`Id`)
-);
-
 CREATE TABLE `Message` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `Body` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     `CreatedAt` DATETIME NOT NULL,
     `IsDeleted` BOOLEAN NOT NULL,
-    `AccountId` INT NOT NULL,
-    `ThreadId` INT NOT NULL,
+    `ReceiverId` INT NOT NULL,
+    `SenderId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Message_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_Message_Thread` FOREIGN KEY (`ThreadId`) REFERENCES `MThreadParticipant`(`Id`)
+    CONSTRAINT `FK_Message_Receiver` FOREIGN KEY (`ReceiverId`) REFERENCES `Account`(`Id`),
+    CONSTRAINT `FK_Message_Sender` FOREIGN KEY (`SenderId`) REFERENCES `Account`(`Id`)
 );
 
 

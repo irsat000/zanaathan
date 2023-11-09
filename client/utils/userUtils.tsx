@@ -55,7 +55,7 @@ export const fetchUserContacts = (setUserContacts: (v: UserContacts[]) => void) 
     })
         .then(res => res.ok ? res.json() : Promise.reject(res))
         .then(data => {
-            setUserContacts(data.threadList);
+            setUserContacts(data.contactList);
         })
         .catch((res) => {
             console.log('Sunucuyla bağlantıda hata');

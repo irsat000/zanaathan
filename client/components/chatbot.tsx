@@ -4,10 +4,10 @@ import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { Fullscreen, Person, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
 import { apiUrl, imageLink, toShortLocal } from '@/utils/helperUtils';
-import { fetchUserContacts } from '@/utils/userUtils';
+import { fetchJwt, fetchUserContacts } from '@/utils/userUtils';
 
 export interface UserContacts {
-    ThreadId: number;
+    ReceiverId: number;
     LastMessage: string | null;
     LastMessageDate: string | null;
     ReceiverAvatar: string | null;
@@ -18,7 +18,7 @@ export interface UserContacts {
 interface ThreadMessage {
     Id: number;
     Body: string;
-    AccountId: number;
+    SenderId: number;
     CreatedAt: string;
 }
 
@@ -37,13 +37,20 @@ const Chatbot: React.FC<{
     }, []);
 
     // Function for fetching a thread's messages
-    const fetchThreadMessages = (threadId: number) => {
+    const fetchThreadMessages = (contactId: number) => {
         //const threadId = userContacts.length > 0 ? userContacts[activeContact]?.ThreadId : null;
         //if (!threadId) return;
+        
+        // Check jwt
+        const jwt = fetchJwt();
+        if (!jwt) return;
 
-        fetch(`${apiUrl}/chat/get-thread/${threadId}`, {
+        fetch(`${apiUrl}/chat/get-thread/${contactId}`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${jwt}`
+            }
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
@@ -91,7 +98,7 @@ const Chatbot: React.FC<{
                                 className={`contact-item ${i === activeContact ? 'active' : 'default'}`}
                                 onClick={() => {
                                     setActiveContact(i);
-                                    fetchThreadMessages(contact.ThreadId);
+                                    fetchThreadMessages(contact.ReceiverId);
                                 }}
                             >
                                 <div className="profile-picture">
@@ -132,7 +139,7 @@ const Chatbot: React.FC<{
                         <div className="messages">
                             {threadMessages.length > 0 ? threadMessages.map((message, i) => {
                                 return (
-                                    <div key={i} className={`message-item ${message.AccountId === userData.sub ? 'you' : 'receiver'}`}>
+                                    <div key={i} className={`message-item ${message.SenderId === userData.sub ? 'you' : 'receiver'}`}>
                                         <p>
                                             {message.Body}
                                         </p>
