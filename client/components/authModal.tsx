@@ -1,6 +1,6 @@
 import { useUser } from '@/context/userContext';
-import { apiUrl } from '@/utils/helperUtils';
-import { decodedJwt, fetchUserContacts, storeJwt } from '@/utils/userUtils';
+import { apiUrl } from '@/lib/utils/helperUtils';
+import { decodedJwt, fetchUserContacts, storeJwt } from '@/lib/utils/userUtils';
 import Link from 'next/link';
 import { useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';

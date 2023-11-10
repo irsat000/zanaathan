@@ -6,7 +6,7 @@ import { Bell, ChatDots, List, PersonPlus, PlusSquare, XLg } from 'react-bootstr
 import Link from 'next/link'
 import AuthModal, { AuthModalState } from './authModal'
 import { useUser } from '@/context/userContext'
-import { readJwtCookie, removeJwtCookie } from '@/utils/userUtils'
+import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
 import Chatbot, { UserContacts } from './chatbot'
 
 

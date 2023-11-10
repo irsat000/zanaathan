@@ -6,7 +6,7 @@ import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
-import { apiUrl } from '@/utils/helperUtils'
+import { apiUrl } from '@/lib/utils/helperUtils'
 
 interface City {
   Id: number;

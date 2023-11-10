@@ -161,6 +161,8 @@ exports.createPost = (req: Request, res: Response) => {
             }
         };
 
+        // TODO: CHECK USER ID WITH JWT
+
         // Get connection for transaction and rollback
         pool.getConnection((connErr: any, connection: any) => {
             if (connErr) return handleError(connection);

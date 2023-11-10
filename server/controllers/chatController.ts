@@ -57,8 +57,6 @@ exports.getThread = (req: Request, res: Response) => {
         const userId = verifyJwt(jwt);
         if (!userId) return res.status(401).send('Not authorized');
 
-        console.log({ userId, contactId });
-
         const query = `
             SELECT M.Id, M.SenderId, M.CreatedAt, M.Body
             FROM Message AS M

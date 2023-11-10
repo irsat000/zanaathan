@@ -20,7 +20,7 @@ GROUP BY JP.Id;
 
 
 USE ZanaatHan;
-# Get posts with all their images in a column
+# Get detailed single post with all its images in a column
 SELECT
 	JP.Id,
 	JP.Title,

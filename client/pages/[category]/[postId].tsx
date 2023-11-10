@@ -1,6 +1,6 @@
 
 import Template from '@/components/template'
-import { apiUrl, formatSecondsAgo, imageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters } from '@/utils/helperUtils';
+import { apiUrl, formatSecondsAgo, imageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters } from '@/lib/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router';

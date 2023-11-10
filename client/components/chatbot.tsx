@@ -3,8 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { Fullscreen, Person, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
-import { apiUrl, imageLink, toShortLocal } from '@/utils/helperUtils';
-import { fetchJwt, fetchUserContacts } from '@/utils/userUtils';
+import { apiUrl, apiWebSocketUrl, imageLink, toShortLocal } from '@/lib/utils/helperUtils';
+import { fetchJwt, fetchUserContacts } from '@/lib/utils/userUtils';
 
 export interface UserContacts {
     ReceiverId: number;
@@ -40,7 +40,7 @@ const Chatbot: React.FC<{
     const fetchThreadMessages = (contactId: number) => {
         //const threadId = userContacts.length > 0 ? userContacts[activeContact]?.ThreadId : null;
         //if (!threadId) return;
-        
+
         // Check jwt
         const jwt = fetchJwt();
         if (!jwt) return;
@@ -83,6 +83,80 @@ const Chatbot: React.FC<{
     const [activeContact, setActiveContact] = useState<number | null>(null);
     // Keeps thread messages
     const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
+    // Message input
+    const [messageInput, setMessageInput] = useState('');
+
+    // WEB SOCKET
+    const [socket, setSocket] = useState<WebSocket | null>(null);
+
+    const connectWebSocket = () => {
+        const newSocket = new WebSocket(apiWebSocketUrl!);
+
+        newSocket.addEventListener('open', (event) => {
+            console.log("WS is active.");
+            // Connection opened
+        });
+
+        newSocket.addEventListener('message', (event) => {
+            // Data received from the server
+            console.log(event.data);
+        });
+
+        newSocket.addEventListener('close', (event) => {
+            console.log("WS is closed.");
+            // Automatically attempt reconnection after a delay (5 seconds)
+            setTimeout(() => {
+                console.log("Trying to reconnect Web Socket");
+                connectWebSocket();
+            }, 5000);
+            // Connection closed
+            setSocket(null); // Reset the socket in state
+        });
+
+        setSocket(newSocket); // Store the WebSocket instance in state
+    };
+
+    useEffect(() => {
+        // Check user login
+        if (!userData) return;
+        // Create connection
+        connectWebSocket();
+        // Unmount
+        return () => {
+            if (socket) socket.close();
+        };
+    }, [userData]);
+
+    const handleMessageSubmit = () => {
+        // Check user and prepare it for payload
+        const jwt = fetchJwt();
+        if (!jwt) {
+            alert("Üye girişi bu işlem için gereklidir.")
+            return;
+        };
+        // Check contact selection
+        if (!activeContact) {
+            alert("Hedef kişi seçimi gereklidir.")
+            return;
+        };
+        // Check WS connection
+        if (!socket) {
+            alert("Sunucuyla bağlantıda hata.")
+            return;
+        }
+        // Payload
+        const messageObject = {
+            type: 'text',
+            content: messageInput,
+            receiver: activeContact,
+            jwt: jwt
+            // Add other relevant details like sender, recipient, timestamp, etc.
+        };
+        // Send payload through connection
+        socket.send(JSON.stringify(messageObject));
+        // Reset message input after sending
+        setMessageInput('');
+    }
 
     return (
         <div className={`chatbot-container ${chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
@@ -95,9 +169,9 @@ const Chatbot: React.FC<{
                     <div className="chatbot-contacts">
                         {userContacts.length > 0 ? userContacts.map((contact, i) =>
                             <div key={i}
-                                className={`contact-item ${i === activeContact ? 'active' : 'default'}`}
+                                className={`contact-item ${contact.ReceiverId === activeContact ? 'active' : 'default'}`}
                                 onClick={() => {
-                                    setActiveContact(i);
+                                    setActiveContact(contact.ReceiverId);
                                     fetchThreadMessages(contact.ReceiverId);
                                 }}
                             >
@@ -149,8 +223,13 @@ const Chatbot: React.FC<{
                         </div>
                     </div>
                     <div className="send-message-container">
-                        <input type='text' placeholder='Mesaj gönder...' className='message-input' />
-                        <button className='send'><Send /></button>
+                        <input type='text'
+                            placeholder='Mesaj gönder...'
+                            className='message-input'
+                            value={messageInput}
+                            onChange={(e) => setMessageInput(e.target.value)}
+                        />
+                        <button className='send' onClick={handleMessageSubmit}><Send /></button>
                     </div>
                 </div>
             </div>
