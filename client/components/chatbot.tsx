@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Fullscreen, Person, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
 import { apiUrl, apiWebSocketUrl, imageLink, toShortLocal } from '@/lib/utils/helperUtils';
 import { fetchJwt, fetchUserContacts } from '@/lib/utils/userUtils';
+import { io, Socket } from 'socket.io-client';
 
 export interface UserContacts {
     ReceiverId: number;
@@ -29,7 +30,13 @@ const Chatbot: React.FC<{
     setUserContacts: (v: UserContacts[]) => void,
 }> = ({ chatbotActive, setChatbotActive, userContacts, setUserContacts }) => {
     // User context
-    const { userData, setUserData } = useUser();
+    const { userData } = useUser();
+    // Switch between contacts.
+    const [activeContact, setActiveContact] = useState<number | null>(null);
+    // Keeps thread messages
+    const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
+    // Message input
+    const [messageInput, setMessageInput] = useState('');
 
     // Fetch thread list for messaging (PART OF THE TEMPLATE, MOUNTS ONCE)
     useEffect(() => {
@@ -79,30 +86,35 @@ const Chatbot: React.FC<{
         };
     }, [chatbotActive]);
 
-    // Switch between contacts.
-    const [activeContact, setActiveContact] = useState<number | null>(null);
-    // Keeps thread messages
-    const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
-    // Message input
-    const [messageInput, setMessageInput] = useState('');
-
     // WEB SOCKET
-    const [socket, setSocket] = useState<WebSocket | null>(null);
+    const [socket, setSocket] = useState<Socket | null>(null);
 
     const connectWebSocket = () => {
-        const newSocket = new WebSocket(apiWebSocketUrl!);
+        const newSocket = io(apiWebSocketUrl!);
 
-        newSocket.addEventListener('open', (event) => {
+        newSocket.on('open', (data) => {
             console.log("WS is active.");
             // Connection opened
         });
 
-        newSocket.addEventListener('message', (event) => {
-            // Data received from the server
-            console.log(event.data);
+        newSocket.on('message', (res) => {
+            const data = JSON.parse(res);
+            // status: 'success' | 'error'
+            if (data.status !== 'success') return;
+            // Create new message from insertion on back end
+            const newMessage: ThreadMessage = {
+                Id: data.message.Id,
+                Body: data.message.Body,
+                SenderId: data.message.SenderId,
+                CreatedAt: data.message.CreatedAt
+            }
+            // Update thread messages
+            /*const updatedThreadMessages = [...threadMessages];
+            updatedThreadMessages.push(newMessage);*/
+            setThreadMessages(prev => [...prev, newMessage]);
         });
 
-        newSocket.addEventListener('close', (event) => {
+        /*newSocket.on('close', (event) => {
             console.log("WS is closed.");
             // Automatically attempt reconnection after a delay (5 seconds)
             setTimeout(() => {
@@ -111,7 +123,7 @@ const Chatbot: React.FC<{
             }, 5000);
             // Connection closed
             setSocket(null); // Reset the socket in state
-        });
+        });*/
 
         setSocket(newSocket); // Store the WebSocket instance in state
     };
@@ -153,7 +165,7 @@ const Chatbot: React.FC<{
             // Add other relevant details like sender, recipient, timestamp, etc.
         };
         // Send payload through connection
-        socket.send(JSON.stringify(messageObject));
+        socket.emit('message', JSON.stringify(messageObject));
         // Reset message input after sending
         setMessageInput('');
     }

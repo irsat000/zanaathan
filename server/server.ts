@@ -1,15 +1,22 @@
 const express = require('express');
-//const http = require('http');
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 const cors = require('cors');
-const WebSocket = require('ws');
 import { Request, Response } from 'express';
 import { verifyJwt } from './utils/userUtils';
-const app = express();
 
 // Configuration
-const PORT = 8081;
-//const server = http.createServer(express);
-const wss = new WebSocket.Server({ port: 8082 });
+const app = express();
+const PORT = 8080;
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: process.env.NODE_ENV === 'development'
+            ? ['http://localhost:3000', 'http://127.0.0.1:3000']
+            : ['http://localhost:3000']
+    }
+})
+
 
 // MIDDLEWARES
 app.use(express.json());
@@ -31,12 +38,12 @@ app.use('/api', imageRoutes);
 const pool = require('./db/db');
 
 // Web socket
-wss.on('connection', (connection: any) => {
-    console.log('Client connected');
+io.on('connection', (socket: any) => {
+    console.log(`Client ${socket.id} connected`);
 
-    connection.on('message', (message: any) => {
+    socket.on('message', (data: any) => {
         try {
-            const parsed = JSON.parse(message);
+            const parsed = JSON.parse(data);
             const userId = verifyJwt(parsed.jwt);
             if (!userId) return; //Not authorized
             // Handle the message from the client
@@ -48,23 +55,34 @@ wss.on('connection', (connection: any) => {
                         status: 'error',
                         message: 'Failed to insert the message into the database.'
                     };
-                    connection.send(JSON.stringify(errorMessage));
+                    io.emit('message', JSON.stringify(errorMessage));
                     return;
                 }
 
-                const newMsgId = results.insertId;
-                const responseMessage = {
-                    status: 'success',
-                    messageId: newMsgId
-                };
-                connection.send(JSON.stringify(responseMessage));
+                const query2 = 'SELECT Id, Body, SenderId, CreatedAt FROM Message WHERE Id = ?';
+                pool.query(query2, [results.insertId], (qErr2: any, results2: any) => {
+                    if (qErr2) {
+                        const errorMessage = {
+                            status: 'error',
+                            message: 'Failed to fetch the inserted message.'
+                        };
+                        io.emit('message', JSON.stringify(errorMessage));
+                        return;
+                    }
+
+                    const responseMessage = {
+                        status: 'success',
+                        message: results2[0]
+                    };
+                    io.emit('message', JSON.stringify(responseMessage));
+                });
             });
         } catch (error) {
             console.error("Error:", error);
         }
     });
 
-    connection.on('close', () => {
+    socket.on('close', () => {
         console.log('Client disconnected');
     });
 });
@@ -87,6 +105,6 @@ app.get("/api/dbtest", (req: Request, res: Response) => {
 });
 
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`Server started on http://localhost:${PORT}`);
 });
