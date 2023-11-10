@@ -43,6 +43,39 @@ const Chatbot: React.FC<{
         fetchUserContacts(setUserContacts);
     }, []);
 
+    // Scroll down in chat box automatically
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    // Scrolls down for sure when chat is retrieved for the first time
+    const [isInitialScroll, setIsInitialScroll] = useState(true);
+    // Check if someone is above the height of the box.
+    // If yes, don't touch it. If close to bottom, scroll down
+    const shouldScrollToBottom = () => {
+        if (!messagesEndRef.current) return;
+        const { scrollTop, scrollHeight, clientHeight } = messagesEndRef.current;
+        /*if (scrollTop === 0) {
+            return true;
+        }*/
+        // Check if the user has manually scrolled up
+        const should = scrollHeight - (clientHeight * 2) < scrollTop;
+        return should;
+    };
+    // Scroll action
+    const scrollToBottom = () => {
+        if (messagesEndRef.current && (shouldScrollToBottom() === true || isInitialScroll)) {
+            messagesEndRef.current.scrollTo({
+                top: messagesEndRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
+        }
+        if (isInitialScroll) {
+            setIsInitialScroll(false);
+        }
+    }
+    // Every time a new message is added
+    useEffect(() => {
+        scrollToBottom();
+    }, [threadMessages]);
+
     // Function for fetching a thread's messages
     const fetchThreadMessages = (contactId: number) => {
         //const threadId = userContacts.length > 0 ? userContacts[activeContact]?.ThreadId : null;
@@ -89,15 +122,26 @@ const Chatbot: React.FC<{
     // WEB SOCKET
     const [socket, setSocket] = useState<Socket | null>(null);
 
-    const connectWebSocket = () => {
+    useEffect(() => {
+        // Create connection
         const newSocket = io(apiWebSocketUrl!);
 
+        // On and off
         newSocket.on('open', (data) => {
             console.log("WS is active.");
             // Connection opened
         });
+        newSocket.on('disconnect', (event) => {
+            console.log("WS is closed.");
+            // Reset the socket in state
+            setSocket(null);
+        });
 
+        // Receive message emit
         newSocket.on('message', (res) => {
+            // Check user login // May be unnecessary
+            if (!userData) return;
+
             const data = JSON.parse(res);
             // status: 'success' | 'error'
             if (data.status !== 'success') return;
@@ -109,35 +153,16 @@ const Chatbot: React.FC<{
                 CreatedAt: data.message.CreatedAt
             }
             // Update thread messages
-            /*const updatedThreadMessages = [...threadMessages];
-            updatedThreadMessages.push(newMessage);*/
             setThreadMessages(prev => [...prev, newMessage]);
         });
 
-        /*newSocket.on('close', (event) => {
-            console.log("WS is closed.");
-            // Automatically attempt reconnection after a delay (5 seconds)
-            setTimeout(() => {
-                console.log("Trying to reconnect Web Socket");
-                connectWebSocket();
-            }, 5000);
-            // Connection closed
-            setSocket(null); // Reset the socket in state
-        });*/
-
         setSocket(newSocket); // Store the WebSocket instance in state
-    };
 
-    useEffect(() => {
-        // Check user login
-        if (!userData) return;
-        // Create connection
-        connectWebSocket();
         // Unmount
         return () => {
             if (socket) socket.close();
         };
-    }, [userData]);
+    }, []);
 
     const handleMessageSubmit = () => {
         // Check user and prepare it for payload
@@ -183,8 +208,14 @@ const Chatbot: React.FC<{
                             <div key={i}
                                 className={`contact-item ${contact.ReceiverId === activeContact ? 'active' : 'default'}`}
                                 onClick={() => {
+                                    // Prevent actions if already selected
+                                    if (contact.ReceiverId === activeContact) return;
+                                    // Switch chat/contact
                                     setActiveContact(contact.ReceiverId);
+                                    // Fetch messages associated with this "chat", messages between two users
                                     fetchThreadMessages(contact.ReceiverId);
+                                    // Indicates this chat needs scrolling down initially
+                                    setIsInitialScroll(true);
                                 }}
                             >
                                 <div className="profile-picture">
@@ -222,7 +253,7 @@ const Chatbot: React.FC<{
                         </div>
                     </div>
                     <div className="message-box">
-                        <div className="messages">
+                        <div className="messages" ref={messagesEndRef}>
                             {threadMessages.length > 0 ? threadMessages.map((message, i) => {
                                 return (
                                     <div key={i} className={`message-item ${message.SenderId === userData.sub ? 'you' : 'receiver'}`}>

@@ -82,7 +82,7 @@ io.on('connection', (socket: any) => {
         }
     });
 
-    socket.on('close', () => {
+    socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
 });
