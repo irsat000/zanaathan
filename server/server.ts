@@ -37,28 +37,50 @@ app.use('/api', imageRoutes);
 // Database pool
 const pool = require('./db/db');
 
+const userSocketMap: Map<number, string> = new Map();
+
 // Web socket
 io.on('connection', (socket: any) => {
     console.log(`Client ${socket.id} connected`);
 
+    socket.on('setUserId', (jwt: string) => {
+        const userId = verifyJwt(jwt);
+        if (!userId) return; //Not authorized
+        // Associate the user's ID with their socket ID
+        userSocketMap.set(userId, socket.id);
+    });
+
+    // Handle the chat message from the client
     socket.on('message', (data: any) => {
         try {
+            // Verify and parse
             const parsed = JSON.parse(data);
             const userId = verifyJwt(parsed.jwt);
             if (!userId) return; //Not authorized
-            // Handle the message from the client
+            const receiverId = parsed.receiver;
+            if (isNaN(+receiverId) && userId !== receiverId) return; //Faulty receiver id
 
+            // Connections that we send real-time messages to
+            const connsToSendMessage: string[] = [];
+            const target_1 = userSocketMap.get(userId);
+            const target_2 = userSocketMap.get(receiverId);
+            if (target_1) connsToSendMessage.push(target_1);
+            if (target_2) connsToSendMessage.push(target_2);
+
+            // Create message in db
             const query = 'INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES(?, NOW(), 0, ?, ?);';
-            pool.query(query, [parsed.content, parsed.receiver, userId], (qErr: any, results: any) => {
+            pool.query(query, [parsed.content, receiverId, userId], (qErr: any, results: any) => {
                 if (qErr) {
                     const errorMessage = {
                         status: 'error',
                         message: 'Failed to insert the message into the database.'
                     };
-                    io.emit('message', JSON.stringify(errorMessage));
+                    // Send error message
+                    if (target_1) io.to(target_1).emit('message', JSON.stringify(errorMessage));
                     return;
                 }
 
+                // Get message from db
                 const query2 = 'SELECT Id, Body, SenderId, CreatedAt FROM Message WHERE Id = ?';
                 pool.query(query2, [results.insertId], (qErr2: any, results2: any) => {
                     if (qErr2) {
@@ -66,15 +88,19 @@ io.on('connection', (socket: any) => {
                             status: 'error',
                             message: 'Failed to fetch the inserted message.'
                         };
-                        io.emit('message', JSON.stringify(errorMessage));
+                        // Send error message
+                        if (target_1) io.to(target_1).emit('message', JSON.stringify(errorMessage));
                         return;
                     }
 
+                    // Send message in real-time to associated users only
                     const responseMessage = {
                         status: 'success',
                         message: results2[0]
                     };
-                    io.emit('message', JSON.stringify(responseMessage));
+                    connsToSendMessage.forEach((socketId) => {
+                        io.to(socketId).emit('message', JSON.stringify(responseMessage));
+                    });
                 });
             });
         } catch (error) {

@@ -126,12 +126,18 @@ const Chatbot: React.FC<{
         // Create connection
         const newSocket = io(apiWebSocketUrl!);
 
-        // On and off
+        // Connection opened
         newSocket.on('connect', () => {
             console.log("WS is active.");
-            setSocket(newSocket); // Store the WebSocket instance in state
-            // Connection opened
+            // Store the WebSocket instance in a state for outside use
+            setSocket(newSocket);
+            // Get jwt and associate the user id with socket id for real time messaging
+            const jwt = fetchJwt();
+            if (!jwt) return;
+            newSocket.emit('setUserId', jwt);
         });
+
+        // Connection closed
         newSocket.on('disconnect', () => {
             console.log("WS is closed.");
             // Reset the socket in state
@@ -194,6 +200,11 @@ const Chatbot: React.FC<{
         setMessageInput('');
     }
 
+    // To do: Everytime threadMessages is updated, replace the contact's last message with the latest message
+    useEffect(() => {
+    
+    }, [threadMessages])
+
     return (
         <div className={`chatbot-container ${chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
             <div className="chatbot">
@@ -236,7 +247,7 @@ const Chatbot: React.FC<{
                                             : <></>
                                         }
                                     </div>
-                                    <span className='last-message'>{contact.ReceiverFullName ?? contact.ReceiverUsername}: {contact.LastMessage}</span>
+                                    <span className='last-message'>{contact.LastMessage}</span>
                                 </div>
                             </div>
                         ) : <></>}
