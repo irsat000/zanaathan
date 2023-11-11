@@ -41,7 +41,7 @@ const Chatbot: React.FC<{
     // Fetch thread list for messaging (PART OF THE TEMPLATE, MOUNTS ONCE)
     useEffect(() => {
         fetchUserContacts(setUserContacts);
-    }, []);
+    }, [userData.sub]);
 
     // Scroll down in chat box automatically
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -64,7 +64,7 @@ const Chatbot: React.FC<{
         if (messagesEndRef.current && (shouldScrollToBottom() === true || isInitialScroll)) {
             messagesEndRef.current.scrollTo({
                 top: messagesEndRef.current.scrollHeight,
-                behavior: 'smooth',
+                behavior: isInitialScroll ? 'instant' : 'smooth'
             });
         }
         if (isInitialScroll) {
@@ -127,11 +127,12 @@ const Chatbot: React.FC<{
         const newSocket = io(apiWebSocketUrl!);
 
         // On and off
-        newSocket.on('open', (data) => {
+        newSocket.on('connect', () => {
             console.log("WS is active.");
+            setSocket(newSocket); // Store the WebSocket instance in state
             // Connection opened
         });
-        newSocket.on('disconnect', (event) => {
+        newSocket.on('disconnect', () => {
             console.log("WS is closed.");
             // Reset the socket in state
             setSocket(null);
@@ -139,8 +140,8 @@ const Chatbot: React.FC<{
 
         // Receive message emit
         newSocket.on('message', (res) => {
-            // Check user login // May be unnecessary
-            if (!userData) return;
+            // Check user login // Unnecessary because component mount only when user is logged in.
+            //if (!userData) return;
 
             const data = JSON.parse(res);
             // status: 'success' | 'error'
@@ -156,11 +157,9 @@ const Chatbot: React.FC<{
             setThreadMessages(prev => [...prev, newMessage]);
         });
 
-        setSocket(newSocket); // Store the WebSocket instance in state
-
         // Unmount
         return () => {
-            if (socket) socket.close();
+            newSocket.close();
         };
     }, []);
 

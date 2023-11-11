@@ -1,6 +1,6 @@
 import { useUser } from '@/context/userContext';
 import { apiUrl } from '@/lib/utils/helperUtils';
-import { decodedJwt, fetchUserContacts, storeJwt } from '@/lib/utils/userUtils';
+import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import Link from 'next/link';
 import { useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
@@ -72,8 +72,6 @@ const AuthModal: React.FC<{
                 setAuthModalWarning(null);
                 // inform the user about successful login
                 setAuthModalSuccess('Giriş başarılı!');
-                // fetch user contacts/thread list for messaging feature
-                fetchUserContacts(setUserContacts);
                 // close modal after a second
                 setTimeout(() => handleAuthModal('none'), 1000);
             })
