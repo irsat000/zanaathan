@@ -37,6 +37,8 @@ INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('55
 INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('666666666666666666666', NOW(), 0, 9, 11);
 
 
+INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('12 received message from 9', NOW(), 0, 12, 9);
+
 
 SET SQL_SAFE_UPDATES = 0;
 DELETE FROM `Message`;

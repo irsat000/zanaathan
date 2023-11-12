@@ -20,22 +20,21 @@ exports.getContacts = (req: Request, res: Response) => {
                 A.Avatar AS ReceiverAvatar,
                 MAX(M.CreatedAt) AS LastMessageDate,
                 ( SELECT Body
-                    FROM Message M2
+                    FROM Message AS M2
                     WHERE (M2.SenderId = A.Id OR M2.ReceiverId = A.Id)
                         AND M2.CreatedAt = MAX(M.CreatedAt)
                 ) AS LastMessage
-            FROM Account A
-            LEFT JOIN Message M ON A.Id = M.SenderId OR A.Id = M.ReceiverId
-            WHERE A.Id != ?
-            GROUP BY A.Id;
+            FROM
+                Message AS M
+            JOIN
+                Account A ON (M.SenderId = A.Id AND M.ReceiverId = ?)
+                OR (M.ReceiverId = A.Id AND M.SenderId = ?)
+            GROUP BY A.Id
+            ORDER BY LastMessageDate DESC;
         `;
-        pool.query(query, [userId], (qErr: any, results: any) => {
+        pool.query(query, [userId, userId], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
-            }
-
-            if (!results || results.length < 0) {
-                return res.status(404).send('File not found');
             }
 
             return res.status(200).json({ contactList: results });

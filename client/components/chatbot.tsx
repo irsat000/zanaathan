@@ -72,9 +72,9 @@ const Chatbot: React.FC<{
         }
     }
     // Every time a new message is added
-    /*useEffect(() => {
+    useEffect(() => {
         scrollToBottom();
-    }, [userContacts]);*/
+    }, [userContacts]);
 
     // Function for fetching a thread's messages
     const fetchThreadMessages = (contactId: number) => {
@@ -175,7 +175,7 @@ const Chatbot: React.FC<{
                     }
                     // Scroll to bottom every new message if it's in the active contact thread
                     if (contactToUpdate.ReceiverId === activeContact) {
-                        scrollToBottom();
+                        //scrollToBottom();
                     }
                     return updatedContacts;
                 }

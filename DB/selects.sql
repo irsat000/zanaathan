@@ -54,21 +54,23 @@ SELECT * FROM Account;
 USE ZanaatHan;
 # Get contacts
 SELECT
-    A.Id AS ReceiverId,
-    A.Username AS ReceiverUsername,
+	A.Id AS ReceiverId,
+	A.Username AS ReceiverUsername,
 	A.FullName AS ReceiverFullName,
 	A.Avatar AS ReceiverAvatar,
-    MAX(M.CreatedAt) AS LastMessageDate,
-    ( SELECT Body
-		FROM Message M2
+	MAX(M.CreatedAt) AS LastMessageDate,
+	( SELECT Body
+		FROM Message AS M2
 		WHERE (M2.SenderId = A.Id OR M2.ReceiverId = A.Id)
 			AND M2.CreatedAt = MAX(M.CreatedAt)
-    ) AS LastMessage
-FROM Account A
-LEFT JOIN Message M ON A.Id = M.SenderId OR A.Id = M.ReceiverId
-WHERE A.Id != 11
-GROUP BY A.Id;
-
+	) AS LastMessage
+FROM
+	Message AS M
+JOIN
+	Account A ON (M.SenderId = A.Id AND M.ReceiverId = 9)
+	OR (M.ReceiverId = A.Id AND M.SenderId = 9)
+GROUP BY A.Id
+ORDER BY LastMessageDate DESC;
 
 
 # DEPRECATED

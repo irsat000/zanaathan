@@ -13,7 +13,7 @@ interface SigninBody {
 }
 interface SignupBody {
     username: string;
-    fullName: string | null;
+    fullName: string;
     email: string;
     password: string;
 }
@@ -77,12 +77,12 @@ exports.signup = (req: Request, res: Response) => {
         }
 
         const username = body.username;
-        const fullName = body.fullName;
+        const fullName = isNullOrEmpty(body.fullName) ? null : body.fullName;
         const email = body.email;
         const password = body.password;
 
         // Check value lengths
-        if (username.trim().length < 3 || email.trim().length || password.trim().length < 5) {
+        if (username.trim().length < 3 || password.trim().length < 5) {
             return res.status(400).json({ error: 'Form data is not good enough' });
         }
 
