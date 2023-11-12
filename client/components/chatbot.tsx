@@ -54,13 +54,14 @@ const Chatbot: React.FC<{
         /*if (scrollTop === 0) {
             return true;
         }*/
-        // console.log(scrollTop, scrollHeight, clientHeight);
+        console.log(scrollTop, scrollHeight, clientHeight);
         // Check if the user has manually scrolled up
         const should = scrollHeight - (clientHeight * 2) < scrollTop;
         return should;
     };
     // Scroll action
     const scrollToBottom = () => {
+        // isInitialScroll makes sure first time scroll works but manual doesn't
         if (messagesEndRef.current && (shouldScrollToBottom() === true || isInitialScroll)) {
             messagesEndRef.current.scrollTo({
                 top: messagesEndRef.current.scrollHeight,
@@ -71,10 +72,7 @@ const Chatbot: React.FC<{
             setIsInitialScroll(false);
         }
     }
-    // Every time a new message is added
-    useEffect(() => {
-        scrollToBottom();
-    }, [userContacts]);
+
 
     // Function for fetching a thread's messages
     const fetchThreadMessages = (contactId: number) => {
@@ -224,19 +222,21 @@ const Chatbot: React.FC<{
         setMessageInput('');
     }
 
-    const renderMessages = () => {
+    // currentThread rendering for better and easier async scroll
+    const [currentThread, setCurrentThread] = useState<ThreadMessage[] | null>(null)
+    // Assign currentThread from cache
+    useEffect(() => {
+        // Run when userContacts updates, like when data is cached and updated
+        // Also when activeContact changes because it wouldn't run if cached data already exists, basically not detecting change
         const activeContactThread = userContacts.find(c => c.ReceiverId === activeContact)?.CachedThread;
-
-        if (activeContactThread && activeContactThread.length > 0) {
-            return activeContactThread.map((message, i) => (
-                <div key={i} className={`message-item ${message.SenderId === userData.sub ? 'you' : 'receiver'}`}>
-                    <p>{message.Body}</p>
-                </div>
-            ));
-        } else {
-            return <span className='no-thread-selected'>Mesaj görüntülemek için menüden kişi seçiniz.</span>;
+        if (activeContactThread) {
+            setCurrentThread(activeContactThread);
         }
-    };
+    }, [activeContact, userContacts]);
+    // Scroll down the chat everytime currentThread changes if right conditions are met
+    useEffect(() => {
+        scrollToBottom();
+    }, [currentThread]);
 
     return (
         <div className={`chatbot-container ${chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
@@ -253,12 +253,13 @@ const Chatbot: React.FC<{
                                 onClick={() => {
                                     // Prevent actions if already selected
                                     if (contact.ReceiverId === activeContact) return;
-                                    // Switch chat/contact
-                                    setActiveContact(contact.ReceiverId);
                                     // Fetch messages associated with this "chat", messages between two users
                                     fetchThreadMessages(contact.ReceiverId);
                                     // Indicates this chat needs scrolling down initially
+                                    // Before setActiveContact to prevent async problems, can be inside the setActiveContact
                                     setIsInitialScroll(true);
+                                    // Switch chat/contact
+                                    setActiveContact(contact.ReceiverId);
                                 }}
                             >
                                 <div className="profile-picture">
@@ -301,7 +302,13 @@ const Chatbot: React.FC<{
                     </div>
                     <div className="message-box">
                         <div className="messages" ref={messagesEndRef}>
-                            {renderMessages()}
+                            {currentThread && currentThread.length > 0 ? currentThread.map((message, i) => (
+                                <div key={i} className={`message-item ${message.SenderId === userData.sub ? 'you' : 'receiver'}`}>
+                                    <p>{message.Body}</p>
+                                </div>
+                            )) : currentThread
+                                ? <span className='no-thread-selected'>Mesaj gönderin!</span>
+                                : <span className='no-thread-selected'>Mesaj görüntülemek için menüden kişi seçiniz.</span>}
                         </div>
                     </div>
                     <div className="send-message-container">
