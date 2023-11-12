@@ -11,7 +11,7 @@ export const sanatizeInputString = (value: string): string => {
     return value.trim().replace(/ +/g, ' ');
 }
 
-export const isPositiveNumeric = (value: string): boolean => {
+export const isPositiveNumeric = (value: any): boolean => {
     // Including 0
     return /^\d+$/.test(value);
 }

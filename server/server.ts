@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 const cors = require('cors');
 import { Request, Response } from 'express';
 import { verifyJwt } from './utils/userUtils';
+import { isPositiveNumeric } from './utils/helperUtils';
 
 // Configuration
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api', imageRoutes);
 // Database pool
 const pool = require('./db/db');
 
+const socketUserMap: Map<string, number> = new Map();
 const userSocketMap: Map<number, string> = new Map();
 
 // Web socket
@@ -47,6 +49,7 @@ io.on('connection', (socket: any) => {
         const userId = verifyJwt(jwt);
         if (!userId) return; //Not authorized
         // Associate the user's ID with their socket ID
+        socketUserMap.set(socket.id, userId);
         userSocketMap.set(userId, socket.id);
     });
 
@@ -57,8 +60,8 @@ io.on('connection', (socket: any) => {
             const parsed = JSON.parse(data);
             const userId = verifyJwt(parsed.jwt);
             if (!userId) return; //Not authorized
-            const receiverId = parsed.receiver;
-            if (isNaN(+receiverId) && userId !== receiverId) return; //Faulty receiver id
+            const receiverId: number = parsed.receiver;
+            if (!isPositiveNumeric(receiverId) || userId === receiverId) return; //Faulty receiver id
 
             // Connections that we send real-time messages to
             const connsToSendMessage: string[] = [];
@@ -96,7 +99,8 @@ io.on('connection', (socket: any) => {
                     // Send message in real-time to associated users only
                     const responseMessage = {
                         status: 'success',
-                        message: results2[0]
+                        message: results2[0],
+                        receiverId
                     };
                     connsToSendMessage.forEach((socketId) => {
                         io.to(socketId).emit('message', JSON.stringify(responseMessage));
@@ -110,6 +114,12 @@ io.on('connection', (socket: any) => {
 
     socket.on('disconnect', () => {
         console.log('Client disconnected');
+        // Delete pairs after disconnect
+        const userId = socketUserMap.get(socket.id);
+        if(userId){
+            userSocketMap.delete(userId);
+            socketUserMap.delete(socket.id);
+        }
     });
 });
 

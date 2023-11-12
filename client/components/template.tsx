@@ -15,6 +15,15 @@ const Template: React.FC<{
 	children: ReactNode
 }> = ({ children }) => {
 	// Get contacts for messaging
+	/*const first: UserContacts = {
+		ReceiverId: 5,
+		LastMessage: "string",
+		LastMessageDate: "string",
+		ReceiverAvatar: "string",
+		ReceiverFullName: "string",
+		ReceiverUsername: "string",
+		CachedThread: undefined
+	}*/
 	const [userContacts, setUserContacts] = useState<UserContacts[]>([]);
 
 	// User context

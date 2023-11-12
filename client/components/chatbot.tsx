@@ -14,6 +14,7 @@ export interface UserContacts {
     ReceiverAvatar: string | null;
     ReceiverFullName: string | null;
     ReceiverUsername: string;
+    CachedThread: ThreadMessage[] | undefined;
 }
 
 interface ThreadMessage {
@@ -27,14 +28,12 @@ const Chatbot: React.FC<{
     chatbotActive: boolean,
     setChatbotActive: (v: boolean) => void,
     userContacts: UserContacts[],
-    setUserContacts: (v: UserContacts[]) => void,
+    setUserContacts: React.Dispatch<React.SetStateAction<UserContacts[]>>,
 }> = ({ chatbotActive, setChatbotActive, userContacts, setUserContacts }) => {
     // User context
     const { userData } = useUser();
     // Switch between contacts.
     const [activeContact, setActiveContact] = useState<number | null>(null);
-    // Keeps thread messages
-    const [threadMessages, setThreadMessages] = useState<ThreadMessage[]>([]);
     // Message input
     const [messageInput, setMessageInput] = useState('');
 
@@ -55,6 +54,7 @@ const Chatbot: React.FC<{
         /*if (scrollTop === 0) {
             return true;
         }*/
+        // console.log(scrollTop, scrollHeight, clientHeight);
         // Check if the user has manually scrolled up
         const should = scrollHeight - (clientHeight * 2) < scrollTop;
         return should;
@@ -72,15 +72,15 @@ const Chatbot: React.FC<{
         }
     }
     // Every time a new message is added
-    useEffect(() => {
+    /*useEffect(() => {
         scrollToBottom();
-    }, [threadMessages]);
+    }, [userContacts]);*/
 
     // Function for fetching a thread's messages
     const fetchThreadMessages = (contactId: number) => {
-        //const threadId = userContacts.length > 0 ? userContacts[activeContact]?.ThreadId : null;
-        //if (!threadId) return;
-
+        // Check cache, if exist, no need for fetching because chat is updated in real-time
+        const cache = userContacts.find(contact => contact.ReceiverId === contactId);
+        if (cache && cache.CachedThread) return;
         // Check jwt
         const jwt = fetchJwt();
         if (!jwt) return;
@@ -94,7 +94,10 @@ const Chatbot: React.FC<{
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
-                setThreadMessages(data.messages);
+                // Cache the messages
+                const updatedContacts = [...userContacts];
+                updatedContacts.find(contact => contact.ReceiverId === contactId)!.CachedThread = data.messages;
+                setUserContacts(updatedContacts);
             })
             .catch((res) => {
                 console.log('Sunucuyla bağlantıda hata');
@@ -146,11 +149,12 @@ const Chatbot: React.FC<{
 
         // Receive message emit
         newSocket.on('message', (res) => {
-            // Check user login // Unnecessary because component mount only when user is logged in.
+            // Check user login // Unnecessary because component mounts only when user is logged in.
             //if (!userData) return;
 
             const data = JSON.parse(res);
             // status: 'success' | 'error'
+            // TODO: Inform the user if error
             if (data.status !== 'success') return;
             // Create new message from insertion on back end
             const newMessage: ThreadMessage = {
@@ -159,8 +163,28 @@ const Chatbot: React.FC<{
                 SenderId: data.message.SenderId,
                 CreatedAt: data.message.CreatedAt
             }
-            // Update thread messages
-            setThreadMessages(prev => [...prev, newMessage]);
+            // Cache the new message
+            setUserContacts((prev: UserContacts[]) => {
+                const updatedContacts = [...prev];
+                const contactToUpdate = updatedContacts.find(contact => contact.ReceiverId === data.receiverId || contact.ReceiverId === data.message.SenderId);
+                if (contactToUpdate) {
+                    if (contactToUpdate.CachedThread) {
+                        contactToUpdate.CachedThread.push(newMessage);
+                    } else {
+                        contactToUpdate.CachedThread = [newMessage];
+                    }
+                    // Scroll to bottom every new message if it's in the active contact thread
+                    if (contactToUpdate.ReceiverId === activeContact) {
+                        scrollToBottom();
+                    }
+                    return updatedContacts;
+                }
+                else {
+                    return prev;
+                    // Todo: Create new thread/contact with data.message.SenderId.
+                    // If contactToUpdate doesn't exist, it means a new person is messaging the current user
+                }
+            });
         });
 
         // Unmount
@@ -200,10 +224,19 @@ const Chatbot: React.FC<{
         setMessageInput('');
     }
 
-    // To do: Everytime threadMessages is updated, replace the contact's last message with the latest message
-    useEffect(() => {
-    
-    }, [threadMessages])
+    const renderMessages = () => {
+        const activeContactThread = userContacts.find(c => c.ReceiverId === activeContact)?.CachedThread;
+
+        if (activeContactThread && activeContactThread.length > 0) {
+            return activeContactThread.map((message, i) => (
+                <div key={i} className={`message-item ${message.SenderId === userData.sub ? 'you' : 'receiver'}`}>
+                    <p>{message.Body}</p>
+                </div>
+            ));
+        } else {
+            return <span className='no-thread-selected'>Mesaj görüntülemek için menüden kişi seçiniz.</span>;
+        }
+    };
 
     return (
         <div className={`chatbot-container ${chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
@@ -247,7 +280,11 @@ const Chatbot: React.FC<{
                                             : <></>
                                         }
                                     </div>
-                                    <span className='last-message'>{contact.LastMessage}</span>
+                                    <span className='last-message'>
+                                        {contact.CachedThread
+                                            ? contact.CachedThread[contact.CachedThread.length - 1].Body
+                                            : contact.LastMessage}
+                                    </span>
                                 </div>
                             </div>
                         ) : <></>}
@@ -264,15 +301,7 @@ const Chatbot: React.FC<{
                     </div>
                     <div className="message-box">
                         <div className="messages" ref={messagesEndRef}>
-                            {threadMessages.length > 0 ? threadMessages.map((message, i) => {
-                                return (
-                                    <div key={i} className={`message-item ${message.SenderId === userData.sub ? 'you' : 'receiver'}`}>
-                                        <p>
-                                            {message.Body}
-                                        </p>
-                                    </div>)
-                            }
-                            ) : <span className='no-thread-selected'>Mesaj görüntülemek için menüden kişi seçiniz.</span>}
+                            {renderMessages()}
                         </div>
                     </div>
                     <div className="send-message-container">
