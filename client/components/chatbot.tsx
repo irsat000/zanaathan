@@ -54,7 +54,7 @@ const Chatbot: React.FC<{
         /*if (scrollTop === 0) {
             return true;
         }*/
-        console.log(scrollTop, scrollHeight, clientHeight);
+        // console.log(scrollTop, scrollHeight, clientHeight);
         // Check if the user has manually scrolled up
         const should = scrollHeight - (clientHeight * 2) < scrollTop;
         return should;
@@ -172,9 +172,9 @@ const Chatbot: React.FC<{
                         contactToUpdate.CachedThread = [newMessage];
                     }
                     // Scroll to bottom every new message if it's in the active contact thread
-                    if (contactToUpdate.ReceiverId === activeContact) {
-                        //scrollToBottom();
-                    }
+                    /*if (contactToUpdate.ReceiverId === activeContact) {
+                        scrollToBottom();
+                    }*/
                     return updatedContacts;
                 }
                 else {
@@ -230,7 +230,7 @@ const Chatbot: React.FC<{
         // Also when activeContact changes because it wouldn't run if cached data already exists, basically not detecting change
         const activeContactThread = userContacts.find(c => c.ReceiverId === activeContact)?.CachedThread;
         if (activeContactThread) {
-            setCurrentThread(activeContactThread);
+            setCurrentThread([...activeContactThread]);
         }
     }, [activeContact, userContacts]);
     // Scroll down the chat everytime currentThread changes if right conditions are met
