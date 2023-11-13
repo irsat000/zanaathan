@@ -117,6 +117,9 @@ const Chatbot: React.FC<{
         };
     }, [chatbotActive]);
 
+    // Store and pop message ids that animates
+    const [animateMessageId, setAnimateMessageId] = useState<number | null>(null);
+
     // WEB SOCKET
     const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -158,6 +161,8 @@ const Chatbot: React.FC<{
                 SenderId: data.message.SenderId,
                 CreatedAt: data.message.CreatedAt
             }
+            // Set as 'will be animated'
+            setAnimateMessageId(newMessage.Id);
             // Cache the new message
             setUserContacts((prev: UserContact[]) => {
                 const updatedContacts = [...prev];
@@ -234,9 +239,11 @@ const Chatbot: React.FC<{
             setCurrentThread([...activeContactThread]);
         }
     }, [activeContact, userContacts]);
-    // Scroll down the chat everytime currentThread changes if right conditions are met
     useEffect(() => {
+        // Scroll down the chat everytime currentThread changes if right conditions are met
         scrollToBottom();
+        // Stop animation of the last message
+        setAnimateMessageId(null);
     }, [currentThread]);
 
     return (
@@ -303,11 +310,18 @@ const Chatbot: React.FC<{
                     </div>
                     <div className="message-box">
                         <div className="messages" ref={messagesEndRef}>
-                            {currentThread && currentThread.length > 0 ? currentThread.map((message, i) => (
-                                <div key={i} className={`message-item ${message.SenderId === userData.sub ? 'you' : 'receiver'}`}>
-                                    <p>{message.Body}</p>
-                                </div>
-                            )) : currentThread
+                            {currentThread && currentThread.length > 0 ? currentThread.map((message, i) => {
+                                // Animate if this is the new message
+                                const animate = animateMessageId === message.Id ? 'animate-new' : '';
+                                // Message owner
+                                const msgOwner = message.SenderId === userData.sub ? 'you' : 'receiver';
+
+                                return (
+                                    <div key={i} className={`message-item ${msgOwner} ${animate}`}>
+                                        <p>{message.Body}</p>
+                                    </div>
+                                )
+                            }) : currentThread
                                 ? <span className='empty-thread'>Mesaj gönderin!</span>
                                 : <span className='no-thread-selected'>Mesaj görüntülemek için menüden kişi seçiniz.</span>}
                         </div>
