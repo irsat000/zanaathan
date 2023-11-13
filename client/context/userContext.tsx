@@ -17,7 +17,7 @@ export interface IUserData {
     username: "lala1"
 */
 
-export const UserData = React.createContext({} as any);
+const UserData = React.createContext({} as any);
 
 export const UserContext: React.FC<{
     children: React.ReactNode

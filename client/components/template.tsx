@@ -7,7 +7,9 @@ import Link from 'next/link'
 import AuthModal, { AuthModalState } from './authModal'
 import { useUser } from '@/context/userContext'
 import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
-import Chatbot, { UserContact } from './chatbot'
+import Chatbot from './chatbot'
+import { useContacts } from '@/context/contactsContext'
+import { useGStatus } from '@/context/globalContext'
 
 
 
@@ -24,7 +26,11 @@ const Template: React.FC<{
 		ReceiverUsername: "string",
 		CachedThread: undefined
 	}*/
-	const [userContacts, setUserContacts] = useState<UserContact[]>([]);
+	// User contacts context
+	const { userContacts, setUserContacts } = useContacts();
+	// General status context
+	const { gStatus, setGStatus, handleGStatus } = useGStatus();
+
 
 	// User context
 	const { userData, setUserData } = useUser();
@@ -46,7 +52,6 @@ const Template: React.FC<{
 	const [authModalActive, setAuthModalActive] = useState<AuthModalState>('none'); // Login/Register modal = auth modal
 	const [drawerActive, setDrawerActive] = useState(false); // Drawer for mobile
 	const [userMenuActive, setUserMenuActive] = useState(false); // User menu drop down
-	const [chatbotActive, setChatbotActive] = useState(false); // Chat bot
 
 	// Will close the drawer and open auth modal
 	const handleLoginModal = (type: AuthModalState) => {
@@ -85,10 +90,7 @@ const Template: React.FC<{
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<div className='page-content'>
-				{userData ? <Chatbot
-					chatbotActive={chatbotActive} setChatbotActive={setChatbotActive}
-					userContacts={userContacts} setUserContacts={setUserContacts}
-				/> : <></>}
+				{userData ? <Chatbot /> : <></>}
 				<AuthModal
 					authModalActive={authModalActive} setAuthModalActive={setAuthModalActive}
 					setUserContacts={setUserContacts}
@@ -127,7 +129,7 @@ const Template: React.FC<{
 									<Link href={'/yeni-ilan'}>
 										<PlusSquare />
 									</Link>
-									<button className='open-chatbot-button' onClick={() => setChatbotActive(!chatbotActive)}>
+									<button className='open-chatbot-button' onClick={() => handleGStatus('chatbotActive', !gStatus.chatbotActive)}>
 										<ChatDots />
 									</button>
 									<button onClick={() => alert("Hi!")}>

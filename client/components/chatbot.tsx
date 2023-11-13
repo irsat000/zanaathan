@@ -6,34 +6,19 @@ import { Fullscreen, Person, PlusLg, Send, ThreeDots, XLg } from 'react-bootstra
 import { apiUrl, apiWebSocketUrl, imageLink, toShortLocal } from '@/lib/utils/helperUtils';
 import { fetchJwt, fetchUserContacts } from '@/lib/utils/userUtils';
 import { io, Socket } from 'socket.io-client';
+import { ThreadMessage, UserContact, useContacts } from '@/context/contactsContext';
+import { useGStatus } from '@/context/globalContext';
 
-export interface UserContact {
-    ReceiverId: number;
-    LastMessage: string | null;
-    LastMessageDate: string | null;
-    ReceiverAvatar: string | null;
-    ReceiverFullName: string | null;
-    ReceiverUsername: string;
-    CachedThread: ThreadMessage[] | undefined;
-}
-
-interface ThreadMessage {
-    Id: number;
-    Body: string;
-    SenderId: number;
-    CreatedAt: string;
-}
 
 const Chatbot: React.FC<{
-    chatbotActive: boolean,
-    setChatbotActive: (v: boolean) => void,
-    userContacts: UserContact[],
-    setUserContacts: React.Dispatch<React.SetStateAction<UserContact[]>>,
-}> = ({ chatbotActive, setChatbotActive, userContacts, setUserContacts }) => {
+}> = ({ }) => {
+    // User contacts context
+    const { userContacts, setUserContacts } = useContacts();
+    // General status context
+    const { gStatus, setGStatus, handleGStatus } = useGStatus();
+
     // User context
     const { userData } = useUser();
-    // Switch between contacts.
-    const [activeContact, setActiveContact] = useState<number | null>(null);
     // Message input
     const [messageInput, setMessageInput] = useState('');
 
@@ -104,8 +89,11 @@ const Chatbot: React.FC<{
     useEffect(() => {
         const handleDocumentClick = (e: any) => {
             // Check if the click target is outside of the user-menu dropdown div and user-menu button
-            if (chatbotActive && !chatbotRef.current?.contains(e.target) && !e.target.closest('.open-chatbot-button')) {
-                setChatbotActive(false);
+            if (gStatus.chatbotActive
+                && !chatbotRef.current?.contains(e.target)
+                && !e.target.closest('.open-chatbot-button')
+                && !e.target.closest('.message-request')) {
+                handleGStatus('chatbotActive', false);
             }
         };
 
@@ -115,9 +103,9 @@ const Chatbot: React.FC<{
         return () => {
             document.removeEventListener("click", handleDocumentClick);
         };
-    }, [chatbotActive]);
+    }, [gStatus.chatbotActive]);
 
-    // Store and pop message ids that animates
+    // Store the message id that will be animated, becomes null after render using useEffect on currentThread
     const [animateMessageId, setAnimateMessageId] = useState<number | null>(null);
 
     // WEB SOCKET
@@ -205,7 +193,7 @@ const Chatbot: React.FC<{
             return;
         };
         // Check contact selection
-        if (!activeContact) {
+        if (!gStatus.activeContact) {
             alert("Hedef kişi seçimi gereklidir.")
             return;
         };
@@ -218,7 +206,7 @@ const Chatbot: React.FC<{
         const messageObject = {
             type: 'text',
             content: messageInput,
-            receiver: activeContact,
+            receiver: gStatus.activeContact,
             jwt: jwt
             // Add other relevant details like sender, recipient, timestamp, etc.
         };
@@ -234,11 +222,11 @@ const Chatbot: React.FC<{
     useEffect(() => {
         // Run when userContacts updates, like when data is cached and updated
         // Also when activeContact changes because it wouldn't run if cached data already exists, basically not detecting change
-        const activeContactThread = userContacts.find(c => c.ReceiverId === activeContact)?.CachedThread;
+        const activeContactThread = userContacts.find(c => c.ReceiverId === gStatus.activeContact)?.CachedThread;
         if (activeContactThread) {
             setCurrentThread([...activeContactThread]);
         }
-    }, [activeContact, userContacts]);
+    }, [gStatus.activeContact, userContacts]);
     useEffect(() => {
         // Scroll down the chat everytime currentThread changes if right conditions are met
         scrollToBottom();
@@ -247,7 +235,7 @@ const Chatbot: React.FC<{
     }, [currentThread]);
 
     return (
-        <div className={`chatbot-container ${chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
+        <div className={`chatbot-container ${gStatus.chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
             <div className="chatbot">
                 <div className="chatbot-menu">
                     <div className="chatbot-menu-header">
@@ -257,17 +245,17 @@ const Chatbot: React.FC<{
                     <div className="chatbot-contacts">
                         {userContacts.length > 0 ? userContacts.map((contact, i) =>
                             <div key={i}
-                                className={`contact-item ${contact.ReceiverId === activeContact ? 'active' : 'default'}`}
+                                className={`contact-item ${contact.ReceiverId === gStatus.activeContact ? 'active' : 'default'}`}
                                 onClick={() => {
                                     // Prevent actions if already selected
-                                    if (contact.ReceiverId === activeContact) return;
+                                    if (contact.ReceiverId === gStatus.activeContact) return;
                                     // Fetch messages associated with this "chat", messages between two users
                                     fetchThreadMessages(contact.ReceiverId);
                                     // Indicates this chat needs scrolling down initially
                                     // Before setActiveContact to prevent async problems, can be inside the setActiveContact
                                     setIsInitialScroll(true);
                                     // Switch chat/contact
-                                    setActiveContact(contact.ReceiverId);
+                                    handleGStatus('activeContact', contact.ReceiverId);
                                 }}
                             >
                                 <div className="profile-picture">
@@ -290,7 +278,7 @@ const Chatbot: React.FC<{
                                         }
                                     </div>
                                     <span className='last-message'>
-                                        {contact.CachedThread
+                                        {contact.CachedThread && contact.CachedThread.length > 0
                                             ? contact.CachedThread[contact.CachedThread.length - 1].Body
                                             : contact.LastMessage}
                                     </span>
@@ -305,7 +293,7 @@ const Chatbot: React.FC<{
                         <div className="chatbot-shortcuts">
                             <button type='button' className='chatbot-shortcut-button'><ThreeDots /></button>
                             <button type='button' className='chatbot-shortcut-button fullscreen-button'><Fullscreen /></button>
-                            <button type='button' className='chatbot-shortcut-button' onClick={() => setChatbotActive(false)}><XLg /></button>
+                            <button type='button' className='chatbot-shortcut-button' onClick={() => handleGStatus('chatbotActive', false)}><XLg /></button>
                         </div>
                     </div>
                     <div className="message-box">

@@ -1,7 +1,7 @@
 
 import Cookies from 'js-cookie';
 import { apiUrl } from './helperUtils';
-import { UserContacts } from '@/components/chatbot';
+import { UserContact } from '@/context/contactsContext';
 const jwt = require('jsonwebtoken');
 
 export const decodedJwt = (token: string) => {
@@ -41,7 +41,7 @@ export const removeJwtCookie = () => {
 
 
 
-export const fetchUserContacts = (setUserContacts: (v: UserContacts[]) => void) => {
+export const fetchUserContacts = (setUserContacts: (v: UserContact[]) => void) => {
     // Check jwt
     const jwt = fetchJwt();
     if (!jwt) return;
