@@ -7,7 +7,7 @@ import Link from 'next/link'
 import AuthModal, { AuthModalState } from './authModal'
 import { useUser } from '@/context/userContext'
 import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
-import Chatbot, { UserContacts } from './chatbot'
+import Chatbot, { UserContact } from './chatbot'
 
 
 
@@ -24,7 +24,7 @@ const Template: React.FC<{
 		ReceiverUsername: "string",
 		CachedThread: undefined
 	}*/
-	const [userContacts, setUserContacts] = useState<UserContacts[]>([]);
+	const [userContacts, setUserContacts] = useState<UserContact[]>([]);
 
 	// User context
 	const { userData, setUserData } = useUser();

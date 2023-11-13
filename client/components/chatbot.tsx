@@ -7,7 +7,7 @@ import { apiUrl, apiWebSocketUrl, imageLink, toShortLocal } from '@/lib/utils/he
 import { fetchJwt, fetchUserContacts } from '@/lib/utils/userUtils';
 import { io, Socket } from 'socket.io-client';
 
-export interface UserContacts {
+export interface UserContact {
     ReceiverId: number;
     LastMessage: string | null;
     LastMessageDate: string | null;
@@ -27,8 +27,8 @@ interface ThreadMessage {
 const Chatbot: React.FC<{
     chatbotActive: boolean,
     setChatbotActive: (v: boolean) => void,
-    userContacts: UserContacts[],
-    setUserContacts: React.Dispatch<React.SetStateAction<UserContacts[]>>,
+    userContacts: UserContact[],
+    setUserContacts: React.Dispatch<React.SetStateAction<UserContact[]>>,
 }> = ({ chatbotActive, setChatbotActive, userContacts, setUserContacts }) => {
     // User context
     const { userData } = useUser();
@@ -51,9 +51,6 @@ const Chatbot: React.FC<{
     const shouldScrollToBottom = () => {
         if (!messagesEndRef.current) return;
         const { scrollTop, scrollHeight, clientHeight } = messagesEndRef.current;
-        /*if (scrollTop === 0) {
-            return true;
-        }*/
         // console.log(scrollTop, scrollHeight, clientHeight);
         // Check if the user has manually scrolled up
         const should = scrollHeight - (clientHeight * 2) < scrollTop;
@@ -162,19 +159,23 @@ const Chatbot: React.FC<{
                 CreatedAt: data.message.CreatedAt
             }
             // Cache the new message
-            setUserContacts((prev: UserContacts[]) => {
+            setUserContacts((prev: UserContact[]) => {
                 const updatedContacts = [...prev];
                 const contactToUpdate = updatedContacts.find(contact => contact.ReceiverId === data.receiverId || contact.ReceiverId === data.message.SenderId);
                 if (contactToUpdate) {
+                    // Push the mew message
                     if (contactToUpdate.CachedThread) {
                         contactToUpdate.CachedThread.push(newMessage);
                     } else {
                         contactToUpdate.CachedThread = [newMessage];
                     }
-                    // Scroll to bottom every new message if it's in the active contact thread
-                    /*if (contactToUpdate.ReceiverId === activeContact) {
-                        scrollToBottom();
-                    }*/
+                    // Update the date
+                    contactToUpdate.LastMessageDate = newMessage.CreatedAt;
+                    // Move the updated contact to the beginning of the array
+                    const index = updatedContacts.indexOf(contactToUpdate);
+                    updatedContacts.splice(index, 1);
+                    updatedContacts.unshift(contactToUpdate);
+
                     return updatedContacts;
                 }
                 else {
@@ -307,7 +308,7 @@ const Chatbot: React.FC<{
                                     <p>{message.Body}</p>
                                 </div>
                             )) : currentThread
-                                ? <span className='no-thread-selected'>Mesaj gönderin!</span>
+                                ? <span className='empty-thread'>Mesaj gönderin!</span>
                                 : <span className='no-thread-selected'>Mesaj görüntülemek için menüden kişi seçiniz.</span>}
                         </div>
                     </div>
