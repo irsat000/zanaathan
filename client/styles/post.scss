@@ -4,9 +4,15 @@
     padding: var(--site-padding);
     align-items: center;
 
+    .breadcrumb-trail-container {
+        align-self: unset;
+        max-width: 1300px;
+        width: 100%;
+    }
+
     .post-container {
         margin-top: 20px;
-        max-width: 1200px;
+        max-width: 1300px;
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -210,7 +216,7 @@
 
     .post-description {
         margin-top: 30px;
-        max-width: 1200px;
+        max-width: 1300px;
         width: 100%;
         display: flex;
         flex-direction: column;

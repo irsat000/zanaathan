@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import { isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
 import * as fs from 'fs';
+import { verifyJwt } from '../utils/userUtils';
 const path = require('path');
 const appDir = path.dirname(require.main?.filename);
 
@@ -115,6 +116,11 @@ interface CreatePost {
 
 exports.createPost = (req: Request, res: Response) => {
     try {
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) return res.status(401).send('Not authorized');
+        
         // Get uploaded file list
         // We already check this in fileFilter
         const files = req.files;
@@ -161,8 +167,6 @@ exports.createPost = (req: Request, res: Response) => {
             }
         };
 
-        // TODO: CHECK USER ID WITH JWT
-
         // Get connection for transaction and rollback
         pool.getConnection((connErr: any, connection: any) => {
             if (connErr) return handleError(connection);
@@ -171,8 +175,8 @@ exports.createPost = (req: Request, res: Response) => {
                 if (beginErr) return handleError(connection);
             });
 
-            const query = "INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId) VALUES (?, NOW(), ?, ?, ?, 1);";
-            connection.query(query, [title, description, district, subCategory], (qErr: any, results: any) => {
+            const query = "INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 1, ?);";
+            connection.query(query, [title, description, district, subCategory, userId], (qErr: any, results: any) => {
                 if (qErr) connection.rollback(() => handleError(connection));
 
                 // Get post id

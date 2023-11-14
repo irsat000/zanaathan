@@ -7,6 +7,7 @@ import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
 import { apiUrl } from '@/lib/utils/helperUtils'
+import { fetchJwt } from '@/lib/utils/userUtils'
 
 interface City {
   Id: number;
@@ -151,8 +152,13 @@ export default function NewPost() {
       multiPartFormData.append(`postImages`, pic);
     });
 
+    // Check jwt
+    const jwt = fetchJwt();
+    if (!jwt) return null;
+
     fetch(`${apiUrl}/create-post`, {
       method: "POST",
+      headers: { 'Authorization': `Bearer ${jwt}` },
       body: multiPartFormData
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))

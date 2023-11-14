@@ -8,7 +8,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { ChevronCompactLeft, ChevronCompactRight } from 'react-bootstrap-icons'
+import { ChevronCompactLeft, ChevronCompactRight, ChevronRight } from 'react-bootstrap-icons'
+import categoryList from '@/assets/site/categories.json'
 
 
 interface PostDetails {
@@ -37,9 +38,26 @@ export default function PostDetails() {
 	// General status context
 	const { handleGStatus } = useGStatus();
 
+	// Get category info by category code
 	// Get path
 	const router = useRouter();
 	const { category, postId } = router.query;
+	const [categoryInfo, setCategoryInfo] = useState<{
+		code: string | null,
+		name: string | null
+	}>({ code: null, name: null });
+	useEffect(() => {
+		if (!category) return;
+		// Get name by searching with code in category list from categories.json file
+		// and assign both to categoryInfo
+		const categoryObj = categoryList.find(cate => cate.Code === category);
+		if (categoryObj) {
+			const code = categoryObj.Code;
+			const name = categoryObj.Name;
+			setCategoryInfo({ code, name });
+		}
+	}, [category]);
+
 	// Details for the current post
 	const [postDetails, setPostDetails] = useState<PostDetails | null>(null);
 
@@ -118,6 +136,14 @@ export default function PostDetails() {
 		<Template>
 			{postDetails ?
 				<div className='post-page'>
+					{categoryInfo.code && categoryInfo.name ?
+						<div className="breadcrumb-trail-container">
+							<Link href={'/'}>Anasayfa</Link>
+							<span><ChevronRight /></span>
+							<Link href={'/' + categoryInfo.code}>{categoryInfo.name}</Link>
+						</div>
+						: <></>
+					}
 					<div className="post-container">
 						<div className="gallery-container">
 							<div className="gallery-main">
