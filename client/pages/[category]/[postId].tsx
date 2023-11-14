@@ -2,6 +2,7 @@
 import Template from '@/components/template'
 import { useContacts } from '@/context/contactsContext';
 import { useGStatus } from '@/context/globalContext';
+import { useUser } from '@/context/userContext';
 import { apiUrl, formatSecondsAgo, imageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters } from '@/lib/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
@@ -29,6 +30,8 @@ interface PostDetails {
 }
 
 export default function PostDetails() {
+	// Get user context
+	const { userData } = useUser();
 	// User contacts context
 	const { userContacts, setUserContacts } = useContacts();
 	// General status context
@@ -87,6 +90,8 @@ export default function PostDetails() {
 	// Creates a temporary contact with targetId at the start of the contact menu
 	// - First message makes it permanent
 	const handleMessageRequest = (targetId: number) => {
+		if (!userData) return; // TODO: Warn the user about logging in first
+		if (targetId === userData.sub) return; // TODO: Warn the user about not being able to send message to yourself
 		if (!postDetails) return; // To ignore warning, postDetails is not null in this function
 		const receiverIdExists = userContacts.some(contact => contact.ReceiverId === targetId);
 		if (!receiverIdExists) {

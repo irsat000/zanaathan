@@ -55,17 +55,17 @@ const Chatbot: React.FC<{
         }
     }
 
-
     // Function for fetching a thread's messages
-    const fetchThreadMessages = (contactId: number) => {
+    const fetchThreadMessages = async (contactId: number) => {
         // Check cache, if exist, no need for fetching because chat is updated in real-time
         const cache = userContacts.find(contact => contact.ReceiverId === contactId);
-        if (cache && cache.CachedThread) return;
+        if (cache && cache.CachedThread) {
+            return cache.CachedThread;
+        }
         // Check jwt
         const jwt = fetchJwt();
-        if (!jwt) return;
-
-        fetch(`${apiUrl}/chat/get-thread/${contactId}`, {
+        if (!jwt) return null;
+        return await fetch(`${apiUrl}/chat/get-thread/${contactId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
@@ -75,12 +75,14 @@ const Chatbot: React.FC<{
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
                 // Cache the messages
-                const updatedContacts = [...userContacts];
+                /*const updatedContacts = [...userContacts];
                 updatedContacts.find(contact => contact.ReceiverId === contactId)!.CachedThread = data.messages;
-                setUserContacts(updatedContacts);
+                setUserContacts(updatedContacts);*/
+                return data.messages as ThreadMessage[];
             })
             .catch((res) => {
                 console.log('Sunucuyla bağlantıda hata');
+                return null;
             });
     };
 
@@ -185,6 +187,7 @@ const Chatbot: React.FC<{
         };
     }, []);
 
+    // Handle new message by user, acts the same way for receiving since it's using web socket
     const handleMessageSubmit = () => {
         // Check user and prepare it for payload
         const jwt = fetchJwt();
@@ -218,6 +221,19 @@ const Chatbot: React.FC<{
 
     // currentThread rendering for better and easier async scroll
     const [currentThread, setCurrentThread] = useState<ThreadMessage[] | null>(null)
+    // Fetch messages associated with this "chat", messages between two users
+    useEffect(() => {
+        if (gStatus.activeContact) {
+            fetchThreadMessages(gStatus.activeContact).then((thread) => {
+                const updatedContacts = [...userContacts];
+                const contact = updatedContacts.find(contact => contact.ReceiverId === gStatus.activeContact);
+                if (contact) {
+                    contact.CachedThread = thread ?? [];
+                    setUserContacts(updatedContacts);
+                }
+            });
+        }
+    }, [gStatus.activeContact]);
     // Assign currentThread from cache
     useEffect(() => {
         // Run when userContacts updates, like when data is cached and updated
@@ -256,8 +272,6 @@ const Chatbot: React.FC<{
                                     setContactMenuActive(false);
                                     // Prevent actions if already selected
                                     if (contact.ReceiverId === gStatus.activeContact) return;
-                                    // Fetch messages associated with this "chat", messages between two users
-                                    fetchThreadMessages(contact.ReceiverId);
                                     // Indicates this chat needs scrolling down initially
                                     // Before setActiveContact to prevent async problems, can be inside the setActiveContact
                                     setIsInitialScroll(true);
