@@ -15,7 +15,7 @@ const Chatbot: React.FC<{
     // User contacts context
     const { userContacts, setUserContacts } = useContacts();
     // General status context
-    const { gStatus, setGStatus, handleGStatus } = useGStatus();
+    const { gStatus, handleGStatus } = useGStatus();
 
     // User context
     const { userData } = useUser();
@@ -100,10 +100,10 @@ const Chatbot: React.FC<{
         };
 
         // Record clicks
-        document.addEventListener("click", handleDocumentClick);
+        document.addEventListener("mousedown", handleDocumentClick);
 
         return () => {
-            document.removeEventListener("click", handleDocumentClick);
+            document.removeEventListener("mousedown", handleDocumentClick);
         };
     }, [gStatus.chatbotActive]);
 
@@ -244,6 +244,8 @@ const Chatbot: React.FC<{
         }
     }, [gStatus.activeContact, userContacts]);
     useEffect(() => {
+        // Prevents initial run, only need this afterwards, also fixes message request from post not scrolling down
+        if (!currentThread) return;
         // Scroll down the chat everytime currentThread changes if right conditions are met
         scrollToBottom();
         // Stop animation of the last message
@@ -254,6 +256,9 @@ const Chatbot: React.FC<{
     const [contactMenuActive, setContactMenuActive] = useState(false);
     // Fullscreen or default (Only for desktop)
     const [isChatbotFullscreen, setIsChatbotFullscreen] = useState(false);
+
+    const currentContact = userContacts.find(c => c.ReceiverId === gStatus.activeContact);
+    const contactName = currentContact ? currentContact.ReceiverFullName ?? currentContact.ReceiverUsername : 'Kişi seçilmedi';
 
     return (
         <div className={`chatbot-container ${gStatus.chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
@@ -311,7 +316,7 @@ const Chatbot: React.FC<{
                 <div className="chatbot-body">
                     <div className="chatbot-body-header">
                         <button type='button' className='chatbot-shortcut-button contact-menu-button' onClick={() => setContactMenuActive(true)}><PersonLinesFill /></button>
-                        <h5>İrşat Akdeniz</h5>
+                        <h5>{contactName}</h5>
                         <div className="chatbot-shortcuts">
                             <button type='button' className='chatbot-shortcut-button'><ThreeDots /></button>
                             <button type='button' className='chatbot-shortcut-button fullscreen-button' onClick={(e: any) => {
@@ -344,12 +349,15 @@ const Chatbot: React.FC<{
                         </div>
                     </div>
                     <div className="send-message-container">
-                        <input type='text'
+                        <textarea
                             placeholder='Mesaj gönder...'
                             className='message-input'
                             value={messageInput}
                             onChange={(e) => setMessageInput(e.target.value)}
-                        />
+                            onKeyUp={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) handleMessageSubmit();
+                            }}>
+                        </textarea>
                         <button className='send' onClick={handleMessageSubmit}><Send /></button>
                     </div>
                 </div>

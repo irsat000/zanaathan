@@ -733,6 +733,7 @@ body select {
   border-radius: 10px;
   border: 1px solid var(--primary-light-border);
   width: 100%;
+  resize: vertical;
 }
 .chatbot-container .chatbot .chatbot-body .send-message-container .send {
   padding: 11px 11px 8px 8px;
