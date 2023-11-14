@@ -4,15 +4,13 @@ import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import Link from 'next/link';
 import { useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
-import { UserContacts } from './chatbot';
 
 export type AuthModalState = 'signin' | 'signup' | 'none';
 
 const AuthModal: React.FC<{
     authModalActive: AuthModalState,
-    setAuthModalActive: (v: AuthModalState) => void,
-    setUserContacts: (v: UserContacts[]) => void,
-}> = ({ authModalActive, setAuthModalActive, setUserContacts }) => {
+    setAuthModalActive: (v: AuthModalState) => void
+}> = ({ authModalActive, setAuthModalActive }) => {
     // Get user context
     const { setUserData } = useUser();
     // Auth modal - informing the user
@@ -109,7 +107,7 @@ const AuthModal: React.FC<{
     }
 
     return (
-        <div className={`auth-modal-container modal-container ${authModalActive !== 'none' && 'active'}`} onMouseDown={() => handleAuthModal('none')}>
+        <div className={`auth-modal-container modal-container ${authModalActive !== 'none' ? 'active' : ''}`} onMouseDown={() => handleAuthModal('none')}>
             <div className='auth-modal' onMouseDown={(e) => { e.stopPropagation() }}>
                 <button type='button' className='close-modal-button' onClick={() => handleAuthModal('none')}><XLg /></button>
                 <div className="auth-tab-buttons">

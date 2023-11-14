@@ -2,7 +2,7 @@ import { useUser } from '@/context/userContext';
 import Link from 'next/link';
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { Fullscreen, Person, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
+import { Fullscreen, FullscreenExit, Person, PersonLinesFill, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
 import { apiUrl, apiWebSocketUrl, imageLink, toShortLocal } from '@/lib/utils/helperUtils';
 import { fetchJwt, fetchUserContacts } from '@/lib/utils/userUtils';
 import { io, Socket } from 'socket.io-client';
@@ -90,7 +90,7 @@ const Chatbot: React.FC<{
         const handleDocumentClick = (e: any) => {
             // Check if the click target is outside of the user-menu dropdown div and user-menu button
             if (gStatus.chatbotActive
-                && !chatbotRef.current?.contains(e.target)
+                && !e.target.closest('.chatbot')
                 && !e.target.closest('.open-chatbot-button')
                 && !e.target.closest('.message-request')) {
                 handleGStatus('chatbotActive', false);
@@ -234,10 +234,15 @@ const Chatbot: React.FC<{
         setAnimateMessageId(null);
     }, [currentThread]);
 
+    // On/Off for contact menu (Only for mobile)
+    const [contactMenuActive, setContactMenuActive] = useState(false);
+    // Fullscreen or default (Only for desktop)
+    const [isChatbotFullscreen, setIsChatbotFullscreen] = useState(false);
+
     return (
         <div className={`chatbot-container ${gStatus.chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
-            <div className="chatbot">
-                <div className="chatbot-menu">
+            <div className={`chatbot ${isChatbotFullscreen ? 'fullscreen' : ''}`}>
+                <div className={`chatbot-menu ${contactMenuActive ? 'active' : ''}`}>
                     <div className="chatbot-menu-header">
                         <h5>Kişiler</h5>
                         <button type='button' className='chatbot-add-user'>Yeni<PlusLg /></button>
@@ -247,6 +252,8 @@ const Chatbot: React.FC<{
                             <div key={i}
                                 className={`contact-item ${contact.ReceiverId === gStatus.activeContact ? 'active' : 'default'}`}
                                 onClick={() => {
+                                    // For mobile, disable chatbot menu
+                                    setContactMenuActive(false);
                                     // Prevent actions if already selected
                                     if (contact.ReceiverId === gStatus.activeContact) return;
                                     // Fetch messages associated with this "chat", messages between two users
@@ -289,10 +296,18 @@ const Chatbot: React.FC<{
                 </div>
                 <div className="chatbot-body">
                     <div className="chatbot-body-header">
+                        <button type='button' className='chatbot-shortcut-button contact-menu-button' onClick={() => setContactMenuActive(true)}><PersonLinesFill /></button>
                         <h5>İrşat Akdeniz</h5>
                         <div className="chatbot-shortcuts">
                             <button type='button' className='chatbot-shortcut-button'><ThreeDots /></button>
-                            <button type='button' className='chatbot-shortcut-button fullscreen-button'><Fullscreen /></button>
+                            <button type='button' className='chatbot-shortcut-button fullscreen-button' onClick={(e: any) => {
+                                e.stopPropagation();
+                                setIsChatbotFullscreen(!isChatbotFullscreen);
+                            }}>
+                                {isChatbotFullscreen
+                                    ? <FullscreenExit />
+                                    : <Fullscreen />}
+                            </button>
                             <button type='button' className='chatbot-shortcut-button' onClick={() => handleGStatus('chatbotActive', false)}><XLg /></button>
                         </div>
                     </div>
@@ -325,7 +340,7 @@ const Chatbot: React.FC<{
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
