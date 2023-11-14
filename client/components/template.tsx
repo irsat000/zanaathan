@@ -93,7 +93,6 @@ const Template: React.FC<{
 				{userData ? <Chatbot /> : <></>}
 				<AuthModal
 					authModalActive={authModalActive} setAuthModalActive={setAuthModalActive}
-					setUserContacts={setUserContacts}
 				/>
 				<div className={`drawer-container ${drawerActive && 'active'}`} onClick={() => setDrawerActive(false)}>
 					<div className="drawer" onClick={(e) => { e.stopPropagation() }}>

@@ -261,7 +261,7 @@ const Chatbot: React.FC<{
                 <div className={`chatbot-menu ${contactMenuActive ? 'active' : ''}`}>
                     <div className="chatbot-menu-header">
                         <h5>Kişiler</h5>
-                        <button type='button' className='chatbot-add-user'>Yeni<PlusLg /></button>
+                        {/*<button type='button' className='chatbot-add-user'>Yeni<PlusLg /></button>*/}
                     </div>
                     <div className="chatbot-contacts">
                         {userContacts.length > 0 ? userContacts.map((contact, i) =>

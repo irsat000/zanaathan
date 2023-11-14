@@ -990,7 +990,7 @@ main {
 }
 main .breadcrumb-trail-container {
   align-self: flex-start;
-  padding: 20px 0;
+  padding: 20px 0 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1003,7 +1003,6 @@ main .breadcrumb-trail-container span svg {
   display: flex;
 }
 main .breadcrumb-trail-container a {
-  padding: 5px 12px;
   border-radius: 20px;
 }
 main .breadcrumb-trail-container a:hover {
@@ -1102,6 +1101,9 @@ footer {
   }
   header > .header-container .user-container {
     display: flex;
+  }
+  main .breadcrumb-trail-container a {
+    padding: 5px 12px;
   }
 }
 @media (min-width: 992px) {

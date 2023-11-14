@@ -1141,7 +1141,7 @@ main {
 
     .breadcrumb-trail-container {
         align-self: flex-start;
-        padding: 20px 0;
+        padding: 20px 0 0;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -1157,7 +1157,6 @@ main {
         }
 
         a {
-            padding: 5px 12px;
             border-radius: 20px;
 
             &:hover {
@@ -1292,6 +1291,10 @@ footer {
         .user-container {
             display: flex;
         }
+    }
+
+    main .breadcrumb-trail-container a {
+        padding: 5px 12px;
     }
 }
 

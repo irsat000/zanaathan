@@ -7,6 +7,7 @@ import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { apiUrl, formatSecondsAgo, imageLink } from '@/lib/utils/helperUtils'
+import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/lib/utils/fetchUtils'
 
 interface Post {
   Id: number;
@@ -88,6 +89,22 @@ export default function Category() {
     setDistrictSelectActive(!districtSelectActive);
   }
 
+  // Get cities
+  const [fetchedCities, setFetchedCities] = useState<City[]>([]);
+  useEffect(() => {
+    fetchAndCacheCities().then(data => {
+      if (data) setFetchedCities(data);
+    });
+  }, []);
+  // Districts depending on City Id
+  const [districtsAll, setDistrictsAll] = useState<Map<string, District[]>>(new Map());
+  // Get the selected city's districts, keep the previously fetched districts for future use
+  const fetchDistricts = (cityId: string) => {
+    fetchAndCacheDistricts(cityId, districtsAll).then(data => {
+      if (data) setDistrictsAll(data);
+    });
+  }
+
   // Upon closing filter modal
   const handleFilterModalClose = () => {
     setFilterModalActive(false);
@@ -99,6 +116,24 @@ export default function Category() {
     if (!e.target.closest('.select2')) {
       closeSelects();
     }
+  }
+
+  const [filterData, setFilterData] = useState<{
+    subcategory: number | null,
+    city: number | null,
+    district: number | null,
+  }>({
+    subcategory: null,
+    city: null,
+    district: null,
+  });
+
+  // Change the filters
+  const handleFilterChange = (e: any) => {
+    setFilterData({
+      ...filterData,
+      [e.target.name]: e.target.value
+    });
   }
 
   return (
@@ -131,13 +166,14 @@ export default function Category() {
                   <Search />
                 </div>
                 <ul className="option-list">
-                  <li>Adana</li>
-                  <li>Antalya</li>
-                  <li>Balıkesir</li>
-                  <li>Bursa</li>
-                  <li>İstanbul</li>
-                  <li>Muş</li>
-                  <li>Kahramanmaraş</li>
+                  {fetchedCities.map((city, i) => <li key={i} onClick={() => {
+                    fetchDistricts(city.Id.toString());
+                    setFilterData({
+                      ...filterData,
+                      city: city.Id
+                    });
+                    toggleCitySelect();
+                  }}>{city.Name}</li>)}
                 </ul>
               </div>
             </div>
@@ -149,11 +185,15 @@ export default function Category() {
                   <Search />
                 </div>
                 <ul className="option-list">
-                  <li>Yıldırım</li>
-                  <li>Osmangazi</li>
-                  <li>Orhangazi</li>
-                  <li>İnegöl</li>
-                  <li>Nilüfer</li>
+                  {filterData.city ? districtsAll.get(filterData.city.toString())?.map((district, i) =>
+                    <li key={i} onClick={() => {
+                      setFilterData({
+                        ...filterData,
+                        district: district.Id
+                      });
+                      toggleDistrictSelect();
+                    }}>{district.Name}</li>
+                  ) : <></>}
                 </ul>
               </div>
             </div>
@@ -171,15 +211,8 @@ export default function Category() {
           <div className='sort-by'>
             <span>Sırala</span>
             <select>
-              <option value='mix'>Karışık</option>
-              <optgroup label='Çalışanlar'>
-                <option value='popular'>Popüler</option>
-                <option value='new-freelancer'>Yeni</option>
-              </optgroup>
-              <optgroup label='İlanlar'>
-                <option value='old'>Eski</option>
-                <option value='new-work'>Yeni</option>
-              </optgroup>
+              <option value='old'>Eski</option>
+              <option value='new'>Yeni</option>
             </select>
           </div>
         </div>
