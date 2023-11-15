@@ -4,9 +4,9 @@ export interface UserContact {
     ReceiverId: number;
     LastMessage: string | null;
     LastMessageDate: string | null;
-    ReceiverAvatar: string | null;
-    ReceiverFullName: string | null;
     ReceiverUsername: string;
+    ReceiverFullName: string | null;
+    ReceiverAvatar: string | null;
     CachedThread: ThreadMessage[] | undefined;
 }
 

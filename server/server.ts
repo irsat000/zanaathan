@@ -84,7 +84,13 @@ io.on('connection', (socket: any) => {
                 }
 
                 // Get message from db
-                const query2 = 'SELECT Id, Body, SenderId, CreatedAt FROM Message WHERE Id = ?';
+                const query2 = `
+                    SELECT M.Id AS Id, Body, SenderId, M.CreatedAt,
+                        A.Username, A.FullName, A.Avatar
+                    FROM Message AS M
+                    LEFT JOIN Account AS A ON A.Id = M.SenderId
+                    WHERE M.Id = ?;
+                `;
                 pool.query(query2, [results.insertId], (qErr2: any, results2: any) => {
                     if (qErr2) {
                         const errorMessage = {

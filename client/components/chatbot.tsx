@@ -157,8 +157,9 @@ const Chatbot: React.FC<{
             setUserContacts((prev: UserContact[]) => {
                 const updatedContacts = [...prev];
                 const contactToUpdate = updatedContacts.find(contact => contact.ReceiverId === data.receiverId || contact.ReceiverId === data.message.SenderId);
+                // If contactToUpdate doesn't exist, it means a new person is messaging the current user
                 if (contactToUpdate) {
-                    // Push the mew message
+                    // Push the mew message from current or another user in the UserContacts of current user
                     if (contactToUpdate.CachedThread) {
                         contactToUpdate.CachedThread.push(newMessage);
                     } else {
@@ -174,9 +175,18 @@ const Chatbot: React.FC<{
                     return updatedContacts;
                 }
                 else {
-                    return prev;
-                    // Todo: Create new thread/contact with data.message.SenderId.
-                    // If contactToUpdate doesn't exist, it means a new person is messaging the current user
+                    // This is the new contact who sent the new message
+                    const newContact = {
+                        ReceiverId: data.message.SenderId,
+                        LastMessage: newMessage.Body,
+                        LastMessageDate: newMessage.CreatedAt,
+                        ReceiverUsername: data.message.Username,
+                        ReceiverFullName: data.message.FullName,
+                        ReceiverAvatar: data.message.Avatar,
+                        CachedThread: [newMessage]
+                    }
+                    updatedContacts.unshift(newContact);
+                    return updatedContacts;
                 }
             });
         });
