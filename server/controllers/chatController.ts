@@ -6,12 +6,12 @@ const pool = require('../db/db');
 
 
 exports.getContacts = (req: Request, res: Response) => {
-    // Verify and decode the token
-    const jwt = req.headers?.authorization?.split(' ')[1];
-    const userId = verifyJwt(jwt);
-    if (!userId) return res.status(401).send('Not authorized');
-
     try {
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) return res.status(401).send('Not authorized');
+        // Get the list of contacts with their last messages and all the necessary information
         const query = `
             SELECT
                 A.Id AS ReceiverId,
@@ -45,7 +45,6 @@ exports.getContacts = (req: Request, res: Response) => {
 }
 
 
-// TODO: Check if person is authorized by checking if they are participated in the thread
 exports.getThread = (req: Request, res: Response) => {
     try {
         // Get contact id
@@ -55,7 +54,7 @@ exports.getThread = (req: Request, res: Response) => {
         const jwt = req.headers?.authorization?.split(' ')[1];
         const userId = verifyJwt(jwt);
         if (!userId) return res.status(401).send('Not authorized');
-
+        // Get messages from both sides
         const query = `
             SELECT M.Id, M.SenderId, M.CreatedAt, M.Body
             FROM Message AS M

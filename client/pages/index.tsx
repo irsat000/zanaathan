@@ -12,7 +12,7 @@ export default function Home() {
       <div className='index-page'>
         <div className="intro">
           <div className="intro-content">
-            <h2>Zanaat sanattır, ödemesini bilmeli.</h2>
+            <h2>Zanaat sanattır.</h2>
             <p>
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem animi reiciendis debitis beatae temporibus, voluptatibus earum molestiae. Dolores tempora consectetur ad possimus veritatis quibusdam aspernatur quod natus unde quas. Culpa.
             </p>

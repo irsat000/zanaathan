@@ -10,6 +10,9 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronCompactLeft, ChevronCompactRight, ChevronRight } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
+import ReactHtmlParser from 'html-react-parser';
+import DOMPurify from 'dompurify';
+
 
 
 interface PostDetails {
@@ -214,9 +217,9 @@ export default function PostDetails() {
 					</div>
 					<div className='post-description'>
 						<h2 className='description-heading'>Açıklama</h2>
-						<p className='description'>
-							{postDetails.Description}
-						</p>
+						<div className='description'>
+							{ReactHtmlParser(DOMPurify.sanitize(postDetails.Description))}
+						</div>
 					</div>
 				</div>
 				: <>Show no post error</>}

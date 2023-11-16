@@ -9,6 +9,10 @@ import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
 import { apiUrl } from '@/lib/utils/helperUtils'
 import { fetchJwt } from '@/lib/utils/userUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts, getSubsByCategory } from '@/lib/utils/fetchUtils'
+//import ReactQuill from 'react-quill';
+import dynamic from 'next/dynamic'
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false }); // ReactQuill doesn't work on server side, ssr is no good
+import 'react-quill/dist/quill.snow.css';
 
 
 interface SubCategory {
@@ -20,11 +24,12 @@ export default function NewPost() {
   // Create post payload
   const [formData, setFormData] = useState<NPFormData>({
     title: '',
-    description: '',
     subCategory: '0',
     district: '0',
     selectedImages: []
   });
+  const [description, setDescription] = useState('');
+
 
   // Extra data that's used for user experience.
   // Example: City selection changing or disabling district select
@@ -92,7 +97,7 @@ export default function NewPost() {
 
     const multiPartFormData = new FormData();
     multiPartFormData.append('title', formData.title);
-    multiPartFormData.append('description', formData.description);
+    multiPartFormData.append('description', description);
     multiPartFormData.append('subCategory', formData.subCategory);
     multiPartFormData.append('district', formData.district);
     formData.selectedImages.forEach((pic, index) => {
@@ -123,11 +128,11 @@ export default function NewPost() {
   const resetForm = () => {
     setFormData({
       title: '',
-      description: '',
       subCategory: '0',
       district: '0',
       selectedImages: []
     });
+    setDescription('');
     setExtraData({
       category: '0',
       city: '0'
@@ -152,7 +157,9 @@ export default function NewPost() {
         <form className="new-post-form" onSubmit={handleNewPostSubmit}>
           <div className="np-primary">
             <input className='np-title' type='text' name='title' placeholder='Başlık' onChange={handleFormChange} />
-            <textarea className='np-description' name='description' placeholder='Açıklama' onChange={handleFormChange}></textarea>
+            <div className='description-container'>
+              <ReactQuill theme="snow" value={description} onChange={setDescription} className='np-description' />
+            </div>
             <NP_Thumbnails formData={formData} setFormData={setFormData} />
             <label className='np-image-upload'>
               <input type='file'

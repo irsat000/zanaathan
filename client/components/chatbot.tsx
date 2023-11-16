@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { Fullscreen, FullscreenExit, Person, PersonLinesFill, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
-import { apiUrl, apiWebSocketUrl, imageLink, toShortLocal } from '@/lib/utils/helperUtils';
+import { apiUrl, apiWebSocketUrl, imageLink, isNullOrEmpty, toShortLocal } from '@/lib/utils/helperUtils';
 import { fetchJwt, fetchUserContacts } from '@/lib/utils/userUtils';
 import { io, Socket } from 'socket.io-client';
 import { ThreadMessage, UserContact, useContacts } from '@/context/contactsContext';
@@ -156,6 +156,7 @@ const Chatbot: React.FC<{
             // Cache the new message
             setUserContacts((prev: UserContact[]) => {
                 const updatedContacts = [...prev];
+                // Get either current user's target contact or the contact that targeted current user
                 const contactToUpdate = updatedContacts.find(contact => contact.ReceiverId === data.receiverId || contact.ReceiverId === data.message.SenderId);
                 // If contactToUpdate doesn't exist, it means a new person is messaging the current user
                 if (contactToUpdate) {
@@ -199,6 +200,8 @@ const Chatbot: React.FC<{
 
     // Handle new message by user, acts the same way for receiving since it's using web socket
     const handleMessageSubmit = () => {
+        // Check empty
+        if (isNullOrEmpty(messageInput)) return;
         // Check user and prepare it for payload
         const jwt = fetchJwt();
         if (!jwt) {
@@ -214,7 +217,7 @@ const Chatbot: React.FC<{
         if (!socket) {
             alert("Sunucuyla bağlantıda hata.")
             return;
-        }
+        };
         // Payload
         const messageObject = {
             type: 'text',
@@ -275,7 +278,7 @@ const Chatbot: React.FC<{
             <div className={`chatbot ${isChatbotFullscreen ? 'fullscreen' : ''}`}>
                 <div className={`chatbot-menu ${contactMenuActive ? 'active' : ''}`}>
                     <div className="chatbot-menu-header">
-                        <h5>Kişiler</h5>
+                        <h5>Benim ağım</h5>
                         {/*<button type='button' className='chatbot-add-user'>Yeni<PlusLg /></button>*/}
                     </div>
                     <div className="chatbot-contacts">
@@ -351,6 +354,7 @@ const Chatbot: React.FC<{
                                 return (
                                     <div key={i} className={`message-item ${msgOwner} ${animate}`}>
                                         <p>{message.Body}</p>
+                                        <span className='message-date'>{toShortLocal(message.CreatedAt)}</span>
                                     </div>
                                 )
                             }) : currentThread

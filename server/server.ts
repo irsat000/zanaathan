@@ -4,7 +4,7 @@ import { Server } from 'socket.io';
 const cors = require('cors');
 import { Request, Response } from 'express';
 import { verifyJwt } from './utils/userUtils';
-import { isPositiveNumeric } from './utils/helperUtils';
+import { isNullOrEmpty, isPositiveNumeric } from './utils/helperUtils';
 
 // Configuration
 const app = express();
@@ -58,10 +58,14 @@ io.on('connection', (socket: any) => {
         try {
             // Verify and parse
             const parsed = JSON.parse(data);
+            // Check empty
+            if (isNullOrEmpty(parsed.content)) return;
+            // Check authorization
             const userId = verifyJwt(parsed.jwt);
-            if (!userId) return; //Not authorized
+            if (!userId) return;
+            // Check target
             const receiverId: number = parsed.receiver;
-            if (!isPositiveNumeric(receiverId) || userId === receiverId) return; //Faulty receiver id
+            if (!isPositiveNumeric(receiverId) || userId === receiverId) return;
 
             // Connections that we send real-time messages to
             const connsToSendMessage: string[] = [];
@@ -122,7 +126,7 @@ io.on('connection', (socket: any) => {
         console.log('Client disconnected');
         // Delete pairs after disconnect
         const userId = socketUserMap.get(socket.id);
-        if(userId){
+        if (userId) {
             userSocketMap.delete(userId);
             socketUserMap.delete(socket.id);
         }

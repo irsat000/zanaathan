@@ -497,6 +497,7 @@ body select {
   display: flex;
   flex-direction: row;
   position: relative;
+  overflow: hidden;
 }
 .chatbot-container .chatbot .chatbot-shortcut-button {
   display: flex;
@@ -527,7 +528,7 @@ body select {
   background-color: var(--primary-bg-color);
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-menu-header {
-  padding: 10px 10px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--primary-light-border);
   display: flex;
   flex-direction: row;
@@ -535,8 +536,8 @@ body select {
   justify-content: space-between;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-menu-header h5 {
-  font-weight: 500;
-  font-family: "Fira-sans", sans-serif;
+  font-weight: 300;
+  font-family: "Poppins", sans-serif;
   font-size: 1.2rem;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-menu-header .chatbot-add-user {
@@ -563,6 +564,7 @@ body select {
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item.active {
   background-color: rgba(0, 0, 0, 0.06);
+  border-left: 4px solid #22bded;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item.default:hover {
   background-color: rgba(0, 0, 0, 0.03);
@@ -573,6 +575,7 @@ body select {
   align-items: center;
   cursor: pointer;
   padding: 4px 0;
+  border-left: 4px solid transparent;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .profile-picture {
   padding: 8px;
@@ -602,11 +605,11 @@ body select {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   gap: 10px;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .body .person-header .name {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 300;
   font-family: "Poppins", sans-serif;
   white-space: nowrap;
@@ -698,22 +701,55 @@ body select {
 }
 .chatbot-container .chatbot .chatbot-body .message-box .messages .message-item {
   display: flex;
-  padding: 8px;
   max-width: 90%;
   border: 1px solid rgba(0, 0, 0, 0.05);
+  flex-direction: row;
+  align-items: flex-end;
+  position: relative;
+}
+.chatbot-container .chatbot .chatbot-body .message-box .messages .message-item p {
+  display: inline;
+  padding: 8px;
+}
+.chatbot-container .chatbot .chatbot-body .message-box .messages .message-item .message-date {
+  padding: 0 6px 2px 2px;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+.chatbot-container .chatbot .chatbot-body .message-box .messages .message-item::before {
+  z-index: 1;
+  border-bottom: none;
+  border-top: none;
+  border-left: 2px solid transparent;
+  display: block;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  height: 9px;
 }
 .chatbot-container .chatbot .chatbot-body .message-box .messages .message-item.animate-new {
   animation: new-message 0.2s ease-in-out forwards;
 }
 .chatbot-container .chatbot .chatbot-body .message-box .messages .message-item.receiver {
+  border-radius: 0 10px 10px 10px;
   align-self: flex-start;
   background-color: var(--chatbot-receiver);
-  border-radius: 0 10px 10px 10px;
+}
+.chatbot-container .chatbot .chatbot-body .message-box .messages .message-item.receiver::before {
+  left: -8px;
+  border-right: 4px solid rgba(0, 0, 0, 0.1);
+  transform: rotate(20deg);
 }
 .chatbot-container .chatbot .chatbot-body .message-box .messages .message-item.you {
+  border-radius: 10px 10px 0 10px;
   align-self: flex-end;
   background-color: var(--chatbot-you);
-  border-radius: 10px 10px 0 10px;
+}
+.chatbot-container .chatbot .chatbot-body .message-box .messages .message-item.you::before {
+  right: -8px;
+  transform: rotate(154deg);
+  border-right: 4px solid #d1e9d0;
 }
 .chatbot-container .chatbot .chatbot-body .send-message-container {
   display: flex;

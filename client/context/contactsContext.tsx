@@ -7,7 +7,7 @@ export interface UserContact {
     ReceiverUsername: string;
     ReceiverFullName: string | null;
     ReceiverAvatar: string | null;
-    CachedThread: ThreadMessage[] | undefined;
+    CachedThread?: ThreadMessage[];
 }
 
 export interface ThreadMessage {

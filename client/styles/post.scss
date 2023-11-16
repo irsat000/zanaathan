@@ -230,6 +230,17 @@
             margin-bottom: 14px;
             font-size: 1.1rem;
             font-weight: 300;
+            padding: 12px 0;
+            border-top: 1px solid var(--primary-light-border);
+            overflow: hidden;
+
+            a {
+                color: var(--link-color);
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
         }
     }
 }
@@ -239,26 +250,36 @@
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) {
-    .post-page .post-container {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
+    .post-page {
+        .post-container {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
 
-        .gallery-container {
-            width: 60%;
-            max-width: 700px;
+            .gallery-container {
+                width: 60%;
+                max-width: 700px;
 
-            .thumbnail-carousel-container {
+                .thumbnail-carousel-container {
 
-                .thumbnail-carousel {
-                    gap: 16px;
-                    flex-wrap: wrap;
+                    .thumbnail-carousel {
+                        gap: 16px;
+                        flex-wrap: wrap;
 
-                    .thumbnail-wrapper {
-                        width: 100px;
-                        height: 100px;
+                        .thumbnail-wrapper {
+                            width: 100px;
+                            height: 100px;
+                        }
                     }
                 }
+            }
+        }
+
+        .post-description{
+            .description{
+                border-radius: 4px;
+                padding: 20px 14px;
+                border: 1px solid var(--primary-light-border);
             }
         }
     }

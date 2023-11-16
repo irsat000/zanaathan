@@ -4,7 +4,6 @@ import { useState } from "react";
 
 export interface NPFormData {
     title: string,
-    description: string,
     subCategory: string,
     district: string,
     selectedImages: File[]

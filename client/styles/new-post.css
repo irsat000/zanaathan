@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .new-post-page {
   display: flex;
   flex-direction: column;
@@ -27,8 +28,7 @@
   flex-direction: column;
   gap: 14px;
 }
-.new-post-page .new-post-form .np-primary .np-title,
-.new-post-page .new-post-form .np-primary .np-description {
+.new-post-page .new-post-form .np-primary .np-title {
   border-radius: 6px;
   border: 1px solid var(--button-white-border);
 }
@@ -37,12 +37,34 @@
   font-size: 1.1rem;
   padding: 8px 14px;
 }
-.new-post-page .new-post-form .np-primary .np-description {
+.new-post-page .new-post-form .np-primary .description-container {
+  display: flex;
+  margin-bottom: 44px;
+}
+.new-post-page .new-post-form .np-primary .description-container .np-description {
+  width: 100%;
+  border-radius: 6px;
+  font-weight: 300;
   font-family: "Poppins", sans-serif;
   font-size: 1.1rem;
-  font-weight: 300;
-  padding: 8px 14px;
-  min-height: 200px;
+}
+.new-post-page .new-post-form .np-primary .description-container .np-description .ql-picker-label[data-value="1"]::before,
+.new-post-page .new-post-form .np-primary .description-container .np-description .ql-picker-item[data-value="1"]::before {
+  content: "Başlık 1" !important;
+}
+.new-post-page .new-post-form .np-primary .description-container .np-description .ql-picker-label[data-value="2"]::before,
+.new-post-page .new-post-form .np-primary .description-container .np-description .ql-picker-item[data-value="2"]::before {
+  content: "Başlık 2" !important;
+}
+.new-post-page .new-post-form .np-primary .description-container .np-description .ql-picker-label[data-value="3"]::before,
+.new-post-page .new-post-form .np-primary .description-container .np-description .ql-picker-item[data-value="3"]::before {
+  content: "Başlık 3" !important;
+}
+.new-post-page .new-post-form .np-primary .description-container .np-description .ql-tooltip[data-mode=link]::before {
+  content: "Link gir:";
+}
+.new-post-page .new-post-form .np-primary .description-container .np-description .ql-tooltip.ql-editing a.ql-action::after {
+  content: "Kaydet";
 }
 .new-post-page .new-post-form .np-primary .np-thumbnail-wrapper {
   display: flex;
