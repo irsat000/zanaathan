@@ -82,7 +82,13 @@ USE ZanaatHan;
 # Get user block
 SELECT COUNT(*) AS Count FROM UserBlock
 WHERE AccountId = 9 AND TargetId = 11;
+
+SELECT COUNT(*) AS Count FROM UserBlock
+WHERE (AccountId = 9 AND TargetId = 11)
+OR (AccountId = 11 AND TargetId = 9);
+
 INSERT INTO UserBlock(AccountId, TargetId) VALUES(9, 11);
+INSERT INTO UserBlock(AccountId, TargetId) VALUES(11, 9);
 DELETE FROM UserBlock WHERE AccountId = 9 AND TargetId = 11;
 
 

@@ -149,8 +149,15 @@ const Chatbot: React.FC<{
             //if (!userData) return;
 
             const data = JSON.parse(res);
-            // status: 'success' | 'error'
+            // status: 'success' | 'error' | 'blocked'
             // TODO: Inform the user if error
+
+            // Check if there is a block, tell the current user that they are blocked.
+            // In case current user is the blocker, user is already warned during the handleMessageSubmit function
+            if (data.status === 'blocked') {
+                alert("Bu kişi tarafından engellendiniz.");
+                return;
+            }
             if (data.status !== 'success') return;
             // Create new message from insertion on back end
             const newMessage: ThreadMessage = {
@@ -220,17 +227,17 @@ const Chatbot: React.FC<{
         if (!jwt) {
             alert("Üye girişi bu işlem için gereklidir.")
             return;
-        };
+        }
         // Check contact selection
         if (!gStatus.activeContact) {
             alert("Hedef kişi seçimi gereklidir.")
             return;
-        };
+        }
         // Check WS connection
         if (!socket) {
             alert("Sunucuyla bağlantıda hata.")
             return;
-        };
+        }
         // Check block from this user
         if (currentContact && currentContact.IsBlocked) {
             alert("Engellediğiniz kullanıcıya mesaj atamazsınız.");
