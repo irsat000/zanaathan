@@ -7,6 +7,7 @@ export interface UserContact {
     ReceiverUsername: string;
     ReceiverFullName: string | null;
     ReceiverAvatar: string | null;
+    IsBlocked: boolean;
     CachedThread?: ThreadMessage[];
 }
 

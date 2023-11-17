@@ -67,6 +67,44 @@ io.on('connection', (socket: any) => {
             const receiverId: number = parsed.receiver;
             if (!isPositiveNumeric(receiverId) || userId === receiverId) return;
 
+            // TODO: CHECK IF EITHER OF THEM BLOCKED
+            /*
+            // Check block status between two users
+                const query = `
+                    SELECT COUNT(*) AS Count FROM UserBlock
+                    WHERE AccountId = ? AND TargetId = ?;
+                `;
+                pool.query(query, [userId, targetId], (qErr: any, results: any) => {
+                    if (qErr) {
+                        return res.status(500).json({ error: 'Query error' });
+                    }
+
+                    if (results[0].Count > 0) {
+                        // If user is already blocked, toggle and lift the block
+                        const query2 = `DELETE FROM UserBlock WHERE AccountId = ? AND TargetId = ?;`;
+                        pool.query(query2, [userId, targetId], (qErr2: any) => {
+                            if (qErr2) {
+                                return res.status(500).json({ error: 'Query error' });
+                            }
+
+                            return res.status(200).json({ message: 'User block is lifted' });
+                        });
+                    }
+                    else {
+                        // Block if user is not blocked
+                        const query2 = `INSERT INTO UserBlock(AccountId, TargetId) VALUES(?, ?);`;
+                        pool.query(query2, [userId, targetId], (qErr2: any) => {
+                            if (qErr2) {
+                                return res.status(500).json({ error: 'Query error' });
+                            }
+
+                            return res.status(200).json({ message: 'User blocked' });
+                        });
+                    }
+                });
+                
+            */
+
             // Connections that we send real-time messages to
             const connsToSendMessage: string[] = [];
             const target_1 = userSocketMap.get(userId);

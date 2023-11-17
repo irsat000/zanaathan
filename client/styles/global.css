@@ -662,6 +662,39 @@ body select {
   flex-direction: row;
   align-items: center;
   gap: 16px;
+  position: relative;
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts .chatbot-user-menu.active {
+  display: flex;
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts .chatbot-user-menu {
+  display: none;
+  flex-direction: column;
+  z-index: 1;
+  position: absolute;
+  right: 80%;
+  top: calc(14px + 1.2rem);
+  animation: fade-in 0.1s ease-in-out forwards;
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts .chatbot-user-menu ul {
+  background-color: var(--primary-bg-color);
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--primary-light-border);
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts .chatbot-user-menu ul li {
+  padding: 10px 24px 10px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--primary-light-border);
+  white-space: nowrap;
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts .chatbot-user-menu ul li:last-of-type {
+  border-bottom: unset;
+}
+.chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts .chatbot-user-menu ul li:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 .chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts .fullscreen-button {
   display: none;

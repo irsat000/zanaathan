@@ -115,7 +115,7 @@ html[data-colorset-1] {}
         .category-card {
             display: flex;
             flex-direction: column;
-            padding: 10px;
+            overflow: hidden;
             border-radius: 8px;
             cursor: pointer;
             -webkit-box-shadow: 0px 0px 6px -2px rgb(121, 128, 224, 0.6);
@@ -131,13 +131,15 @@ html[data-colorset-1] {}
             }
 
             .category-image {
-                margin-bottom: 10px;
+                height: 200px;
+                display: flex;
+                justify-content: center;
 
                 img {
-                    width: 100%;
                     height: 100%;
+                    width: 100%;
                     object-fit: cover;
-                    border-radius: 8px;
+                    border-radius: 8px 8px 0 0;
                 }
             }
 
@@ -146,7 +148,7 @@ html[data-colorset-1] {}
                 flex-direction: row;
                 flex-wrap: wrap;
                 align-items: center;
-                padding: 0 6px;
+                padding: 10px;
                 gap: 4px;
 
                 .category-title {
@@ -190,7 +192,7 @@ html[data-colorset-1] {}
             .category-card .category-image {
 
                 img {
-                    aspect-ratio: 1.4/1;
+                    //aspect-ratio: 1.4/1;
                 }
             }
         }

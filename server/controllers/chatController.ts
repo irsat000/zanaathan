@@ -23,16 +23,19 @@ exports.getContacts = (req: Request, res: Response) => {
                     FROM Message AS M2
                     WHERE (M2.SenderId = A.Id OR M2.ReceiverId = A.Id)
                         AND M2.CreatedAt = MAX(M.CreatedAt)
-                ) AS LastMessage
+                ) AS LastMessage,
+                CASE WHEN COUNT(UB.TargetId) > 0 THEN true ELSE false END AS IsBlocked
             FROM
                 Message AS M
             JOIN
                 Account A ON (M.SenderId = A.Id AND M.ReceiverId = ?)
                 OR (M.ReceiverId = A.Id AND M.SenderId = ?)
+            LEFT JOIN
+                UserBlock UB ON A.Id = UB.TargetId AND UB.AccountId = ?
             GROUP BY A.Id
             ORDER BY LastMessageDate DESC;
         `;
-        pool.query(query, [userId, userId], (qErr: any, results: any) => {
+        pool.query(query, [userId, userId, userId], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
             }
@@ -68,6 +71,54 @@ exports.getThread = (req: Request, res: Response) => {
             }
 
             return res.status(200).json({ messages: results });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+exports.blockUserToggle = (req: Request, res: Response) => {
+    try {
+        // Get contact id
+        const targetId = req.params.targetId;
+        if (!targetId) res.status(400).json({ error: 'Bad request' });
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) return res.status(401).send('Not authorized');
+
+        // Check block status between two users
+        const query = `
+            SELECT COUNT(*) AS Count FROM UserBlock
+            WHERE AccountId = ? AND TargetId = ?;
+        `;
+        pool.query(query, [userId, targetId], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            if (results[0].Count > 0) {
+                // If user is already blocked, toggle and lift the block
+                const query2 = `DELETE FROM UserBlock WHERE AccountId = ? AND TargetId = ?;`;
+                pool.query(query2, [userId, targetId], (qErr2: any) => {
+                    if (qErr2) {
+                        return res.status(500).json({ error: 'Query error' });
+                    }
+
+                    return res.status(200).json({ message: 'User block is lifted' });
+                });
+            }
+            else {
+                // Block if user is not blocked
+                const query2 = `INSERT INTO UserBlock(AccountId, TargetId) VALUES(?, ?);`;
+                pool.query(query2, [userId, targetId], (qErr2: any) => {
+                    if (qErr2) {
+                        return res.status(500).json({ error: 'Query error' });
+                    }
+
+                    return res.status(200).json({ message: 'User blocked' });
+                });
+            }
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });

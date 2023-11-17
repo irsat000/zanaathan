@@ -44,13 +44,6 @@ WHERE JP.Id = 1
 GROUP BY JP.Id;
 
 
-SELECT * FROM Account;
-
-
-
-
-
-
 USE ZanaatHan;
 # Get contacts
 SELECT
@@ -63,62 +56,17 @@ SELECT
 		FROM Message AS M2
 		WHERE (M2.SenderId = A.Id OR M2.ReceiverId = A.Id)
 			AND M2.CreatedAt = MAX(M.CreatedAt)
-	) AS LastMessage
+	) AS LastMessage,
+     CASE WHEN COUNT(UB.TargetId) > 0 THEN true ELSE false END AS IsBlocked
 FROM
 	Message AS M
 JOIN
 	Account A ON (M.SenderId = A.Id AND M.ReceiverId = 9)
 	OR (M.ReceiverId = A.Id AND M.SenderId = 9)
+LEFT JOIN
+    UserBlock UB ON A.Id = UB.TargetId AND UB.AccountId = 9
 GROUP BY A.Id
 ORDER BY LastMessageDate DESC;
-
-
-# DEPRECATED
-# Without the names of the others
-/*SELECT
-  Message.Id, Message.CreatedAt, Message.Body, Account.Username AS LastMessagerName
-FROM Message
-INNER JOIN Account ON Message.AccountId = Account.Id
-WHERE ( Message.Id in 
-        (SELECT MAX(Message.Id)
-         FROM MThreadParticipant AS TP
-         INNER JOIN Message ON TP.ThreadId = Message.ThreadId
-         WHERE TP.AccountId = 9
-         GROUP BY TP.ThreadId)
-      )
-ORDER BY Message.CreatedAt DESC;*/
-# With the receiver's name and avatar
-/*SELECT
-  DISTINCT Message.ThreadId AS ThreadId,
-  Message.CreatedAt AS LastMessageDate,
-  Message.Body AS LastMessage,
-  Account.Username AS ReceiverUsername,
-  Account.FullName AS ReceiverFullName,
-  Account.Avatar AS ReceiverAvatar
-FROM Message
-INNER JOIN MThreadParticipant AS TP1 ON TP1.ThreadId = Message.ThreadId
-INNER JOIN Account ON Account.Id = (
-	SELECT MAX(A.Id)
-    FROM Account A
-    INNER JOIN MThreadParticipant TP2 ON A.Id = TP2.AccountId
-    WHERE TP2.ThreadId = TP1.ThreadId AND A.Id != 9
-)
-WHERE (Message.Id IN 
-        (SELECT MAX(Message.Id)
-         FROM MThreadParticipant AS TP3
-         INNER JOIN Message ON TP3.ThreadId = Message.ThreadId
-         WHERE TP3.AccountId = 9
-         GROUP BY TP3.ThreadId)
-      )
-ORDER BY LastMessageDate DESC;*/
-
-
-
-
-
-
-
-
 
 
 USE ZanaatHan;
@@ -129,10 +77,13 @@ WHERE (SenderId = 9 AND ReceiverId = 11)
    OR (SenderId = 11 AND ReceiverId = 9)
 ORDER BY CreatedAt;
 
-# DEPRECATED
-/*SELECT M.Id, M.Body, M.AccountId, M.CreatedAt
-FROM Message AS M
-INNER JOIN MThread T ON M.ThreadId = T.Id
-WHERE M.IsDeleted = 0 AND M.ThreadId = 1
-ORDER BY CreatedAt;*/
+
+USE ZanaatHan;
+# Get user block
+SELECT COUNT(*) AS Count FROM UserBlock
+WHERE AccountId = 9 AND TargetId = 11;
+INSERT INTO UserBlock(AccountId, TargetId) VALUES(9, 11);
+DELETE FROM UserBlock WHERE AccountId = 9 AND TargetId = 11;
+
+
 

@@ -86,16 +86,24 @@ const Chatbot: React.FC<{
             });
     };
 
+    // On/Off for chatbot user menu
+    const [chatUMenuActive, setChatUMenuActive] = useState(false);
+
     // Handle clicking outside chatbot
     const chatbotRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         const handleDocumentClick = (e: any) => {
-            // Check if the click target is outside of the user-menu dropdown div and user-menu button
+            // Check if the click target is outside of the chatbot, chatbot button and message request in post page
             if (gStatus.chatbotActive
                 && !e.target.closest('.chatbot')
                 && !e.target.closest('.open-chatbot-button')
                 && !e.target.closest('.message-request')) {
                 handleGStatus('chatbotActive', false);
+            }
+            if (chatUMenuActive
+                && !e.target.closest('.chatbot-user-menu')
+                && !e.target.closest('.usermenu-button')) {
+                setChatUMenuActive(false);
             }
         };
 
@@ -105,7 +113,7 @@ const Chatbot: React.FC<{
         return () => {
             document.removeEventListener("mousedown", handleDocumentClick);
         };
-    }, [gStatus.chatbotActive]);
+    }, [gStatus.chatbotActive, chatUMenuActive]);
 
     // Store the message id that will be animated, becomes null after render using useEffect on currentThread
     const [animateMessageId, setAnimateMessageId] = useState<number | null>(null);
@@ -184,6 +192,7 @@ const Chatbot: React.FC<{
                         ReceiverUsername: data.message.Username,
                         ReceiverFullName: data.message.FullName,
                         ReceiverAvatar: data.message.Avatar,
+                        IsBlocked: false,
                         CachedThread: [newMessage]
                     }
                     updatedContacts.unshift(newContact);
@@ -197,6 +206,10 @@ const Chatbot: React.FC<{
             newSocket.close();
         };
     }, []);
+
+    // Get necessary render properties
+    const currentContact = userContacts.find(c => c.ReceiverId === gStatus.activeContact);
+    const contactName = currentContact ? currentContact.ReceiverFullName ?? currentContact.ReceiverUsername : 'Kişi seçilmedi';
 
     // Handle new message by user, acts the same way for receiving since it's using web socket
     const handleMessageSubmit = () => {
@@ -218,6 +231,11 @@ const Chatbot: React.FC<{
             alert("Sunucuyla bağlantıda hata.")
             return;
         };
+        // Check block from this user
+        if (currentContact && currentContact.IsBlocked) {
+            alert("Engellediğiniz kullanıcıya mesaj atamazsınız.");
+            return;
+        }
         // Payload
         const messageObject = {
             type: 'text',
@@ -270,8 +288,44 @@ const Chatbot: React.FC<{
     // Fullscreen or default (Only for desktop)
     const [isChatbotFullscreen, setIsChatbotFullscreen] = useState(false);
 
-    const currentContact = userContacts.find(c => c.ReceiverId === gStatus.activeContact);
-    const contactName = currentContact ? currentContact.ReceiverFullName ?? currentContact.ReceiverUsername : 'Kişi seçilmedi';
+    // Chatbot user menu actions
+    const toggleChatUserMenu = () => {
+        if (gStatus.activeContact) {
+            setChatUMenuActive(prev => !prev);
+        }
+    }
+    const handleBlockUser = () => {
+        // Check user and prepare it for payload
+        const jwt = fetchJwt();
+        if (!jwt) {
+            alert("Üye girişi bu işlem için gereklidir.")
+            return;
+        };
+        // Check contact selection
+        if (!gStatus.activeContact) {
+            alert("Hedef kişi seçimi gereklidir.")
+            return;
+        };
+
+        fetch(`${apiUrl}/block-user-toggle/${gStatus.activeContact}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${jwt}`
+            }
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(data => {
+                const updatedContacts = [...userContacts];
+                const contact = updatedContacts.find(contact => contact.ReceiverId === gStatus.activeContact);
+                if (contact) {
+                    contact.IsBlocked = !contact.IsBlocked;
+                    setUserContacts(updatedContacts);
+                }
+                //setChatUMenuActive(false);
+            })
+            .catch((res) => console.log('Sunucuyla bağlantıda hata'));
+    }
 
     return (
         <div className={`chatbot-container ${gStatus.chatbotActive ? 'active' : ''}`} ref={chatbotRef}>
@@ -331,7 +385,15 @@ const Chatbot: React.FC<{
                         <button type='button' className='chatbot-shortcut-button contact-menu-button' onClick={() => setContactMenuActive(true)}><PersonLinesFill /></button>
                         <h5>{contactName}</h5>
                         <div className="chatbot-shortcuts">
-                            <button type='button' className='chatbot-shortcut-button'><ThreeDots /></button>
+                            <div className={`chatbot-user-menu ${chatUMenuActive ? 'active' : ''}`}>
+                                <ul>
+                                    <li onClick={handleBlockUser}>
+                                        {currentContact && currentContact.IsBlocked ? 'Engeli Kaldır' : 'Engelle'}
+                                    </li>
+                                    <li>Şikayet et</li>
+                                </ul>
+                            </div>
+                            <button type='button' className='chatbot-shortcut-button usermenu-button' onClick={toggleChatUserMenu}><ThreeDots /></button>
                             <button type='button' className='chatbot-shortcut-button fullscreen-button' onClick={(e: any) => {
                                 e.stopPropagation();
                                 setIsChatbotFullscreen(!isChatbotFullscreen);

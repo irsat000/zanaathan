@@ -153,7 +153,14 @@ DROP TABLE `JobPosting`;
 
 
 
-
+CREATE TABLE `UserBlock` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `AccountId` INT NOT NULL,
+    `TargetId` INT NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_UserBlock_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
+    CONSTRAINT `FK_UserBlock_Target` FOREIGN KEY (`TargetId`) REFERENCES `Account`(`Id`)
+);
 
 
 CREATE TABLE `AdminId` (
