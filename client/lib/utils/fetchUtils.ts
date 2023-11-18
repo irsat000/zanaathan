@@ -1,4 +1,5 @@
-export const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+import { apiUrl } from './helperUtils';
 import categoryList from '@/assets/site/categories.json'
 
 export interface City {

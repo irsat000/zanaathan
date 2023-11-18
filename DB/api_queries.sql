@@ -1,4 +1,15 @@
 
+# Get user for auth
+SELECT Password FROM Account WHERE Username = '' AND OAuthProviderId = NULL;
+
+# Check existing when sign up
+SELECT * FROM Account WHERE Username = '' OR (Email = '' AND IsEmailValid = 1);
+# Sign up normally
+INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
+VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL);
+
+
+
 # Get posts with their first image
 SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
 (
@@ -67,6 +78,7 @@ LEFT JOIN
     UserBlock UB ON A.Id = UB.TargetId AND UB.AccountId = 9
 GROUP BY A.Id
 ORDER BY LastMessageDate DESC;
+
 
 
 USE ZanaatHan;

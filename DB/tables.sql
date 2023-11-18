@@ -54,6 +54,11 @@ CREATE TABLE `Message` (
     CONSTRAINT `FK_Message_Thread` FOREIGN KEY (`ThreadId`) REFERENCES `MThreadParticipant`(`Id`)
 );*/
 
+CREATE TABLE `OAuthProvider` (
+	`Id` INT NOT NULL,
+    `Body` VARCHAR(64) NULL,
+    PRIMARY KEY (`Id`)
+);
 
 CREATE TABLE `Account` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
@@ -61,9 +66,12 @@ CREATE TABLE `Account` (
     `FullName` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     `Email` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     `IsEmailValid` BOOLEAN NOT NULL,
-    `Password` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `Password` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
     `Avatar` VARCHAR(255) NULL,
-    PRIMARY KEY (`Id`)
+    `ExternalId` VARCHAR(128) NULL,
+    `OAuthProviderId` INT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Account_OAuthProvider` FOREIGN KEY (`OAuthProviderId`) REFERENCES `OAuthProvider`(`Id`)
 );
 
 CREATE TABLE `ContactType` (

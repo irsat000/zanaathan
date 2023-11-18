@@ -4,6 +4,7 @@ import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import Link from 'next/link';
 import { useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
+import LoginWithGoogle from './loginWithGoogle';
 
 export type AuthModalState = 'signin' | 'signup' | 'none';
 
@@ -140,6 +141,7 @@ const AuthModal: React.FC<{
                 }
                 <span className='or-seperator'>Ya da</span>
                 <button type='button' className='google-button-temp'>Google ile</button>
+                <LoginWithGoogle setAuthModalWarning={setAuthModalWarning} setAuthModalSuccess={setAuthModalSuccess} handleAuthModal={handleAuthModal} />
                 <span className='line-seperator'></span>
                 <span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>
             </div>

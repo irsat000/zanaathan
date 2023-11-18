@@ -2,10 +2,12 @@
 
 const bcrypt = require('bcrypt');
 import { Request, Response } from 'express';
+const { OAuth2Client } = require('google-auth-library');
 import { isNullOrEmpty } from '../utils/helperUtils';
 import { createJwt } from '../utils/userUtils';
 
 const pool = require('../db/db');
+const client = new OAuth2Client();
 
 interface SigninBody {
     username: string;
@@ -30,7 +32,7 @@ exports.signin = (req: Request, res: Response) => {
         const password = body.password;
 
         // Run the query
-        const query = 'SELECT * FROM Account WHERE Username = ?';
+        const query = 'SELECT Id, Username, FullName, Email, Password FROM Account WHERE Username = ? AND OAuthProviderId = NULL;';
         pool.query(query, [username], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
@@ -104,7 +106,10 @@ exports.signup = (req: Request, res: Response) => {
             }
 
             // Run the query
-            const signUpQuery = "INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar) VALUES (?, ?, ?, ?, ?, NULL);";
+            const signUpQuery = `
+                INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
+                VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL);
+            `;
             pool.query(signUpQuery, [username, fullName, email, 0, hash], (qErr: any, results: any) => {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error' });
@@ -120,6 +125,106 @@ exports.signup = (req: Request, res: Response) => {
                 return res.status(200).json({ JWT });
             });
         });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+};
+
+
+// TODO: Ask if they are nullable
+interface GoogleUser {
+    sub: string;
+    email: string;
+    email_verified: boolean;
+    name: string;
+    picture: string;
+};
+
+exports.authGoogle = (req: Request, res: Response) => {
+    try {
+        const body = req.body;
+        // Validate the request body
+        if (!body || !body.credentials) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        // To use in then()
+        const user: GoogleUser = {
+            sub: '',
+            email: '',
+            email_verified: false,
+            name: '',
+            picture: ''
+        };
+        // Verify google credentials response
+        async function verify() {
+            const ticket = await client.verifyIdToken({
+                idToken: body.credentials.credential,
+                audience: '714554272496-8aan1i53sdgkp9o9s78mlnu5af214ipk.apps.googleusercontent.com'
+            });
+            const payload = ticket.getPayload();
+            user.sub = payload['sub'];
+            user.email = payload['email'];
+            user.email_verified = payload['email_verified'];
+            user.name = payload['name'];
+            user.picture = payload['picture'];
+        }
+        // Verify then move on to register/login
+        verify()
+            .then(() => {
+                // Check if user exists
+                const checkQuery = `
+                    SELECT Id, Username, FullName, Email FROM Account WHERE ExternalId = ? && OAuthProviderId = 1;
+                `;
+                pool.query(checkQuery, [user.sub], (qErr: any, results: any) => {
+                    if (qErr) {
+                        return res.status(500).json({ error: 'Query error' });
+                    }
+
+                    if (results.length > 0) {
+                        // Login if user exists
+                        // Get user
+                        const existing = results[0];
+
+                        // Generate JWT
+                        const JWT = createJwt({
+                            id: existing.Id,
+                            username: existing.Username,
+                            fullName: existing.FullName,
+                            email: existing.Email
+                        });
+
+                        return res.status(200).json({ JWT });
+                    }
+                    else {
+                        // Register if user doesn't exist
+                        // Username column has UNIQUE, even if it somehow conflicts, it will return 500
+                        const uniqueUsername = user.name.replace(/\s/g, '') + '-' + Date.now();
+                        // Run the query
+                        const signUpQuery = `
+                            INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
+                            VALUES (?, ?, ?, ?, NULL, ?, ?, ?);
+                        `;
+                        pool.query(signUpQuery, [uniqueUsername, user.name, user.email, user.email_verified, user.picture, user.sub, 1], (qErr: any, results: any) => {
+                            if (qErr) {
+                                return res.status(500).json({ error: 'Query error' });
+                            }
+
+                            // Generate JWT
+                            const JWT = createJwt({
+                                id: results.insertId,
+                                username: uniqueUsername,
+                                fullName: user.name,
+                                email: user.email
+                            });
+
+                            return res.status(200).json({ JWT });
+                        });
+                    }
+                });
+            })
+            .catch(() => {
+                // Error at verifying
+            });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
     }

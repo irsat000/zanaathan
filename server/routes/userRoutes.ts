@@ -7,5 +7,7 @@ const userController = require('../controllers/userController');
 router.post('/sign-in', userController.signin);
 // To register
 router.post('/sign-up', userController.signup);
+// To login or register with google
+router.post('/auth-google', userController.authGoogle);
 
 module.exports = router;
