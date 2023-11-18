@@ -1,12 +1,18 @@
 
-# Get user for auth
-SELECT Password FROM Account WHERE Username = '' AND OAuthProviderId = NULL;
+# Get user for auth in default way
+SELECT Id, Username, FullName, Email, Password FROM Account WHERE Username = '' AND OAuthProviderId = NULL;
 
 # Check existing when sign up
 SELECT * FROM Account WHERE Username = '' OR (Email = '' AND IsEmailValid = 1);
 # Sign up normally
 INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
 VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL);
+
+# Check existing external account
+SELECT Id, Username, FullName, Email FROM Account WHERE ExternalId = 0 && OAuthProviderId = 0;
+# Signup with external account
+INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
+VALUES (?, ?, ?, ?, NULL, ?, ?, ?);
 
 
 

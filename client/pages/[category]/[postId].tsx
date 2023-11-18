@@ -3,7 +3,7 @@ import Template from '@/components/template'
 import { useContacts } from '@/context/contactsContext';
 import { useGStatus } from '@/context/globalContext';
 import { useUser } from '@/context/userContext';
-import { apiUrl, formatSecondsAgo, imageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters } from '@/lib/utils/helperUtils';
+import { apiUrl, formatSecondsAgo, postImageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters } from '@/lib/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
@@ -124,6 +124,7 @@ export default function PostDetails() {
 				ReceiverAvatar: postDetails.A_Avatar,
 				ReceiverFullName: postDetails.A_FullName,
 				ReceiverUsername: postDetails.A_Username,
+				IsBlocked: false,
 				CachedThread: []
 			}
 			updated.unshift(newContact);
@@ -153,10 +154,10 @@ export default function PostDetails() {
 								{postDetails.Images.map((img, i) => img && !img.ImageError ?
 									<Image
 										className={`${activeImage === i ? 'active' : ''}`}
-										loader={() => imageLink(img.Link)}
+										loader={() => postImageLink(img.Link)}
 										unoptimized={true}
 										priority={true}
-										src={imageLink(img.Link)}
+										src={postImageLink(img.Link)}
 										alt={`İlanın ${i + 1}. fotoğrafı`}
 										width={0}
 										height={0}
@@ -184,10 +185,10 @@ export default function PostDetails() {
 											onClick={() => setActiveImage(i)}
 										>
 											<Image
-												loader={() => imageLink(img.Link)}
+												loader={() => postImageLink(img.Link)}
 												unoptimized={true}
 												priority={false}
-												src={imageLink(img.Link)}
+												src={postImageLink(img.Link)}
 												alt={`İlanın ${i + 1}. mini fotoğrafı`}
 												width={0}
 												height={0}

@@ -13,8 +13,9 @@ export interface IUserData {
     exp: 1700076515069
     fullName: "İrşat Akdeniz" | null
     iat: 1699471715
-    sub: 11    ---> id becomes sub in jwt
-    username: "lala1"
+    sub: 11
+    username: "lala1",
+    avatar: "image.webp" | null
 */
 
 const UserData = React.createContext({} as any);

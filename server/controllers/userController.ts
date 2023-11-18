@@ -2,6 +2,9 @@
 
 const bcrypt = require('bcrypt');
 import { Request, Response } from 'express';
+import * as fs from 'fs';
+const path = require('path');
+const appDir = path.dirname(require.main?.filename);
 const { OAuth2Client } = require('google-auth-library');
 import { isNullOrEmpty } from '../utils/helperUtils';
 import { createJwt } from '../utils/userUtils';
@@ -53,10 +56,11 @@ exports.signin = (req: Request, res: Response) => {
                 if (isMatch) {
                     // Generate JWT
                     const JWT = createJwt({
-                        id: user.Id,
+                        sub: user.Id,
                         username: user.Username,
                         fullName: user.FullName,
-                        email: user.Email
+                        email: user.Email,
+                        avatar: null
                     });
                     return res.status(200).json({ JWT });
                 } else {
@@ -117,10 +121,11 @@ exports.signup = (req: Request, res: Response) => {
 
                 // Generate JWT
                 const JWT = createJwt({
-                    id: results.insertId,
+                    sub: results.insertId,
                     username: username,
                     fullName: fullName,
-                    email: email
+                    email: email,
+                    avatar: null
                 });
                 return res.status(200).json({ JWT });
             });
@@ -137,7 +142,7 @@ interface GoogleUser {
     email: string;
     email_verified: boolean;
     name: string;
-    picture: string;
+    picture: string | null;
 };
 
 exports.authGoogle = (req: Request, res: Response) => {
@@ -153,13 +158,13 @@ exports.authGoogle = (req: Request, res: Response) => {
             email: '',
             email_verified: false,
             name: '',
-            picture: ''
+            picture: null
         };
         // Verify google credentials response
         async function verify() {
             const ticket = await client.verifyIdToken({
                 idToken: body.credentials.credential,
-                audience: '714554272496-8aan1i53sdgkp9o9s78mlnu5af214ipk.apps.googleusercontent.com'
+                audience: '714554272496-8aan1i53sdgkp9o9s78mlnu5af214ipk.apps.googleusercontent.com' // Not from body
             });
             const payload = ticket.getPayload();
             user.sub = payload['sub'];
@@ -173,9 +178,9 @@ exports.authGoogle = (req: Request, res: Response) => {
             .then(() => {
                 // Check if user exists
                 const checkQuery = `
-                    SELECT Id, Username, FullName, Email FROM Account WHERE ExternalId = ? && OAuthProviderId = 1;
+                    SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE ExternalId = ? && OAuthProviderId = 1;
                 `;
-                pool.query(checkQuery, [user.sub], (qErr: any, results: any) => {
+                pool.query(checkQuery, [user.sub], async (qErr: any, results: any) => {
                     if (qErr) {
                         return res.status(500).json({ error: 'Query error' });
                     }
@@ -187,10 +192,11 @@ exports.authGoogle = (req: Request, res: Response) => {
 
                         // Generate JWT
                         const JWT = createJwt({
-                            id: existing.Id,
+                            sub: existing.Id,
                             username: existing.Username,
                             fullName: existing.FullName,
-                            email: existing.Email
+                            email: existing.Email,
+                            avatar: existing.Avatar
                         });
 
                         return res.status(200).json({ JWT });
@@ -199,22 +205,46 @@ exports.authGoogle = (req: Request, res: Response) => {
                         // Register if user doesn't exist
                         // Username column has UNIQUE, even if it somehow conflicts, it will return 500
                         const uniqueUsername = user.name.replace(/\s/g, '') + '-' + Date.now();
+
+                        let newAvatar: string | null = null;
+                        // User avatar
+                        if (user.picture) {
+                            try {
+                                const imgRes = await fetch(user.picture, {
+                                    method: 'GET',
+                                    headers: {
+                                        'Content-Type': 'image/*'
+                                    }
+                                })
+                                if (imgRes.status === 200) {
+                                    const buffer = await imgRes.arrayBuffer();
+                                    const fileName = `avatar-${Date.now()}-${Math.round(Math.random() * 1E9)}.webp`;
+                                    const filePath = appDir + '/uploaded/avatar/' + fileName;
+                                    fs.writeFileSync(filePath, Buffer.from(buffer));
+                                    newAvatar = fileName;
+                                }
+                            } catch (error) {
+                                // Pass the avatar upload and move on with sign up, newAvatar stays null
+                            }
+                        }
+
                         // Run the query
                         const signUpQuery = `
                             INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
                             VALUES (?, ?, ?, ?, NULL, ?, ?, ?);
                         `;
-                        pool.query(signUpQuery, [uniqueUsername, user.name, user.email, user.email_verified, user.picture, user.sub, 1], (qErr: any, results: any) => {
+                        pool.query(signUpQuery, [uniqueUsername, user.name, user.email, user.email_verified, newAvatar, user.sub, 1], (qErr: any, results: any) => {
                             if (qErr) {
                                 return res.status(500).json({ error: 'Query error' });
                             }
 
                             // Generate JWT
                             const JWT = createJwt({
-                                id: results.insertId,
+                                sub: results.insertId,
                                 username: uniqueUsername,
                                 fullName: user.name,
-                                email: user.email
+                                email: user.email,
+                                avatar: newAvatar
                             });
 
                             return res.status(200).json({ JWT });
@@ -223,7 +253,7 @@ exports.authGoogle = (req: Request, res: Response) => {
                 });
             })
             .catch(() => {
-                // Error at verifying
+                return res.status(401).json({ error: 'Unauthorized!' });
             });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });

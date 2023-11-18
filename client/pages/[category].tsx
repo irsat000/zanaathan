@@ -6,7 +6,7 @@ import { ChevronDown, ChevronRight, Search, XLg } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { apiUrl, formatSecondsAgo, imageLink } from '@/lib/utils/helperUtils'
+import { apiUrl, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/lib/utils/fetchUtils'
 
 interface Post {
@@ -224,10 +224,10 @@ export default function Category() {
                 <div className="post-image-carousel">
                   {post.MainImage && !post.ImageError ?
                     <Image
-                      loader={() => imageLink(post.MainImage!)}
+                      loader={() => postImageLink(post.MainImage!)}
                       unoptimized={true}
                       priority={true}
-                      src={imageLink(post.MainImage)}
+                      src={postImageLink(post.MainImage)}
                       alt={`${i + 1}. ilanın birincil fotoğrafı`}
                       width={0}
                       height={0}

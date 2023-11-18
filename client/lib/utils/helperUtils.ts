@@ -58,8 +58,11 @@ export const formatSecondsAgo = (secondsDifference: number) => {
 }
 
 
-export const imageLink = (name: string) => {
-  return `${apiUrl}/images/${name}`;
+export const postImageLink = (name: string) => {
+  return `${apiUrl}/post-image/${name}`;
+}
+export const avatarLink = (name: string) => {
+  return `${apiUrl}/avatar/${name}`;
 }
 
 export const lowerCaseAllWordsExceptFirstLetters = (string: string) => {

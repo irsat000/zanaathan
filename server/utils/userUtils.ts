@@ -3,10 +3,11 @@ import { isNullOrEmpty } from "./helperUtils";
 const jwt = require('jsonwebtoken');
 
 interface JWT {
-    id: number;
+    sub: number;
     username: string;
     fullName: string | null;
     email: string;
+    avatar: string | null;
 }
 
 export const createJwt = (Info: JWT): string => {
@@ -14,10 +15,11 @@ export const createJwt = (Info: JWT): string => {
     let expireDate = new Date();
     const data = {
         exp: expireDate.setDate(expireDate.getDate() + 7),
-        sub: Info.id,
+        sub: Info.sub,
         username: Info.username,
         fullName: Info.fullName,
         email: Info.email,
+        avatar: Info.avatar
     };
     return jwt.sign(data, "tempJwtSecretKey");
 }

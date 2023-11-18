@@ -10,6 +10,7 @@ import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
 import Chatbot from './chatbot'
 import { useContacts } from '@/context/contactsContext'
 import { useGStatus } from '@/context/globalContext'
+import { apiUrl, avatarLink } from '@/lib/utils/helperUtils'
 
 
 
@@ -136,7 +137,20 @@ const Template: React.FC<{
 									</button>
 								</div>
 								<button type='button' className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>
-									<Image src={require('@/assets/site/user.png')} alt={userData.username} />
+									{userData.avatar
+										? <Image
+											loader={() => avatarLink(userData.avatar)}
+											src={avatarLink(userData.avatar)}
+											alt={userData.username + ' avatar'}
+											unoptimized={true}
+											priority={false}
+											width={0}
+											height={0} />
+										: <Image
+											src={require('@/assets/site/user.png')}
+											alt={'NULL avatar'}
+											width={0}
+											height={0} />}
 								</button>
 								<div className={`user-menu ${userMenuActive && 'active'}`} ref={userMenuRef}>
 									<div className='user-menu-close'>

@@ -4,7 +4,9 @@ const imageController = require('../controllers/imageController');
 
 
 // To serve images
-router.get('/images/:imageName', imageController.serveImage);
+router.get('/post-image/:imageName', imageController.servePostImage);
+// To serve avatar
+router.get('/avatar/:imageName', imageController.serveAvatar);
 
 
 module.exports = router;

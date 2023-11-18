@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { Fullscreen, FullscreenExit, Person, PersonLinesFill, PlusLg, Send, ThreeDots, XLg } from 'react-bootstrap-icons';
-import { apiUrl, apiWebSocketUrl, imageLink, isNullOrEmpty, toShortLocal } from '@/lib/utils/helperUtils';
+import { apiUrl, apiWebSocketUrl, postImageLink, isNullOrEmpty, toShortLocal } from '@/lib/utils/helperUtils';
 import { fetchJwt, fetchUserContacts } from '@/lib/utils/userUtils';
 import { io, Socket } from 'socket.io-client';
 import { ThreadMessage, UserContact, useContacts } from '@/context/contactsContext';
@@ -361,8 +361,8 @@ const Chatbot: React.FC<{
                                 <div className="profile-picture">
                                     {contact.ReceiverAvatar ?
                                         <Image
-                                            loader={() => imageLink(contact.ReceiverAvatar!)}
-                                            src={imageLink(contact.ReceiverAvatar)}
+                                            loader={() => postImageLink(contact.ReceiverAvatar!)}
+                                            src={postImageLink(contact.ReceiverAvatar)}
                                             alt={''}
                                             width={0}
                                             height={0}
