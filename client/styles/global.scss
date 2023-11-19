@@ -415,7 +415,40 @@ body {
             margin-bottom: 14px;
         }
 
-        .google-button-temp {
+        .google-login-wrapper {
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: center;
+            max-width: 100%;
+        }
+
+        .facebook-login-wrapper {
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            overflow: hidden;
+
+            >button {
+                border-radius: 4px;
+                padding: 8px 26px;
+                border: 1px solid var(--button-white-border);
+                background-color: var(--button-white);
+                font-size: 1.1rem;
+                cursor: pointer;
+                font-family: 'Fira Sans', sans-serif;
+                font-weight: 300;
+                transition: all 0.1s ease-in-out;
+
+                &:hover {
+                    color: #ffffff;
+                    border: 1px solid var(--button1-1);
+                    background-color: var(--button1-1);
+                }
+            }
+        }
+
+        /*.google-button {
             border-radius: 20px;
             padding: 6px 20px;
             border: 1px solid var(--button-white-border);
@@ -432,15 +465,17 @@ body {
                 border: 1px solid var(--button1-1);
                 background-color: var(--button1-1);
             }
-        }
+        }*/
 
         .line-seperator {
+            display: none;
             width: 90%;
             border-bottom: 1px solid #b4b4b4;
             margin-bottom: 14px;
         }
 
         .signup-instead {
+            display: none;
             font-weight: 300;
 
             a {

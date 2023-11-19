@@ -225,6 +225,24 @@ body select {
   border-radius: 10px;
   max-width: 260px;
   box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+  /*.google-button {
+      border-radius: 20px;
+      padding: 6px 20px;
+      border: 1px solid var(--button-white-border);
+      background-color: var(--button-white);
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-family: 'Fira Sans', sans-serif;
+      font-weight: 300;
+      transition: all 0.1s ease-in-out;
+      margin-bottom: 14px;
+
+      &:hover {
+          color: #ffffff;
+          border: 1px solid var(--button1-1);
+          background-color: var(--button1-1);
+      }
+  }*/
 }
 .auth-modal-container .auth-modal .auth-tab-buttons {
   width: 100%;
@@ -381,9 +399,22 @@ body select {
 .auth-modal-container .auth-modal .or-seperator {
   margin-bottom: 14px;
 }
-.auth-modal-container .auth-modal .google-button-temp {
-  border-radius: 20px;
-  padding: 6px 20px;
+.auth-modal-container .auth-modal .google-login-wrapper {
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+}
+.auth-modal-container .auth-modal .facebook-login-wrapper {
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+}
+.auth-modal-container .auth-modal .facebook-login-wrapper > button {
+  border-radius: 4px;
+  padding: 8px 26px;
   border: 1px solid var(--button-white-border);
   background-color: var(--button-white);
   font-size: 1.1rem;
@@ -391,19 +422,20 @@ body select {
   font-family: "Fira Sans", sans-serif;
   font-weight: 300;
   transition: all 0.1s ease-in-out;
-  margin-bottom: 14px;
 }
-.auth-modal-container .auth-modal .google-button-temp:hover {
+.auth-modal-container .auth-modal .facebook-login-wrapper > button:hover {
   color: #ffffff;
   border: 1px solid var(--button1-1);
   background-color: var(--button1-1);
 }
 .auth-modal-container .auth-modal .line-seperator {
+  display: none;
   width: 90%;
   border-bottom: 1px solid #b4b4b4;
   margin-bottom: 14px;
 }
 .auth-modal-container .auth-modal .signup-instead {
+  display: none;
   font-weight: 300;
 }
 .auth-modal-container .auth-modal .signup-instead a {

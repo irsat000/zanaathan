@@ -2,9 +2,10 @@ import { useUser } from '@/context/userContext';
 import { apiUrl } from '@/lib/utils/helperUtils';
 import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import Link from 'next/link';
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
 import LoginWithGoogle from './loginWithGoogle';
+import LoginWithFacebook from './loginWithFacebook';
 
 export type AuthModalState = 'signin' | 'signup' | 'none';
 
@@ -107,6 +108,8 @@ const AuthModal: React.FC<{
             });
     }
 
+    //const realOAuthGoogleButton = useRef<Element | null>(null);
+
     return (
         <div className={`auth-modal-container modal-container ${authModalActive !== 'none' ? 'active' : ''}`} onMouseDown={() => handleAuthModal('none')}>
             <div className='auth-modal' onMouseDown={(e) => { e.stopPropagation() }}>
@@ -140,8 +143,12 @@ const AuthModal: React.FC<{
                     <span className='warning-text'>{authModalWarning}</span>
                 }
                 <span className='or-seperator'>Ya da</span>
-                <button type='button' className='google-button-temp'>Google ile</button>
-                <LoginWithGoogle setAuthModalWarning={setAuthModalWarning} setAuthModalSuccess={setAuthModalSuccess} handleAuthModal={handleAuthModal} />
+                <div className="google-login-wrapper">
+                    <LoginWithGoogle setAuthModalWarning={setAuthModalWarning} setAuthModalSuccess={setAuthModalSuccess} handleAuthModal={handleAuthModal} />
+                </div>
+                <div className="facebook-login-wrapper">
+                    <LoginWithFacebook />
+                </div>
                 <span className='line-seperator'></span>
                 <span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>
             </div>
