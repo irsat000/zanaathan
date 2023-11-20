@@ -181,6 +181,10 @@ body {
             max-height: 140px;
             padding-bottom: 10px;
 
+            li.hidden {
+                display: none;
+            }
+
             li {
                 padding: 7px 12px;
                 cursor: pointer;

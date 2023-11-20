@@ -128,13 +128,23 @@ export default function Category() {
     district: 0,
   });
 
+  // Filter cities by city search change
+  const [citySearchTerm, setCitySearchTerm] = useState('');
+  const handleCitySearchChange = (e: any) => {
+    setCitySearchTerm(e.target.value.toLocaleLowerCase('tr'));
+  };
+  // Filter districts by district search change
+  const [districtSearchTerm, setDistrictSearchTerm] = useState('');
+  const handleDistrictSearchChange = (e: any) => {
+    setDistrictSearchTerm(e.target.value.toLocaleLowerCase('tr'));
+  };
   // Change the filters utility
-  const handleFilterChange = (e: any) => {
+  /*const handleFilterChange = (e: any) => {
     setFilterData({
       ...filterData,
       [e.target.name]: e.target.value
     });
-  }
+  }*/
   // Change city id, reset the district, and close the select2
   const handleCityChange = (cityId: number) => {
     setFilterData({
@@ -143,6 +153,7 @@ export default function Category() {
       district: 0
     });
     toggleCitySelect();
+    setCitySearchTerm('');
   }
   // Change district id and close the select2
   const handleDistrictChange = (districtId: number) => {
@@ -151,6 +162,7 @@ export default function Category() {
       district: districtId
     });
     toggleDistrictSelect();
+    setDistrictSearchTerm('');
   }
 
   // Get names for filter modal
@@ -160,18 +172,15 @@ export default function Category() {
   const selectedDistrictName = selectedDistrict?.Name ?? 'İlçe seç';
 
   const handleSubCateChange = (val: number) => {
-    if (filterData.subcategory.includes(val)) {
-      setFilterData({
-        ...filterData,
-        subcategory: filterData.subcategory.filter(cate => cate !== val)
-      });
-    } else {
-      setFilterData({
-        ...filterData,
-        subcategory: [...filterData.subcategory, val]
-      });
-    }
+    setFilterData({
+      ...filterData,
+      subcategory: filterData.subcategory.includes(val)
+        ? filterData.subcategory.filter(cate => cate !== val)
+        : [...filterData.subcategory, val]
+    });
   };
+
+
 
   console.log(filterData.subcategory);
 
@@ -188,9 +197,6 @@ export default function Category() {
           <span className='modal-heading'>Filtrele</span>
           <span className="f-heading">Alt Kategoriler</span>
           <div className="f-container">
-            <label className='sub-category-label'><input type='checkbox' onChange={(e) => {
-              // TODO: Deactivate all except this one, or choose all of them
-            }} /><span>Hepsi</span></label>
             {categoryInfo.subCates.map((c, i) => {
               return <label key={i} className='sub-category-label'>
                 <input
@@ -208,17 +214,23 @@ export default function Category() {
               <span className='s2-chosen' onClick={toggleCitySelect}>{selectedCityName}<ChevronDown /></span>
               <div className='option-container'>
                 <div className='option-search-container'>
-                  <input type='text' placeholder='Ara' className='option-search' />
+                  <input type='text' placeholder='Ara' className='option-search' value={citySearchTerm} onChange={handleCitySearchChange} />
                   <Search />
                 </div>
                 <ul className="option-list">
                   <li onClick={() => {
                     handleCityChange(0);
                   }}>Şehir seç</li>
-                  {fetchedCities.map((city, i) => <li key={i} onClick={() => {
-                    fetchDistricts(city.Id.toString());
-                    handleCityChange(city.Id);
-                  }}>{city.Name}</li>)}
+                  {fetchedCities.map((city, i) =>
+                    <li
+                      key={i}
+                      onClick={() => {
+                        fetchDistricts(city.Id.toString());
+                        handleCityChange(city.Id);
+                      }}
+                      className={`${citySearchTerm !== '' && !city.Name.toLocaleLowerCase('tr').includes(citySearchTerm) ? 'hidden' : ''}`}
+                    >{city.Name}</li>)
+                  }
                 </ul>
               </div>
             </div>
@@ -227,18 +239,22 @@ export default function Category() {
                 <span className='s2-chosen' onClick={toggleDistrictSelect}>{selectedDistrictName}<ChevronDown /></span>
                 <div className='option-container'>
                   <div className='option-search-container'>
-                    <input type='text' placeholder='Ara' className='option-search' />
+                    <input type='text' placeholder='Ara' className='option-search' value={districtSearchTerm} onChange={handleDistrictSearchChange} />
                     <Search />
                   </div>
                   <ul className="option-list">
                     <li onClick={() => {
                       handleDistrictChange(0);
                     }}>İlçe seç</li>
-                    {filterData.city ? districtsAll.get(filterData.city.toString())?.map((district, i) =>
-                      <li key={i} onClick={() => {
-                        handleDistrictChange(district.Id);
-                      }}>{district.Name}</li>
-                    ) : <></>}
+                    {districtsAll.get(filterData.city.toString())?.map((district, i) =>
+                      <li
+                        key={i}
+                        onClick={() => {
+                          handleDistrictChange(district.Id);
+                        }}
+                        className={`${districtSearchTerm !== '' && !district.Name.toLocaleLowerCase('tr').includes(districtSearchTerm) ? 'hidden' : ''}`}
+                      >{district.Name}</li>
+                    )}
                   </ul>
                 </div>
               </div>

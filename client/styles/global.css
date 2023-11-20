@@ -165,6 +165,9 @@ body select {
   max-height: 140px;
   padding-bottom: 10px;
 }
+.select2 .option-container .option-list li.hidden {
+  display: none;
+}
 .select2 .option-container .option-list li {
   padding: 7px 12px;
   cursor: pointer;
