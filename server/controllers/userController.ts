@@ -35,7 +35,7 @@ exports.signin = (req: Request, res: Response) => {
         const password = body.password;
 
         // Run the query
-        const query = 'SELECT Id, Username, FullName, Email, Password FROM Account WHERE Username = ? AND OAuthProviderId = NULL;';
+        const query = 'SELECT Id, Username, FullName, Email, Password FROM Account WHERE Username = ? AND OAuthProviderId IS NULL;';
         pool.query(query, [username], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });

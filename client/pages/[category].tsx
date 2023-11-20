@@ -119,22 +119,61 @@ export default function Category() {
   }
 
   const [filterData, setFilterData] = useState<{
-    subcategory: number | null,
-    city: number | null,
-    district: number | null,
+    subcategory: number[],
+    city: number,
+    district: number,
   }>({
-    subcategory: null,
-    city: null,
-    district: null,
+    subcategory: [],
+    city: 0,
+    district: 0,
   });
 
-  // Change the filters
+  // Change the filters utility
   const handleFilterChange = (e: any) => {
     setFilterData({
       ...filterData,
       [e.target.name]: e.target.value
     });
   }
+  // Change city id, reset the district, and close the select2
+  const handleCityChange = (cityId: number) => {
+    setFilterData({
+      ...filterData,
+      city: cityId,
+      district: 0
+    });
+    toggleCitySelect();
+  }
+  // Change district id and close the select2
+  const handleDistrictChange = (districtId: number) => {
+    setFilterData({
+      ...filterData,
+      district: districtId
+    });
+    toggleDistrictSelect();
+  }
+
+  // Get names for filter modal
+  const selectedCity = fetchedCities.find(c => c.Id === filterData.city);
+  const selectedCityName = selectedCity?.Name ?? 'Şehir seç';
+  const selectedDistrict = districtsAll.get(filterData.city.toString())?.find(d => d.Id == filterData.district);
+  const selectedDistrictName = selectedDistrict?.Name ?? 'İlçe seç';
+
+  const handleSubCateChange = (val: number) => {
+    if (filterData.subcategory.includes(val)) {
+      setFilterData({
+        ...filterData,
+        subcategory: filterData.subcategory.filter(cate => cate !== val)
+      });
+    } else {
+      setFilterData({
+        ...filterData,
+        subcategory: [...filterData.subcategory, val]
+      });
+    }
+  };
+
+  console.log(filterData.subcategory);
 
   return (
     <Template>
@@ -150,53 +189,60 @@ export default function Category() {
           <span className="f-heading">Alt Kategoriler</span>
           <div className="f-container">
             <label className='sub-category-label'><input type='checkbox' onChange={(e) => {
-
+              // TODO: Deactivate all except this one, or choose all of them
             }} /><span>Hepsi</span></label>
             {categoryInfo.subCates.map((c, i) => {
-              return <label key={i} className='sub-category-label'><input type='checkbox' /><span>{c.Name}</span></label>;
+              return <label key={i} className='sub-category-label'>
+                <input
+                  type='checkbox'
+                  checked={filterData.subcategory.includes(c.Id)}
+                  onChange={() => handleSubCateChange(c.Id)}
+                />
+                <span>{c.Name}</span>
+              </label>;
             })}
           </div>
           <span className="f-heading">Bölge Seç</span>
           <div className="f-container">
-            <div className={`select2 ${citySelectActive && 'list-active'}`}>
-              <span className='s2-chosen' onClick={toggleCitySelect}>Şehir seç<ChevronDown /></span>
+            <div className={`select2 ${citySelectActive ? 'list-active' : ''}`}>
+              <span className='s2-chosen' onClick={toggleCitySelect}>{selectedCityName}<ChevronDown /></span>
               <div className='option-container'>
                 <div className='option-search-container'>
                   <input type='text' placeholder='Ara' className='option-search' />
                   <Search />
                 </div>
                 <ul className="option-list">
+                  <li onClick={() => {
+                    handleCityChange(0);
+                  }}>Şehir seç</li>
                   {fetchedCities.map((city, i) => <li key={i} onClick={() => {
                     fetchDistricts(city.Id.toString());
-                    setFilterData({
-                      ...filterData,
-                      city: city.Id
-                    });
-                    toggleCitySelect();
+                    handleCityChange(city.Id);
                   }}>{city.Name}</li>)}
                 </ul>
               </div>
             </div>
-            <div className={`select2 ${districtSelectActive && 'list-active'}`}>
-              <span className='s2-chosen' onClick={toggleDistrictSelect}>İlçe seç<ChevronDown /></span>
-              <div className='option-container'>
-                <div className='option-search-container'>
-                  <input type='text' placeholder='Ara' className='option-search' />
-                  <Search />
+            {filterData.city !== 0 ?
+              <div className={`select2 ${districtSelectActive ? 'list-active' : ''}`}>
+                <span className='s2-chosen' onClick={toggleDistrictSelect}>{selectedDistrictName}<ChevronDown /></span>
+                <div className='option-container'>
+                  <div className='option-search-container'>
+                    <input type='text' placeholder='Ara' className='option-search' />
+                    <Search />
+                  </div>
+                  <ul className="option-list">
+                    <li onClick={() => {
+                      handleDistrictChange(0);
+                    }}>İlçe seç</li>
+                    {filterData.city ? districtsAll.get(filterData.city.toString())?.map((district, i) =>
+                      <li key={i} onClick={() => {
+                        handleDistrictChange(district.Id);
+                      }}>{district.Name}</li>
+                    ) : <></>}
+                  </ul>
                 </div>
-                <ul className="option-list">
-                  {filterData.city ? districtsAll.get(filterData.city.toString())?.map((district, i) =>
-                    <li key={i} onClick={() => {
-                      setFilterData({
-                        ...filterData,
-                        district: district.Id
-                      });
-                      toggleDistrictSelect();
-                    }}>{district.Name}</li>
-                  ) : <></>}
-                </ul>
               </div>
-            </div>
+              : <></>}
           </div>
         </div>
       </div>

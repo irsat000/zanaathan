@@ -1,6 +1,6 @@
 
 # Get user for auth in default way
-SELECT Id, Username, FullName, Email, Password FROM Account WHERE Username = '' AND OAuthProviderId = NULL;
+SELECT Id, Username, FullName, Email, Password FROM Account WHERE Username = '' AND OAuthProviderId IS NULL;
 
 # Check existing when sign up
 SELECT * FROM Account WHERE Username = '' OR (Email = '' AND IsEmailValid = 1);
