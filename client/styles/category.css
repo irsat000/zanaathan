@@ -47,6 +47,25 @@
   font-weight: 400;
   font-size: 0.9rem;
 }
+.filter-modal-container .filter-modal .filter-action-container {
+  margin-top: 30px;
+}
+.filter-modal-container .filter-modal .filter-action-container .filter-submit {
+  border-radius: 4px;
+  padding: 6px 30px;
+  border: 1px solid var(--button-white-border);
+  background-color: var(--button-white);
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.filter-modal-container .filter-modal .filter-action-container .filter-submit:hover {
+  color: #ffffff;
+  border: 1px solid var(--button2-2);
+  background-color: var(--button2-2);
+}
 
 .category-page {
   display: flex;

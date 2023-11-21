@@ -48,6 +48,9 @@
   font-family: "Poppins", sans-serif;
   font-size: 1.1rem;
 }
+.new-post-page .new-post-form .np-primary .description-container .np-description .ql-container {
+  font-size: inherit !important;
+}
 .new-post-page .new-post-form .np-primary .description-container .np-description .ql-picker-label[data-value="1"]::before,
 .new-post-page .new-post-form .np-primary .description-container .np-description .ql-picker-item[data-value="1"]::before {
   content: "Başlık 1" !important;

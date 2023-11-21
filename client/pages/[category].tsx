@@ -20,7 +20,7 @@ interface Post {
 export default function Category() {
   // Get category from path
   const router = useRouter();
-  const { category } = router.query;
+  const { category, subc, city, district, sortby } = router.query;
 
   // This state is for filters
   const [categoryInfo, setCategoryInfo] = useState<{
@@ -45,7 +45,38 @@ export default function Category() {
       const subCates = categoryObj.SubCategories;
       setCategoryInfo({ code, name, subCates });
     }
-  }, [category]);
+  }, [router.query]);
+
+  // Filter data options
+  const [filterData, setFilterData] = useState<{
+    subcategory: number[],
+    city: number,
+    district: number,
+    sortBy: 'new' | 'old'
+  }>({
+    subcategory: [],
+    city: 0,
+    district: 0,
+    sortBy: 'old'
+  });
+
+  useEffect(() => {
+    const subcategoryQuery = Array.isArray(subc)
+      ? subc.map(s => parseInt(s, 10))
+      : typeof subc === 'string'
+        ? [parseInt(subc, 10)]
+        : [];
+    const cityQuery = city && typeof city === 'string' ? parseInt(city, 10) : 0;
+    const districtQuery = district && typeof district === 'string' ? parseInt(district, 10) : 0;
+    const sortbyQuery = sortby === 'new' ? 'new' : 'old';
+
+    setFilterData({
+      subcategory: subcategoryQuery,
+      city: cityQuery,
+      district: districtQuery,
+      sortBy: sortbyQuery
+    });
+  }, [router.query])
 
   // Fetch posts
   const [postList, setPostList] = useState<Post[]>([]);
@@ -99,11 +130,12 @@ export default function Category() {
   // Districts depending on City Id
   const [districtsAll, setDistrictsAll] = useState<Map<string, District[]>>(new Map());
   // Get the selected city's districts, keep the previously fetched districts for future use
-  const fetchDistricts = (cityId: string) => {
-    fetchAndCacheDistricts(cityId, districtsAll).then(data => {
+  useEffect(() => {
+    if (filterData.city === 0) return;
+    fetchAndCacheDistricts(filterData.city.toString(), districtsAll).then(data => {
       if (data) setDistrictsAll(data);
     });
-  }
+  }, [filterData.city])
 
   // Upon closing filter modal
   const handleFilterModalClose = () => {
@@ -118,16 +150,6 @@ export default function Category() {
     }
   }
 
-  const [filterData, setFilterData] = useState<{
-    subcategory: number[],
-    city: number,
-    district: number,
-  }>({
-    subcategory: [],
-    city: 0,
-    district: 0,
-  });
-
   // Filter cities by city search change
   const [citySearchTerm, setCitySearchTerm] = useState('');
   const handleCitySearchChange = (e: any) => {
@@ -139,12 +161,12 @@ export default function Category() {
     setDistrictSearchTerm(e.target.value.toLocaleLowerCase('tr'));
   };
   // Change the filters utility
-  /*const handleFilterChange = (e: any) => {
+  const handleFilterChange = (e: any) => {
     setFilterData({
       ...filterData,
       [e.target.name]: e.target.value
     });
-  }*/
+  }
   // Change city id, reset the district, and close the select2
   const handleCityChange = (cityId: number) => {
     setFilterData({
@@ -164,13 +186,7 @@ export default function Category() {
     toggleDistrictSelect();
     setDistrictSearchTerm('');
   }
-
-  // Get names for filter modal
-  const selectedCity = fetchedCities.find(c => c.Id === filterData.city);
-  const selectedCityName = selectedCity?.Name ?? 'Şehir seç';
-  const selectedDistrict = districtsAll.get(filterData.city.toString())?.find(d => d.Id == filterData.district);
-  const selectedDistrictName = selectedDistrict?.Name ?? 'İlçe seç';
-
+  // Handle sub category
   const handleSubCateChange = (val: number) => {
     setFilterData({
       ...filterData,
@@ -180,9 +196,59 @@ export default function Category() {
     });
   };
 
+  // Get names for filter modal
+  const selectedCity = fetchedCities.find(c => c.Id === filterData.city);
+  const selectedCityName = selectedCity?.Name ?? 'Şehir seç';
+  const selectedDistrict = districtsAll.get(filterData.city.toString())?.find(d => d.Id == filterData.district);
+  const selectedDistrictName = selectedDistrict?.Name ?? 'İlçe seç';
 
+  // Update the url with new filters
+  const handleFilterSubmit = () => {
+    const { pathname, query } = router;
+    const newParams = {} as any;
 
-  console.log(filterData.subcategory);
+    const updatedQuery = { ...query };
+
+    if (filterData.subcategory.length > 0) newParams.subc = filterData.subcategory;
+    else delete updatedQuery.subc;
+
+    if (filterData.city !== 0) newParams.city = filterData.city;
+    else delete updatedQuery.city;
+
+    if (filterData.district !== 0) newParams.district = filterData.district;
+    else delete updatedQuery.district;
+
+    if (filterData.sortBy !== 'old') newParams.sortby = filterData.sortBy;
+    else delete updatedQuery.sortby;
+
+    // Use the push method to update the query string
+    router.push({
+      pathname,
+      query: { ...updatedQuery, ...newParams },
+    });
+  }
+  const handleSortByChange = (e: any) => {
+    const { pathname, query } = router;
+    const newParams = {} as any;
+    const updatedQuery = { ...query };
+
+    // Update value
+    const sortByVal = e.target.value;
+    setFilterData({
+      ...filterData,
+      sortBy: sortByVal
+    });
+
+    if (sortByVal !== 'old') newParams.sortby = sortByVal;
+    else delete updatedQuery.sortby;
+
+    // Use the push method to update the query string
+    router.push({
+      pathname,
+      query: { ...updatedQuery, ...newParams },
+    });
+  }
+
 
   return (
     <Template>
@@ -225,7 +291,6 @@ export default function Category() {
                     <li
                       key={i}
                       onClick={() => {
-                        fetchDistricts(city.Id.toString());
                         handleCityChange(city.Id);
                       }}
                       className={`${citySearchTerm !== '' && !city.Name.toLocaleLowerCase('tr').includes(citySearchTerm) ? 'hidden' : ''}`}
@@ -260,6 +325,9 @@ export default function Category() {
               </div>
               : <></>}
           </div>
+          <div className="filter-action-container">
+            <button type='button' className="filter-submit" onClick={handleFilterSubmit}>Filtrele</button>
+          </div>
         </div>
       </div>
       <div className='category-page'>
@@ -272,7 +340,7 @@ export default function Category() {
           <button className='filter-button' onClick={() => setFilterModalActive(true)}>Filtrele</button>
           <div className='sort-by'>
             <span>Sırala</span>
-            <select>
+            <select onChange={handleSortByChange} value={filterData.sortBy}>
               <option value='old'>Eski</option>
               <option value='new'>Yeni</option>
             </select>

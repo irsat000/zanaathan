@@ -50,6 +50,10 @@
                     font-family: 'Poppins', sans-serif;
                     font-size: 1.1rem;
 
+                    .ql-container {
+                        font-size: inherit !important;
+                    }
+
                     // Turkish support
                     .ql-picker-label[data-value="1"]::before,
                     .ql-picker-item[data-value="1"]::before {
@@ -65,12 +69,12 @@
                     .ql-picker-item[data-value="3"]::before {
                         content: "Başlık 3" !important;
                     }
-                    
-                    .ql-tooltip[data-mode=link]::before{
+
+                    .ql-tooltip[data-mode=link]::before {
                         content: "Link gir:";
                     }
 
-                    .ql-tooltip.ql-editing a.ql-action::after{
+                    .ql-tooltip.ql-editing a.ql-action::after {
                         content: "Kaydet";
                     }
                 }
