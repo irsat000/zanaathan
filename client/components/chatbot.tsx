@@ -146,9 +146,8 @@ const Chatbot: React.FC<{
                 // Push the mew message from current or another user in the UserContacts of current user
                 if (contactToUpdate.CachedThread) {
                     contactToUpdate.CachedThread.push(newMessage);
-                } else {
-                    contactToUpdate.CachedThread = [newMessage];
-                }
+                } // Else, let fetchThreadMessages function get the new messages by being undefined
+
                 // Update the date
                 contactToUpdate.LastMessageDate = newMessage.CreatedAt;
                 // Send notification if the current contact isn't the sender or the active contact
