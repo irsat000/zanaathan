@@ -24,13 +24,14 @@ export default function Category() {
 
   // This state is for filters
   const [categoryInfo, setCategoryInfo] = useState<{
+    id: number | null,
     code: string | null,
     name: string | null,
     subCates: Array<{
       Id: number;
       Name: string;
     }>
-  }>({ code: null, name: null, subCates: [] });
+  }>({ id: null, code: null, name: null, subCates: [] });
 
   // Get category info by category code
   useEffect(() => {
@@ -40,10 +41,11 @@ export default function Category() {
     // and assign both to categoryInfo
     const categoryObj = categoryList.find(cate => cate.Code === category);
     if (categoryObj) {
+      const id = categoryObj.Id;
       const code = categoryObj.Code;
       const name = categoryObj.Name;
       const subCates = categoryObj.SubCategories;
-      setCategoryInfo({ code, name, subCates });
+      setCategoryInfo({ id, code, name, subCates });
     }
   }, [router.query]);
 
@@ -81,9 +83,12 @@ export default function Category() {
   // Fetch posts
   const [postList, setPostList] = useState<Post[]>([]);
   useEffect(() => {
-    if (!category) return;
-
-    fetch(`${apiUrl}/get-posts`, {
+    if (!categoryInfo.id) return;
+    // Get parameters as a string, e.g. ?subc=1&city=5
+    const queryParams = window.location.search;
+    // api url + get-posts + category id as path + query parameters
+    const fetchPostsUrl = `${apiUrl}/get-posts/${categoryInfo.id}${queryParams}`;
+    fetch(fetchPostsUrl, {
       method: "GET",
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
     })
@@ -92,7 +97,7 @@ export default function Category() {
         setPostList(data.posts);
       })
       .catch((res) => console.log('Sunucuda hata'));
-  }, [category])
+  }, [categoryInfo])
 
   // Filter values
   const [filterModalActive, setFilterModalActive] = useState(false);
@@ -232,7 +237,7 @@ export default function Category() {
     const newParams = {} as any;
     const updatedQuery = { ...query };
 
-    // Update value
+    // Update state but use the sortByVal for up to date value
     const sortByVal = e.target.value;
     setFilterData({
       ...filterData,

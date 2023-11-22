@@ -12,18 +12,67 @@ const pool = require('../db/db');
 
 exports.getPosts = (req: Request, res: Response) => {
     try {
+        // Get necessary filter data from query strings and path
+        const category = req.params.category;
+        const { subc, sortby, city, district } = req.query as {
+            subc?: string | string[],
+            sortby?: string,
+            city?: string,
+            district?: string
+        };
+
         // SUBSTRING(Description, 1, 200) // If description is needed, it's best to shorten it
-        const query =
-            `SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
-            (
-                SELECT JPI.Body
-                FROM JobPostingImages JPI
-                WHERE JP.Id = JPI.JobPostingId
-                ORDER BY JPI.ImgIndex
-                LIMIT 1
-            ) AS MainImage FROM JobPosting JP
-            ORDER BY SecondsAgo DESC;`;
-        pool.query(query, (qErr: any, results: any) => {
+        let query = `
+            SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
+                (
+                    SELECT JPI.Body
+                    FROM JobPostingImages JPI
+                    WHERE JP.Id = JPI.JobPostingId
+                    ORDER BY JPI.ImgIndex
+                    LIMIT 1
+                ) AS MainImage
+            FROM JobPosting JP
+            LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
+        `;
+        const parameters: (string | string[])[] = [];
+
+        // Join district to get city afterwards
+        // No need for district table and city id if district is selected, we can use DistrictId of JP
+        if (city && !district) {
+            query += ` LEFT JOIN District ON District.Id = JP.DistrictId`;
+        }
+
+        // Start WHERE after JOIN(s)
+        // Filter by category [Mandatory]
+        query += ` WHERE SubCategory.CategoryId = ?`;
+        parameters.push(category);
+
+        // Filter by sub categories
+        if (subc) {
+            // subc can be string[] or string
+            query += ` AND JP.SubCategoryId IN (?)`;
+            parameters.push(subc);
+        }
+
+        // Filter by district
+        if (district) {
+            query += ` AND JP.DistrictId = ?`;
+            parameters.push(district);
+        } else {
+            // Filter by city
+            if (city) {
+                query += ` AND District.CityId = ?`;
+                parameters.push(city);
+            }
+        }
+
+        // Sort by seconds ago, default is DESC, meaning old first
+        query += ` ORDER BY SecondsAgo`;
+        if (!sortby || sortby === 'old') {
+            query += ` DESC`;
+        }
+
+        pool.query(query, parameters, (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
             }
@@ -39,8 +88,8 @@ exports.getPosts = (req: Request, res: Response) => {
 exports.getPostDetails = (req: Request, res: Response) => {
     try {
         const postId = req.params.postId;
-        if(!postId) res.status(400).json({ error: 'Bad request' });
-        
+        if (!postId) res.status(400).json({ error: 'Bad request' });
+
         const query =
             `SELECT
                 JP.Id,
@@ -120,7 +169,7 @@ exports.createPost = (req: Request, res: Response) => {
         const jwt = req.headers?.authorization?.split(' ')[1];
         const userId = verifyJwt(jwt);
         if (!userId) return res.status(401).send('Not authorized');
-        
+
         // Get uploaded file list
         // We already check this in fileFilter
         const files = req.files;
