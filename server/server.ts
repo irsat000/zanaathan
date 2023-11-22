@@ -53,6 +53,18 @@ io.on('connection', (socket: any) => {
         userSocketMap.set(userId, socket.id);
     });
 
+    socket.on('removeNotification', (data: string) => {
+        // Verify and parse
+        const parsed = JSON.parse(data);
+        const userId = verifyJwt(parsed.jwt);
+        if (!userId) return; //Not authorized
+
+        const query = `DELETE FROM MNotification WHERE SenderId = ? AND ReceiverId = ?;`;
+        pool.query(query, [parsed.contact, userId], (qErr: any, results: any) => {
+            if (qErr) return;
+        });
+    });
+
     // Handle the chat message from the client
     socket.on('message', (data: any) => {
         try {
@@ -143,6 +155,15 @@ io.on('connection', (socket: any) => {
                             connsToSendMessage.forEach((socketId) => {
                                 io.to(socketId).emit('message', JSON.stringify(responseMessage));
                             });
+
+                            // Create only if target_2(receiver) is offline
+                            if (!target_2) {
+                                // Create notification and send it to receiver
+                                const query3 = 'INSERT INTO MNotification(ReceiverId, SenderId) VALUES(?, ?);';
+                                pool.query(query3, [receiverId, userId], (qErr3: any, results3: any) => {
+                                    if (qErr3) return;
+                                });
+                            }
                         });
                     });
                 }

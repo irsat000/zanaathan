@@ -24,7 +24,11 @@ exports.getContacts = (req: Request, res: Response) => {
                     WHERE (M2.SenderId = A.Id OR M2.ReceiverId = A.Id)
                         AND M2.CreatedAt = MAX(M.CreatedAt)
                 ) AS LastMessage,
-                CASE WHEN COUNT(UB.TargetId) > 0 THEN true ELSE false END AS IsBlocked
+                CASE WHEN COUNT(UB.TargetId) > 0 THEN true ELSE false END AS IsBlocked,
+                ( SELECT COUNT(*)
+                    FROM MNotification AS MN
+                    WHERE MN.SenderId = A.Id AND MN.ReceiverId = ?
+                ) AS NotificationCount
             FROM
                 Message AS M
             JOIN
@@ -35,7 +39,7 @@ exports.getContacts = (req: Request, res: Response) => {
             GROUP BY A.Id
             ORDER BY LastMessageDate DESC;
         `;
-        pool.query(query, [userId, userId, userId], (qErr: any, results: any) => {
+        pool.query(query, [userId, userId, userId, userId], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
             }

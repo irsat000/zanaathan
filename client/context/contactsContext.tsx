@@ -8,6 +8,7 @@ export interface UserContact {
     ReceiverFullName: string | null;
     ReceiverAvatar: string | null;
     IsBlocked: boolean;
+    NotificationCount: number;
     CachedThread?: ThreadMessage[];
 }
 

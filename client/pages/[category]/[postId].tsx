@@ -125,6 +125,7 @@ export default function PostDetails() {
 				ReceiverFullName: postDetails.A_FullName,
 				ReceiverUsername: postDetails.A_Username,
 				IsBlocked: false,
+				NotificationCount: 0,
 				CachedThread: []
 			}
 			updated.unshift(newContact);
@@ -155,7 +156,6 @@ export default function PostDetails() {
 									<Image
 										className={`${activeImage === i ? 'active' : ''}`}
 										loader={() => postImageLink(img.Link)}
-										unoptimized={true}
 										priority={true}
 										src={postImageLink(img.Link)}
 										alt={`İlanın ${i + 1}. fotoğrafı`}
@@ -186,7 +186,6 @@ export default function PostDetails() {
 										>
 											<Image
 												loader={() => postImageLink(img.Link)}
-												unoptimized={true}
 												priority={false}
 												src={postImageLink(img.Link)}
 												alt={`İlanın ${i + 1}. mini fotoğrafı`}

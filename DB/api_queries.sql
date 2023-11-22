@@ -91,7 +91,11 @@ SELECT
 		WHERE (M2.SenderId = A.Id OR M2.ReceiverId = A.Id)
 			AND M2.CreatedAt = MAX(M.CreatedAt)
 	) AS LastMessage,
-     CASE WHEN COUNT(UB.TargetId) > 0 THEN true ELSE false END AS IsBlocked
+     CASE WHEN COUNT(UB.TargetId) > 0 THEN true ELSE false END AS IsBlocked,
+	( SELECT COUNT(*)
+		FROM MNotification AS MN
+		WHERE MN.SenderId = A.Id AND MN.ReceiverId = 9
+	) AS NotificationCount
 FROM
 	Message AS M
 JOIN
@@ -101,6 +105,9 @@ LEFT JOIN
     UserBlock UB ON A.Id = UB.TargetId AND UB.AccountId = 9
 GROUP BY A.Id
 ORDER BY LastMessageDate DESC;
+
+# Delete notification
+DELETE FROM MNotification WHERE SenderId = ? AND ReceiverId = ?;
 
 
 

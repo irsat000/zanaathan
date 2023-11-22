@@ -360,7 +360,6 @@ export default function Category() {
                   {post.MainImage && !post.ImageError ?
                     <Image
                       loader={() => postImageLink(post.MainImage!)}
-                      unoptimized={true}
                       priority={true}
                       src={postImageLink(post.MainImage)}
                       alt={`${i + 1}. ilanın birincil fotoğrafı`}

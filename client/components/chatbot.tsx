@@ -16,6 +16,12 @@ const Chatbot: React.FC<{
     const { userContacts, setUserContacts } = useContacts();
     // General status context
     const { gStatus, handleGStatus } = useGStatus();
+    // Up to date gStatus.activeContact
+    const activeContactRef = useRef<number | null>(null);
+    activeContactRef.current = gStatus.activeContact;
+    // Up to date gStatus.chatbotActive
+    const chatbotActiveRef = useRef<boolean>(false);
+    chatbotActiveRef.current = gStatus.chatbotActive;
 
     // User context
     const { userData } = useUser();
@@ -118,6 +124,64 @@ const Chatbot: React.FC<{
     // Store the message id that will be animated, becomes null after render using useEffect on currentThread
     const [animateMessageId, setAnimateMessageId] = useState<number | null>(null);
 
+
+    // Message handler for a chat message from socket
+    const handleNewMessageFromSocket = (data: any) => {
+        // Create new message from insertion on back end
+        const newMessage: ThreadMessage = {
+            Id: data.message.Id,
+            Body: data.message.Body,
+            SenderId: data.message.SenderId,
+            CreatedAt: data.message.CreatedAt
+        }
+        // Set as 'will be animated'
+        setAnimateMessageId(newMessage.Id);
+        // Cache the new message
+        setUserContacts((prev: UserContact[]) => {
+            const updatedContacts = [...prev];
+            // Get either current user's target contact or the contact that targeted current user
+            const contactToUpdate = updatedContacts.find(contact => contact.ReceiverId === data.receiverId || contact.ReceiverId === newMessage.SenderId);
+            // If contactToUpdate doesn't exist, it means a new person is messaging the current user
+            if (contactToUpdate) {
+                // Push the mew message from current or another user in the UserContacts of current user
+                if (contactToUpdate.CachedThread) {
+                    contactToUpdate.CachedThread.push(newMessage);
+                } else {
+                    contactToUpdate.CachedThread = [newMessage];
+                }
+                // Update the date
+                contactToUpdate.LastMessageDate = newMessage.CreatedAt;
+                // Send notification if the current contact isn't the sender or the active contact
+                if ((newMessage.SenderId !== userData.sub) &&
+                    ((newMessage.SenderId !== activeContactRef.current) || (!chatbotActiveRef.current))) {
+                    contactToUpdate.NotificationCount++;
+                }
+                // Move the updated contact to the beginning of the array
+                const index = updatedContacts.indexOf(contactToUpdate);
+                updatedContacts.splice(index, 1);
+                updatedContacts.unshift(contactToUpdate);
+
+                return updatedContacts;
+            }
+            else {
+                // This is the new contact who sent the new message
+                const newContact = {
+                    ReceiverId: newMessage.SenderId,
+                    LastMessage: newMessage.Body,
+                    LastMessageDate: newMessage.CreatedAt,
+                    ReceiverUsername: data.message.Username,
+                    ReceiverFullName: data.message.FullName,
+                    ReceiverAvatar: data.message.Avatar,
+                    IsBlocked: false,
+                    NotificationCount: 1,
+                    CachedThread: [newMessage]
+                }
+                updatedContacts.unshift(newContact);
+                return updatedContacts;
+            }
+        });
+    }
+
     // WEB SOCKET
     const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -159,53 +223,8 @@ const Chatbot: React.FC<{
                 return;
             }
             if (data.status !== 'success') return;
-            // Create new message from insertion on back end
-            const newMessage: ThreadMessage = {
-                Id: data.message.Id,
-                Body: data.message.Body,
-                SenderId: data.message.SenderId,
-                CreatedAt: data.message.CreatedAt
-            }
-            // Set as 'will be animated'
-            setAnimateMessageId(newMessage.Id);
-            // Cache the new message
-            setUserContacts((prev: UserContact[]) => {
-                const updatedContacts = [...prev];
-                // Get either current user's target contact or the contact that targeted current user
-                const contactToUpdate = updatedContacts.find(contact => contact.ReceiverId === data.receiverId || contact.ReceiverId === data.message.SenderId);
-                // If contactToUpdate doesn't exist, it means a new person is messaging the current user
-                if (contactToUpdate) {
-                    // Push the mew message from current or another user in the UserContacts of current user
-                    if (contactToUpdate.CachedThread) {
-                        contactToUpdate.CachedThread.push(newMessage);
-                    } else {
-                        contactToUpdate.CachedThread = [newMessage];
-                    }
-                    // Update the date
-                    contactToUpdate.LastMessageDate = newMessage.CreatedAt;
-                    // Move the updated contact to the beginning of the array
-                    const index = updatedContacts.indexOf(contactToUpdate);
-                    updatedContacts.splice(index, 1);
-                    updatedContacts.unshift(contactToUpdate);
-
-                    return updatedContacts;
-                }
-                else {
-                    // This is the new contact who sent the new message
-                    const newContact = {
-                        ReceiverId: data.message.SenderId,
-                        LastMessage: newMessage.Body,
-                        LastMessageDate: newMessage.CreatedAt,
-                        ReceiverUsername: data.message.Username,
-                        ReceiverFullName: data.message.FullName,
-                        ReceiverAvatar: data.message.Avatar,
-                        IsBlocked: false,
-                        CachedThread: [newMessage]
-                    }
-                    updatedContacts.unshift(newContact);
-                    return updatedContacts;
-                }
-            });
+            // Call handler to push the new message
+            handleNewMessageFromSocket(data);
         });
 
         // Unmount
@@ -213,6 +232,7 @@ const Chatbot: React.FC<{
             newSocket.close();
         };
     }, []);
+
 
     // Get necessary render properties
     const currentContact = userContacts.find(c => c.ReceiverId === gStatus.activeContact);
@@ -249,7 +269,6 @@ const Chatbot: React.FC<{
             content: messageInput,
             receiver: gStatus.activeContact,
             jwt: jwt
-            // Add other relevant details like sender, recipient, timestamp, etc.
         };
         // Send payload through connection
         socket.emit('message', JSON.stringify(messageObject));
@@ -266,12 +285,33 @@ const Chatbot: React.FC<{
                 const updatedContacts = [...userContacts];
                 const contact = updatedContacts.find(contact => contact.ReceiverId === gStatus.activeContact);
                 if (contact) {
+                    // Get thread
                     contact.CachedThread = thread ?? [];
+                    // Remove the notification
+                    if (contact.NotificationCount > 0) {
+                        // Reset for instant visual and not needing to reload
+                        contact.NotificationCount = 0;
+                        // Check jwt
+                        const jwt = fetchJwt();
+                        if (jwt && socket) {
+                            // Payload
+                            const removeNotificationPayload = {
+                                contact: gStatus.activeContact,
+                                jwt: jwt
+                            };
+                            // Send payload through connection
+                            socket.emit('removeNotification', JSON.stringify(removeNotificationPayload));
+                        }
+                    }
+                    // Get thread for the contact and update
                     setUserContacts(updatedContacts);
                 }
             });
         }
-    }, [gStatus.activeContact]);
+        // DA[0] reason: Fetch/check thread messages with every change of contact
+        // DA[1] reason: Re-run for removing notification if active contact is the same and chat bot is activated once again
+    }, [gStatus.activeContact, gStatus.chatbotActive]);
+
     // Assign currentThread from cache
     useEffect(() => {
         // Run when userContacts updates, like when data is cached and updated
@@ -371,7 +411,7 @@ const Chatbot: React.FC<{
                                 </div>
                                 <div className="body">
                                     <div className="person-header">
-                                        <span className='name'>{contact.ReceiverFullName ?? contact.ReceiverUsername}</span>
+                                        <span className='name'>{contact.ReceiverFullName ?? contact.ReceiverUsername} - {contact.NotificationCount}</span>
                                         {contact.LastMessageDate ?
                                             <span className="last-contact">{toShortLocal(contact.LastMessageDate)}</span>
                                             : <></>

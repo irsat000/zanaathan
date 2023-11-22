@@ -81,6 +81,8 @@ const Template: React.FC<{
 		};
 	}, [userMenuActive]);
 
+	// Check chat notification
+	const hasNotification = userContacts.some(c => c.NotificationCount > 0);
 
 	return (
 		<>
@@ -130,7 +132,9 @@ const Template: React.FC<{
 										<PlusSquare />
 									</Link>
 									<button className='open-chatbot-button' onClick={() => handleGStatus('chatbotActive', !gStatus.chatbotActive)}>
-										<ChatDots />
+										<div className={`icon-wrap ${hasNotification ? 'icon-alert' : ''}`}>
+											<ChatDots />
+										</div>
 									</button>
 									<button onClick={() => alert("Hi!")}>
 										<Bell />
@@ -142,7 +146,6 @@ const Template: React.FC<{
 											loader={() => avatarLink(userData.avatar)}
 											src={avatarLink(userData.avatar)}
 											alt={userData.username + ' avatar'}
-											unoptimized={true}
 											priority={false}
 											width={0}
 											height={0} />

@@ -102,6 +102,15 @@ CREATE TABLE `Message` (
     CONSTRAINT `FK_Message_Sender` FOREIGN KEY (`SenderId`) REFERENCES `Account`(`Id`)
 );
 
+CREATE TABLE `MNotification` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `ReceiverId` INT NOT NULL,
+    `SenderId` INT NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_MNotification_Receiver` FOREIGN KEY (`ReceiverId`) REFERENCES `Account`(`Id`),
+    CONSTRAINT `FK_MNotification_Sender` FOREIGN KEY (`SenderId`) REFERENCES `Account`(`Id`)
+);
+
 
 
 CREATE TABLE `Category` (
