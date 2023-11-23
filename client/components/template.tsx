@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Bell, ChatDots, List, PersonPlus, PlusSquare, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
+import categoryList from '@/assets/site/categories.json'
 import AuthModal, { AuthModalState } from './authModal'
 import { useUser } from '@/context/userContext'
 import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
@@ -11,8 +12,13 @@ import Chatbot from './chatbot'
 import { useContacts } from '@/context/contactsContext'
 import { useGStatus } from '@/context/globalContext'
 import { apiUrl, avatarLink } from '@/lib/utils/helperUtils'
+import router from 'next/router'
 
 
+interface SearchRecommendation {
+	text: string;
+	link: string;
+}
 
 const Template: React.FC<{
 	children: ReactNode
@@ -81,6 +87,46 @@ const Template: React.FC<{
 		};
 	}, [userMenuActive]);
 
+	// Search feature
+	const [searchBar, setSearchBar] = useState('');
+	const [searchRecommendations, setSearchRecommendations] = useState<SearchRecommendation[]>([]);
+	const handleSearchBarChange = (e: any) => {
+		// Get value from input
+		const value = e.target.value;
+
+		// Set value for input
+		setSearchBar(value);
+
+		// Create empty recommendations array or initialize it with written text
+		const updated = value !== '' ? [{
+			text: value + ' - Ara',
+			link: "/search?key=" + encodeURIComponent(value)
+		}] : [];
+
+		// Get categories and subcategories that includes the value substring
+		categoryList.forEach(c => {
+			if (c.Name.toLocaleLowerCase('tr').includes(value.toLocaleLowerCase('tr'))) {
+				updated.push({
+					text: c.Name,
+					link: '/' + c.Code
+				});
+			}
+			c.SubCategories.forEach(s => {
+				if (s.Name.toLocaleLowerCase('tr').includes(value.toLocaleLowerCase('tr'))) {
+					updated.push({
+						text: c.Name + ' > ' + s.Name,
+						link: `/${c.Code}?subc=${s.Id}`
+					});
+				}
+			})
+		});
+
+		// Update state
+		setSearchRecommendations(updated);
+	}
+
+
+
 	// Check chat notification
 	const hasNotification = userContacts.some(c => c.NotificationCount > 0);
 
@@ -109,12 +155,20 @@ const Template: React.FC<{
 				<header>
 					<div className="header-container">
 						<div className='search-bar'>
-							<input type='text' placeholder='Hizmetleri hızlıca ara' />
+							<input
+								type='text'
+								placeholder='Hizmetleri hızlıca ara'
+								value={searchBar}
+								onChange={handleSearchBarChange}
+							/>
 							<div className="search-recommendations">
 								<ul>
-									<li>Boya Badana</li>
-									<li>Sıhhi Tesisat</li>
-									<li>Fayans İşçiliği</li>
+									{searchRecommendations.slice(0, 5).map(r =>
+										<li><Link href={r.link} onMouseDown={() => {
+											setSearchBar('')
+											router.push(r.link)
+										}}>{r.text}</Link></li>
+									)}
 								</ul>
 							</div>
 						</div>

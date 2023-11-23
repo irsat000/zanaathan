@@ -410,10 +410,12 @@ const Chatbot: React.FC<{
                                 </div>
                                 <div className="body">
                                     <div className="person-header">
-                                        <span className='name'>{contact.ReceiverFullName ?? contact.ReceiverUsername} - {contact.NotificationCount}</span>
-                                        {contact.LastMessageDate ?
-                                            <span className="last-contact">{toShortLocal(contact.LastMessageDate)}</span>
-                                            : <></>
+                                        <span className='name'>{contact.ReceiverFullName ?? contact.ReceiverUsername}</span>
+                                        {contact.NotificationCount > 0 ?
+                                            <span className='message-alert'>{contact.NotificationCount}</span>
+                                            : contact.LastMessageDate ?
+                                                <span className="last-contact">{toShortLocal(contact.LastMessageDate)}</span>
+                                                : <></>
                                         }
                                     </div>
                                     <span className='last-message'>

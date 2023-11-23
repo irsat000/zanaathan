@@ -91,7 +91,6 @@
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 20px 3%;
-  align-self: center;
   align-items: start;
 }
 .index-page .category-list .category-card {

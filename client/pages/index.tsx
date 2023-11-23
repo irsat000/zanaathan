@@ -35,7 +35,7 @@ export default function Home() {
                 </div>
                 <div className="category-details">
                   <span className="category-title">{cate.Name}</span>
-                  <div className="category-statistics"><span>0</span><CheckLg /></div>
+                  {/*<div className="category-statistics"><span>0</span><CheckLg /></div>*/}
                 </div>
               </Link>
             )
