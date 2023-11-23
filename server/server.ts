@@ -8,13 +8,13 @@ import { isNullOrEmpty, isPositiveNumeric } from './utils/helperUtils';
 
 // Configuration
 const app = express();
-const PORT = 8080;
+const PORT = 8123;
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
         origin: process.env.NODE_ENV === 'development'
-            ? ['http://localhost:3000', 'http://127.0.0.1:3000']
-            : ['http://localhost:3000']
+            ? ['https://localhost:3000', 'https://127.0.0.1:3000']
+            : ['https://localhost:3000']
     }
 })
 
@@ -22,7 +22,7 @@ const io = new Server(httpServer, {
 // MIDDLEWARES
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'https://localhost:3000',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 // - Route middlewares

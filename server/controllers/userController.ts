@@ -140,7 +140,6 @@ exports.signup = (req: Request, res: Response) => {
 interface GoogleUser {
     sub: string;
     email: string;
-    email_verified: boolean;
     name: string;
     picture: string | null;
 };
@@ -156,7 +155,6 @@ exports.authGoogle = (req: Request, res: Response) => {
         const user: GoogleUser = {
             sub: '',
             email: '',
-            email_verified: false,
             name: '',
             picture: null
         };
@@ -169,7 +167,6 @@ exports.authGoogle = (req: Request, res: Response) => {
             const payload = ticket.getPayload();
             user.sub = payload['sub'];
             user.email = payload['email'];
-            user.email_verified = payload['email_verified'];
             user.name = payload['name'];
             user.picture = payload['picture'];
         }
@@ -231,9 +228,9 @@ exports.authGoogle = (req: Request, res: Response) => {
                         // Run the query
                         const signUpQuery = `
                             INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
-                            VALUES (?, ?, ?, ?, NULL, ?, ?, ?);
+                            VALUES (?, ?, ?, 1, NULL, ?, ?, 1);
                         `;
-                        pool.query(signUpQuery, [uniqueUsername, user.name, user.email, user.email_verified, newAvatar, user.sub, 1], (qErr: any, results: any) => {
+                        pool.query(signUpQuery, [uniqueUsername, user.name, user.email, newAvatar, user.sub], (qErr: any, results: any) => {
                             if (qErr) {
                                 return res.status(500).json({ error: 'Query error' });
                             }
@@ -259,3 +256,30 @@ exports.authGoogle = (req: Request, res: Response) => {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
 };
+
+
+exports.authFacebook = (req: Request, res: Response) => {
+    try {
+        const body = req.body;
+        // Validate the request body
+        if (!body || !body.accessToken || !body.userID) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        fetch(`https://graph.facebook.com/v18.0/${body.userID}?fields=id,name,email,picture&access_token=${body.accessToken}`, {
+            method: 'GET'
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(data => {
+                const uniqueUsername = data.name.replace(/\s/g, '') + '-' + Date.now();
+                // TODO: Same stuff with google oauth, nothing much to say
+
+                return res.status(200).json({ data });
+            })
+            .catch((error) => {
+                return res.status(500).json({ error: 'Server error: ' + error });
+            });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
