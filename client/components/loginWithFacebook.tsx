@@ -1,10 +1,18 @@
+import { useUser } from '@/context/userContext';
 import { apiUrl } from '@/lib/utils/helperUtils';
+import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import { FacebookProvider, LoginButton } from 'react-facebook';
+import { AuthModalState } from './authModal';
 
-export default function LoginWithFacebook() {
+const LoginWithFacebook: React.FC<{
+    setAuthModalWarning: React.Dispatch<React.SetStateAction<string | null>>,
+    setAuthModalSuccess: React.Dispatch<React.SetStateAction<string | null>>,
+    handleAuthModal: (state: AuthModalState) => void
+}> = ({ setAuthModalWarning, setAuthModalSuccess, handleAuthModal }) => {
+    // Get user context
+    const { setUserData } = useUser();
 
     function handleSuccess(response: any) {
-        console.log(response);
         // Not necessary
         if (!response.authResponse || !response.authResponse.accessToken || !response.authResponse.userID) {
             return;
@@ -24,7 +32,16 @@ export default function LoginWithFacebook() {
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
-                console.log(data.data);
+                // store jwt in cookies
+                storeJwt(data.JWT);
+                // set user data in user context
+                setUserData(decodedJwt(data.JWT));
+                // remove warning on modal if there is any
+                setAuthModalWarning(null);
+                // inform the user about successful login
+                setAuthModalSuccess('Giriş başarılı!');
+                // close modal after a second
+                setTimeout(() => handleAuthModal('none'), 1000);
             })
             .catch((res) => console.log('Sunucuyla bağlantıda hata'));
     }
@@ -44,3 +61,5 @@ export default function LoginWithFacebook() {
         </FacebookProvider>
     );
 }
+
+export default LoginWithFacebook;

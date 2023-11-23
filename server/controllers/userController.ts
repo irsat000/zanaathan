@@ -203,26 +203,11 @@ exports.authGoogle = (req: Request, res: Response) => {
                         // Username column has UNIQUE, even if it somehow conflicts, it will return 500
                         const uniqueUsername = user.name.replace(/\s/g, '') + '-' + Date.now();
 
-                        let newAvatar: string | null = null;
                         // User avatar
+                        let newAvatar: string | null = null;
+                        // Skip the avatar upload if it fails
                         if (user.picture) {
-                            try {
-                                const imgRes = await fetch(user.picture, {
-                                    method: 'GET',
-                                    headers: {
-                                        'Content-Type': 'image/*'
-                                    }
-                                })
-                                if (imgRes.status === 200) {
-                                    const buffer = await imgRes.arrayBuffer();
-                                    const fileName = `avatar-${Date.now()}-${Math.round(Math.random() * 1E9)}.webp`;
-                                    const filePath = appDir + '/uploaded/avatar/' + fileName;
-                                    fs.writeFileSync(filePath, Buffer.from(buffer));
-                                    newAvatar = fileName;
-                                }
-                            } catch (error) {
-                                // Pass the avatar upload and move on with sign up, newAvatar stays null
-                            }
+                            newAvatar = await fetchAndWriteImage(user.picture);
                         }
 
                         // Run the query
@@ -271,15 +256,94 @@ exports.authFacebook = (req: Request, res: Response) => {
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
-                const uniqueUsername = data.name.replace(/\s/g, '') + '-' + Date.now();
-                // TODO: Same stuff with google oauth, nothing much to say
+                // Check if user exists
+                const checkQuery = `
+                    SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE ExternalId = ? && OAuthProviderId = 2;
+                `;
+                pool.query(checkQuery, [data.id], async (qErr: any, results: any) => {
+                    if (qErr) {
+                        return res.status(500).json({ error: 'Query error' });
+                    }
 
-                return res.status(200).json({ data });
+                    if (results.length > 0) {
+                        // Login if user exists
+                        // Get user
+                        const existing = results[0];
+
+                        // Generate JWT
+                        const JWT = createJwt({
+                            sub: existing.Id,
+                            username: existing.Username,
+                            fullName: existing.FullName,
+                            email: existing.Email,
+                            avatar: existing.Avatar
+                        });
+
+                        return res.status(200).json({ JWT });
+                    }
+                    else {
+                        // Register if user doesn't exist
+                        // Username column has UNIQUE, even if it somehow conflicts, it will return 500
+                        const uniqueUsername = data.name.replace(/\s/g, '') + '-' + Date.now();
+
+                        // User avatar
+                        let newAvatar: string | null = null;
+                        // Skip the avatar upload if it fails
+                        if (data.picture) {
+                            newAvatar = await fetchAndWriteImage(data.picture);
+                        }
+
+                        // Run the query
+                        const signUpQuery = `
+                            INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
+                            VALUES (?, ?, ?, 1, NULL, ?, ?, 2);
+                        `;
+                        pool.query(signUpQuery, [uniqueUsername, data.name, data.email, newAvatar, data.id], (qErr: any, results: any) => {
+                            if (qErr) {
+                                return res.status(500).json({ error: 'Query error' });
+                            }
+
+                            // Generate JWT
+                            const JWT = createJwt({
+                                sub: results.insertId,
+                                username: uniqueUsername,
+                                fullName: data.name,
+                                email: data.email,
+                                avatar: newAvatar
+                            });
+
+                            return res.status(200).json({ JWT });
+                        });
+                    }
+                });
             })
             .catch((error) => {
                 return res.status(500).json({ error: 'Server error: ' + error });
             });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+async function fetchAndWriteImage(imgLink: string) {
+    try {
+        const imgRes = await fetch(imgLink, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'image/*'
+            }
+        })
+        if (imgRes.status === 200) {
+            const buffer = await imgRes.arrayBuffer();
+            const fileName = `avatar-${Date.now()}-${Math.round(Math.random() * 1E9)}.webp`;
+            const filePath = appDir + '/uploaded/avatar/' + fileName;
+            fs.writeFileSync(filePath, Buffer.from(buffer));
+            return fileName;
+        }
+        else {
+            throw new Error(`Image couldn't be fetched`);
+        }
+    } catch (error) {
+        return null;
     }
 }

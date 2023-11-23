@@ -54,6 +54,12 @@ const Template: React.FC<{
 		setUserData(null);
 		removeJwtCookie();
 		setUserContacts([]);
+		// If facebook is connected, logout from FB aswell
+		window.FB.getLoginStatus(function (response: any) {
+			if (response.status === 'connected') {
+				window.FB.logout();
+			}
+		});
 	}
 
 	const [authModalActive, setAuthModalActive] = useState<AuthModalState>('none'); // Login/Register modal = auth modal

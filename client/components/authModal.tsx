@@ -147,7 +147,7 @@ const AuthModal: React.FC<{
                     <LoginWithGoogle setAuthModalWarning={setAuthModalWarning} setAuthModalSuccess={setAuthModalSuccess} handleAuthModal={handleAuthModal} />
                 </div>
                 <div className="facebook-login-wrapper">
-                    <LoginWithFacebook />
+                    <LoginWithFacebook setAuthModalWarning={setAuthModalWarning} setAuthModalSuccess={setAuthModalSuccess} handleAuthModal={handleAuthModal} />
                 </div>
                 <span className='line-seperator'></span>
                 <span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>
