@@ -55,11 +55,13 @@ const Template: React.FC<{
 		removeJwtCookie();
 		setUserContacts([]);
 		// If facebook is connected, logout from FB aswell
-		window.FB.getLoginStatus(function (response: any) {
-			if (response.status === 'connected') {
-				window.FB.logout();
-			}
-		});
+		try {
+			window.FB.getLoginStatus(function (response: any) {
+				if (response.status === 'connected') {
+					window.FB.logout();
+				}
+			});
+		} catch (e) { }
 	}
 
 	const [authModalActive, setAuthModalActive] = useState<AuthModalState>('none'); // Login/Register modal = auth modal
@@ -215,11 +217,14 @@ const Template: React.FC<{
 											width={0}
 											height={0} />}
 								</button>
-								<div className={`user-menu ${userMenuActive && 'active'}`} ref={userMenuRef}>
+								<div className={`user-menu ${userMenuActive ? 'active' : ''}`} ref={userMenuRef}>
 									<div className='user-menu-close'>
 										<button type='button' onClick={() => setUserMenuActive(false)}><XLg /></button>
 									</div>
-									<span className='um-username'>{userData.fullName ?? userData.username}</span>
+									<Link href={'/profil'} className='um-profile'>
+										<span className='um-username'>{userData.fullName ?? userData.username}</span>
+										<span className='um-email'>{userData.email}</span>
+									</Link>
 									<button type='button' className='sign-out-button' onClick={handleSignOut}>Çıkış yap</button>
 								</div>
 							</> : <>

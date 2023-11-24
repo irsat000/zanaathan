@@ -4,6 +4,7 @@ import '@/styles/index.css'
 import '@/styles/category.css'
 import '@/styles/post.css'
 import '@/styles/new-post.css'
+import '@/styles/profile.css'
 import type { AppProps } from 'next/app'
 
 import { ContactsProvider } from '@/context/contactsContext'

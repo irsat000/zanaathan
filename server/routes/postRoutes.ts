@@ -14,5 +14,7 @@ router.get('/get-cities', postController.getCities);
 router.get('/get-districts', postController.getDistricts);
 // To create a new post
 router.post('/create-post', uploadPostImage.array('postImages', 10), postController.createPost);
+// To get user's posts
+router.get('/get-user-posts/:userId', postController.getUserPosts);
 
 module.exports = router;

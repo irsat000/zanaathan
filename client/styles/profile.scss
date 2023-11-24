@@ -1,0 +1,97 @@
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    padding: var(--site-padding);
+    gap: 20px 4%;
+
+    .profile-panel {
+        padding: 20px 20px;
+        border-radius: 10px;
+
+        .personal-info-container {
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .user-avatar {
+                width: 120px;
+                height: 120px;
+                overflow: hidden;
+                border-radius: 50%;
+                margin-bottom: 20px;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+
+            .name {
+                margin-bottom: 10px;
+                gap: 6px;
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+
+                >span:nth-child(1) {
+                    font-weight: 400;
+                    font-size: 1.4rem;
+                }
+
+                >span:nth-child(2) {
+                    font-weight: 300;
+                    font-size: 1.2rem;
+                }
+            }
+
+            .email {
+                font-size: 1.1rem;
+                font-weight: 300;
+            }
+        }
+    }
+
+    .profile-body {
+        flex-grow: 1;
+        height: 40vh;
+        border: 1px solid black;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// Most phones
+@media (min-width: 340px) {}
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+    .profile-page {
+        flex-direction: row;
+        padding-top: 4vh;
+
+        .profile-panel {
+            border: 1px solid var(--primary-light-border);
+        }
+    }
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {}
+
+// X-Large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {}
+
+// XX-Large devices (larger desktops, 1400px and up)
+@media (min-width: 1400px) {}

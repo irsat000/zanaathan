@@ -1088,13 +1088,14 @@ header>.header-container {
 
                 li {
                     width: 100%;
-                    a{
+
+                    a {
                         width: 100%;
                         padding: 10px 10px;
                         transition: background-color 0.1s ease-in-out;
                         cursor: pointer;
                         font-size: 1.1rem;
-    
+
                         &:hover {
                             background-color: rgba(0, 0, 0, 0.05);
                         }
@@ -1228,6 +1229,7 @@ header>.header-container {
                 width: 36px;
                 display: flex;
                 justify-content: center;
+                display: none;
 
                 button {
                     padding: 4px;
@@ -1242,9 +1244,30 @@ header>.header-container {
                 }
             }
 
-            .um-username {
-                padding: 12px 46px 10px 14px;
+            .um-profile {
+                padding: 16px 16px 12px;
+                border-bottom: 1px solid var(--primary-light-border);
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.05);
+                }
+
+                .um-username {
+                    font-size: 1rem;
+                    font-weight: 400;
+                    margin-right: 40px;
+                }
+
+                .um-email {
+                    font-size: 0.9rem;
+                    font-weight: 300;
+                    opacity: 0.8;
+                }
             }
+
 
             .sign-out-button {
                 margin: auto 20px 14px;
@@ -1362,6 +1385,10 @@ footer {
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) {
+    :root {
+        --site-padding: 0 5%;
+    }
+
     html {
         font-size: 16px;
     }

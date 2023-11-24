@@ -1072,6 +1072,7 @@ header > .header-container .user-container .user-menu .user-menu-close {
   width: 36px;
   display: flex;
   justify-content: center;
+  display: none;
 }
 header > .header-container .user-container .user-menu .user-menu-close button {
   padding: 4px;
@@ -1083,8 +1084,25 @@ header > .header-container .user-container .user-menu .user-menu-close button {
 header > .header-container .user-container .user-menu .user-menu-close button:hover {
   transform: scale(1.05);
 }
-header > .header-container .user-container .user-menu .um-username {
-  padding: 12px 46px 10px 14px;
+header > .header-container .user-container .user-menu .um-profile {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--primary-light-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+header > .header-container .user-container .user-menu .um-profile:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+header > .header-container .user-container .user-menu .um-profile .um-username {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-right: 40px;
+}
+header > .header-container .user-container .user-menu .um-profile .um-email {
+  font-size: 0.9rem;
+  font-weight: 300;
+  opacity: 0.8;
 }
 header > .header-container .user-container .user-menu .sign-out-button {
   margin: auto 20px 14px;
@@ -1181,6 +1199,9 @@ footer {
   }
 }
 @media (min-width: 768px) {
+  :root {
+    --site-padding: 0 5%;
+  }
   html {
     font-size: 16px;
   }

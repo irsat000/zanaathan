@@ -157,9 +157,6 @@
   }
 }
 @media (min-width: 768px) {
-  :root {
-    --site-padding: 0 5%;
-  }
   .index-page .intro {
     font-size: 18px;
     margin: 40px 0 80px;

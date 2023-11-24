@@ -199,15 +199,10 @@ html[data-colorset-1] {}
 }
 
 // Small devices (landscape phones, 576px and up)
-@media (min-width: 576px) {
-}
+@media (min-width: 576px) {}
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) {
-    :root {
-        --site-padding: 0 5%;
-    }
-
     .index-page {
         .intro {
             font-size: 18px;

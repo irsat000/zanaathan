@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express';
-import { isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
+import { isNullOrEmpty, isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
 import * as fs from 'fs';
 import { verifyJwt } from '../utils/userUtils';
 const path = require('path');
@@ -44,7 +44,7 @@ exports.getPosts = (req: Request, res: Response) => {
 
         // Start WHERE after JOIN(s)
         // Filter by category [Mandatory]
-        query += ` WHERE SubCategory.CategoryId = ?`;
+        query += ` WHERE CurrentStatusId = 1 AND SubCategory.CategoryId = ?`;
         parameters.push(category);
 
         // Filter by sub categories
@@ -259,6 +259,38 @@ exports.createPost = (req: Request, res: Response) => {
 }
 
 
+exports.getUserPosts = (req: Request, res: Response) => {
+    try {
+        // Get user id
+        const userId = req.params.userId;
+        if (isNullOrEmpty(userId)) return;
+
+        // Fetch user's posts (excluding posts with deleted status which is 4)
+        let query = `
+            SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
+                (
+                    SELECT JPI.Body
+                    FROM JobPostingImages JPI
+                    WHERE JP.Id = JPI.JobPostingId
+                    ORDER BY JPI.ImgIndex
+                    LIMIT 1
+                ) AS MainImage,
+                JP.CurrentStatusId
+            FROM JobPosting JP
+            WHERE JP.CurrentStatusId != 4 AND AccountId = ?
+            ORDER BY SecondsAgo DESC;
+        `;
+        pool.query(query, [userId], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            return res.status(200).json({ posts: results });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
 
 
 
