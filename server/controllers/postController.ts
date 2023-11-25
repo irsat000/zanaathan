@@ -265,11 +265,6 @@ exports.getUserPosts = (req: Request, res: Response) => {
         const userId = req.params.userId;
         if (isNullOrEmpty(userId)) return;
 
-        /* No need for category
-            C.Code AS CategoryCode
-            LEFT JOIN SubCategory SC ON SC.Id = JP.SubCategoryId
-            LEFT JOIN Category C ON C.Id = SC.CategoryId
-        */
         // Fetch user's posts (excluding posts with deleted status which is 4)
         let query = `
             SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
@@ -280,8 +275,11 @@ exports.getUserPosts = (req: Request, res: Response) => {
                     ORDER BY JPI.ImgIndex
                     LIMIT 1
                 ) AS MainImage,
-                JP.CurrentStatusId
+                JP.CurrentStatusId,
+                C.Code AS CategoryCode
             FROM JobPosting JP
+            LEFT JOIN SubCategory SC ON SC.Id = JP.SubCategoryId
+            LEFT JOIN Category C ON C.Id = SC.CategoryId
             WHERE JP.CurrentStatusId != 4 AND AccountId = ?
             ORDER BY SecondsAgo DESC;
         `;

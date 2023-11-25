@@ -16,7 +16,7 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 30px;
+        gap: 0 30px;
 
         .gallery-container {
             display: flex;
@@ -24,9 +24,24 @@
             width: 100%;
             flex-shrink: 0;
 
+            .gallery-no-image {
+                display: none;
+                height: 300px;
+                justify-content: center;
+                align-items: center;
+                background-color: rgba(0, 0, 0, 0.05);
+                border-radius: 4px;
+
+                >img {
+                    height: 30px;
+                    width: 34px;
+                    opacity: 0.5;
+                }
+            }
+
             .gallery-main {
                 position: relative;
-                height: 500px;
+                height: 300px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -34,11 +49,11 @@
                 border-radius: 4px;
                 overflow: hidden;
 
-                img.active {
+                img.active.gallery-image {
                     display: block;
                 }
 
-                img {
+                img.gallery-image {
                     display: none;
                     width: 100%;
                     height: 100%;
@@ -48,6 +63,7 @@
             }
 
             .thumbnail-carousel-container {
+                margin-bottom: 30px;
 
                 .thumbnail-carousel {
                     width: 100%;
@@ -68,6 +84,7 @@
                     }
 
                     .thumbnail-wrapper {
+                        flex-shrink: 0;
                         display: flex;
                         flex-direction: column;
                         align-items: center;
@@ -82,7 +99,6 @@
 
                         &:hover {
                             outline: 2px solid #5997cd;
-                            //transform: scale(1.05);
                         }
 
                         img {
@@ -260,7 +276,16 @@
                 width: 60%;
                 max-width: 700px;
 
+                .gallery-no-image {
+                    display: flex;
+                }
+
+                .gallery-main {
+                    height: 500px;
+                }
+
                 .thumbnail-carousel-container {
+                    margin-bottom: unset;
 
                     .thumbnail-carousel {
                         gap: 16px;
@@ -275,8 +300,8 @@
             }
         }
 
-        .post-description{
-            .description{
+        .post-description {
+            .description {
                 border-radius: 4px;
                 padding: 20px 14px;
                 border: 1px solid var(--primary-light-border);

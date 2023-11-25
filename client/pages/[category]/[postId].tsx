@@ -151,53 +151,59 @@ export default function PostDetails() {
 					}
 					<div className="post-container">
 						<div className="gallery-container">
-							<div className="gallery-main">
-								{postDetails.Images.map((img, i) => img && !img.ImageError ?
-									<Image
-										className={`${activeImage === i ? 'active' : ''}`}
-										loader={() => postImageLink(img.Link)}
-										priority={true}
-										src={postImageLink(img.Link)}
-										alt={`İlanın ${i + 1}. fotoğrafı`}
-										width={0}
-										height={0}
-										key={i}
-										onError={() => {
-											// Set ImageError to true if the image is not found
-											const updatedPostDetails = { ...postDetails };
-											updatedPostDetails.Images[i].ImageError = true;
-											setPostDetails(updatedPostDetails);
-										}}
-										onLoad={() => {
-											// Set Loaded to true if the image is found
-											const updatedPostDetails = { ...postDetails };
-											updatedPostDetails.Images[i].Loaded = true;
-											setPostDetails(updatedPostDetails);
-										}} />
-									: null
-								)}
-							</div>
-							<div className="thumbnail-carousel-container">
-								<div className="thumbnail-carousel">
-									{postDetails.Images.map((img, i) => img && img.Loaded && !img.ImageError ?
-										<div className={`thumbnail-wrapper ${i === activeImage && 'active'}`}
+							{postDetails.Images.filter((img) => img && !img.ImageError).length > 0 ? <>
+								<div className="gallery-main">
+									{postDetails.Images.map((img, i) => img && !img.ImageError ?
+										<Image
+											className={`gallery-image ${activeImage === i ? 'active' : ''}`}
+											loader={() => postImageLink(img.Link)}
+											priority={true}
+											src={postImageLink(img.Link)}
+											alt={`İlanın ${i + 1}. fotoğrafı`}
+											width={0}
+											height={0}
 											key={i}
-											onClick={() => setActiveImage(i)}
-										>
-											<Image
-												loader={() => postImageLink(img.Link)}
-												priority={false}
-												src={postImageLink(img.Link)}
-												alt={`İlanın ${i + 1}. mini fotoğrafı`}
-												width={0}
-												height={0}
-											/>
-											<span className='active-sign'></span>
-										</div>
+											onError={() => {
+												// Set ImageError to true if the image is not found
+												const updatedPostDetails = { ...postDetails };
+												updatedPostDetails.Images[i].ImageError = true;
+												setPostDetails(updatedPostDetails);
+											}}
+											onLoad={() => {
+												// Set Loaded to true if the image is found
+												const updatedPostDetails = { ...postDetails };
+												updatedPostDetails.Images[i].Loaded = true;
+												setPostDetails(updatedPostDetails);
+											}} />
 										: null
 									)}
 								</div>
-							</div>
+								<div className="thumbnail-carousel-container">
+									<div className="thumbnail-carousel">
+										{postDetails.Images.map((img, i) => img && img.Loaded && !img.ImageError ?
+											<div className={`thumbnail-wrapper ${i === activeImage && 'active'}`}
+												key={i}
+												onClick={() => setActiveImage(i)}
+											>
+												<Image
+													loader={() => postImageLink(img.Link)}
+													priority={false}
+													src={postImageLink(img.Link)}
+													alt={`İlanın ${i + 1}. mini fotoğrafı`}
+													width={0}
+													height={0}
+												/>
+												<span className='active-sign'></span>
+											</div>
+											: null
+										)}
+									</div>
+								</div></>
+								:
+								<div className="gallery-no-image">
+									<Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
+								</div>
+							}
 						</div>
 						<div className='post-details'>
 							<div className='author-container'>

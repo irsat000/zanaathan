@@ -155,10 +155,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.05);
   flex-grow: 1;
 }
-.listing .post .post-link .post-image-carousel img {
+.listing .post .post-link .post-image-carousel img.post-image {
   aspect-ratio: 1/0.8;
   width: 100%;
   height: 100%;
@@ -168,12 +168,15 @@
      object-position: center;
 }
 .listing .post .post-link .post-image-carousel .image-error {
-  text-align: center;
-  padding: 20px 0;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.listing .post .post-link .post-image-carousel .image-error span {
-  font-weight: 300;
-  font-size: 1.2rem;
+.listing .post .post-link .post-image-carousel .image-error > img {
+  height: 30px;
+  width: 34px;
+  opacity: 0.5;
 }
 .listing .post .post-link .title {
   font-size: 1.1rem;

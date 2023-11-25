@@ -359,6 +359,7 @@ export default function Category() {
                 <div className="post-image-carousel">
                   {post.MainImage && !post.ImageError ?
                     <Image
+                      className='post-image'
                       loader={() => postImageLink(post.MainImage!)}
                       priority={true}
                       src={postImageLink(post.MainImage)}
@@ -377,7 +378,9 @@ export default function Category() {
                       }}
                     />
                     :
-                    <div className="image-error"><span>Fotoğraf yok</span></div>
+                    <div className="image-error">
+                      <Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
+                    </div>
                   }
                 </div>
                 <h4 className='title'>{post.Title}</h4>
