@@ -205,7 +205,7 @@ const Template: React.FC<{
 								<button type='button' className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>
 									{userData.avatar
 										? <Image
-											loader={() => avatarLink(userData.avatar)}
+											loader={() => avatarLink(userData.avatar!)}
 											src={avatarLink(userData.avatar)}
 											alt={userData.username + ' avatar'}
 											priority={false}

@@ -55,8 +55,55 @@
 
     .profile-body {
         flex-grow: 1;
-        height: 40vh;
-        border: 1px solid black;
+        display: flex;
+        flex-direction: column;
+
+        .profile-nav {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 16px;
+
+            h3 {
+                font-weight: 400;
+                font-size: 1.5rem;
+                font-family: 'Poppins', sans-serif;
+            }
+        }
+
+        .user-posts {
+            margin-top: unset !important;
+            padding: unset !important;
+        }
+    }
+}
+
+.profile-page {
+    .listing {
+        .date-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+
+            .status {
+                margin-left: auto;
+                font-size: 0.8rem;
+                font-weight: 400;
+            }
+
+            .status.cs-1 {
+                color: #de0000;
+            }
+
+            .status.cs-2 {
+                color: #0046de;
+            }
+
+            .status.cs-3 {
+                color: #12bc0c;
+            }
+        }
     }
 }
 
@@ -70,7 +117,13 @@
 
 
 // Most phones
-@media (min-width: 340px) {}
+@media (min-width: 340px) {
+    .profile-page {
+        .listing {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
 
 // Small devices (landscape phones, 576px and up)
 @media (min-width: 576px) {}
@@ -80,18 +133,37 @@
     .profile-page {
         flex-direction: row;
         padding-top: 4vh;
+        align-items: flex-start;
 
         .profile-panel {
             border: 1px solid var(--primary-light-border);
+
+            .name,
+            .email {
+                white-space: nowrap;
+            }
         }
+
     }
 }
 
 // Large devices (desktops, 992px and up)
-@media (min-width: 992px) {}
+@media (min-width: 992px) {
+    .profile-page {
+        .listing {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+}
 
 // X-Large devices (large desktops, 1200px and up)
-@media (min-width: 1200px) {}
+@media (min-width: 1200px) {
+    /*.profile-page {
+        .listing {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }*/
+}
 
 // XX-Large devices (larger desktops, 1400px and up)
 @media (min-width: 1400px) {}

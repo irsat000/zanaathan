@@ -18,12 +18,27 @@ export interface IUserData {
     avatar: "image.webp" | null
 */
 
-const UserData = React.createContext({} as any);
+interface UserDataType {
+    email: string;
+    exp: number;
+    fullName: string | null;
+    sub: number;
+    username: string;
+    avatar: string | null;
+}
+
+const UserData = React.createContext<{
+    userData: UserDataType | null;
+    setUserData: React.Dispatch<React.SetStateAction<UserDataType | null>>;
+}>({
+    userData: null,
+    setUserData: () => { },
+});
 
 export const UserContext: React.FC<{
     children: React.ReactNode
 }> = ({ children }) => {
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState<UserDataType | null>(null);
 
     return (
         <UserData.Provider value={{ userData, setUserData }}>

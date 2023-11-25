@@ -265,6 +265,11 @@ exports.getUserPosts = (req: Request, res: Response) => {
         const userId = req.params.userId;
         if (isNullOrEmpty(userId)) return;
 
+        /* No need for category
+            C.Code AS CategoryCode
+            LEFT JOIN SubCategory SC ON SC.Id = JP.SubCategoryId
+            LEFT JOIN Category C ON C.Id = SC.CategoryId
+        */
         // Fetch user's posts (excluding posts with deleted status which is 4)
         let query = `
             SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,

@@ -48,16 +48,74 @@
 }
 .profile-page .profile-body {
   flex-grow: 1;
-  height: 40vh;
-  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+}
+.profile-page .profile-body .profile-nav {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 16px;
+}
+.profile-page .profile-body .profile-nav h3 {
+  font-weight: 400;
+  font-size: 1.5rem;
+  font-family: "Poppins", sans-serif;
+}
+.profile-page .profile-body .user-posts {
+  margin-top: unset !important;
+  padding: unset !important;
 }
 
+.profile-page .listing .date-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.profile-page .listing .date-container .status {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+.profile-page .listing .date-container .status.cs-1 {
+  color: #de0000;
+}
+.profile-page .listing .date-container .status.cs-2 {
+  color: #0046de;
+}
+.profile-page .listing .date-container .status.cs-3 {
+  color: #12bc0c;
+}
+
+@media (min-width: 340px) {
+  .profile-page .listing {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 @media (min-width: 768px) {
   .profile-page {
     flex-direction: row;
     padding-top: 4vh;
+    align-items: flex-start;
   }
   .profile-page .profile-panel {
     border: 1px solid var(--primary-light-border);
   }
+  .profile-page .profile-panel .name,
+  .profile-page .profile-panel .email {
+    white-space: nowrap;
+  }
+}
+@media (min-width: 992px) {
+  .profile-page .listing {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1200px) {
+  /*.profile-page {
+      .listing {
+          grid-template-columns: repeat(4, 1fr);
+      }
+  }*/
 }/*# sourceMappingURL=profile.css.map */

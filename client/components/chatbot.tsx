@@ -30,8 +30,9 @@ const Chatbot: React.FC<{
 
     // Fetch thread list for messaging (PART OF THE TEMPLATE, MOUNTS ONCE)
     useEffect(() => {
+        if (!userData) return;
         fetchUserContacts(setUserContacts);
-    }, [userData.sub]);
+    }, [userData]);
 
     // Scroll down in chat box automatically
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -151,7 +152,8 @@ const Chatbot: React.FC<{
                 // Update the date
                 contactToUpdate.LastMessageDate = newMessage.CreatedAt;
                 // Send notification if the current contact isn't the sender or the active contact
-                if ((newMessage.SenderId !== userData.sub) &&
+                // userData won't be null because coming here means userContacts are fetched and userData is checked
+                if ((newMessage.SenderId !== userData!.sub) &&
                     ((newMessage.SenderId !== activeContactRef.current) || (!chatbotActiveRef.current))) {
                     contactToUpdate.NotificationCount++;
                 }
@@ -459,7 +461,7 @@ const Chatbot: React.FC<{
                                 // Animate if this is the new message
                                 const animate = animateMessageId === message.Id ? 'animate-new' : '';
                                 // Message owner
-                                const msgOwner = message.SenderId === userData.sub ? 'you' : 'receiver';
+                                const msgOwner = message.SenderId === userData!.sub ? 'you' : 'receiver';
 
                                 return (
                                     <div key={i} className={`message-item ${msgOwner} ${animate}`}>

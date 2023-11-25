@@ -117,14 +117,15 @@
 .category-page .listing-options .sort-by select:hover {
   transform: scale(1.04);
 }
-.category-page .listing {
+
+.listing {
   margin-top: 20px;
   display: grid;
   gap: 16px 3%;
   grid-template-columns: repeat(1, 1fr);
   padding: 10px 0;
 }
-.category-page .listing .post {
+.listing .post {
   display: flex;
   flex-direction: column;
   /* DEPRECATED
@@ -136,17 +137,17 @@
       overflow: hidden;
   }*/
 }
-.category-page .listing .post .post-link {
+.listing .post .post-link {
   display: flex;
   flex-direction: column;
   cursor: pointer;
   position: relative;
   flex-grow: 1;
 }
-.category-page .listing .post .post-link:hover .title {
+.listing .post .post-link:hover .title {
   text-decoration: underline;
 }
-.category-page .listing .post .post-link .post-image-carousel {
+.listing .post .post-link .post-image-carousel {
   margin-bottom: 6px;
   position: relative;
   border-radius: 8px;
@@ -157,7 +158,7 @@
   background-color: rgba(0, 0, 0, 0.1);
   flex-grow: 1;
 }
-.category-page .listing .post .post-link .post-image-carousel img {
+.listing .post .post-link .post-image-carousel img {
   aspect-ratio: 1/0.8;
   width: 100%;
   height: 100%;
@@ -166,23 +167,22 @@
   -o-object-position: center;
      object-position: center;
 }
-.category-page .listing .post .post-link .post-image-carousel .image-error {
+.listing .post .post-link .post-image-carousel .image-error {
   text-align: center;
   padding: 20px 0;
 }
-.category-page .listing .post .post-link .post-image-carousel .image-error span {
+.listing .post .post-link .post-image-carousel .image-error span {
   font-weight: 300;
   font-size: 1.2rem;
 }
-.category-page .listing .post .post-link .title {
+.listing .post .post-link .title {
   font-size: 1.1rem;
   font-weight: 400;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
-.category-page .listing .post span.date {
+.listing .post span.date {
   font-size: 0.8rem;
   font-weight: 400;
-  margin-bottom: 8px;
 }
 
 @media (min-width: 400px) {

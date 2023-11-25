@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 import { apiUrl, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/lib/utils/fetchUtils'
 
-interface Post {
+export interface Post {
   Id: number;
   Title: string;
   SecondsAgo: number;
