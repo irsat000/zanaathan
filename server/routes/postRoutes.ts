@@ -16,5 +16,7 @@ router.get('/get-districts', postController.getDistricts);
 router.post('/create-post', uploadPostImage.array('postImages', 10), postController.createPost);
 // To get user's posts
 router.get('/get-user-posts/:userId', postController.getUserPosts);
+// To update post status by post owner
+router.put('/update-post-status/:postId', postController.updatePostStatus);
 
 module.exports = router;

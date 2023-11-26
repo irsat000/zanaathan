@@ -5,21 +5,24 @@
     gap: 20px 4%;
 
     .profile-panel {
-        padding: 20px 20px;
-        border-radius: 10px;
+        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
 
         .personal-info-container {
-            align-self: center;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
+            gap: 20px 20px;
+            margin: 0 auto;
 
             .user-avatar {
-                width: 120px;
-                height: 120px;
+                width: 90px;
+                height: 90px;
                 overflow: hidden;
                 border-radius: 50%;
-                margin-bottom: 20px;
+                flex-shrink: 0;
 
                 img {
                     width: 100%;
@@ -28,27 +31,61 @@
                 }
             }
 
-            .name {
-                margin-bottom: 10px;
-                gap: 6px;
+            .user-name-email {
                 display: flex;
                 flex-direction: column;
-                text-align: center;
+                align-items: flex-start;
+                gap: 6px;
 
-                >span:nth-child(1) {
+                .name {
+                    gap: 6px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: flex-end;
+                    white-space: nowrap;
+
+                    >span:nth-child(1) {
+                        font-weight: 400;
+                        font-size: 1.5rem;
+                    }
+
+                    >span:nth-child(2) {
+                        font-weight: 300;
+                        font-size: 0.9rem;
+                        padding-bottom: 4px;
+                    }
+                }
+
+                .email {
+                    font-size: 0.9rem;
                     font-weight: 400;
-                    font-size: 1.4rem;
+                    font-family: 'Poppins', sans-serif;
+                    white-space: nowrap;
                 }
 
-                >span:nth-child(2) {
+                .name,
+                .email {
+                    flex-wrap: wrap;
+                }
+
+                .edit-profile {
+                    margin-top: 2px;
+                    border-radius: 4px;
+                    padding: 4px 20px;
+                    border: 1px solid var(--button-white-border);
+                    background-color: var(--button-white);
+                    font-size: 0.9rem;
+                    cursor: pointer;
+                    font-family: 'Fira Sans', sans-serif;
                     font-weight: 300;
-                    font-size: 1.2rem;
-                }
-            }
+                    transition: all 0.1s ease-in-out;
 
-            .email {
-                font-size: 1.1rem;
-                font-weight: 300;
+                    &:hover {
+                        color: #ffffff;
+                        border: 1px solid var(--button4-1);
+                        background-color: var(--button4-1);
+                    }
+                }
             }
         }
     }
@@ -79,6 +116,18 @@
 
 .profile-page {
     .listing {
+        .cs-1 {
+            color: #de0000;
+        }
+
+        .cs-2 {
+            color: #0046de;
+        }
+
+        .cs-3 {
+            color: #12bc0c;
+        }
+
         .date-container {
             display: flex;
             flex-direction: row;
@@ -91,17 +140,81 @@
                 font-size: 0.8rem;
                 font-weight: 400;
             }
+        }
 
-            .status.cs-1 {
-                color: #de0000;
+        .update-post {
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            position: relative;
+
+            .update-post-button {
+                border-radius: 4px;
+                padding: 5px 14px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                font-family: 'Fira Sans', sans-serif;
+                font-weight: 300;
+                border: 1px solid var(--button-white-border);
+                background-color: var(--button-white);
+                display: inline-flex;
+                align-items: center;
+
+                svg {
+                    margin-left: 5px;
+                    transition: transform 0.1s ease-in-out;
+                }
+
+                &:hover {
+                    svg {
+                        transform: translateY(3px);
+                    }
+                }
             }
 
-            .status.cs-2 {
-                color: #0046de;
+            .update-menu.active {
+                display: flex;
             }
 
-            .status.cs-3 {
-                color: #12bc0c;
+            .update-menu {
+                display: none;
+                width: max-content;
+                position: absolute;
+                top: calc(32px + 0.9rem);
+                left: 0;
+                right: 0;
+                margin: 0 auto;
+                flex-direction: column;
+                z-index: 1;
+                background-color: var(--primary-bg-color);
+                -webkit-box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
+                -moz-box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
+                box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
+                border-radius: 6px;
+                overflow: hidden;
+
+                ul.new-status-list {
+                    display: flex;
+                    flex-direction: column;
+                    border: 1px solid var(--primary-light-border);
+                    border-radius: 6px;
+
+                    li {
+                        padding: 8px 10px;
+                        font-weight: 300;
+                        border-bottom: 1px solid var(--primary-light-border);
+                        white-space: nowrap;
+                        cursor: pointer;
+
+                        &:hover {
+                            background-color: rgba(0, 0, 0, 0.02);
+                        }
+
+                        &:last-of-type {
+                            border-bottom: unset;
+                        }
+                    }
+                }
             }
         }
     }
@@ -131,38 +244,52 @@
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) {
     .profile-page {
-        flex-direction: row;
-        padding-top: 4vh;
-        align-items: flex-start;
 
         .profile-panel {
-            border: 1px solid var(--primary-light-border);
-
-            .name,
-            .email {
-                white-space: nowrap;
-            }
+            padding: 26px 0;
         }
-
     }
 }
 
 // Large devices (desktops, 992px and up)
 @media (min-width: 992px) {
     .profile-page {
-        .listing {
-            grid-template-columns: repeat(3, 1fr);
+        flex-direction: row;
+        padding-top: 4vh;
+        align-items: flex-start;
+
+        .profile-panel {
+            padding: 10px 20px 40px;
+            min-height: 60vh;
+            border-right: 1px solid var(--primary-light-border);
+
+            .personal-info-container {
+                margin: unset;
+                overflow: hidden;
+                border-radius: 12px;
+                padding: 16px;
+                border: 1px solid var(--primary-light-border);
+                max-width: 500px;
+
+                .user-name-email {
+                    .name {
+                        flex-direction: row;
+                        max-width: 300px;
+                        white-space: wrap;
+                    }
+                }
+            }
         }
     }
 }
 
 // X-Large devices (large desktops, 1200px and up)
 @media (min-width: 1200px) {
-    /*.profile-page {
+    .profile-page {
         .listing {
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
         }
-    }*/
+    }
 }
 
 // XX-Large devices (larger desktops, 1400px and up)

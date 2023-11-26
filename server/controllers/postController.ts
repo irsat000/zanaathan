@@ -296,8 +296,42 @@ exports.getUserPosts = (req: Request, res: Response) => {
 }
 
 
+exports.updatePostStatus = (req: Request, res: Response) => {
+    try {
+        const body = req.body;
+        // Validate the newStatusId, it can only be -> 1 | 2 | 3
+        if (!body || ![1, 2, 3].includes(body.newStatusId)) {
+            return res.status(400).json({ error: 'Bad request' });
+        }
 
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) return res.status(401).send('Not authorized');
 
+        // Get post id
+        const postId = req.params.postId;
+        if (!postId) res.status(400).json({ error: 'Bad request' });
+
+        // Update post current status if authorized(using AccountId)
+        const query = `
+            UPDATE JobPosting 
+            SET CurrentStatusId = ? 
+            WHERE AccountId = ? AND Id = ?;
+        `;
+        pool.query(query, [body.newStatusId, userId, postId], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+            if (results.affectedRows === 0) {
+                return res.status(401).send('Not authorized');
+            }
+            return res.status(200).json({ message: 'Success!' });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
 
 
 

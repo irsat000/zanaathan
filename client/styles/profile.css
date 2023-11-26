@@ -5,21 +5,24 @@
   gap: 20px 4%;
 }
 .profile-page .profile-panel {
-  padding: 20px 20px;
-  border-radius: 10px;
-}
-.profile-page .profile-panel .personal-info-container {
-  align-self: center;
+  padding-top: 20px;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+}
+.profile-page .profile-panel .personal-info-container {
+  display: flex;
+  flex-direction: row;
   align-items: center;
+  gap: 20px 20px;
+  margin: 0 auto;
 }
 .profile-page .profile-panel .personal-info-container .user-avatar {
-  width: 120px;
-  height: 120px;
+  width: 90px;
+  height: 90px;
   overflow: hidden;
   border-radius: 50%;
-  margin-bottom: 20px;
+  flex-shrink: 0;
 }
 .profile-page .profile-panel .personal-info-container .user-avatar img {
   width: 100%;
@@ -27,24 +30,54 @@
   -o-object-fit: cover;
      object-fit: cover;
 }
-.profile-page .profile-panel .personal-info-container .name {
-  margin-bottom: 10px;
-  gap: 6px;
+.profile-page .profile-panel .personal-info-container .user-name-email {
   display: flex;
   flex-direction: column;
-  text-align: center;
+  align-items: flex-start;
+  gap: 6px;
 }
-.profile-page .profile-panel .personal-info-container .name > span:nth-child(1) {
+.profile-page .profile-panel .personal-info-container .user-name-email .name {
+  gap: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  white-space: nowrap;
+}
+.profile-page .profile-panel .personal-info-container .user-name-email .name > span:nth-child(1) {
   font-weight: 400;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
 }
-.profile-page .profile-panel .personal-info-container .name > span:nth-child(2) {
+.profile-page .profile-panel .personal-info-container .user-name-email .name > span:nth-child(2) {
   font-weight: 300;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
+  padding-bottom: 4px;
 }
-.profile-page .profile-panel .personal-info-container .email {
-  font-size: 1.1rem;
+.profile-page .profile-panel .personal-info-container .user-name-email .email {
+  font-size: 0.9rem;
+  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+  white-space: nowrap;
+}
+.profile-page .profile-panel .personal-info-container .user-name-email .name,
+.profile-page .profile-panel .personal-info-container .user-name-email .email {
+  flex-wrap: wrap;
+}
+.profile-page .profile-panel .personal-info-container .user-name-email .edit-profile {
+  margin-top: 2px;
+  border-radius: 4px;
+  padding: 4px 20px;
+  border: 1px solid var(--button-white-border);
+  background-color: var(--button-white);
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
   font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.profile-page .profile-panel .personal-info-container .user-name-email .edit-profile:hover {
+  color: #ffffff;
+  border: 1px solid var(--button4-1);
+  background-color: var(--button4-1);
 }
 .profile-page .profile-body {
   flex-grow: 1;
@@ -66,6 +99,15 @@
   padding: unset !important;
 }
 
+.profile-page .listing .cs-1 {
+  color: #de0000;
+}
+.profile-page .listing .cs-2 {
+  color: #0046de;
+}
+.profile-page .listing .cs-3 {
+  color: #12bc0c;
+}
 .profile-page .listing .date-container {
   display: flex;
   flex-direction: row;
@@ -78,14 +120,68 @@
   font-size: 0.8rem;
   font-weight: 400;
 }
-.profile-page .listing .date-container .status.cs-1 {
-  color: #de0000;
+.profile-page .listing .update-post {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  position: relative;
 }
-.profile-page .listing .date-container .status.cs-2 {
-  color: #0046de;
+.profile-page .listing .update-post .update-post-button {
+  border-radius: 4px;
+  padding: 5px 14px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  border: 1px solid var(--button-white-border);
+  background-color: var(--button-white);
+  display: inline-flex;
+  align-items: center;
 }
-.profile-page .listing .date-container .status.cs-3 {
-  color: #12bc0c;
+.profile-page .listing .update-post .update-post-button svg {
+  margin-left: 5px;
+  transition: transform 0.1s ease-in-out;
+}
+.profile-page .listing .update-post .update-post-button:hover svg {
+  transform: translateY(3px);
+}
+.profile-page .listing .update-post .update-menu.active {
+  display: flex;
+}
+.profile-page .listing .update-post .update-menu {
+  display: none;
+  width: -moz-max-content;
+  width: max-content;
+  position: absolute;
+  top: calc(32px + 0.9rem);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  flex-direction: column;
+  z-index: 1;
+  background-color: var(--primary-bg-color);
+  box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.profile-page .listing .update-post .update-menu ul.new-status-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--primary-light-border);
+  border-radius: 6px;
+}
+.profile-page .listing .update-post .update-menu ul.new-status-list li {
+  padding: 8px 10px;
+  font-weight: 300;
+  border-bottom: 1px solid var(--primary-light-border);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.profile-page .listing .update-post .update-menu ul.new-status-list li:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+.profile-page .listing .update-post .update-menu ul.new-status-list li:last-of-type {
+  border-bottom: unset;
 }
 
 @media (min-width: 340px) {
@@ -94,28 +190,37 @@
   }
 }
 @media (min-width: 768px) {
+  .profile-page .profile-panel {
+    padding: 26px 0;
+  }
+}
+@media (min-width: 992px) {
   .profile-page {
     flex-direction: row;
     padding-top: 4vh;
     align-items: flex-start;
   }
   .profile-page .profile-panel {
+    padding: 10px 20px 40px;
+    min-height: 60vh;
+    border-right: 1px solid var(--primary-light-border);
+  }
+  .profile-page .profile-panel .personal-info-container {
+    margin: unset;
+    overflow: hidden;
+    border-radius: 12px;
+    padding: 16px;
     border: 1px solid var(--primary-light-border);
+    max-width: 500px;
   }
-  .profile-page .profile-panel .name,
-  .profile-page .profile-panel .email {
-    white-space: nowrap;
-  }
-}
-@media (min-width: 992px) {
-  .profile-page .listing {
-    grid-template-columns: repeat(3, 1fr);
+  .profile-page .profile-panel .personal-info-container .user-name-email .name {
+    flex-direction: row;
+    max-width: 300px;
+    white-space: wrap;
   }
 }
 @media (min-width: 1200px) {
-  /*.profile-page {
-      .listing {
-          grid-template-columns: repeat(4, 1fr);
-      }
-  }*/
+  .profile-page .listing {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }/*# sourceMappingURL=profile.css.map */
