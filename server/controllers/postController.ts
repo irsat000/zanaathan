@@ -171,17 +171,19 @@ exports.createPost = (req: Request, res: Response) => {
         if (!userId) return res.status(401).send('Not authorized');
 
         // Get uploaded file list
-        // We already check this in fileFilter
+        // Filtered in multer instance
         const files = req.files;
-        if (!files || !Array.isArray(files) || files.length === 0) {
-            return res.status(400).json({ error: 'No image uploaded' });
-        }
-        const imageNameList = files.map(file => file.filename);
+        const imageNameList = Array.isArray(files) ? files.map(file => {
+            return {
+                name: file.filename, // Has extension
+                path: file.path // Full directory path
+            }
+        }) : [];
 
-        // Deletes the images uploaded when called
+        // Deletes the uploaded images when called
         const deleteUploadedOnError = () => {
-            files.forEach((uploadedFile) =>
-                fs.existsSync(uploadedFile.path) && fs.unlinkSync(uploadedFile.path)
+            imageNameList.forEach((file) =>
+                fs.existsSync(file.path) && fs.unlinkSync(file.path)
             );
         }
 
@@ -192,8 +194,9 @@ exports.createPost = (req: Request, res: Response) => {
         const subCategory = body.subCategory;
         const district = body.district;
 
+        // Note: This can be done with a middleware before image uploading
         // Validate the inputs
-        if (title.length < 5 || title.length > 255
+        if (!req.body || title.length < 5 || title.length > 255
             || description.length < 50 || description.length > 2000
             || !isPositiveNumeric(subCategory) || !isPositiveNumeric(district)
         ) {
@@ -230,10 +233,21 @@ exports.createPost = (req: Request, res: Response) => {
 
                 // Get post id
                 const postId = results.insertId;
+
+                // If no image is uploaded, finish it here
+                if (imageNameList.length === 0) {
+                    connection.commit((commitErr: any) => {
+                        if (commitErr) connection.rollback(() => handleError(connection));
+
+                        // Send postId to go to the post after it's published
+                        return res.status(200).json({ postId });
+                    });
+                }
+
                 // Iterate image names to get necessary image insert queries
-                const imageQueries = imageNameList.map((imageName, index) => ({
+                const imageQueries = imageNameList.map((file, index) => ({
                     sql: "INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);",
-                    values: [imageName, index, postId]
+                    values: [file.name, index, postId]
                 }));
                 // Iterate over image insert queries
                 imageQueries.forEach((imageQuery, index) => {
@@ -254,7 +268,7 @@ exports.createPost = (req: Request, res: Response) => {
             });
         });
     } catch (error) {
-        return res.status(500).json({ error: 'Server error: ' + error });
+        return res.status(500).json({ error });
     }
 }
 

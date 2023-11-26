@@ -45,8 +45,8 @@ DELETE FROM `Message`;
 SET SQL_SAFE_UPDATES = 1;
 
 
-
-
+DELETE FROM JobPostingImages WHERE JobPostingId = 7;
+DELETE FROM JobPosting WHERE Id = 7;
 
 
 

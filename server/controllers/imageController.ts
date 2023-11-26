@@ -1,5 +1,5 @@
 
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
 import * as fs from 'fs';
 const path = require('path');
@@ -7,10 +7,6 @@ const appDir = path.dirname(require.main?.filename);
 
 
 
-
-// NEEDS FURTHER WORK
-// Clearing the metadata
-// Changing extension may be necessary
 
 // Define storage for uploaded files
 const postImageStorage = multer.diskStorage({
@@ -24,28 +20,47 @@ const postImageStorage = multer.diskStorage({
     },
 });
 
-// Create an instance of multer
-export const uploadPostImage = multer({
-    storage: postImageStorage,
-    fileFilter: (req, file, cb) => {
-        const files = req.files;
-        if (!files || !Array.isArray(files) || files.length === 0) {
-            return cb(new Error('No image uploaded'));
+// Custom multer middleware
+export const uploadPostImage = (req: Request, res: Response, next: NextFunction) => {
+    const multerMiddleware = multer({
+        storage: postImageStorage,
+        limits: { fileSize: 5000000, files: 10 }, // 5 megabyte
+        fileFilter: (req, file, cb) => {
+            // Accept only images, excluding gif
+            if (['image/webp', 'image/png', 'image/jpg', 'image/jpeg'].includes(file.mimetype))
+                cb(null, true);
+            else
+                cb(null, false);
         }
-        // Reject the file if it's too large, > 5mb
-        // Reducing file size will be in client side
-        else if (file.size > 5000000) {
-            // Delete the uploaded files
-            files.forEach((uploadedFile) =>
-                fs.existsSync(uploadedFile.path) && fs.unlinkSync(uploadedFile.path)
-            );
-            return cb(new Error('File size is too large'));
+    }).array('postImages', 10);
+
+    // Apply multer middleware
+    multerMiddleware(req, res, (multerError: any) => {
+        if (multerError) {
+            // Probably deletes automatically upon error
+            // Delete all the uploaded files upon error
+            /*const uploadedList = Array.isArray(req.files) ? req.files : [];
+            uploadedList.forEach(file => {
+                if (fs.existsSync(file.path)) {
+                    fs.unlinkSync(file.path);
+                }
+            });*/
+
+            if (multerError.code === 'LIMIT_FILE_SIZE') {
+                // 5mb limit, if one exceeds, return 413, payload too large error
+                return res.status(413).json({ error: 'A file exceeded the 5 megabyte limit' });
+            }
+            else if (multerError.code === 'LIMIT_FILE_COUNT') {
+                // 10 image limit
+                return res.status(417).json({ error: 'Maximum of 10 files can be sent' });
+            }
+            return next(multerError);
         }
 
-        // If no error is detected, accept the file
-        cb(null, true);
-    }
-});
+        // To route handler
+        next();
+    });
+};
 
 
 // Define storage for uploaded files

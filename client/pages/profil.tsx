@@ -77,12 +77,12 @@ export default function Home() {
   }, []);
 
   const updateStatus = (postId: number, value: CurrentStatus) => {
+    // Check jwt and get necessary items
     const jwt = fetchJwt();
     if (!jwt) return;
-
+    // Payload
     const updatedItem = { newStatusId: value };
-    const updateStatusUrl = `${apiUrl}/update-post-status/${postId}`;
-    fetch(updateStatusUrl, {
+    fetch(`${apiUrl}/update-post-status/${postId}`, {
       method: "PUT",
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -92,6 +92,7 @@ export default function Home() {
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then((data) => {
+        // Update current status and close update menu on success
         setPostList(prev => {
           const updatedPostList = prev.map((p) => {
             if (p.Id === postId) {

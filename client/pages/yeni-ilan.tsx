@@ -106,7 +106,7 @@ export default function NewPost() {
 
     // Check jwt
     const jwt = fetchJwt();
-    if (!jwt) return null;
+    if (!jwt) return;
 
     fetch(`${apiUrl}/create-post`, {
       method: "POST",
