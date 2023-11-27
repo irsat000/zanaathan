@@ -123,7 +123,7 @@ export default function Home() {
                     : userData.username}
                 </span>
                 <span className='email'>{userData.email}</span>
-                <button type="button" className='edit-profile'>Düzenle</button>
+                <Link href={'/ayarlar'} type="button" className='edit-profile'>Düzenle</Link>
               </div>
             </div>
           </div>

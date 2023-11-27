@@ -1,0 +1,163 @@
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  padding: var(--site-padding);
+  gap: 20px 4%;
+  padding-top: 20px;
+}
+.settings-page .settings-body {
+  display: flex;
+  flex-direction: column;
+}
+.settings-page .settings-body h2 {
+  font-size: 1.5rem;
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.settings-page .settings-body .profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.settings-page .settings-body .profile-form .input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.settings-page .settings-body .profile-form .input-wrapper > span {
+  font-weight: 300;
+  font-size: 1.1rem;
+  padding-left: 4px;
+}
+.settings-page .settings-body .profile-form .input-wrapper input[type=text],
+.settings-page .settings-body .profile-form .input-wrapper input[type=password] {
+  font-weight: 300;
+  font-size: 1.1rem;
+  padding: 10px 14px;
+  position: relative;
+  border-radius: 4px;
+  border: 1px solid var(--primary-light-border);
+}
+.settings-page .settings-body .profile-form .set-avatar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+.settings-page .settings-body .profile-form .set-avatar .avatar-wrapper {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 50%;
+  padding: 8px;
+  border: 1px solid var(--primary-light-border);
+}
+.settings-page .settings-body .profile-form .set-avatar .avatar-wrapper img {
+  -o-object-fit: cover;
+     object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+.settings-page .settings-body .profile-form .set-avatar .change-avatar-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.settings-page .settings-body .profile-form .set-avatar .change-avatar-buttons button {
+  border-radius: 6px;
+  padding: 6px 20px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.settings-page .settings-body .profile-form .set-avatar .change-avatar-buttons .change {
+  border: 1px solid var(--primary-light-border);
+  background-color: var(--button-white);
+}
+.settings-page .settings-body .profile-form .set-avatar .change-avatar-buttons .change:hover {
+  color: #ffffff;
+  border: 1px solid var(--button4-1);
+  background-color: var(--button4-1);
+}
+.settings-page .settings-body .profile-form .set-avatar .change-avatar-buttons .delete {
+  border: none;
+  color: #ffffff;
+  background-color: var(--button3-1);
+}
+.settings-page .settings-body .profile-form .set-avatar .change-avatar-buttons .delete:hover {
+  background-color: var(--button3-2);
+}
+.settings-page .settings-body .profile-form .set-name-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px 10px;
+}
+.settings-page .settings-body .profile-form .set-new-password-container {
+  padding: 14px 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.settings-page .settings-body .profile-form .set-new-password-container button {
+  align-self: flex-start;
+  border-radius: 6px;
+  padding: 8px 20px;
+  border: none;
+  color: #ffffff;
+  background-color: var(--button3-1);
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.settings-page .settings-body .profile-form .set-new-password-container button:hover {
+  background-color: var(--button3-2);
+}
+.settings-page .settings-body .profile-form .set-new-password-container .new-password-wrapper.active {
+  display: flex;
+}
+.settings-page .settings-body .profile-form .set-new-password-container .new-password-wrapper {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+.settings-page .settings-body .profile-form .submit-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+.settings-page .settings-body .profile-form .submit-container button {
+  border-radius: 6px;
+  padding: 10px 20px;
+  border: none;
+  color: #ffffff;
+  background-color: var(--button2-1);
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.settings-page .settings-body .profile-form .submit-container button:hover {
+  background-color: var(--button2-2);
+}
+
+@media (min-width: 768px) {
+  .settings-page {
+    align-items: center;
+  }
+  .settings-page .settings-body .profile-form .set-avatar .avatar-wrapper {
+    width: 120px;
+    height: 120px;
+  }
+  .settings-page .settings-body .profile-form .input-wrapper {
+    width: 400px;
+  }
+}/*# sourceMappingURL=settings.css.map */
