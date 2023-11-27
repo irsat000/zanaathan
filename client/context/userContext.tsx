@@ -18,7 +18,7 @@ export interface IUserData {
     avatar: "image.webp" | null
 */
 
-interface UserDataType {
+export interface UserDataType {
     email: string;
     exp: number;
     fullName: string | null;

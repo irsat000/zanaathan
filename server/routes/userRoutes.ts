@@ -11,5 +11,10 @@ router.post('/sign-up', userController.signup);
 router.post('/auth-google', userController.authGoogle);
 // To login or register with facebook
 router.post('/auth-facebook', userController.authFacebook);
+// To get user info
+// router.get('/get-user-info/:userId', userController.getUserInfo);
+// To let user change their profile
+router.put('/edit-profile', userController.editProfile);
+
 
 module.exports = router;

@@ -14,6 +14,35 @@ SELECT Id, Username, FullName, Email FROM Account WHERE ExternalId = 0 && OAuthP
 INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
 VALUES (?, ?, ?, ?, NULL, ?, ?, ?);
 
+USE ZanaatHan;
+# Get user's own profile
+SELECT Username, FullName, Email, Avatar FROM Account WHERE Id = 9;
+
+
+
+
+
+# Get posts owned by a user
+SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
+	(
+		SELECT JPI.Body
+		FROM JobPostingImages JPI
+		WHERE JP.Id = JPI.JobPostingId
+		ORDER BY JPI.ImgIndex
+		LIMIT 1
+	) AS MainImage,
+	JP.CurrentStatusId,
+	C.Code AS CategoryCode
+FROM JobPosting JP
+LEFT JOIN SubCategory SC ON SC.Id = JP.SubCategoryId
+LEFT JOIN Category C ON C.Id = SC.CategoryId
+WHERE JP.CurrentStatusId != 4 AND AccountId = ?
+ORDER BY SecondsAgo DESC;
+
+# To let the user change their posts' current status
+UPDATE JobPosting 
+SET CurrentStatusId = ? 
+WHERE AccountId = ? AND Id = ?;
 
 # Get FILTERED posts with their first image
 SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
