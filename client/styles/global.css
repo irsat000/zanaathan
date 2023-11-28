@@ -638,6 +638,7 @@ body select {
   display: flex;
   width: 60px;
   height: 60px;
+  overflow: hidden;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .profile-picture img {
   width: 44px;
@@ -1019,6 +1020,7 @@ header > .header-container .user-container .user-menu-button {
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  outline: 2px solid #a6cfed;
 }
 header > .header-container .user-container .user-menu-button img {
   width: 100%;

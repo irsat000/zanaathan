@@ -6,15 +6,13 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react';
 import { Post } from './[category]';
 import { decodedJwt, fetchJwt, storeJwt } from '@/lib/utils/userUtils';
-import { apiUrl, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
+import { acceptedImgSet_1, apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
 import { ChevronDown } from 'react-bootstrap-icons';
 
 
 export default function Home() {
     // Get user context
     const { userData, setUserData } = useUser();
-    // New avatar is seperate from the form and saving
-    const [newUserAvatar, setNewUserAvatar] = useState<File | null>(null);
     // User form
     const [userForm, setUserForm] = useState<{
         email: string;
@@ -80,6 +78,56 @@ export default function Home() {
             });
     }
 
+    const handleAvatarSubmit = (file: File) => {
+        // Check jwt
+        const jwt = fetchJwt();
+        if (!jwt) return null;
+        // Get image
+        const avatarForm = new FormData();
+        avatarForm.append('image', file);
+
+        fetch(`${apiUrl}/set-new-avatar`, {
+            method: "POST",
+            headers: {
+                'Authorization': `Bearer ${jwt}`
+            },
+            body: avatarForm
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then((data) => {
+                // store jwt in cookies
+                storeJwt(data.JWT);
+                // set user data in user context
+                setUserData(decodedJwt(data.JWT));
+            })
+            .catch((res) => {
+                alert('Başarısız!')
+            });
+    }
+
+    const handleDeleteAvatar = () => {
+        // Check jwt
+        const jwt = fetchJwt();
+        if (!jwt) return null;
+
+        fetch(`${apiUrl}/delete-avatar`, {
+            method: "PUT",
+            headers: {
+                'Authorization': `Bearer ${jwt}`
+            }
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then((data) => {
+                // store jwt in cookies
+                storeJwt(data.JWT);
+                // set user data in user context
+                setUserData(decodedJwt(data.JWT));
+            })
+            .catch((res) => {
+                alert('Başarısız!')
+            });
+    }
+
     return (
         <Template>
             {userData ?
@@ -89,11 +137,41 @@ export default function Home() {
                         <div className='profile-form' onSubmit={handleSubmit}>
                             <div className="set-avatar">
                                 <div className="avatar-wrapper">
-                                    <Image src={require('@/assets/site/user.png')} alt={'Profil fotoğrafı'} />
+                                    {userData.avatar ?
+                                        <Image
+                                            loader={() => avatarLink(userData.avatar!)}
+                                            src={avatarLink(userData.avatar)}
+                                            alt={'Profil fotoğrafı'}
+                                            width={0}
+                                            height={0}
+                                        /> :
+                                        <Image
+                                            src={require('@/assets/site/image-not-found.webp')}
+                                            alt={'Profil fotoğrafı yok'}
+                                            width={0}
+                                            height={0}
+                                            className='no-image'
+                                        />
+                                    }
                                 </div>
                                 <div className="change-avatar-buttons">
-                                    <button type="button" className="change">Değiştir</button>
-                                    <button type="button" className="delete">Sil</button>
+                                    <label>
+                                        <input
+                                            type='file'
+                                            className='new-avatar-input'
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                const file = e.target.files ? e.target.files[0] : null
+                                                if (file && acceptedImgSet_1.includes(file.type)) {
+                                                    handleAvatarSubmit(file)
+                                                } else {
+                                                    alert('Desteklenmeyen dosya biçimi')
+                                                }
+                                            }}
+                                        />
+                                        <span className="change">Değiştir</span>
+                                    </label>
+                                    <button type="button" className="delete" onClick={handleDeleteAvatar}>Sil</button>
                                 </div>
                             </div>
                             <div className="set-name-container">

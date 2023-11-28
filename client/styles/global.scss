@@ -710,6 +710,7 @@ body {
                         display: flex;
                         width: 60px;
                         height: 60px;
+                        overflow: hidden;
 
                         img {
                             width: 44px;
@@ -1168,7 +1169,7 @@ header>.header-container {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-
+            outline: 2px solid #a6cfed;
 
             img {
                 width: 100%;

@@ -2,6 +2,7 @@
 import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
 import * as fs from 'fs';
+import { acceptedImgSet_1 } from '../utils/helperUtils';
 const path = require('path');
 const appDir = path.dirname(require.main?.filename);
 
@@ -27,7 +28,7 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
         limits: { fileSize: 5000000, files: 10 }, // 5 megabyte
         fileFilter: (req, file, cb) => {
             // Accept only images, excluding gif
-            if (['image/webp', 'image/png', 'image/jpg', 'image/jpeg'].includes(file.mimetype))
+            if (acceptedImgSet_1.includes(file.mimetype))
                 cb(null, true);
             else
                 cb(null, false);
@@ -74,6 +75,58 @@ const avatarStorage = multer.diskStorage({
         cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
     },
 });
+
+// Custom multer middleware
+export const uploadAvatar = (req: Request, res: Response, next: NextFunction) => {
+    const multerMiddleware = multer({
+        storage: avatarStorage,
+        limits: { fileSize: 5000000 }, // 5 megabyte
+        fileFilter: (req, file, cb) => {
+            // Accept only images, excluding gif
+            if (acceptedImgSet_1.includes(file.mimetype))
+                cb(null, true);
+            else
+                cb(null, false);
+        }
+    }).single('image');
+
+    // Apply multer middleware
+    multerMiddleware(req, res, (multerError: any) => {
+        if (multerError) {
+            if (multerError.code === 'LIMIT_FILE_SIZE') {
+                // 5mb limit, if one exceeds, return 413, payload too large error
+                return res.status(413).json({ error: 'A file exceeded the 5 megabyte limit' });
+            }
+            return next(multerError);
+        }
+
+        // To route handler
+        next();
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 // Create an instance of multer
 export const uploadAvatar = multer({

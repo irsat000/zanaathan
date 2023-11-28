@@ -94,3 +94,5 @@ export const toShortLocal = (dateString: string) => {
     return utcDate.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
   }
 }
+
+export const acceptedImgSet_1 = ['image/webp', 'image/png', 'image/jpg', 'image/jpeg'];

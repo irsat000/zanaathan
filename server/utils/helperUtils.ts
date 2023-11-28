@@ -19,3 +19,5 @@ export const isPositiveNumeric = (value: any): boolean => {
 export const dateToMysqlDate = (date: Date) => {
     return date.toISOString().slice(0, 19).replace('T', ' ')
 }
+
+export const acceptedImgSet_1 = ['image/webp', 'image/png', 'image/jpg', 'image/jpeg'];

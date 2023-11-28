@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react';
 import { Post } from './[category]';
 import { fetchJwt } from '@/lib/utils/userUtils';
-import { apiUrl, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
+import { apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
 import { ChevronDown } from 'react-bootstrap-icons';
 
 type CurrentStatus = 1 | 2 | 3;
@@ -114,7 +114,19 @@ export default function Home() {
           <div className="profile-panel">
             <div className="personal-info-container">
               <div className="user-avatar">
-                <Image src={require('@/assets/site/user.png')} alt={'Profil fotoğrafı'} />
+                {userData.avatar
+                  ? <Image
+                    loader={() => avatarLink(userData.avatar!)}
+                    src={avatarLink(userData.avatar)}
+                    alt={'Profile fotoğrafı'}
+                    priority={false}
+                    width={0}
+                    height={0} />
+                  : <Image
+                    src={require('@/assets/site/user.png')}
+                    alt={'Profil fotoğrafı yok'}
+                    width={0}
+                    height={0} />}
               </div>
               <div className="user-name-email">
                 <span className='name'>

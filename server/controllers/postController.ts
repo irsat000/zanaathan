@@ -165,11 +165,6 @@ interface CreatePost {
 
 exports.createPost = (req: Request, res: Response) => {
     try {
-        // Verify and decode the token
-        const jwt = req.headers?.authorization?.split(' ')[1];
-        const userId = verifyJwt(jwt);
-        if (!userId) return res.status(401).send('Not authorized');
-
         // Get uploaded file list
         // Filtered in multer instance
         const files = req.files;
@@ -185,6 +180,14 @@ exports.createPost = (req: Request, res: Response) => {
             imageNameList.forEach((file) =>
                 fs.existsSync(file.path) && fs.unlinkSync(file.path)
             );
+        }
+
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) {
+            deleteUploadedOnError();
+            return res.status(401).send('Not authorized');
         }
 
         // Get inputs
@@ -351,7 +354,7 @@ exports.updatePostStatus = (req: Request, res: Response) => {
 
 exports.asdf = (req: Request, res: Response) => {
     try {
-        const query = "";
+        const query = ``;
         pool.query(query, (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });

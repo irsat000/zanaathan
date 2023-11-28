@@ -1,6 +1,6 @@
 
 # Get user for auth in default way
-SELECT Id, Username, FullName, Email, Password FROM Account WHERE Username = '' AND OAuthProviderId IS NULL;
+SELECT Id, Username, FullName, Email, Avatar, Password FROM Account WHERE Username = '' AND OAuthProviderId IS NULL;
 
 # Check existing when sign up
 SELECT * FROM Account WHERE Username = '' OR (Email = '' AND IsEmailValid = 1);
@@ -14,9 +14,15 @@ SELECT Id, Username, FullName, Email FROM Account WHERE ExternalId = 0 && OAuthP
 INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
 VALUES (?, ?, ?, ?, NULL, ?, ?, ?);
 
+
 USE ZanaatHan;
-# Get user's own profile
-SELECT Username, FullName, Email, Avatar FROM Account WHERE Id = 9;
+# PROFILE SETTINGS
+# For comparing
+SELECT FullName, Email, Password FROM Account WHERE Id = ?;
+# For updating
+UPDATE Account SET FullName = ?, Email = ?, Password = ? WHERE Id = ?;
+# For creating jwt
+SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;
 
 
 

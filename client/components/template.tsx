@@ -207,13 +207,13 @@ const Template: React.FC<{
 										? <Image
 											loader={() => avatarLink(userData.avatar!)}
 											src={avatarLink(userData.avatar)}
-											alt={userData.username + ' avatar'}
+											alt={'Profile fotoğrafı'}
 											priority={false}
 											width={0}
 											height={0} />
 										: <Image
 											src={require('@/assets/site/user.png')}
-											alt={'NULL avatar'}
+											alt={'Profil fotoğrafı yok'}
 											width={0}
 											height={0} />}
 								</button>

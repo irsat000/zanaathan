@@ -486,3 +486,132 @@ exports.editProfile = (req: Request, res: Response) => {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
 }
+
+
+exports.deleteAvatar = (req: Request, res: Response) => {
+    try {
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) return res.status(401).send('Not authorized');
+        // Get image name
+        const query = `SELECT Avatar FROM Account WHERE Id = ?;`;
+        pool.query(query, [userId], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+            // Verify image name
+            const imageName = results[0].Avatar;
+            if (!imageName) res.status(404).json({ error: 'Image not found' });
+            // Delete from storage
+            const imgPath = `${appDir}/uploaded/avatar/${imageName}`;
+            if (fs.existsSync(imgPath)) {
+                fs.unlinkSync(imgPath)
+            }
+            // Delete from Account table
+            const deleteAvatarQuery = `UPDATE Account SET Avatar = NULL WHERE Id = ?;`;
+            pool.query(deleteAvatarQuery, [userId], (qErr: any, results: any) => {
+                if (qErr) {
+                    return res.status(500).json({ error: 'Query error' });
+                }
+
+                // Get updated user
+                const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;';
+                pool.query(selectQuery, [userId], (qErr: any, results: any) => {
+                    if (qErr) {
+                        return res.status(500).json({ error: 'Query error' });
+                    }
+                    // Get user from results
+                    const user = results[0];
+                    // Generate JWT
+                    const JWT = createJwt({
+                        sub: user.Id,
+                        username: user.Username,
+                        fullName: user.FullName,
+                        email: user.Email,
+                        avatar: user.Avatar
+                    });
+                    return res.status(200).json({ JWT });
+                });
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+exports.uploadAvatar = (req: Request, res: Response) => {
+    try {
+        // Get the uploaded file
+        if (!req.file) throw new Error('Image upload error');
+        const newAvatar = {
+            name: req.file.filename, // Has extension
+            path: req.file.path // Full directory path
+        };
+
+        // Deletes the uploaded images when called
+        const deleteUploadedOnError = () => {
+            if (fs.existsSync(newAvatar.path)) {
+                fs.unlinkSync(newAvatar.path)
+            }
+        }
+
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) {
+            deleteUploadedOnError();
+            return res.status(401).send('Not authorized');
+        }
+
+        // Update the avatar
+        const query = `UPDATE Account SET Avatar = ? WHERE Id = ?`;
+        pool.query(query, [newAvatar.name, userId], (qErr: any, results: any) => {
+            if (qErr) {
+                deleteUploadedOnError();
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            // Get updated user
+            const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;';
+            pool.query(selectQuery, [userId], (qErr: any, results: any) => {
+                if (qErr) {
+                    // We don't call deleteUploadedOnError(); because it didn't fail during UPDATE
+                    return res.status(500).json({ error: 'Query error' });
+                }
+                // Get user from results
+                const user = results[0];
+                // Generate JWT
+                const JWT = createJwt({
+                    sub: user.Id,
+                    username: user.Username,
+                    fullName: user.FullName,
+                    email: user.Email,
+                    avatar: user.Avatar
+                });
+                return res.status(200).json({ JWT });
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+
+
+
+
+exports.asdf = (req: Request, res: Response) => {
+    try {
+        const query = ``;
+        pool.query(query, (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            return res.status(200).json({});
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}

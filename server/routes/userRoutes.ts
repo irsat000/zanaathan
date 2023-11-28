@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { uploadAvatar } from '../controllers/imageController';
 const router = Router();
 const userController = require('../controllers/userController');
 
@@ -12,9 +13,14 @@ router.post('/auth-google', userController.authGoogle);
 // To login or register with facebook
 router.post('/auth-facebook', userController.authFacebook);
 // To get user info
-// router.get('/get-user-info/:userId', userController.getUserInfo);
+// - router.get('/get-user-info/:userId', userController.getUserInfo);
 // To let user change their profile
 router.put('/edit-profile', userController.editProfile);
+// To let user delete their avatar
+router.put('/delete-avatar', userController.deleteAvatar);
+// To let user change their avatar with a new one
+router.post('/set-new-avatar', uploadAvatar, userController.uploadAvatar);
+
 
 
 module.exports = router;
