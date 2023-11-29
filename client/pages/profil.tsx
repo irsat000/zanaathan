@@ -9,6 +9,7 @@ import { fetchJwt } from '@/lib/utils/userUtils';
 import { apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
 import { ChevronDown } from 'react-bootstrap-icons';
 import GridLoader from 'react-spinners/GridLoader';
+import { useGStatus } from '@/context/globalContext';
 
 type CurrentStatus = 1 | 2 | 3;
 
@@ -19,6 +20,8 @@ interface UserPost extends Post {
 }
 
 export default function Home() {
+  // Use global context
+  const { handleGStatus } = useGStatus();
   // Get user context
   const { userData } = useUser();
 
@@ -44,7 +47,12 @@ export default function Home() {
       .then((data) => {
         setPostList(data.posts);
       })
-      .catch((res) => console.log('Sunucuda hata'))
+      .catch((res) => {
+        handleGStatus('informationModal', {
+          type: 'error',
+          text: 'Gönderileri getirirken hata. Üzgünüz!'
+        });
+      })
       .finally(() => {
         setProfilePostsLoading(false);
       });
@@ -110,7 +118,12 @@ export default function Home() {
           return updatedPostList;
         });
       })
-      .catch((res) => console.log('Hata'));
+      .catch((res) => {
+        handleGStatus('informationModal', {
+          type: 'error',
+          text: 'Gönderi güncellenemedi. Üzgünüz!'
+        });
+      });
   }
 
 

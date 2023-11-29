@@ -43,11 +43,11 @@ const LoginWithFacebook: React.FC<{
                 // close modal after a second
                 setTimeout(() => handleAuthModal('none'), 1000);
             })
-            .catch((res) => console.log('Sunucuyla bağlantıda hata'));
+            .catch((res) => setAuthModalWarning('*Bağlantıda hata*'));
     }
 
     function handleError(error: any) {
-        console.log("Facebook'a bağlanırken hata", error);
+        setAuthModalWarning('*Bağlantıda hata*');
     }
 
     return (

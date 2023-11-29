@@ -90,7 +90,12 @@ export default function PostDetails() {
 				// Update the postDetails
 				setPostDetails(sanatizedPostDetails);
 			})
-			.catch((res) => console.log('Sunucuda hata'))
+			.catch((res) => {
+				handleGStatus('informationModal', {
+					type: 'error',
+					text: 'Gönderi getirilemedi!'
+				})
+			})
 			.finally(() => {
 				setPostLoading(false);
 			});

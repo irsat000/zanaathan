@@ -31,7 +31,6 @@ export const fetchAndCacheCities = async () => {
                 return data.cities as City[];
             })
             .catch((res) => {
-                console.log('Sunucuda hata');
                 return null;
             });
     }
@@ -67,7 +66,6 @@ export const fetchAndCacheDistricts = async (cityId: string, districtsAll: Map<s
                 return updatedDistrictsAll;
             })
             .catch((res) => {
-                console.log('Sunucuda hata');
                 return null;
             });
     }

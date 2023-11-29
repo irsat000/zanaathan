@@ -31,7 +31,16 @@ const Chatbot: React.FC<{
     // Fetch thread list for messaging (PART OF THE TEMPLATE, MOUNTS ONCE)
     useEffect(() => {
         if (!userData) return;
-        fetchUserContacts(setUserContacts);
+        fetchUserContacts().then(data => {
+            if (data) {
+                setUserContacts(data);
+            } else {
+                handleGStatus('informationModal', {
+                    type: 'error',
+                    text: 'Mesajlaşmalarınız getirilemedi. Üzgünüz!'
+                })
+            }
+        });
     }, [userData]);
 
     // Scroll down in chat box automatically
@@ -88,7 +97,10 @@ const Chatbot: React.FC<{
                 return data.messages as ThreadMessage[];
             })
             .catch((res) => {
-                console.log('Sunucuyla bağlantıda hata');
+                handleGStatus('informationModal', {
+                    type: 'error',
+                    text: 'Bağlantıda hata. Mesajlar getirilemedi.'
+                })
                 return null;
             });
     };
@@ -379,9 +391,13 @@ const Chatbot: React.FC<{
                     contact.IsBlocked = !contact.IsBlocked;
                     setUserContacts(updatedContacts);
                 }
-                //setChatUMenuActive(false);
             })
-            .catch((res) => console.log('Sunucuyla bağlantıda hata'));
+            .catch((res) => {
+                handleGStatus('informationModal', {
+                    type: 'error',
+                    text: 'Bağlantıda hata!'
+                })
+            });
     }
 
     return (

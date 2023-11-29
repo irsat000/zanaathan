@@ -2,6 +2,7 @@
 import Cookies from 'js-cookie';
 import { apiUrl } from './helperUtils';
 import { UserContact } from '@/context/contactsContext';
+import { useGStatus } from '@/context/globalContext';
 const jwt = require('jsonwebtoken');
 
 export const decodedJwt = (token: string) => {
@@ -41,12 +42,12 @@ export const removeJwtCookie = () => {
 
 
 
-export const fetchUserContacts = (setUserContacts: (v: UserContact[]) => void) => {
+export const fetchUserContacts = async () => {
     // Check jwt
     const jwt = fetchJwt();
-    if (!jwt) return;
+    if (!jwt) return null;
 
-    fetch(`${apiUrl}/chat/get-contacts`, {
+    return await fetch(`${apiUrl}/chat/get-contacts`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json; charset=utf-8',
@@ -55,9 +56,9 @@ export const fetchUserContacts = (setUserContacts: (v: UserContact[]) => void) =
     })
         .then(res => res.ok ? res.json() : Promise.reject(res))
         .then(data => {
-            setUserContacts(data.contactList);
+            return data.contactList as UserContact[];
         })
         .catch((res) => {
-            console.log('Sunucuyla bağlantıda hata');
+            return null;
         });
 }

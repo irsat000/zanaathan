@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import { apiUrl, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/lib/utils/fetchUtils'
 import GridLoader from 'react-spinners/GridLoader'
+import { useGStatus } from '@/context/globalContext'
 
 export interface Post {
   Id: number;
@@ -22,6 +23,9 @@ export default function Category() {
   // Get category from path
   const router = useRouter();
   const { category, subc, city, district, sortby } = router.query;
+
+  // Use global context
+  const { handleGStatus } = useGStatus();
 
   // This state is for filters
   const [categoryInfo, setCategoryInfo] = useState<{
@@ -100,7 +104,12 @@ export default function Category() {
       .then((data) => {
         setPostList(data.posts);
       })
-      .catch((res) => console.log('Sunucuda hata'))
+      .catch((res) => {
+        handleGStatus('informationModal', {
+          type: 'error',
+          text: 'Gönderileri getirirken hata. Üzgünüz!'
+        });
+      })
       .finally(() => {
         setPostListLoading(false);
       });

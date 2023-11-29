@@ -9,10 +9,10 @@ const LoginWithGoogle: React.FC<{
     setAuthModalWarning: React.Dispatch<React.SetStateAction<string | null>>,
     setAuthModalSuccess: React.Dispatch<React.SetStateAction<string | null>>,
     handleAuthModal: (state: AuthModalState) => void
-}> = ({setAuthModalWarning, setAuthModalSuccess, handleAuthModal}) => {
+}> = ({ setAuthModalWarning, setAuthModalSuccess, handleAuthModal }) => {
     // Get user context
     const { setUserData } = useUser();
-    
+
     return <GoogleLogin
         onSuccess={credentialResponse => {
             fetch(`${apiUrl}/auth-google`, {
@@ -34,12 +34,11 @@ const LoginWithGoogle: React.FC<{
                     setTimeout(() => handleAuthModal('none'), 1000);
                 })
                 .catch((res) => {
-                    if ([500].includes(res.status)) console.log('Error');
-                    else console.log('Sunucuyla bağlantıda hata')
+                    setAuthModalWarning('*Bağlantıda hata*');
                 });
         }}
         onError={() => {
-            console.log('Login Failed');
+            setAuthModalWarning('*Bağlantıda hata*');
         }}
     />;
 };

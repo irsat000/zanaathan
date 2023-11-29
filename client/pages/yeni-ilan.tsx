@@ -147,9 +147,14 @@ export default function NewPost() {
         if (res.status === 400) {
           handleGStatus('informationModal', {
             type: 'error',
-            text: 'Gönderi oluşturulamadı!'
+            text: 'Form verisi geçersiz, gönderi oluşturulamadı.'
           })
-        } else console.log('Sunucuyla bağlantıda hata')
+        } else {
+          handleGStatus('informationModal', {
+            type: 'error',
+            text: 'Bağlantıda hata.'
+          })
+        }
       })
       .finally(() => {
         setCreatingPost(false);

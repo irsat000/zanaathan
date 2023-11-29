@@ -77,7 +77,7 @@ const AuthModal: React.FC<{
             })
             .catch((res) => {
                 if ([400, 401, 404].includes(res.status)) setAuthModalWarning('*Kullanıcı adı veya şifre hatalı*');
-                else console.log('Sunucuyla bağlantıda hata')
+                else setAuthModalWarning('*Bağlantıda hata*');
             });
     }
 
@@ -104,7 +104,7 @@ const AuthModal: React.FC<{
             .catch((res) => {
                 if (res.status === 400) setAuthModalWarning('*Form bilgileri yetersiz*');
                 else if (res.status === 409) setAuthModalWarning('Bu kullanıcı adı ya da eposta kullanılıyor');
-                else console.log('Sunucuyla bağlantıda hata')
+                else setAuthModalWarning('*Bağlantıda hata*');
             });
     }
 
