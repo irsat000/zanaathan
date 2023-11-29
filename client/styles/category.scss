@@ -138,6 +138,33 @@
 }
 
 
+.listing-loading {
+    padding: 70px 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.no-post-warning {
+    padding: 70px 6%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+
+    .frown-emoji-wrapper {
+        overflow: hidden;
+        font-size: 70px;
+        display: flex;
+    }
+
+    h3 {
+        font-weight: 300;
+        font-size: 1.6rem;
+    }
+}
+
 .listing {
     margin-top: 20px;
     display: grid;

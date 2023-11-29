@@ -1106,6 +1106,16 @@ header > .header-container .user-container .user-menu .um-profile .um-email {
   font-weight: 300;
   opacity: 0.8;
 }
+header > .header-container .user-container .user-menu .user-menu-list li {
+  border-bottom: 1px solid var(--primary-light-border);
+}
+header > .header-container .user-container .user-menu .user-menu-list li a {
+  padding: 10px;
+  text-align: center;
+}
+header > .header-container .user-container .user-menu .user-menu-list li a:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
 header > .header-container .user-container .user-menu .sign-out-button {
   margin: auto 20px 14px;
   align-self: center;

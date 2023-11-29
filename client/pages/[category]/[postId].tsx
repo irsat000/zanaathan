@@ -12,6 +12,7 @@ import { ChevronCompactLeft, ChevronCompactRight, ChevronRight } from 'react-boo
 import categoryList from '@/assets/site/categories.json'
 import ReactHtmlParser from 'html-react-parser';
 import DOMPurify from 'dompurify';
+import RotateLoader from 'react-spinners/RotateLoader';
 
 
 
@@ -63,10 +64,11 @@ export default function PostDetails() {
 
 	// Details for the current post
 	const [postDetails, setPostDetails] = useState<PostDetails | null>(null);
-
+	const [postLoading, setPostLoading] = useState<boolean | null>(null);
 	useEffect(() => {
 		if (!postId) return;
-
+		// LOADING
+		setPostLoading(true);
 		fetch(`${apiUrl}/get-post-details/${postId}`, {
 			method: "GET",
 			headers: { 'Content-Type': 'application/json; charset=utf-8' }
@@ -88,7 +90,10 @@ export default function PostDetails() {
 				// Update the postDetails
 				setPostDetails(sanatizedPostDetails);
 			})
-			.catch((res) => console.log('Sunucuda hata'));
+			.catch((res) => console.log('Sunucuda hata'))
+			.finally(() => {
+				setPostLoading(false);
+			});
 	}, [postId]);
 
 	const [activeImage, setActiveImage] = useState(0);
@@ -139,96 +144,105 @@ export default function PostDetails() {
 
 	return (
 		<Template>
-			{postDetails ?
-				<div className='post-page'>
-					{categoryInfo.code && categoryInfo.name ?
-						<div className="breadcrumb-trail-container">
-							<Link href={'/'}>Anasayfa</Link>
-							<span><ChevronRight /></span>
-							<Link href={'/' + categoryInfo.code}>{categoryInfo.name}</Link>
-						</div>
-						: <></>
-					}
-					<div className="post-container">
-						<div className="gallery-container">
-							{postDetails.Images.filter((img) => img && !img.ImageError).length > 0 ? <>
-								<div className="gallery-main">
-									{postDetails.Images.map((img, i) => img && !img.ImageError ?
-										<Image
-											className={`gallery-image ${activeImage === i ? 'active' : ''}`}
-											loader={() => postImageLink(img.Link)}
-											priority={true}
-											src={postImageLink(img.Link)}
-											alt={`İlanın ${i + 1}. fotoğrafı`}
-											width={0}
-											height={0}
-											key={i}
-											onError={() => {
-												// Set ImageError to true if the image is not found
-												const updatedPostDetails = { ...postDetails };
-												updatedPostDetails.Images[i].ImageError = true;
-												setPostDetails(updatedPostDetails);
-											}}
-											onLoad={() => {
-												// Set Loaded to true if the image is found
-												const updatedPostDetails = { ...postDetails };
-												updatedPostDetails.Images[i].Loaded = true;
-												setPostDetails(updatedPostDetails);
-											}} />
-										: null
-									)}
-								</div>
-								<div className="thumbnail-carousel-container">
-									<div className="thumbnail-carousel">
-										{postDetails.Images.map((img, i) => img && img.Loaded && !img.ImageError ?
-											<div className={`thumbnail-wrapper ${i === activeImage && 'active'}`}
+			<div className='post-page'>
+				{categoryInfo.code && categoryInfo.name ?
+					<div className="breadcrumb-trail-container">
+						<Link href={'/'}>Anasayfa</Link>
+						<span><ChevronRight /></span>
+						<Link href={'/' + categoryInfo.code}>{categoryInfo.name}</Link>
+					</div>
+					: <></>
+				}
+				{postLoading || postLoading === null ?
+					<div className="post-loading">
+						<RotateLoader color="#598dcc" />
+					</div>
+					: postDetails ? <>
+						<div className="post-container">
+							<div className="gallery-container">
+								{postDetails.Images.filter((img) => img && !img.ImageError).length > 0 ? <>
+									<div className="gallery-main">
+										{postDetails.Images.map((img, i) => img && !img.ImageError ?
+											<Image
+												className={`gallery-image ${activeImage === i ? 'active' : ''}`}
+												loader={() => postImageLink(img.Link)}
+												priority={true}
+												src={postImageLink(img.Link)}
+												alt={`İlanın ${i + 1}. fotoğrafı`}
+												width={0}
+												height={0}
 												key={i}
-												onClick={() => setActiveImage(i)}
-											>
-												<Image
-													loader={() => postImageLink(img.Link)}
-													priority={false}
-													src={postImageLink(img.Link)}
-													alt={`İlanın ${i + 1}. mini fotoğrafı`}
-													width={0}
-													height={0}
-												/>
-												<span className='active-sign'></span>
-											</div>
+												onError={() => {
+													// Set ImageError to true if the image is not found
+													const updatedPostDetails = { ...postDetails };
+													updatedPostDetails.Images[i].ImageError = true;
+													setPostDetails(updatedPostDetails);
+												}}
+												onLoad={() => {
+													// Set Loaded to true if the image is found
+													const updatedPostDetails = { ...postDetails };
+													updatedPostDetails.Images[i].Loaded = true;
+													setPostDetails(updatedPostDetails);
+												}} />
 											: null
 										)}
 									</div>
-								</div></>
-								:
-								<div className="gallery-no-image">
-									<Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
-								</div>
-							}
-						</div>
-						<div className='post-details'>
-							<div className='author-container'>
-								<h2 className='author-name'>{postDetails.A_FullName ?? postDetails.A_Username}</h2>
-								{postDetails.ContactInfo.map((info, i) =>
-									<span key={i} className='contact-information'>{info}</span>
-								)}
-								<div className='author-actions'>
-									<button className='message-request' onClick={() => handleMessageRequest(postDetails.A_Id)}>Mesaj Gönder</button>
-									<button className='report-button'>Şikayet et</button>
-								</div>
+									<div className="thumbnail-carousel-container">
+										<div className="thumbnail-carousel">
+											{postDetails.Images.map((img, i) => img && img.Loaded && !img.ImageError ?
+												<div className={`thumbnail-wrapper ${i === activeImage && 'active'}`}
+													key={i}
+													onClick={() => setActiveImage(i)}
+												>
+													<Image
+														loader={() => postImageLink(img.Link)}
+														priority={false}
+														src={postImageLink(img.Link)}
+														alt={`İlanın ${i + 1}. mini fotoğrafı`}
+														width={0}
+														height={0}
+													/>
+													<span className='active-sign'></span>
+												</div>
+												: null
+											)}
+										</div>
+									</div></>
+									:
+									<div className="gallery-no-image">
+										<Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
+									</div>
+								}
 							</div>
-							<h2 className='title'>{postDetails.Title}</h2>
-							<span className="date">{postDetails ? formatSecondsAgo(postDetails.SecondsAgo) : <></>}</span>
-							<span className='location'>{lowerCaseAllWordsExceptFirstLetters(postDetails.Location ?? "")}</span>
+							<div className='post-details'>
+								<div className='author-container'>
+									<h2 className='author-name'>{postDetails.A_FullName ?? postDetails.A_Username}</h2>
+									{postDetails.ContactInfo.map((info, i) =>
+										<span key={i} className='contact-information'>{info}</span>
+									)}
+									<div className='author-actions'>
+										<button className='message-request' onClick={() => handleMessageRequest(postDetails.A_Id)}>Mesaj Gönder</button>
+										<button className='report-button'>Şikayet et</button>
+									</div>
+								</div>
+								<h2 className='title'>{postDetails.Title}</h2>
+								<span className="date">{postDetails ? formatSecondsAgo(postDetails.SecondsAgo) : <></>}</span>
+								<span className='location'>{lowerCaseAllWordsExceptFirstLetters(postDetails.Location ?? "")}</span>
+							</div>
 						</div>
-					</div>
-					<div className='post-description'>
-						<h2 className='description-heading'>Açıklama</h2>
-						<div className='description'>
-							{ReactHtmlParser(DOMPurify.sanitize(postDetails.Description))}
+						<div className='post-description'>
+							<h2 className='description-heading'>Açıklama</h2>
+							<div className='description'>
+								{ReactHtmlParser(DOMPurify.sanitize(postDetails.Description))}
+							</div>
 						</div>
-					</div>
-				</div>
-				: <>Show no post error</>}
+					</> :
+						<div className='post-not-found'>
+							<h2>404</h2>
+							<h4>Bu gönderi bulunamadı!</h4>
+						</div>
+				}
+			</div>
 		</Template>
 	);
 }

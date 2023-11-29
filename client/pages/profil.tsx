@@ -8,6 +8,7 @@ import { Post } from './[category]';
 import { fetchJwt } from '@/lib/utils/userUtils';
 import { apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
 import { ChevronDown } from 'react-bootstrap-icons';
+import GridLoader from 'react-spinners/GridLoader';
 
 type CurrentStatus = 1 | 2 | 3;
 
@@ -23,10 +24,13 @@ export default function Home() {
 
   // Fetch posts
   const [postList, setPostList] = useState<UserPost[]>([]);
+  const [profilePostsLoading, setProfilePostsLoading] = useState<boolean | null>(null);
   useEffect(() => {
     /*const jwt = fetchJwt();
     if(!jwt) return;*/
     if (!userData || !userData.sub) return;
+    // LOADING
+    setProfilePostsLoading(true);
     // api url + get-posts + category id as path + query parameters
     const fetchPostsUrl = `${apiUrl}/get-user-posts/${userData.sub}`;
     fetch(fetchPostsUrl, {
@@ -40,7 +44,10 @@ export default function Home() {
       .then((data) => {
         setPostList(data.posts);
       })
-      .catch((res) => console.log('Sunucuda hata'));
+      .catch((res) => console.log('Sunucuda hata'))
+      .finally(() => {
+        setProfilePostsLoading(false);
+      });
   }, [userData])
 
   // Current status map for id and value
@@ -143,64 +150,76 @@ export default function Home() {
             <div className="profile-nav">
               <h3>Gönderilerim</h3>
             </div>
-            <div className="user-posts listing">
-              {postList.map((post, i) =>
-                <div className="post" key={post.Id}>
-                  <div className='post-link'>
-                    <div className="post-image-carousel">
-                      {post.MainImage && !post.ImageError ?
-                        <Image
-                          className='post-image'
-                          loader={() => postImageLink(post.MainImage!)}
-                          priority={true}
-                          src={postImageLink(post.MainImage)}
-                          alt={`${i + 1}. ilanın birincil fotoğrafı`}
-                          width={0}
-                          height={0}
-                          onError={() => {
-                            // Set ImageError to true if the image is not found
-                            const updatedPostList = postList.map((p) => {
-                              if (p.Id === post.Id) {
-                                return { ...p, ImageError: true };
-                              }
-                              return p;
-                            });
-                            setPostList(updatedPostList);
-                          }}
-                        />
-                        :
-                        <div className="image-error">
-                          <Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
+            {profilePostsLoading || profilePostsLoading === null ?
+              <div className="listing-loading">
+                <GridLoader color="#598dcc" />
+              </div>
+              :
+              postList.length > 0 ?
+                <div className="user-posts listing">
+                  {postList.map((post, i) =>
+                    <div className="post" key={post.Id}>
+                      <div className='post-link'>
+                        <div className="post-image-carousel">
+                          {post.MainImage && !post.ImageError ?
+                            <Image
+                              className='post-image'
+                              loader={() => postImageLink(post.MainImage!)}
+                              priority={true}
+                              src={postImageLink(post.MainImage)}
+                              alt={`${i + 1}. ilanın birincil fotoğrafı`}
+                              width={0}
+                              height={0}
+                              onError={() => {
+                                // Set ImageError to true if the image is not found
+                                const updatedPostList = postList.map((p) => {
+                                  if (p.Id === post.Id) {
+                                    return { ...p, ImageError: true };
+                                  }
+                                  return p;
+                                });
+                                setPostList(updatedPostList);
+                              }}
+                            />
+                            :
+                            <div className="image-error">
+                              <Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
+                            </div>
+                          }
                         </div>
-                      }
+                        <Link href={`/${post.CategoryCode}/${post.Id}`} className='title'>{post.Title}</Link>
+                      </div>
+                      <div className="date-container">
+                        <span className="date">{formatSecondsAgo(post.SecondsAgo)}</span>
+                        <span className={`status cs-${post.CurrentStatusId}`}>{CSMap[post.CurrentStatusId]}</span>
+                      </div>
+                      <div className="update-post">
+                        <button type="button" className="update-post-button" onClick={() => {
+                          const updatedPostList = postList.map((p) => {
+                            if (p.Id === post.Id) {
+                              return { ...p, UpdateMenuActive: !post.UpdateMenuActive };
+                            }
+                            return { ...p, UpdateMenuActive: false };
+                          });
+                          setPostList(updatedPostList);
+                        }}>Güncelle<ChevronDown /></button>
+                        <div className={`update-menu ${post.UpdateMenuActive ? 'active' : ''}`}>
+                          <ul className='new-status-list'>
+                            <li className='cs-1' onClick={() => updateStatus(post.Id, 1)}>Cevap bekliyor</li>
+                            <li className='cs-2' onClick={() => updateStatus(post.Id, 2)}>Anlaşıldı</li>
+                            <li className='cs-3' onClick={() => updateStatus(post.Id, 3)}>Tamamlandı</li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
-                    <Link href={`/${post.CategoryCode}/${post.Id}`} className='title'>{post.Title}</Link>
-                  </div>
-                  <div className="date-container">
-                    <span className="date">{formatSecondsAgo(post.SecondsAgo)}</span>
-                    <span className={`status cs-${post.CurrentStatusId}`}>{CSMap[post.CurrentStatusId]}</span>
-                  </div>
-                  <div className="update-post">
-                    <button type="button" className="update-post-button" onClick={() => {
-                      const updatedPostList = postList.map((p) => {
-                        if (p.Id === post.Id) {
-                          return { ...p, UpdateMenuActive: !post.UpdateMenuActive };
-                        }
-                        return { ...p, UpdateMenuActive: false };
-                      });
-                      setPostList(updatedPostList);
-                    }}>Güncelle<ChevronDown /></button>
-                    <div className={`update-menu ${post.UpdateMenuActive ? 'active' : ''}`}>
-                      <ul className='new-status-list'>
-                        <li className='cs-1' onClick={() => updateStatus(post.Id, 1)}>Cevap bekliyor</li>
-                        <li className='cs-2' onClick={() => updateStatus(post.Id, 2)}>Anlaşıldı</li>
-                        <li className='cs-3' onClick={() => updateStatus(post.Id, 3)}>Tamamlandı</li>
-                      </ul>
-                    </div>
-                  </div>
+                  )}
                 </div>
-              )}
-            </div>
+                :
+                <div className='no-post-warning'>
+                  <h3>Herhangi bir gönderi bulunamadı</h3>
+                </div>
+            }
+
           </div>
         </div>
         : <></>}

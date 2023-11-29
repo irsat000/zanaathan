@@ -1269,6 +1269,20 @@ header>.header-container {
                 }
             }
 
+            .user-menu-list {
+                li {
+                    border-bottom: 1px solid var(--primary-light-border);
+
+                    a {
+                        padding: 10px;
+                        text-align: center;
+
+                        &:hover {
+                            background-color: rgba(0, 0, 0, 0.03);
+                        }
+                    }
+                }
+            }
 
             .sign-out-button {
                 margin: auto 20px 14px;

@@ -225,6 +225,9 @@ const Template: React.FC<{
 										<span className='um-username'>{userData.fullName ?? userData.username}</span>
 										<span className='um-email'>{userData.email}</span>
 									</Link>
+									<ul className='user-menu-list'>
+										<li><Link href={'/ayarlar'}>Ayarlar</Link></li>
+									</ul>
 									<button type='button' className='sign-out-button' onClick={handleSignOut}>Çıkış yap</button>
 								</div>
 							</> : <>

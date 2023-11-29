@@ -2,12 +2,13 @@
 import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDown, ChevronRight, Search, XLg } from 'react-bootstrap-icons'
+import { ChevronDown, ChevronRight, EmojiFrown, Search, XLg } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { apiUrl, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/lib/utils/fetchUtils'
+import GridLoader from 'react-spinners/GridLoader'
 
 export interface Post {
   Id: number;
@@ -82,10 +83,13 @@ export default function Category() {
 
   // Fetch posts
   const [postList, setPostList] = useState<Post[]>([]);
+  const [postListLoading, setPostListLoading] = useState<boolean | null>(null);
   useEffect(() => {
     if (!categoryInfo.id) return;
     // Get parameters as a string, e.g. ?subc=1&city=5
     const queryParams = window.location.search;
+    // LOADING
+    setPostListLoading(true);
     // api url + get-posts + category id as path + query parameters
     const fetchPostsUrl = `${apiUrl}/get-posts/${categoryInfo.id}${queryParams}`;
     fetch(fetchPostsUrl, {
@@ -96,7 +100,10 @@ export default function Category() {
       .then((data) => {
         setPostList(data.posts);
       })
-      .catch((res) => console.log('Sunucuda hata'));
+      .catch((res) => console.log('Sunucuda hata'))
+      .finally(() => {
+        setPostListLoading(false);
+      });
   }, [categoryInfo])
 
   // Filter values
@@ -231,6 +238,8 @@ export default function Category() {
       pathname,
       query: { ...updatedQuery, ...newParams },
     });
+
+    handleFilterModalClose();
   }
   const handleSortByChange = (e: any) => {
     const { pathname, query } = router;
@@ -352,43 +361,56 @@ export default function Category() {
           </div>
         </div>
 
-        <div className="listing">
-          {postList.map((post, i) =>
-            <div className="post" key={post.Id}>
-              <Link href={`/${categoryInfo.code}/${post.Id}`} className='post-link'>
-                <div className="post-image-carousel">
-                  {post.MainImage && !post.ImageError ?
-                    <Image
-                      className='post-image'
-                      loader={() => postImageLink(post.MainImage!)}
-                      priority={true}
-                      src={postImageLink(post.MainImage)}
-                      alt={`${i + 1}. ilanın birincil fotoğrafı`}
-                      width={0}
-                      height={0}
-                      onError={() => {
-                        // Set ImageError to true if the image is not found
-                        const updatedPostList = postList.map((p) => {
-                          if (p.Id === post.Id) {
-                            return { ...p, ImageError: true };
-                          }
-                          return p;
-                        });
-                        setPostList(updatedPostList);
-                      }}
-                    />
-                    :
-                    <div className="image-error">
-                      <Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
+        {postListLoading || postListLoading === null ?
+          <div className='listing-loading'>
+            <GridLoader color="#598dcc" />
+          </div>
+          : postList.length > 0 ?
+            <div className="listing">
+              {postList.map((post, i) =>
+                <div className="post" key={post.Id}>
+                  <Link href={`/${categoryInfo.code}/${post.Id}`} className='post-link'>
+                    <div className="post-image-carousel">
+                      {post.MainImage && !post.ImageError ?
+                        <Image
+                          className='post-image'
+                          loader={() => postImageLink(post.MainImage!)}
+                          priority={true}
+                          src={postImageLink(post.MainImage)}
+                          alt={`${i + 1}. ilanın birincil fotoğrafı`}
+                          width={0}
+                          height={0}
+                          onError={() => {
+                            // Set ImageError to true if the image is not found
+                            const updatedPostList = postList.map((p) => {
+                              if (p.Id === post.Id) {
+                                return { ...p, ImageError: true };
+                              }
+                              return p;
+                            });
+                            setPostList(updatedPostList);
+                          }}
+                        />
+                        :
+                        <div className="image-error">
+                          <Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
+                        </div>
+                      }
                     </div>
-                  }
+                    <h4 className='title'>{post.Title}</h4>
+                  </Link>
+                  <span className="date">{formatSecondsAgo(post.SecondsAgo)}</span>
                 </div>
-                <h4 className='title'>{post.Title}</h4>
-              </Link>
-              <span className="date">{formatSecondsAgo(post.SecondsAgo)}</span>
+              )}
             </div>
-          )}
-        </div>
+            :
+            <div className='no-post-warning'>
+              <div className='frown-emoji-wrapper'>
+                <EmojiFrown />
+              </div>
+              <h3>Aradağınız kriterlerde gönderi bulunamamıştır.</h3>
+            </div>
+        }
 
 
 

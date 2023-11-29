@@ -182,6 +182,7 @@ export default function Home() {
                                         name="fullName"
                                         value={userForm.fullName ?? ''}
                                         onChange={handleFormChange}
+                                        placeholder='Görünecek ad'
                                     />
                                 </div>
                                 <div className="input-wrapper">

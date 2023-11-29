@@ -502,7 +502,9 @@ exports.deleteAvatar = (req: Request, res: Response) => {
             }
             // Verify image name
             const imageName = results[0].Avatar;
-            if (!imageName) res.status(404).json({ error: 'Image not found' });
+            if (!imageName) {
+                return res.status(404).json({ error: 'Image not found' });
+            }
             // Delete from storage
             const imgPath = `${appDir}/uploaded/avatar/${imageName}`;
             if (fs.existsSync(imgPath)) {

@@ -4,6 +4,23 @@
   padding: var(--site-padding);
   align-items: center;
 }
+.post-page .post-loading {
+  margin-top: 20vh;
+}
+.post-page .post-not-found {
+  margin-top: 17vh;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+}
+.post-page .post-not-found h2 {
+  font-weight: 300;
+  font-size: 4rem;
+}
+.post-page .post-not-found h4 {
+  font-weight: 300;
+  font-size: 2rem;
+}
 .post-page .breadcrumb-trail-container {
   align-self: unset;
   max-width: 1300px;

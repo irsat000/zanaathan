@@ -4,6 +4,27 @@
     padding: var(--site-padding);
     align-items: center;
 
+    .post-loading {
+        margin-top: 20vh;
+    }
+
+    .post-not-found {
+        margin-top: 17vh;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+
+        h2 {
+            font-weight: 300;
+            font-size: 4rem;
+        }
+
+        h4 {
+            font-weight: 300;
+            font-size: 2rem;
+        }
+    }
+
     .breadcrumb-trail-container {
         align-self: unset;
         max-width: 1300px;
