@@ -5,6 +5,68 @@
     gap: 20px 4%;
     padding-top: 20px;
 
+    .validate-modal-container {
+        padding-top: 20vh;
+        padding-bottom: 16px;
+
+        .validate-modal {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 80px 14px 40px;
+            background-color: var(--primary-bg-color);
+            border-radius: 10px;
+            max-width: 260px;
+            gap: 40px;
+            animation: fade-in 0.3s ease-in-out;
+            -webkit-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+            -moz-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+            box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+
+            span {
+                font-weight: 300;
+                font-size: 1.3rem;
+                text-align: center;
+            }
+
+            .validate-button-container {
+                display: flex;
+                justify-content: center;
+                gap: 14%;
+
+                button {
+                    border-radius: 20px;
+                    padding: 6px 30px;
+                    font-size: 1.1rem;
+                    cursor: pointer;
+                    font-family: 'Fira Sans', sans-serif;
+                    font-weight: 300;
+                    transition: all 0.1s ease-in-out;
+                }
+
+                .cancel {
+                    border: 1px solid var(--button-white-border);
+                    background-color: var(--button-white);
+
+                    &:hover {
+                        color: #ffffff;
+                        border: 1px solid var(--button1-2);
+                        background-color: var(--button1-2);
+                    }
+                }
+
+                .validate {
+                    color: #ffffff;
+                    background-color: var(--button3-2);
+
+                    &:hover {
+                        background-color: var(--button3-1);
+                    }
+                }
+            }
+        }
+    }
+
     .settings-body {
         display: flex;
         flex-direction: column;
@@ -207,6 +269,14 @@
 @media (min-width: 768px) {
     .settings-page {
         align-items: center;
+
+        .validate-modal-container {
+            .validate-modal {
+                padding-left: 30px;
+                padding-right: 30px;
+                max-width: 600px;
+            }
+        }
 
         .settings-body {
             .profile-form {

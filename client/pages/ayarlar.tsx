@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Post } from './[category]';
 import { decodedJwt, fetchJwt, storeJwt } from '@/lib/utils/userUtils';
 import { acceptedImgSet_1, apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
-import { ChevronDown } from 'react-bootstrap-icons';
+import { ChevronDown, XLg } from 'react-bootstrap-icons';
 
 
 export default function Home() {
@@ -78,6 +78,7 @@ export default function Home() {
             });
     }
 
+    // Function for submitting avatar
     const handleAvatarSubmit = (file: File) => {
         // Check jwt
         const jwt = fetchJwt();
@@ -105,6 +106,7 @@ export default function Home() {
             });
     }
 
+    // Delete avatar from validation modal
     const handleDeleteAvatar = () => {
         // Check jwt
         const jwt = fetchJwt();
@@ -122,16 +124,38 @@ export default function Home() {
                 storeJwt(data.JWT);
                 // set user data in user context
                 setUserData(decodedJwt(data.JWT));
+                // close validation modal
+                setValidateAvatarDeleteModalActive(false);
             })
             .catch((res) => {
                 alert('Başarısız!')
             });
     }
 
+    // Avatar deletion validation modal state
+    const [validateAvatarDeleteModalActive, setValidateAvatarDeleteModalActive] = useState(false);
+
     return (
         <Template>
             {userData ?
                 <div className='settings-page'>
+                    <div className={`validate-modal-container modal-container ${validateAvatarDeleteModalActive ? 'active' : ''}`}
+                        onClick={() => setValidateAvatarDeleteModalActive(false)}
+                    >
+                        <div className={`validate-modal`} onClick={(e) => e.stopPropagation()}>
+                            <button
+                                type='button'
+                                className='close-modal-button'
+                                onClick={() => setValidateAvatarDeleteModalActive(false)}><XLg /></button>
+                            <span>Profil fotoğrafınızı silmek istediğinizden emin misiniz?</span>
+                            <div className="validate-button-container">
+                                <button
+                                    className='cancel'
+                                    onClick={() => { setValidateAvatarDeleteModalActive(false) }}>İptal</button>
+                                <button className='validate' onClick={handleDeleteAvatar}>Sil</button>
+                            </div>
+                        </div>
+                    </div>
                     <div className='settings-body'>
                         <h2>Profil ayarları</h2>
                         <div className='profile-form' onSubmit={handleSubmit}>
@@ -160,7 +184,13 @@ export default function Home() {
                                             type='file'
                                             className='new-avatar-input'
                                             accept="image/*"
+                                            onClick={(e) => {
+                                                // Reset to trigger onChange properly
+                                                const targetInput = e.target as HTMLInputElement;
+                                                targetInput.value = ''
+                                            }}
                                             onChange={(e) => {
+                                                // Get file and submit or give error if it's not image
                                                 const file = e.target.files ? e.target.files[0] : null
                                                 if (file && acceptedImgSet_1.includes(file.type)) {
                                                     handleAvatarSubmit(file)
@@ -171,7 +201,14 @@ export default function Home() {
                                         />
                                         <span className="change">Değiştir</span>
                                     </label>
-                                    <button type="button" className="delete" onClick={handleDeleteAvatar}>Sil</button>
+                                    <button
+                                        type="button"
+                                        className="delete"
+                                        onClick={() => {
+                                            if (userData.avatar) {
+                                                setValidateAvatarDeleteModalActive(true)
+                                            }
+                                        }}>Sil</button>
                                 </div>
                             </div>
                             <div className="set-name-container">

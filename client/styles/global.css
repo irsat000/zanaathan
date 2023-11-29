@@ -218,7 +218,6 @@ body select {
   padding-bottom: 16px;
 }
 .auth-modal-container .auth-modal {
-  opacity: 1;
   animation: fade-in 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
