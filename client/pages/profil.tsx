@@ -18,6 +18,10 @@ interface UserPost extends Post {
   CurrentStatusId: CurrentStatus;
   UpdateMenuActive?: boolean;
 }
+interface ContactInfo {
+  Body: string;
+  Type: string;
+}
 
 export default function Home() {
   // Use global context
@@ -25,36 +29,37 @@ export default function Home() {
   // Get user context
   const { userData } = useUser();
 
-  // Fetch posts
+  // Fetch profile
   const [postList, setPostList] = useState<UserPost[]>([]);
-  const [profilePostsLoading, setProfilePostsLoading] = useState<boolean | null>(null);
+  const [contactInfo, setContactInfo] = useState<ContactInfo[]>([]);
+  const [profileLoading, setProfileLoading] = useState<boolean | null>(null);
   useEffect(() => {
-    /*const jwt = fetchJwt();
-    if(!jwt) return;*/
+    const jwt = fetchJwt();
+    if (!jwt) return;
     if (!userData || !userData.sub) return;
     // LOADING
-    setProfilePostsLoading(true);
-    // api url + get-posts + category id as path + query parameters
-    const fetchPostsUrl = `${apiUrl}/get-user-posts/${userData.sub}`;
-    fetch(fetchPostsUrl, {
+    setProfileLoading(true);
+    const fetchProfileUrl = `${apiUrl}/get-user-profile/${userData.sub}`;
+    fetch(fetchProfileUrl, {
       method: "GET",
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        /*Authorization: 'Bearer ' + jwt*/
+        Authorization: 'Bearer ' + jwt
       }
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then((data) => {
         setPostList(data.posts);
+        setContactInfo(data.contactInfo);
       })
       .catch((res) => {
         handleGStatus('informationModal', {
           type: 'error',
-          text: 'Gönderileri getirirken hata. Üzgünüz!'
+          text: 'Profili getirirken hata oluştu. Üzgünüz!'
         });
       })
       .finally(() => {
-        setProfilePostsLoading(false);
+        setProfileLoading(false);
       });
   }, [userData])
 
@@ -125,7 +130,7 @@ export default function Home() {
         });
       });
   }
-
+  console.log(contactInfo);
 
   return (
     <Template>
@@ -158,12 +163,22 @@ export default function Home() {
                 <Link href={'/ayarlar'} type="button" className='edit-profile'>Düzenle</Link>
               </div>
             </div>
+            {contactInfo.length > 0 ?
+              <div className="contact-options">
+                <h3>İletişim</h3>
+                <ul className="contact-information">
+                  {contactInfo.map((info, index) =>
+                    <li><span className='body'>{info.Body}</span> - <span className='type'>{info.Type}</span></li>
+                  )}
+                </ul>
+              </div>
+              : <></>}
           </div>
           <div className="profile-body">
             <div className="profile-nav">
               <h3>Gönderilerim</h3>
             </div>
-            {profilePostsLoading || profilePostsLoading === null ?
+            {profileLoading !== false ?
               <div className="listing-loading">
                 <GridLoader color="#598dcc" />
               </div>

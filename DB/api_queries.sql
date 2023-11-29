@@ -24,10 +24,7 @@ UPDATE Account SET FullName = ?, Email = ?, Password = ? WHERE Id = ?;
 # For creating jwt
 SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;
 
-
-
-
-
+# PROFILE
 # Get posts owned by a user
 SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
 	(
@@ -50,6 +47,17 @@ UPDATE JobPosting
 SET CurrentStatusId = ? 
 WHERE AccountId = ? AND Id = ?;
 
+# Get contact information of a user
+SELECT CI.Body AS Body, CT.Body AS Type
+FROM ContactInformation CI
+LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
+WHERE CI.AccountId = ?
+
+
+
+
+
+# CATEGORY
 # Get FILTERED posts with their first image
 SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
 	(

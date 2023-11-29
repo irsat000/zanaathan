@@ -599,6 +599,58 @@ exports.uploadAvatar = (req: Request, res: Response) => {
     }
 }
 
+exports.getUserProfile = (req: Request, res: Response) => {
+    try {
+        // Get user id
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) return res.status(401).send('Not authorized');
+
+        // Fetch user's posts (excluding posts with deleted status which is 4)
+        let query = `
+            SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
+                (
+                    SELECT JPI.Body
+                    FROM JobPostingImages JPI
+                    WHERE JP.Id = JPI.JobPostingId
+                    ORDER BY JPI.ImgIndex
+                    LIMIT 1
+                ) AS MainImage,
+                JP.CurrentStatusId,
+                C.Code AS CategoryCode
+            FROM JobPosting JP
+            LEFT JOIN SubCategory SC ON SC.Id = JP.SubCategoryId
+            LEFT JOIN Category C ON C.Id = SC.CategoryId
+            WHERE JP.CurrentStatusId != 4 AND JP.AccountId = ?
+            ORDER BY SecondsAgo DESC;
+        `;
+        pool.query(query, [userId], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+            const posts = results;
+
+            const query2 = `
+                SELECT CI.Body AS Body, CT.Body AS Type
+                FROM ContactInformation CI
+                LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
+                WHERE CI.AccountId = ?
+            `;
+            pool.query(query2, [userId], (qErr2: any, results2: any) => {
+                if (qErr2) {
+                    return res.status(500).json({ error: 'Query error' });
+                }
+                const contactInfo = results2;
+
+                return res.status(200).json({ posts, contactInfo });
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
 
 
 

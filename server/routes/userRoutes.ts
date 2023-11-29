@@ -20,6 +20,8 @@ router.put('/edit-profile', userController.editProfile);
 router.put('/delete-avatar', userController.deleteAvatar);
 // To let user change their avatar with a new one
 router.post('/set-new-avatar', uploadAvatar, userController.uploadAvatar);
+// To get user's profile
+router.get('/get-user-profile/:userId', userController.getUserProfile);
 
 
 

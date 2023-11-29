@@ -9,6 +9,7 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  gap: 30px;
 }
 .profile-page .profile-panel .personal-info-container {
   display: flex;
@@ -79,6 +80,25 @@
   color: #ffffff;
   border: 1px solid var(--button4-1);
   background-color: var(--button4-1);
+}
+.profile-page .profile-panel .contact-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.profile-page .profile-panel .contact-options h3 {
+  font-weight: 300;
+  font-size: 1.2rem;
+}
+.profile-page .profile-panel .contact-options ul.contact-information li {
+  font-weight: 300;
+}
+.profile-page .profile-panel .contact-options ul.contact-information li .body {
+  font-size: 0.9rem;
+}
+.profile-page .profile-panel .contact-options ul.contact-information li .type {
+  font-size: 1rem;
+  font-family: "Poppins", sans-serif;
 }
 .profile-page .profile-body {
   flex-grow: 1;
