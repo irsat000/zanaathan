@@ -213,6 +213,64 @@ body select {
   display: flex;
 }
 
+.information-modal-container {
+  padding-top: 20vh;
+  padding-bottom: 16px;
+}
+.information-modal-container .information-modal {
+  animation: fade-in 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 24px 30px;
+  background-color: var(--primary-bg-color);
+  position: relative;
+  border-radius: 10px;
+  max-width: 260px;
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+}
+.information-modal-container .information-modal .icon {
+  display: flex;
+  font-size: 50px;
+  margin-bottom: 20px;
+}
+.information-modal-container .information-modal span {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+.information-modal-container .information-modal span ul {
+  margin-left: 20px;
+  margin-top: 16px;
+  text-align: left;
+}
+.information-modal-container .information-modal span ul li.fail {
+  color: #a73131;
+}
+.information-modal-container .information-modal span ul li {
+  font-size: 1rem;
+  display: list-item;
+  list-style-type: disc;
+  color: #31a73d;
+}
+.information-modal-container .information-modal button.okay-button {
+  border: 1px solid var(--button-white-border);
+  background-color: var(--button-white);
+  border-radius: 20px;
+  padding: 7px 20px;
+  font-size: 1.1em;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.information-modal-container .information-modal button.okay-button:hover {
+  color: #ffffff;
+  border: 1px solid var(--button1-1);
+  background-color: var(--button1-1);
+}
+
 .auth-modal-container {
   padding-top: 20vh;
   padding-bottom: 16px;
@@ -1271,6 +1329,9 @@ footer {
   }
   .chatbot-container .chatbot .chatbot-body .chatbot-body-header .chatbot-shortcuts .fullscreen-button {
     display: flex;
+  }
+  .information-modal-container .information-modal {
+    max-width: 500px;
   }
   .auth-modal-container {
     padding-top: 10vh;

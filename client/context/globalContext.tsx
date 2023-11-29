@@ -1,8 +1,15 @@
 import React, { useContext, useState } from 'react';
 
+
+interface InformationModal {
+    type: string;
+    text: string;
+}
+
 export interface GStatus {
     chatbotActive: boolean; // Chatbot window on/off
     activeContact: number | null; // Switch between contacts. Default: null
+    informationModal: InformationModal | null;
 }
 
 const GStatusContext = React.createContext
@@ -13,7 +20,8 @@ const GStatusContext = React.createContext
     }>({
         gStatus: {
             chatbotActive: false,
-            activeContact: null
+            activeContact: null,
+            informationModal: null
         },
         setGStatus: () => { },
         handleGStatus: () => { }
@@ -24,7 +32,8 @@ export const GStatusProvider: React.FC<{
 }> = ({ children }) => {
     const [gStatus, setGStatus] = useState<GStatus>({
         chatbotActive: false,
-        activeContact: null
+        activeContact: null,
+        informationModal: null
     });
 
     const handleGStatus = (propertyName: keyof GStatus, newValue: any) => {

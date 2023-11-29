@@ -220,7 +220,10 @@ const Chatbot: React.FC<{
             // Check if there is a block, tell the current user that they are blocked.
             // In case current user is the blocker, user is already warned during the handleMessageSubmit function
             if (data.status === 'blocked') {
-                alert("Bu kişi tarafından engellendiniz.");
+                handleGStatus('informationModal', {
+                    type: 'error',
+                    text: 'Bu kişi tarafından engellendiniz.'
+                })
                 return;
             }
             if (data.status !== 'success') return;
@@ -251,7 +254,10 @@ const Chatbot: React.FC<{
         }
         // Check contact selection
         if (!gStatus.activeContact) {
-            alert("Hedef kişi seçimi gereklidir.")
+            handleGStatus('informationModal', {
+                type: 'error',
+                text: 'Hedef kişi seçimi gereklidir.'
+            })
             return;
         }
         // Check WS connection
@@ -261,7 +267,10 @@ const Chatbot: React.FC<{
         }
         // Check block from this user
         if (currentContact && currentContact.IsBlocked) {
-            alert("Engellediğiniz kullanıcıya mesaj atamazsınız.");
+            handleGStatus('informationModal', {
+                type: 'error',
+                text: 'Engellediğiniz kullanıcıya mesaj atamazsınız.'
+            })
             return;
         }
         // Payload
@@ -480,8 +489,11 @@ const Chatbot: React.FC<{
                             className='message-input'
                             value={messageInput}
                             onChange={(e) => setMessageInput(e.target.value)}
-                            onKeyUp={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) handleMessageSubmit();
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault(); // Prevents line break if shift isn't pressed, it won't work for onKeyUp
+                                    handleMessageSubmit();
+                                }
                             }}>
                         </textarea>
                         <button className='send' onClick={handleMessageSubmit}><Send /></button>

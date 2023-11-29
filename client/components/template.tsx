@@ -2,7 +2,7 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { Bell, ChatDots, List, PersonPlus, PlusSquare, XLg } from 'react-bootstrap-icons'
+import { Bell, ChatDots, CheckCircle, List, PersonPlus, PlusSquare, XCircle, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import AuthModal, { AuthModalState } from './authModal'
@@ -19,6 +19,7 @@ interface SearchRecommendation {
 	text: string;
 	link: string;
 }
+
 
 const Template: React.FC<{
 	children: ReactNode
@@ -151,6 +152,22 @@ const Template: React.FC<{
 				<AuthModal
 					authModalActive={authModalActive} setAuthModalActive={setAuthModalActive}
 				/>
+				{gStatus.informationModal ?
+					<div className={`information-modal-container modal-container ${gStatus.informationModal ? 'active' : ''}`}>
+						<div className="information-modal">
+							<div className='icon'>
+								{gStatus.informationModal.type === 'success'
+									? <CheckCircle style={{ color: '#34c532' }} />
+									: gStatus.informationModal.type === 'error'
+										? <XCircle style={{ color: '#c53232' }} />
+										: <></>}
+
+							</div>
+							<span dangerouslySetInnerHTML={{ __html: gStatus.informationModal.text }} />
+							<button type='button' className='okay-button' onClick={() => handleGStatus('informationModal', null)}>Tamam</button>
+						</div>
+					</div>
+					: <></>}
 				<div className={`drawer-container ${drawerActive && 'active'}`} onClick={() => setDrawerActive(false)}>
 					<div className="drawer" onClick={(e) => { e.stopPropagation() }}>
 						<Link href={'/'} className='drawer-site-logo'>Zanaat.Han</Link>

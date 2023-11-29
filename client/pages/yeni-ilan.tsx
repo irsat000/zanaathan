@@ -13,6 +13,7 @@ import { City, District, fetchAndCacheCities, fetchAndCacheDistricts, getSubsByC
 import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false }); // ReactQuill doesn't work on server side, ssr is no good
 import 'react-quill/dist/quill.snow.css';
+import { useGStatus } from '@/context/globalContext'
 
 
 interface SubCategory {
@@ -21,6 +22,9 @@ interface SubCategory {
 }
 
 export default function NewPost() {
+  // Use global context
+  const { handleGStatus } = useGStatus();
+
   // Create post payload
   const [formData, setFormData] = useState<NPFormData>({
     title: '',
@@ -89,11 +93,27 @@ export default function NewPost() {
 
 
 
-
+  const [creatingPost, setCreatingPost] = useState<boolean | null>(null);
 
   // Send form
   const handleNewPostSubmit = (e: any) => {
     e.preventDefault();
+
+    // Basic validation
+    if (formData.title.length < 5 || formData.title.length > 255
+      || description.length < 50 || description.length > 2000
+      || formData.subCategory === '0' || formData.district === '0'
+    ) {
+      handleGStatus('informationModal', {
+        type: 'error',
+        text: `Form geçersiz. Kurallar;<br /><ul>
+        <li ${formData.title.length < 5 || formData.title.length > 255 ? 'class="fail"' : ''}>Başlık 5-255 karakter arasında olmalıdır</li>
+        <li ${description.length < 50 || description.length > 2000 ? 'class="fail"' : ''}>Açıklama 50-2000 karakter arası olmalıdır</li>
+        <li ${formData.subCategory === '0' ? 'class="fail"' : ''}>Kategori seçimi</li>
+        <li ${formData.district === '0' ? 'class="fail"' : ''}>Bölge seçimi</li></ul>`
+      })
+      return;
+    }
 
     const multiPartFormData = new FormData();
     multiPartFormData.append('title', formData.title);
@@ -108,6 +128,9 @@ export default function NewPost() {
     const jwt = fetchJwt();
     if (!jwt) return;
 
+    // LOADING
+    setCreatingPost(true);
+
     fetch(`${apiUrl}/create-post`, {
       method: "POST",
       headers: { 'Authorization': `Bearer ${jwt}` },
@@ -115,12 +138,21 @@ export default function NewPost() {
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then((data) => {
-        console.log(data.postId);
+        handleGStatus('informationModal', {
+          type: 'success',
+          text: 'Başarılı! Gönderi onaylandıktan sonra yayınlanacaktır.'
+        })
       })
       .catch((res) => {
         if (res.status === 400) {
-          alert("Geçersiz form verisi")
+          handleGStatus('informationModal', {
+            type: 'error',
+            text: 'Gönderi oluşturulamadı!'
+          })
         } else console.log('Sunucuyla bağlantıda hata')
+      })
+      .finally(() => {
+        setCreatingPost(false);
       });
   }
 
@@ -201,7 +233,7 @@ export default function NewPost() {
                 <option key={i} value={district.Id}>{district.Name}</option>
               )}
             </select>
-            <button type='submit' className='submit-button'>
+            <button type='submit' className='submit-button' disabled={creatingPost === null ? false : true}>
               Paylaş
             </button>
             <button type='reset' className='reset-button' onClick={resetForm}>

@@ -247,6 +247,12 @@
                 }
             }
 
+            .submit-button:disabled {
+                opacity: 0.6;
+                cursor: default;
+                pointer-events: none;
+            }
+
             .submit-button {
                 margin-top: 20px;
                 align-self: center;

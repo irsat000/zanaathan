@@ -234,9 +234,76 @@ body {
     }
 }
 
-
 .modal-container.active {
     display: flex;
+}
+
+
+.information-modal-container {
+    padding-top: 20vh;
+    padding-bottom: 16px;
+
+    .information-modal {
+        animation: fade-in 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 24px 30px;
+        background-color: var(--primary-bg-color);
+        position: relative;
+        border-radius: 10px;
+        max-width: 260px;
+        -webkit-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+        box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+
+        .icon {
+            display: flex;
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        span {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+
+            ul {
+                margin-left: 20px;
+                margin-top: 16px;
+                text-align: left;
+
+                li.fail{
+                    color: #a73131;
+                }
+                li {
+                    font-size: 1rem;
+                    display: list-item;
+                    list-style-type: disc;
+                    color: #31a73d;
+                }
+            }
+        }
+
+        button.okay-button {
+            border: 1px solid var(--button-white-border);
+            background-color: var(--button-white);
+            border-radius: 20px;
+            padding: 7px 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-family: 'Fira Sans', sans-serif;
+            font-weight: 300;
+            transition: all 0.1s ease-in-out;
+
+            &:hover {
+                color: #ffffff;
+                border: 1px solid var(--button1-1);
+                background-color: var(--button1-1);
+            }
+        }
+    }
 }
 
 .auth-modal-container {
@@ -1481,6 +1548,12 @@ footer {
                     }
                 }
             }
+        }
+    }
+
+    .information-modal-container {
+        .information-modal {
+            max-width: 500px;
         }
     }
 

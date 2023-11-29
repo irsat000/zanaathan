@@ -8,9 +8,12 @@ import { Post } from './[category]';
 import { decodedJwt, fetchJwt, storeJwt } from '@/lib/utils/userUtils';
 import { acceptedImgSet_1, apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
 import { ChevronDown, XLg } from 'react-bootstrap-icons';
+import { useGStatus } from '@/context/globalContext';
 
 
 export default function Home() {
+    // Get global context
+    const { handleGStatus } = useGStatus();
     // Get user context
     const { userData, setUserData } = useUser();
     // User form
@@ -71,10 +74,16 @@ export default function Home() {
                 // set user data in user context
                 setUserData(decodedJwt(data.JWT));
                 // Inform
-                alert('Kayıt başarılı!')
+                handleGStatus('informationModal', {
+                    type: 'success',
+                    text: 'Kayıt başarılı!'
+                })
             })
             .catch((res) => {
-                alert('Başarısız!')
+                handleGStatus('informationModal', {
+                    type: 'error',
+                    text: 'Kayıt başarısız!'
+                })
             });
     }
 
@@ -102,7 +111,10 @@ export default function Home() {
                 setUserData(decodedJwt(data.JWT));
             })
             .catch((res) => {
-                alert('Başarısız!')
+                handleGStatus('informationModal', {
+                    type: 'error',
+                    text: 'Profil fotoğrafı değiştirilemedi!'
+                })
             });
     }
 
@@ -128,7 +140,10 @@ export default function Home() {
                 setValidateAvatarDeleteModalActive(false);
             })
             .catch((res) => {
-                alert('Başarısız!')
+                handleGStatus('informationModal', {
+                    type: 'error',
+                    text: 'Profile fotoğrafı silinemedi!'
+                })
             });
     }
 
@@ -195,7 +210,10 @@ export default function Home() {
                                                 if (file && acceptedImgSet_1.includes(file.type)) {
                                                     handleAvatarSubmit(file)
                                                 } else {
-                                                    alert('Desteklenmeyen dosya biçimi')
+                                                    handleGStatus('informationModal', {
+                                                        type: 'error',
+                                                        text: 'Desteklenmeyen dosya biçimi!'
+                                                    })
                                                 }
                                             }}
                                         />
