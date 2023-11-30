@@ -3,11 +3,11 @@ import Template from '@/components/template'
 import { useUser } from '@/context/userContext';
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, ChangeEventHandler, useEffect, useRef, useState } from 'react';
 import { Post } from './[category]';
 import { fetchJwt } from '@/lib/utils/userUtils';
 import { apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
-import { ChevronDown } from 'react-bootstrap-icons';
+import { ChevronDown, XLg } from 'react-bootstrap-icons';
 import GridLoader from 'react-spinners/GridLoader';
 import { useGStatus } from '@/context/globalContext';
 
@@ -20,8 +20,15 @@ interface UserPost extends Post {
 }
 interface ContactInfo {
   Body: string;
-  Type: string;
+  Type: number;
 }
+const ContactTypes = new Map([
+  [1, 'Cep Telefonu'],
+  [2, 'İş Telefonu'],
+  [3, 'Ev Telefonu'],
+  [4, 'E-Posta'],
+  [5, 'İnstagram']
+]);
 
 export default function Home() {
   // Use global context
@@ -96,6 +103,7 @@ export default function Home() {
     };
   }, []);
 
+  // Update the status of posts with "Cevap bekliyor | Anlaşıldı | Tamamlandı"
   const updateStatus = (postId: number, value: CurrentStatus) => {
     // Check jwt and get necessary items
     const jwt = fetchJwt();
@@ -130,7 +138,65 @@ export default function Home() {
         });
       });
   }
-  console.log(contactInfo);
+
+  // Contact edit mode
+  const [contactInfoEdited, setContactInfoEdited] = useState<ContactInfo[]>([]);
+  useEffect(() => {
+    setContactInfoEdited(contactInfo);
+  }, [contactInfo])
+
+  const [contactEditMode, setContactEditMode] = useState(false);
+  const [addNewContactMode, setAddNewContactMode] = useState(false);
+  // New contact form
+  const [newContactForm, setNewContactForm] = useState({
+    body: '',
+    type: '0'
+  });
+  // Update new contact value states
+  const handleNewContactFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setNewContactForm({
+      ...newContactForm,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  // Submit new contact option
+  const handleNewContactSubmit = () => {
+    // Simple check
+    if (newContactForm.body.trim() === '' || newContactForm.type === '0') return;
+    // Add new contact
+    const updatedList = [...contactInfoEdited]
+    updatedList.push({
+      Body: newContactForm.body,
+      Type: +newContactForm.type
+    })
+    setContactInfoEdited(updatedList)
+    // Reset new contact form
+    setNewContactForm({
+      body: '',
+      type: '0'
+    })
+    setAddNewContactMode(false);
+  }
+
+  // Delete contact option
+  const deleteContactOption = (index: number) => {
+    const updatedList = [...contactInfoEdited]
+    setContactInfoEdited(updatedList.filter((obj, i) => i !== index))
+  }
+
+  // Handle close
+  const handleCloseContactEditMode = () => {
+    setContactEditMode(false);
+    setAddNewContactMode(false);
+    setContactInfoEdited(contactInfo);
+  }
+
+  // Submit the new contact options
+  const handleContactSubmit = () => {
+    handleCloseContactEditMode();
+  }
+
 
   return (
     <Template>
@@ -160,17 +226,52 @@ export default function Home() {
                     : userData.username}
                 </span>
                 <span className='email'>{userData.email}</span>
-                <Link href={'/ayarlar'} type="button" className='edit-profile'>Düzenle</Link>
+                <Link href={'/ayarlar'} className='edit-profile'>Düzenle</Link>
               </div>
             </div>
             {contactInfo.length > 0 ?
-              <div className="contact-options">
-                <h3>İletişim</h3>
+              <div className={`contact-options ${contactEditMode ? 'edit-mode' : ''}`}>
+                <div className='contact-header'>
+                  <h3>İletişim</h3>
+                  {contactEditMode ?
+                    addNewContactMode ?
+                      <button type="button" className='cancel-new-contact-option' onClick={() => setAddNewContactMode(false)}>Vazgeç</button>
+                      :
+                      <button type="button" className='add-new-contact-option' onClick={() => setAddNewContactMode(true)}>Yeni</button>
+                    :
+                    <button type="button" className='open-contact-edit-mode' onClick={() => setContactEditMode(true)}>Düzenle</button>
+                  }
+                </div>
+                <div className={`new-contact-option-wrapper ${contactEditMode && addNewContactMode ? 'active' : ''}`}>
+                  <input type="text" name="body" className="body" value={newContactForm.body} onChange={handleNewContactFormChange} placeholder='İletişim bilgisi' />
+                  <div className='new-contact-footer'>
+                    <select name='type' className='type' value={newContactForm.type} onChange={handleNewContactFormChange}>
+                      <option value="0">Tür</option>
+                      <option value="1">Cep Telefonu</option>
+                      <option value="2">İş Telefonu</option>
+                      <option value="3">Ev Telefonu</option>
+                      <option value="4">E-Posta</option>
+                      <option value="5">İnstagram</option>
+                    </select>
+                    <button type="button" className="add-new" onClick={handleNewContactSubmit}>Ekle</button>
+                  </div>
+                </div>
                 <ul className="contact-information">
-                  {contactInfo.map((info, index) =>
-                    <li><span className='body'>{info.Body}</span> - <span className='type'>{info.Type}</span></li>
-                  )}
+                  {contactEditMode ?
+                    contactInfoEdited.map((info, index) =>
+                      <li><button type="button" className="remove" onClick={() => deleteContactOption(index)}><XLg /></button><span className='body'>{info.Body}</span> - <span className='type'>{ContactTypes.get(info.Type) ?? '???'}</span></li>
+                    ) :
+                    contactInfo.map((info, index) =>
+                      <li><span className='body'>{info.Body}</span> - <span className='type'>{ContactTypes.get(info.Type) ?? '???'}</span></li>
+                    )
+                  }
                 </ul>
+                {contactEditMode ?
+                  <div className="contact-edit-options">
+                    <button type="button" className="cancel-edit" onClick={handleCloseContactEditMode}>Vazgeç</button>
+                    <button type="button" className="save-edit" onClick={handleContactSubmit}>Kaydet</button>
+                  </div>
+                  : <></>}
               </div>
               : <></>}
           </div>

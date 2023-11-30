@@ -48,9 +48,8 @@ SET CurrentStatusId = ?
 WHERE AccountId = ? AND Id = ?;
 
 # Get contact information of a user
-SELECT CI.Body AS Body, CT.Body AS Type
+SELECT CI.Body AS Body, CI.ContactTypeId AS Type
 FROM ContactInformation CI
-LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
 WHERE CI.AccountId = ?
 
 

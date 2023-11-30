@@ -77,7 +77,6 @@
                     border: 1px solid var(--button-white-border);
                     background-color: var(--button-white);
                     font-size: 0.9rem;
-                    cursor: pointer;
                     font-family: 'Fira Sans', sans-serif;
                     font-weight: 300;
                     transition: all 0.1s ease-in-out;
@@ -91,14 +90,127 @@
             }
         }
 
+        .contact-options.edit-mode {
+            ul.contact-information {
+                font-size: 1.1rem;
+
+                li {
+                    margin-bottom: 12px;
+                }
+            }
+        }
+
         .contact-options {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 0 auto;
 
-            h3 {
-                font-weight: 300;
-                font-size: 1.2rem;
+            .contact-header {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+
+                h3 {
+                    font-weight: 300;
+                    font-size: 1.2rem;
+                }
+
+                .open-contact-edit-mode,
+                .add-new-contact-option,
+                .cancel-new-contact-option {
+                    margin-top: 1px;
+                    border-radius: 4px;
+                    padding: 3px 14px;
+                    font-family: 'Fira Sans', sans-serif;
+                    font-weight: 300;
+                    transition: all 0.1s ease-in-out;
+                }
+
+                .open-contact-edit-mode {
+                    border: 1px solid var(--button-white-border);
+                    background-color: var(--button-white);
+                    font-size: 0.8rem;
+
+                    &:hover {
+                        color: #ffffff;
+                        border: 1px solid var(--button4-1);
+                        background-color: var(--button4-1);
+                    }
+                }
+
+                .add-new-contact-option {
+                    color: #ffffff;
+                    background-color: var(--button1-1);
+                    font-size: 1rem;
+
+                    &:hover {
+                        background-color: var(--button1-2);
+                    }
+                }
+
+                .cancel-new-contact-option {
+                    color: #ffffff;
+                    background-color: var(--button3-2);
+                    font-size: 1rem;
+
+                    &:hover {
+                        background-color: var(--button3-1);
+                    }
+                }
+            }
+
+            .new-contact-option-wrapper.active {
+                display: flex;
+            }
+
+            .new-contact-option-wrapper {
+                display: none;
+                width: 100%;
+                padding: 8px 0;
+                flex-direction: column;
+                gap: 10px;
+
+                input.body {
+                    padding: 6px 8px;
+                    border: 1px solid var(--button-white-border);
+                    border-radius: 4px;
+                    font-family: "Fira Sans", sans-serif;
+                    font-weight: 300;
+                    font-size: 1.1rem;
+                }
+
+                .new-contact-footer {
+                    display: flex;
+                    gap: 6px;
+                    justify-content: space-between;
+
+                    select.type {
+                        padding: 6px 8px;
+                        border: 1px solid var(--button-white-border);
+                        border-radius: 4px;
+                        font-family: "Fira Sans", sans-serif;
+                        font-weight: 300;
+                        font-size: 1.1rem;
+                    }
+
+                    button.add-new {
+                        margin-top: 1px;
+                        border-radius: 4px;
+                        padding: 4px 16px;
+                        font-size: 1rem;
+                        font-family: 'Fira Sans', sans-serif;
+                        font-weight: 300;
+                        transition: all 0.1s ease-in-out;
+                        color: #ffffff;
+                        background-color: var(--button2-1);
+
+                        &:hover {
+                            background-color: var(--button2-2);
+                        }
+                    }
+                }
             }
 
             ul.contact-information {
@@ -106,13 +218,59 @@
                 li {
                     font-weight: 300;
 
+                    .remove {
+                        border-radius: 50%;
+                        padding: 4px;
+                        background-color: var(--button3-2);
+                        color: #ffffff;
+                        display: inline-flex;
+                        margin-right: 6px;
+                        font-size: 0.7em;
+
+                        &:hover {
+                            background-color: var(--button3-1);
+                        }
+                    }
+
                     .body {
-                        font-size: 0.9rem;
+                        font-size: 0.9em;
                     }
 
                     .type {
-                        font-size: 1rem;
+                        font-size: 1em;
                         font-family: 'Poppins', sans-serif;
+                    }
+                }
+            }
+
+            .contact-edit-options {
+                display: flex;
+                gap: 12px;
+
+                button {
+                    margin-top: 1px;
+                    border-radius: 4px;
+                    padding: 4px 16px;
+                    font-size: 1rem;
+                    font-family: 'Fira Sans', sans-serif;
+                    font-weight: 300;
+                    transition: all 0.1s ease-in-out;
+                    color: #ffffff;
+                }
+
+                .cancel-edit {
+                    background-color: var(--button3-2);
+
+                    &:hover {
+                        background-color: var(--button3-1);
+                    }
+                }
+
+                .save-edit {
+                    background-color: var(--button2-1);
+
+                    &:hover {
+                        background-color: var(--button2-2);
                     }
                 }
             }
@@ -306,6 +464,19 @@
                         white-space: wrap;
                     }
                 }
+            }
+
+            .contact-options.edit-mode {
+                ul.contact-information {
+                    font-size: 1rem;
+                }
+            }
+
+            .contact-options {
+                margin: unset;
+                border-radius: 12px;
+                padding: 16px;
+                border: 1px solid var(--primary-light-border);
             }
         }
     }

@@ -116,7 +116,8 @@ const Chatbot: React.FC<{
             if (gStatus.chatbotActive
                 && !e.target.closest('.chatbot')
                 && !e.target.closest('.open-chatbot-button')
-                && !e.target.closest('.message-request')) {
+                && !e.target.closest('.message-request')
+                && !e.target.closest('.information-modal-container')) {
                 handleGStatus('chatbotActive', false);
             }
             if (chatUMenuActive

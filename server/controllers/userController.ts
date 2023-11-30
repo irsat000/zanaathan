@@ -632,9 +632,8 @@ exports.getUserProfile = (req: Request, res: Response) => {
             const posts = results;
 
             const query2 = `
-                SELECT CI.Body AS Body, CT.Body AS Type
+                SELECT CI.Body AS Body, CI.ContactTypeId AS Type
                 FROM ContactInformation CI
-                LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
                 WHERE CI.AccountId = ?
             `;
             pool.query(query2, [userId], (qErr2: any, results2: any) => {

@@ -71,7 +71,6 @@
   border: 1px solid var(--button-white-border);
   background-color: var(--button-white);
   font-size: 0.9rem;
-  cursor: pointer;
   font-family: "Fira Sans", sans-serif;
   font-weight: 300;
   transition: all 0.1s ease-in-out;
@@ -81,24 +80,156 @@
   border: 1px solid var(--button4-1);
   background-color: var(--button4-1);
 }
+.profile-page .profile-panel .contact-options.edit-mode ul.contact-information {
+  font-size: 1.1rem;
+}
+.profile-page .profile-panel .contact-options.edit-mode ul.contact-information li {
+  margin-bottom: 12px;
+}
 .profile-page .profile-panel .contact-options {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 auto;
 }
-.profile-page .profile-panel .contact-options h3 {
+.profile-page .profile-panel .contact-options .contact-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.profile-page .profile-panel .contact-options .contact-header h3 {
   font-weight: 300;
   font-size: 1.2rem;
+}
+.profile-page .profile-panel .contact-options .contact-header .open-contact-edit-mode,
+.profile-page .profile-panel .contact-options .contact-header .add-new-contact-option,
+.profile-page .profile-panel .contact-options .contact-header .cancel-new-contact-option {
+  margin-top: 1px;
+  border-radius: 4px;
+  padding: 3px 14px;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.profile-page .profile-panel .contact-options .contact-header .open-contact-edit-mode {
+  border: 1px solid var(--button-white-border);
+  background-color: var(--button-white);
+  font-size: 0.8rem;
+}
+.profile-page .profile-panel .contact-options .contact-header .open-contact-edit-mode:hover {
+  color: #ffffff;
+  border: 1px solid var(--button4-1);
+  background-color: var(--button4-1);
+}
+.profile-page .profile-panel .contact-options .contact-header .add-new-contact-option {
+  color: #ffffff;
+  background-color: var(--button1-1);
+  font-size: 1rem;
+}
+.profile-page .profile-panel .contact-options .contact-header .add-new-contact-option:hover {
+  background-color: var(--button1-2);
+}
+.profile-page .profile-panel .contact-options .contact-header .cancel-new-contact-option {
+  color: #ffffff;
+  background-color: var(--button3-2);
+  font-size: 1rem;
+}
+.profile-page .profile-panel .contact-options .contact-header .cancel-new-contact-option:hover {
+  background-color: var(--button3-1);
+}
+.profile-page .profile-panel .contact-options .new-contact-option-wrapper.active {
+  display: flex;
+}
+.profile-page .profile-panel .contact-options .new-contact-option-wrapper {
+  display: none;
+  width: 100%;
+  padding: 8px 0;
+  flex-direction: column;
+  gap: 10px;
+}
+.profile-page .profile-panel .contact-options .new-contact-option-wrapper input.body {
+  padding: 6px 8px;
+  border: 1px solid var(--button-white-border);
+  border-radius: 4px;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  font-size: 1.1rem;
+}
+.profile-page .profile-panel .contact-options .new-contact-option-wrapper .new-contact-footer {
+  display: flex;
+  gap: 6px;
+  justify-content: space-between;
+}
+.profile-page .profile-panel .contact-options .new-contact-option-wrapper .new-contact-footer select.type {
+  padding: 6px 8px;
+  border: 1px solid var(--button-white-border);
+  border-radius: 4px;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  font-size: 1.1rem;
+}
+.profile-page .profile-panel .contact-options .new-contact-option-wrapper .new-contact-footer button.add-new {
+  margin-top: 1px;
+  border-radius: 4px;
+  padding: 4px 16px;
+  font-size: 1rem;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+  color: #ffffff;
+  background-color: var(--button2-1);
+}
+.profile-page .profile-panel .contact-options .new-contact-option-wrapper .new-contact-footer button.add-new:hover {
+  background-color: var(--button2-2);
 }
 .profile-page .profile-panel .contact-options ul.contact-information li {
   font-weight: 300;
 }
+.profile-page .profile-panel .contact-options ul.contact-information li .remove {
+  border-radius: 50%;
+  padding: 4px;
+  background-color: var(--button3-2);
+  color: #ffffff;
+  display: inline-flex;
+  margin-right: 6px;
+  font-size: 0.7em;
+}
+.profile-page .profile-panel .contact-options ul.contact-information li .remove:hover {
+  background-color: var(--button3-1);
+}
 .profile-page .profile-panel .contact-options ul.contact-information li .body {
-  font-size: 0.9rem;
+  font-size: 0.9em;
 }
 .profile-page .profile-panel .contact-options ul.contact-information li .type {
-  font-size: 1rem;
+  font-size: 1em;
   font-family: "Poppins", sans-serif;
+}
+.profile-page .profile-panel .contact-options .contact-edit-options {
+  display: flex;
+  gap: 12px;
+}
+.profile-page .profile-panel .contact-options .contact-edit-options button {
+  margin-top: 1px;
+  border-radius: 4px;
+  padding: 4px 16px;
+  font-size: 1rem;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+  color: #ffffff;
+}
+.profile-page .profile-panel .contact-options .contact-edit-options .cancel-edit {
+  background-color: var(--button3-2);
+}
+.profile-page .profile-panel .contact-options .contact-edit-options .cancel-edit:hover {
+  background-color: var(--button3-1);
+}
+.profile-page .profile-panel .contact-options .contact-edit-options .save-edit {
+  background-color: var(--button2-1);
+}
+.profile-page .profile-panel .contact-options .contact-edit-options .save-edit:hover {
+  background-color: var(--button2-2);
 }
 .profile-page .profile-body {
   flex-grow: 1;
@@ -238,6 +369,15 @@
     flex-direction: row;
     max-width: 300px;
     white-space: wrap;
+  }
+  .profile-page .profile-panel .contact-options.edit-mode ul.contact-information {
+    font-size: 1rem;
+  }
+  .profile-page .profile-panel .contact-options {
+    margin: unset;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid var(--primary-light-border);
   }
 }
 @media (min-width: 1200px) {
