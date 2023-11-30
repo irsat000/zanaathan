@@ -192,11 +192,42 @@ export default function Home() {
     setContactInfoEdited(contactInfo);
   }
 
-  // Submit the new contact options
-  const handleContactSubmit = () => {
-    handleCloseContactEditMode();
-  }
+  // LOADING
+  const [updatingContacts, setUpdatingContacts] = useState(false);
 
+  // Submit the new contact options as a whole
+  const handleContactSubmit = () => {
+    if (contactInfo === contactInfoEdited) {
+      return;
+    }
+    // Check jwt
+    const jwt = fetchJwt();
+    if (!jwt) return;
+
+    setUpdatingContacts(true);
+    fetch(`${apiUrl}/update-contact-info`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        Authorization: 'Bearer ' + jwt
+      },
+      body: JSON.stringify({ contactInfo: contactInfoEdited })
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then((data) => {
+        setContactInfo(data.contactInfo);
+        handleCloseContactEditMode();
+      })
+      .catch((res) => {
+        handleGStatus('informationModal', {
+          type: 'error',
+          text: 'İletişim bilgilerinin güncellerken hata oluştu. Üzgünüz!'
+        });
+      })
+      .finally(() => {
+        setUpdatingContacts(false);
+      });
+  }
 
   return (
     <Template>
@@ -269,7 +300,7 @@ export default function Home() {
                 {contactEditMode ?
                   <div className="contact-edit-options">
                     <button type="button" className="cancel-edit" onClick={handleCloseContactEditMode}>Vazgeç</button>
-                    <button type="button" className="save-edit" onClick={handleContactSubmit}>Kaydet</button>
+                    <button type="button" className="save-edit" onClick={handleContactSubmit} disabled={updatingContacts}>Kaydet</button>
                   </div>
                   : <></>}
               </div>

@@ -225,6 +225,11 @@
 .profile-page .profile-panel .contact-options .contact-edit-options .cancel-edit:hover {
   background-color: var(--button3-1);
 }
+.profile-page .profile-panel .contact-options .contact-edit-options .save-edit:disabled {
+  cursor: default;
+  opacity: 0.7;
+  pointer-events: none;
+}
 .profile-page .profile-panel .contact-options .contact-edit-options .save-edit {
   background-color: var(--button2-1);
 }

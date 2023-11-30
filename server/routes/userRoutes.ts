@@ -22,6 +22,8 @@ router.put('/delete-avatar', userController.deleteAvatar);
 router.post('/set-new-avatar', uploadAvatar, userController.uploadAvatar);
 // To get user's profile
 router.get('/get-user-profile/:userId', userController.getUserProfile);
+// To let user update their contact information
+router.post('/update-contact-info', userController.updateContactInfo);
 
 
 

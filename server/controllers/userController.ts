@@ -650,8 +650,66 @@ exports.getUserProfile = (req: Request, res: Response) => {
     }
 }
 
+exports.updateContactInfo = (req: Request, res: Response) => {
+    try {
+        // Get user id
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) return res.status(401).send('Not authorized');
+        // Get request body
+        const body = req.body;
+        if (!body || !body.contactInfo || !Array.isArray(body.contactInfo)) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        const contactInfo = body.contactInfo;
 
+        // New contact queries
+        const queries: string[] = []
+        const parameters: (number | string)[] = [];
+        contactInfo.forEach((info: { Body: string, Type: number }) => {
+            // Check, then push
+            if (isNullOrEmpty(info.Body) || ![1, 2, 3, 4, 5].includes(info.Type)) return;
+            queries.push('INSERT INTO ContactInformation(Body, ContactTypeId, AccountId) VALUES(?, ?, ?);')
+            parameters.push(info.Body, info.Type, userId);
+        });
 
+        // Delete the existing contact information
+        const deleteQuery = `DELETE FROM ContactInformation WHERE AccountId = ?;`;
+        pool.query(deleteQuery, [userId], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            // Return empty list if user deleted all, no contact info is allowed
+            if (queries.length === 0) {
+                return res.status(200).json({ contactInfo: [] });
+            }
+            // Add all contact info at the same time
+            const newContactsQuery = queries.join('');
+            pool.query(newContactsQuery, parameters, (qErr: any, results: any) => {
+                if (qErr) {
+                    return res.status(500).json({ error: 'Query error' });
+                }
+
+                const selectQuery = `
+                    SELECT CI.Body AS Body, CI.ContactTypeId AS Type
+                    FROM ContactInformation CI
+                    WHERE CI.AccountId = ?
+                `;
+                pool.query(selectQuery, [userId], (qErr: any, results: any) => {
+                    if (qErr) {
+                        return res.status(500).json({ error: 'Query error' });
+                    }
+
+                    return res.status(200).json({ contactInfo: results });
+                });
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
 
 
 exports.asdf = (req: Request, res: Response) => {
