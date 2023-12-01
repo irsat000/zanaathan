@@ -56,25 +56,36 @@ exports.getThread = (req: Request, res: Response) => {
     try {
         // Get contact id
         const contactId = req.params.contactId;
-        if (!contactId) res.status(400).json({ error: 'Bad request' });
+        // Get type, "initial | all"
+        const method = req.params.method;
+        if (!contactId || !method) res.status(400).json({ error: 'Bad request' });
         // Verify and decode the token
         const jwt = req.headers?.authorization?.split(' ')[1];
         const userId = verifyJwt(jwt);
         if (!userId) return res.status(401).send('Not authorized');
         // Get messages from both sides
+        // Reversed for latest 50, needs .reverse() in client side
         const query = `
             SELECT M.Id, M.SenderId, M.CreatedAt, M.Body
             FROM Message AS M
             WHERE (SenderId = ? AND ReceiverId = ?)
             OR (SenderId = ? AND ReceiverId = ?)
-            ORDER BY CreatedAt;
+            ORDER BY CreatedAt DESC
+            LIMIT ${method === 'initial' ? '51' : '1000'};
         `;
         pool.query(query, [userId, contactId, contactId, userId], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
             }
 
-            return res.status(200).json({ messages: results });
+            // If the data is initial data, then check if there are more messages, if not hasMore is false
+            // - Get 51, give 50 to find out if there are more messages
+            const hasMore = method === 'initial' ? results.length > 50 : false;
+            if (hasMore) {
+                results.pop();
+            }
+
+            return res.status(200).json({ messages: results, hasMore });
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });

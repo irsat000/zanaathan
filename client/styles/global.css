@@ -846,6 +846,22 @@ body select {
   padding: 14px 10px;
   overflow-y: auto;
 }
+.chatbot-container .chatbot .chatbot-body .message-box .messages .show-all-messages {
+  align-self: center;
+  border-radius: 4px;
+  padding: 4px 20px;
+  border: 1px solid var(--button-white-border);
+  background-color: var(--button-white);
+  font-size: 0.9rem;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.chatbot-container .chatbot .chatbot-body .message-box .messages .show-all-messages:hover {
+  color: #ffffff;
+  border: 1px solid var(--button4-1);
+  background-color: var(--button4-1);
+}
 .chatbot-container .chatbot .chatbot-body .message-box .messages .no-thread-selected,
 .chatbot-container .chatbot .chatbot-body .message-box .messages .empty-thread {
   padding: 80px 0;

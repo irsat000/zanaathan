@@ -274,9 +274,10 @@ body {
                 margin-top: 16px;
                 text-align: left;
 
-                li.fail{
+                li.fail {
                     color: #a73131;
                 }
+
                 li {
                     font-size: 1rem;
                     display: list-item;
@@ -950,6 +951,24 @@ body {
                     gap: 10px;
                     padding: 14px 10px;
                     overflow-y: auto;
+
+                    .show-all-messages {
+                        align-self: center;
+                        border-radius: 4px;
+                        padding: 4px 20px;
+                        border: 1px solid var(--button-white-border);
+                        background-color: var(--button-white);
+                        font-size: 0.9rem;
+                        font-family: 'Fira Sans', sans-serif;
+                        font-weight: 300;
+                        transition: all 0.1s ease-in-out;
+
+                        &:hover {
+                            color: #ffffff;
+                            border: 1px solid var(--button4-1);
+                            background-color: var(--button4-1);
+                        }
+                    }
 
                     .no-thread-selected,
                     .empty-thread {

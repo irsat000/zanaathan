@@ -10,6 +10,7 @@ export interface UserContact {
     IsBlocked: boolean;
     NotificationCount: number;
     CachedThread?: ThreadMessage[];
+    ThreadHasMore?: boolean;
 }
 
 export interface ThreadMessage {

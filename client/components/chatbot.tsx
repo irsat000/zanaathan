@@ -72,16 +72,23 @@ const Chatbot: React.FC<{
     }
 
     // Function for fetching a thread's messages
-    const fetchThreadMessages = async (contactId: number) => {
+    const fetchThreadMessages = async (contactId: number, method: 'initial' | 'all') => {
         // Check cache, if exist, no need for fetching because chat is updated in real-time
         const cache = userContacts.find(contact => contact.ReceiverId === contactId);
-        if (cache && cache.CachedThread) {
-            return cache.CachedThread;
+        // If cache exists, and if either thread has no more messages or method is initial which means it doesn't care about hasMore
+        if (cache && cache.CachedThread && (cache.ThreadHasMore === false || method === 'initial')) {
+            return {
+                messages: cache.CachedThread as ThreadMessage[],
+                hasMore: cache.ThreadHasMore
+            }
         }
         // Check jwt
         const jwt = fetchJwt();
-        if (!jwt) return null;
-        return await fetch(`${apiUrl}/chat/get-thread/${contactId}`, {
+        if (!jwt) return {
+            messages: null,
+            hasMore: undefined
+        };
+        return await fetch(`${apiUrl}/chat/get-thread/${contactId}/${method}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
@@ -94,14 +101,20 @@ const Chatbot: React.FC<{
                 /*const updatedContacts = [...userContacts];
                 updatedContacts.find(contact => contact.ReceiverId === contactId)!.CachedThread = data.messages;
                 setUserContacts(updatedContacts);*/
-                return data.messages as ThreadMessage[];
+                return {
+                    messages: data.messages.reverse() as ThreadMessage[],
+                    hasMore: data.hasMore as boolean
+                }
             })
             .catch((res) => {
                 handleGStatus('informationModal', {
                     type: 'error',
                     text: 'Bağlantıda hata. Mesajlar getirilemedi.'
                 })
-                return null;
+                return {
+                    messages: null,
+                    hasMore: undefined
+                };
             });
     };
 
@@ -299,40 +312,46 @@ const Chatbot: React.FC<{
         setMessageInput('');
     }
 
+    // Handle fetch messages with different methods
+    // - Could be merged with fetchThreadMessages but this is better for future
+    const handleFetchThreadMessages = (activeContact: number, method: 'initial' | 'all') => {
+        fetchThreadMessages(activeContact, method).then((thread) => {
+            const updatedContacts = [...userContacts];
+            const contact = updatedContacts.find(contact => contact.ReceiverId === gStatus.activeContact);
+            if (contact) {
+                // Get thread
+                contact.CachedThread = thread.messages ?? [];
+                contact.ThreadHasMore = thread.hasMore;
+                // Remove the notification
+                if (contact.NotificationCount > 0) {
+                    // Reset for instant visual and not needing to reload
+                    contact.NotificationCount = 0;
+                    // Check jwt
+                    const jwt = fetchJwt();
+                    if (jwt && socket) {
+                        // Payload
+                        const removeNotificationPayload = {
+                            contact: gStatus.activeContact,
+                            jwt: jwt
+                        };
+                        // Send payload through connection
+                        socket.emit('removeNotification', JSON.stringify(removeNotificationPayload));
+                    }
+                }
+                // Get thread for the contact and update
+                setUserContacts(updatedContacts);
+            }
+        });
+    }
+
     // currentThread rendering for better and easier async scroll
     const [currentThread, setCurrentThread] = useState<ThreadMessage[] | null>(null)
     // Fetch messages associated with this "chat", messages between two users
     useEffect(() => {
-        if (gStatus.activeContact) {
-            fetchThreadMessages(gStatus.activeContact).then((thread) => {
-                const updatedContacts = [...userContacts];
-                const contact = updatedContacts.find(contact => contact.ReceiverId === gStatus.activeContact);
-                if (contact) {
-                    // Get thread
-                    contact.CachedThread = thread ?? [];
-                    // Remove the notification
-                    if (contact.NotificationCount > 0) {
-                        // Reset for instant visual and not needing to reload
-                        contact.NotificationCount = 0;
-                        // Check jwt
-                        const jwt = fetchJwt();
-                        if (jwt && socket) {
-                            // Payload
-                            const removeNotificationPayload = {
-                                contact: gStatus.activeContact,
-                                jwt: jwt
-                            };
-                            // Send payload through connection
-                            socket.emit('removeNotification', JSON.stringify(removeNotificationPayload));
-                        }
-                    }
-                    // Get thread for the contact and update
-                    setUserContacts(updatedContacts);
-                }
-            });
-        }
-        // DA[0] reason: Fetch/check thread messages with every change of contact
-        // DA[1] reason: Re-run for removing notification if active contact is the same and chat bot is activated once again
+        if (!gStatus.activeContact) return;
+        handleFetchThreadMessages(gStatus.activeContact, 'initial');
+        // Dependenct Array[0] reason: Fetch/check thread messages with every change of contact
+        // Dependenct Array[1] reason: Re-run for removing notification if active contact is the same and chat bot is activated once again
     }, [gStatus.activeContact, gStatus.chatbotActive]);
 
     // Assign currentThread from cache
@@ -483,19 +502,26 @@ const Chatbot: React.FC<{
                     </div>
                     <div className="message-box">
                         <div className="messages" ref={messagesEndRef}>
-                            {currentThread && currentThread.length > 0 ? currentThread.map((message, i) => {
-                                // Animate if this is the new message
-                                const animate = animateMessageId === message.Id ? 'animate-new' : '';
-                                // Message owner
-                                const msgOwner = message.SenderId === userData!.sub ? 'you' : 'receiver';
+                            {currentThread && currentThread.length > 0 ? <>
+                                {currentContact?.ThreadHasMore ?
+                                    <button type="button" className="show-all-messages" onClick={() => {
+                                        handleFetchThreadMessages(currentContact.ReceiverId, 'all');
+                                    }}>Hepsini göster</button>
+                                    : <></>}
+                                {currentThread.map((message, i) => {
+                                    // Animate if this is the new message
+                                    const animate = animateMessageId === message.Id ? 'animate-new' : '';
+                                    // Message owner
+                                    const msgOwner = message.SenderId === userData!.sub ? 'you' : 'receiver';
 
-                                return (
-                                    <div key={i} className={`message-item ${msgOwner} ${animate}`}>
-                                        <p>{message.Body}</p>
-                                        <span className='message-date'>{toShortLocal(message.CreatedAt)}</span>
-                                    </div>
-                                )
-                            }) : currentThread
+                                    return (
+                                        <div key={i} className={`message-item ${msgOwner} ${animate}`}>
+                                            <p>{message.Body}</p>
+                                            <span className='message-date'>{toShortLocal(message.CreatedAt)}</span>
+                                        </div>
+                                    )
+                                })}
+                            </> : currentThread
                                 ? <span className='empty-thread'>Mesaj gönderin!</span>
                                 : <span className='no-thread-selected'>Mesaj görüntülemek için menüden kişi seçiniz.</span>}
                         </div>
