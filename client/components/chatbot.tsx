@@ -52,7 +52,7 @@ const Chatbot: React.FC<{
     const shouldScrollToBottom = () => {
         if (!messagesEndRef.current) return;
         const { scrollTop, scrollHeight, clientHeight } = messagesEndRef.current;
-        // console.log(scrollTop, scrollHeight, clientHeight);
+        //console.log(scrollTop, scrollHeight, clientHeight);
         // Check if the user has manually scrolled up
         const should = scrollHeight - (clientHeight * 2) < scrollTop;
         return should;
@@ -61,6 +61,7 @@ const Chatbot: React.FC<{
     const scrollToBottom = () => {
         // isInitialScroll makes sure first time scroll works but manual doesn't
         if (messagesEndRef.current && (shouldScrollToBottom() === true || isInitialScroll)) {
+            //console.log(isInitialScroll);
             messagesEndRef.current.scrollTo({
                 top: messagesEndRef.current.scrollHeight,
                 behavior: isInitialScroll ? 'instant' : 'smooth'

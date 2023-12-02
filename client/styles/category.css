@@ -213,6 +213,46 @@
   font-weight: 400;
 }
 
+.pagination {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+.pagination .previous-page,
+.pagination .next-page {
+  display: flex;
+  font-size: 1.6rem;
+  padding: 8px;
+}
+.pagination .previous-page:hover,
+.pagination .next-page:hover {
+  transform: scale(1.2);
+}
+.pagination .page-numbers {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  gap: 16px;
+}
+.pagination .page-numbers .page-link.current {
+  font-size: 1.7rem;
+  color: #0bac00;
+}
+.pagination .page-numbers .page-link {
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: var(--link-color);
+  cursor: pointer;
+  padding: 5px;
+}
+.pagination .page-numbers .page-link:hover {
+  text-decoration: underline;
+}
+
 @media (min-width: 400px) {
   .category-page .listing {
     grid-template-columns: repeat(2, 1fr);

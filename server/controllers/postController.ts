@@ -14,27 +14,20 @@ exports.getPosts = (req: Request, res: Response) => {
     try {
         // Get necessary filter data from query strings and path
         const category = req.params.category;
-        const { subc, sortby, city, district } = req.query as {
+        const { subc, sortby, city, district, page } = req.query as {
             subc?: string | string[],
             sortby?: string,
             city?: string,
-            district?: string
+            district?: string,
+            page?: number
         };
 
         // SUBSTRING(Description, 1, 200) // If description is needed, it's best to shorten it
         let query = `
-            SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
-                (
-                    SELECT JPI.Body
-                    FROM JobPostingImages JPI
-                    WHERE JP.Id = JPI.JobPostingId
-                    ORDER BY JPI.ImgIndex
-                    LIMIT 1
-                ) AS MainImage
             FROM JobPosting JP
             LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
         `;
-        const parameters: (string | string[])[] = [];
+        const parameters: (string | string[] | number)[] = [];
 
         // Join district to get city afterwards
         // No need for district table and city id if district is selected, we can use DistrictId of JP
@@ -66,18 +59,47 @@ exports.getPosts = (req: Request, res: Response) => {
             }
         }
 
-        // Sort by seconds ago, default is DESC, meaning old first
-        query += ` ORDER BY SecondsAgo`;
-        if (!sortby || sortby === 'old') {
-            query += ` DESC`;
-        }
-
-        pool.query(query, parameters, (qErr: any, results: any) => {
+        // Get post total count
+        const countSelect = `SELECT COUNT(*) as Count `;
+        pool.query(countSelect + query, parameters, (qErr: any, count: any) => {
             if (qErr) {
-                return res.status(500).json({ error: 'Query error' });
+                return res.status(500).json({ error: 'Query error 1' });
             }
 
-            return res.status(200).json({ posts: results });
+            // Get filtered 50 posts
+            const postsSelect = `
+                SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
+                (
+                    SELECT JPI.Body
+                    FROM JobPostingImages JPI
+                    WHERE JP.Id = JPI.JobPostingId
+                    ORDER BY JPI.ImgIndex
+                    LIMIT 1
+                ) AS MainImage `;
+
+            // Post exclusive is to get the post count with same filtering
+            // Sort by seconds ago, default is DESC, meaning old first
+            let postsExclusive = ` ORDER BY SecondsAgo`;
+            if (!sortby || sortby === 'old') {
+                postsExclusive += ` DESC`;
+            }
+
+            // Page
+            postsExclusive += ` LIMIT 20`;
+            const postsExclusiveParameters = [];
+            if (page != undefined) {
+                // - Offset will be 0 when page is set to 1, same as when it doesn't exist
+                postsExclusive += ` OFFSET ?`;
+                postsExclusiveParameters.push((page - 1) * 20);
+            }
+
+            pool.query(postsSelect + query + postsExclusive, [...parameters, ...postsExclusiveParameters], (qErr: any, posts: any) => {
+                if (qErr) {
+                    return res.status(500).json({ error: 'Query error 2' });
+                }
+
+                return res.status(200).json({ posts: posts, postCount: count[0].Count });
+            });
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });

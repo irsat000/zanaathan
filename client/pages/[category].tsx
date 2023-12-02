@@ -2,7 +2,7 @@
 import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDown, ChevronRight, EmojiFrown, Search, XLg } from 'react-bootstrap-icons'
+import { ChevronDown, ChevronLeft, ChevronRight, EmojiFrown, Search, XLg } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -20,14 +20,16 @@ export interface Post {
 }
 
 export default function Category() {
-  // Get category from path
+  // Get category and query strings from path
   const router = useRouter();
-  const { category, subc, city, district, sortby } = router.query;
+  const { category, subc, city, district, sortby, page } = router.query;
+  // Active page
+  const [activePage, setActivePage] = useState(1);
 
   // Use global context
   const { handleGStatus } = useGStatus();
 
-  // This state is for filters
+  // Information about current category
   const [categoryInfo, setCategoryInfo] = useState<{
     id: number | null,
     code: string | null,
@@ -67,6 +69,7 @@ export default function Category() {
     sortBy: 'old'
   });
 
+  // Set params from query to states
   useEffect(() => {
     const subcategoryQuery = Array.isArray(subc)
       ? subc.map(s => parseInt(s, 10))
@@ -76,17 +79,21 @@ export default function Category() {
     const cityQuery = city && typeof city === 'string' ? parseInt(city, 10) : 0;
     const districtQuery = district && typeof district === 'string' ? parseInt(district, 10) : 0;
     const sortbyQuery = sortby === 'new' ? 'new' : 'old';
+    const pageQuery = page && typeof page === 'string' ? parseInt(page, 10) : 1;
 
     setFilterData({
       subcategory: subcategoryQuery,
       city: cityQuery,
       district: districtQuery,
-      sortBy: sortbyQuery
+      sortBy: sortbyQuery,
     });
+
+    setActivePage(pageQuery);
   }, [router.query])
 
   // Fetch posts
   const [postList, setPostList] = useState<Post[]>([]);
+  const [postTotalCount, setPostTotalCount] = useState(0);
   const [postListLoading, setPostListLoading] = useState<boolean | null>(null);
   useEffect(() => {
     if (!categoryInfo.id) return;
@@ -102,7 +109,10 @@ export default function Category() {
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then((data) => {
-        setPostList(data.posts);
+        setPostList(prev => {
+          return data.posts // For infinite scroll -> [...prev, ...data.posts]
+        });
+        setPostTotalCount(data.postCount);
       })
       .catch((res) => {
         handleGStatus('informationModal', {
@@ -113,7 +123,7 @@ export default function Category() {
       .finally(() => {
         setPostListLoading(false);
       });
-  }, [categoryInfo])
+  }, [categoryInfo, activePage])
 
   // Filter values
   const [filterModalActive, setFilterModalActive] = useState(false);
@@ -227,7 +237,6 @@ export default function Category() {
   const handleFilterSubmit = () => {
     const { pathname, query } = router;
     const newParams = {} as any;
-
     const updatedQuery = { ...query };
 
     if (filterData.subcategory.length > 0) newParams.subc = filterData.subcategory;
@@ -241,6 +250,9 @@ export default function Category() {
 
     if (filterData.sortBy !== 'old') newParams.sortby = filterData.sortBy;
     else delete updatedQuery.sortby;
+
+    // Delete page to return to page 1
+    delete updatedQuery.page;
 
     // Use the push method to update the query string
     router.push({
@@ -262,10 +274,43 @@ export default function Category() {
       sortBy: sortByVal
     });
 
+    // Not necessary if it's default
     if (sortByVal !== 'old') newParams.sortby = sortByVal;
     else delete updatedQuery.sortby;
 
     // Use the push method to update the query string
+    router.push({
+      pathname,
+      query: { ...updatedQuery, ...newParams },
+    });
+  }
+
+  // Function that generates the array of existing pages around the active page
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    // Get the total page number
+    const totalPageNumber = Math.ceil(postTotalCount / 20);
+    // Try to get pages 2 pages prev and 2 pages next around the active one
+    for (let i = activePage - 2; i <= activePage + 2; i++) {
+      if (i > 0 && i <= totalPageNumber) {
+        pageNumbers.push(i);
+      }
+    }
+    return pageNumbers;
+  }
+  const pageNumbers = generatePageNumbers();
+
+  // Change the page with parameter and push to the router...
+  // which then will set it to activePage state
+  const handlePageChange = (pageNumber: number) => {
+    const { pathname, query } = router;
+    const newParams = {} as any;
+    const updatedQuery = { ...query };
+
+    // Not necessary for the first page
+    if (pageNumber !== 1) newParams.page = pageNumber;
+    else delete updatedQuery.page;
+
     router.push({
       pathname,
       query: { ...updatedQuery, ...newParams },
@@ -420,9 +465,25 @@ export default function Category() {
               <h3>Aradağınız kriterlerde gönderi bulunamamıştır.</h3>
             </div>
         }
-
-
-
+        {postTotalCount > 0 ?
+          <div className="pagination">
+            {pageNumbers.includes(activePage - 1) ?
+              <button type="button" className="previous-page" onClick={() => handlePageChange(activePage - 1)}>
+                <ChevronLeft />
+              </button>
+              : <></>}
+            <div className='page-numbers'>
+              {pageNumbers.map(number =>
+                <a className={`page-link ${number === activePage ? 'current' : ''}`} onClick={() => handlePageChange(number)}>{number}</a>
+              )}
+            </div>
+            {pageNumbers.includes(activePage + 1) ?
+              <button type="button" className="next-page" onClick={() => handlePageChange(activePage + 1)}>
+                <ChevronRight />
+              </button>
+              : <></>}
+          </div>
+          : <></>}
       </div>
     </Template>
   )

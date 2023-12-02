@@ -52,4 +52,9 @@ DELETE FROM JobPosting WHERE Id = 7;
 
 
 
+INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES ('Infinite scrolling 10', NOW(), '<p>Infinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrollingInfinite scrolling</p>', 5, 40, 1, 14);
+
+
+
+
 

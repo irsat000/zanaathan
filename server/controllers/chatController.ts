@@ -71,7 +71,7 @@ exports.getThread = (req: Request, res: Response) => {
             WHERE (SenderId = ? AND ReceiverId = ?)
             OR (SenderId = ? AND ReceiverId = ?)
             ORDER BY CreatedAt DESC
-            LIMIT ${method === 'initial' ? '51' : '1000'};
+            LIMIT ${method === 'initial' ? '51' : '300'};
         `;
         pool.query(query, [userId, contactId, contactId, userId], (qErr: any, results: any) => {
             if (qErr) {
