@@ -120,7 +120,6 @@
                 .open-contact-edit-mode,
                 .add-new-contact-option,
                 .cancel-new-contact-option {
-                    margin-top: 1px;
                     border-radius: 4px;
                     padding: 3px 14px;
                     font-family: 'Fira Sans', sans-serif;
@@ -214,7 +213,6 @@
             }
 
             ul.contact-information {
-
                 li {
                     font-weight: 300;
 
@@ -241,6 +239,12 @@
                         font-family: 'Poppins', sans-serif;
                     }
                 }
+            }
+
+            .no-information{
+                margin-top: 6px;
+                font-weight: 300;
+                text-align: center;
             }
 
             .contact-edit-options {

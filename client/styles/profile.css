@@ -105,7 +105,6 @@
 .profile-page .profile-panel .contact-options .contact-header .open-contact-edit-mode,
 .profile-page .profile-panel .contact-options .contact-header .add-new-contact-option,
 .profile-page .profile-panel .contact-options .contact-header .cancel-new-contact-option {
-  margin-top: 1px;
   border-radius: 4px;
   padding: 3px 14px;
   font-family: "Fira Sans", sans-serif;
@@ -204,6 +203,11 @@
 .profile-page .profile-panel .contact-options ul.contact-information li .type {
   font-size: 1em;
   font-family: "Poppins", sans-serif;
+}
+.profile-page .profile-panel .contact-options .no-information {
+  margin-top: 6px;
+  font-weight: 300;
+  text-align: center;
 }
 .profile-page .profile-panel .contact-options .contact-edit-options {
   display: flex;

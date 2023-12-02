@@ -260,33 +260,33 @@ export default function Home() {
                 <Link href={'/ayarlar'} className='edit-profile'>Düzenle</Link>
               </div>
             </div>
-            {contactInfo.length > 0 ?
-              <div className={`contact-options ${contactEditMode ? 'edit-mode' : ''}`}>
-                <div className='contact-header'>
-                  <h3>İletişim</h3>
-                  {contactEditMode ?
-                    addNewContactMode ?
-                      <button type="button" className='cancel-new-contact-option' onClick={() => setAddNewContactMode(false)}>Vazgeç</button>
-                      :
-                      <button type="button" className='add-new-contact-option' onClick={() => setAddNewContactMode(true)}>Yeni</button>
+            <div className={`contact-options ${contactEditMode ? 'edit-mode' : ''}`}>
+              <div className='contact-header'>
+                <h3>İletişim</h3>
+                {contactEditMode ?
+                  addNewContactMode ?
+                    <button type="button" className='cancel-new-contact-option' onClick={() => setAddNewContactMode(false)}>Vazgeç</button>
                     :
-                    <button type="button" className='open-contact-edit-mode' onClick={() => setContactEditMode(true)}>Düzenle</button>
-                  }
+                    <button type="button" className='add-new-contact-option' onClick={() => setAddNewContactMode(true)}>Yeni</button>
+                  :
+                  <button type="button" className='open-contact-edit-mode' onClick={() => setContactEditMode(true)}>Düzenle</button>
+                }
+              </div>
+              <div className={`new-contact-option-wrapper ${contactEditMode && addNewContactMode ? 'active' : ''}`}>
+                <input type="text" name="body" className="body" value={newContactForm.body} onChange={handleNewContactFormChange} placeholder='İletişim bilgisi' />
+                <div className='new-contact-footer'>
+                  <select name='type' className='type' value={newContactForm.type} onChange={handleNewContactFormChange}>
+                    <option value="0">Tür</option>
+                    <option value="1">Cep Telefonu</option>
+                    <option value="2">İş Telefonu</option>
+                    <option value="3">Ev Telefonu</option>
+                    <option value="4">E-Posta</option>
+                    <option value="5">İnstagram</option>
+                  </select>
+                  <button type="button" className="add-new" onClick={handleNewContactSubmit}>Ekle</button>
                 </div>
-                <div className={`new-contact-option-wrapper ${contactEditMode && addNewContactMode ? 'active' : ''}`}>
-                  <input type="text" name="body" className="body" value={newContactForm.body} onChange={handleNewContactFormChange} placeholder='İletişim bilgisi' />
-                  <div className='new-contact-footer'>
-                    <select name='type' className='type' value={newContactForm.type} onChange={handleNewContactFormChange}>
-                      <option value="0">Tür</option>
-                      <option value="1">Cep Telefonu</option>
-                      <option value="2">İş Telefonu</option>
-                      <option value="3">Ev Telefonu</option>
-                      <option value="4">E-Posta</option>
-                      <option value="5">İnstagram</option>
-                    </select>
-                    <button type="button" className="add-new" onClick={handleNewContactSubmit}>Ekle</button>
-                  </div>
-                </div>
+              </div>
+              {contactInfo.length > 0 || contactEditMode ?
                 <ul className="contact-information">
                   {contactEditMode ?
                     contactInfoEdited.map((info, index) =>
@@ -297,14 +297,15 @@ export default function Home() {
                     )
                   }
                 </ul>
-                {contactEditMode ?
-                  <div className="contact-edit-options">
-                    <button type="button" className="cancel-edit" onClick={handleCloseContactEditMode}>Vazgeç</button>
-                    <button type="button" className="save-edit" onClick={handleContactSubmit} disabled={updatingContacts}>Kaydet</button>
-                  </div>
-                  : <></>}
-              </div>
-              : <></>}
+                : <span className="no-information">Seçenek yok...</span>
+              }
+              {contactEditMode ?
+                <div className="contact-edit-options">
+                  <button type="button" className="cancel-edit" onClick={handleCloseContactEditMode}>Vazgeç</button>
+                  <button type="button" className="save-edit" onClick={handleContactSubmit} disabled={updatingContacts}>Kaydet</button>
+                </div>
+                : <></>}
+            </div>
           </div>
           <div className="profile-body">
             <div className="profile-nav">
