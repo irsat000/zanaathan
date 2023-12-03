@@ -252,44 +252,42 @@ exports.createPost = (req: Request, res: Response) => {
                 if (beginErr) return handleError(connection);
             });
 
-            const query = "INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 1, ?);";
+            const query = "INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 5, ?);";
             connection.query(query, [title, description, district, subCategory, userId], (qErr: any, results: any) => {
                 if (qErr) connection.rollback(() => handleError(connection));
 
                 // Get post id
-                const postId = results.insertId;
+                const postId = results.insertId as number;
 
                 // If no image is uploaded, finish it here
                 if (imageNameList.length === 0) {
                     connection.commit((commitErr: any) => {
                         if (commitErr) connection.rollback(() => handleError(connection));
 
-                        // Send postId to go to the post after it's published
+                        connection.release();
                         return res.status(200).json({ postId });
                     });
                 }
 
                 // Iterate image names to get necessary image insert queries
-                const imageQueries = imageNameList.map((file, index) => ({
-                    sql: "INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);",
-                    values: [file.name, index, postId]
-                }));
-                // Iterate over image insert queries
-                imageQueries.forEach((imageQuery, index) => {
-                    connection.query(imageQuery.sql, imageQuery.values, (qErr2: any) => {
-                        if (qErr2) connection.rollback(() => handleError(connection));
+                let imageQueries = '';
+                const imageParameters: (number | string)[] = [];
+                imageNameList.forEach((file, index) => {
+                    imageQueries += "INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
+                    imageParameters.push(file.name, index, postId);
+                });
+                // Run the image queries in one go
+                connection.query(imageQueries, imageParameters, (qErr2: any) => {
+                    if (qErr2) connection.rollback(() => handleError(connection));
 
-                        // COMMIT IN THE LAST INDEX
-                        if (index === imageQueries.length - 1) {
-                            connection.commit((commitErr: any) => {
-                                if (commitErr) connection.rollback(() => handleError(connection));
+                    // COMMIT
+                    connection.commit((commitErr: any) => {
+                        if (commitErr) connection.rollback(() => handleError(connection));
 
-                                // Send postId to go to the post after it's published
-                                return res.status(200).json({ postId });
-                            });
-                        }
+                        connection.release();
+                        return res.status(200).json({ postId });
                     });
-                })
+                });
             });
         });
     } catch (error) {
@@ -303,6 +301,7 @@ exports.updatePostStatus = (req: Request, res: Response) => {
     try {
         const body = req.body;
         // Validate the newStatusId, it can only be -> 1 | 2 | 3
+        // 4 (Kaldırıldı) and 5 (Onay bekliyor) are out of option
         if (!body || ![1, 2, 3].includes(body.newStatusId)) {
             return res.status(400).json({ error: 'Bad request' });
         }

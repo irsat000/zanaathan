@@ -11,7 +11,7 @@ import { ChevronDown, XLg } from 'react-bootstrap-icons';
 import GridLoader from 'react-spinners/GridLoader';
 import { useGStatus } from '@/context/globalContext';
 
-type CurrentStatus = 1 | 2 | 3;
+type CurrentStatus = 1 | 2 | 3 | 5;
 
 interface UserPost extends Post {
   CategoryCode: string;
@@ -74,7 +74,8 @@ export default function Home() {
   const CSMap = {
     1: 'Cevap bekliyor',
     2: 'Anlaşıldı',
-    3: 'Tamamlandı'
+    3: 'Tamamlandı',
+    5: 'Onay bekliyor'
   };
 
   // Check update menus in case one is active, needed for document click
@@ -366,9 +367,9 @@ export default function Home() {
                         }}>Güncelle<ChevronDown /></button>
                         <div className={`update-menu ${post.UpdateMenuActive ? 'active' : ''}`}>
                           <ul className='new-status-list'>
-                            <li className='cs-1' onClick={() => updateStatus(post.Id, 1)}>Cevap bekliyor</li>
-                            <li className='cs-2' onClick={() => updateStatus(post.Id, 2)}>Anlaşıldı</li>
-                            <li className='cs-3' onClick={() => updateStatus(post.Id, 3)}>Tamamlandı</li>
+                            <li className='cs-1' onClick={() => updateStatus(post.Id, 1)}>{CSMap[1]}</li>
+                            <li className='cs-2' onClick={() => updateStatus(post.Id, 2)}>{CSMap[2]}</li>
+                            <li className='cs-3' onClick={() => updateStatus(post.Id, 3)}>{CSMap[3]}</li>
                           </ul>
                         </div>
                       </div>

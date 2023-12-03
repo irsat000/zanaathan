@@ -164,12 +164,6 @@ DROP TABLE `JobPosting`;
 
 
 
-
-
-
-
-
-
 CREATE TABLE `UserBlock` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `AccountId` INT NOT NULL,
@@ -180,14 +174,24 @@ CREATE TABLE `UserBlock` (
 );
 
 
-CREATE TABLE `AdminId` (
-	`Id` INT NOT NULL AUTO_INCREMENT,
-    `Username` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `Password` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+
+
+CREATE TABLE `Role` (
+	`Id` INT NOT NULL,
+    `RoleCode` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     PRIMARY KEY (`Id`)
 );
 
-CREATE TABLE `BanLog` (
+CREATE TABLE `Admin` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `Username` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `Password` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `RoleId` INT NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Admin_Role` FOREIGN KEY (`RoleId`) REFERENCES `Role`(`Id`)
+);
+
+CREATE TABLE `UserBans` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `BannedAt` DATETIME NOT NULL,
     `LiftDate` DATETIME NOT NULL,

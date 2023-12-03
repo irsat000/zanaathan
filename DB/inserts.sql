@@ -96,7 +96,7 @@ INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(1, 'Cevap bekliyor');
 INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(2, 'Anlaşıldı');
 INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(3, 'Tamamlandı');
 INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(4, 'Kaldırıldı');
-
+INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(5, 'Onay bekliyor');
 
 
 SET SQL_SAFE_UPDATES = 0;
@@ -109,6 +109,13 @@ select * from CurrentStatus;
 
 
 
+
+INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(1, 'developer');
+INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(2, 'admin');
+INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(3, 'moderator');
+
+
+INSERT INTO `Admin`(`Username`, `Password`, `RoleId`) VALUES('', '', 2);
 
 
 

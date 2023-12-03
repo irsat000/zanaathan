@@ -60,8 +60,8 @@ const Chatbot: React.FC<{
     // Scroll action
     const scrollToBottom = () => {
         // isInitialScroll makes sure first time scroll works but manual doesn't
+        // shouldScrollToBottom makes sure new message doesn't force scroll down if the user is scrolled up a certain height
         if (messagesEndRef.current && (shouldScrollToBottom() === true || isInitialScroll)) {
-            //console.log(isInitialScroll);
             messagesEndRef.current.scrollTo({
                 top: messagesEndRef.current.scrollHeight,
                 behavior: isInitialScroll ? 'instant' : 'smooth'
@@ -242,7 +242,6 @@ const Chatbot: React.FC<{
 
             const data = JSON.parse(res);
             // status: 'success' | 'error' | 'blocked'
-            // TODO: Inform the user if error
 
             // Check if there is a block, tell the current user that they are blocked.
             // In case current user is the blocker, user is already warned during the handleMessageSubmit function

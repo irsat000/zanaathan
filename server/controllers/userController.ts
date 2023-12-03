@@ -607,7 +607,7 @@ exports.getUserProfile = (req: Request, res: Response) => {
         const userId = verifyJwt(jwt);
         if (!userId) return res.status(401).send('Not authorized');
 
-        // Fetch user's posts (excluding posts with deleted status which is 4)
+        // Fetch user's posts (excluding posts with deleted status which is 4, "Onay bekliyor/5" is okay)
         let query = `
             SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
                 (
