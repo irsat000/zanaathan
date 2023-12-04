@@ -91,7 +91,6 @@ const Template: React.FC<{
 		document.addEventListener("click", handleDocumentClick);
 
 		return () => {
-			// Probably won't go here because this is from the template
 			document.removeEventListener("click", handleDocumentClick);
 		};
 	}, [userMenuActive]);

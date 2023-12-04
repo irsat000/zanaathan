@@ -1,11 +1,12 @@
 
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import { ChevronDown } from 'react-bootstrap-icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useUser } from '@/context/userContext';
-import { readJwtCookie } from '@/lib/utils/userUtils';
+import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils';
+import { useContacts } from '@/context/contactsContext';
 
 const PanelTemplate: React.FC<{
     children: ReactNode,
@@ -16,6 +17,10 @@ const PanelTemplate: React.FC<{
 
     // User context
     const { userData, setUserData } = useUser();
+    // User Contacts context
+    const { setUserContacts } = useContacts();
+
+
     // Decode jwt and login if token is still there
     useEffect(() => {
         const info = readJwtCookie();
@@ -25,6 +30,45 @@ const PanelTemplate: React.FC<{
             router.push('/panel/giris');
         }
     }, []);
+
+    // Logout function
+    // Empties the user context and removes the cookie
+    const handleSignOut = () => {
+        setUserData(null);
+        removeJwtCookie();
+        setUserContacts([]);
+        // If facebook is connected, logout from FB aswell
+        try {
+            window.FB.getLoginStatus(function (response: any) {
+                if (response.status === 'connected') {
+                    window.FB.logout();
+                }
+            });
+        } catch (e) { }
+        router.push('/');
+    }
+
+    // User menu drop down
+    const [userMenuActive, setUserMenuActive] = useState(false);
+
+    // Handle clicking outside user-menu
+    useEffect(() => {
+        const handleDocumentClick = (e: any) => {
+            // Check if the click target is outside of the user-menu dropdown div and user-menu button
+            if (userMenuActive
+                && !e.target.closest('.admin-container')
+                && !e.target.closest('.user-menu-button')) {
+                setUserMenuActive(false);
+            }
+        };
+
+        // Record clicks
+        document.addEventListener("click", handleDocumentClick);
+
+        return () => {
+            document.removeEventListener("click", handleDocumentClick);
+        };
+    }, [userMenuActive]);
 
     return (
         <>
@@ -56,8 +100,16 @@ const PanelTemplate: React.FC<{
                     <header>
                         <h2 className='tab-name'>{tabName}</h2>
                         <div className="admin-container">
-                            <span>{userData?.username}</span>
-                            <ChevronDown />
+                            <button type="button" className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>
+                                <span>{userData?.username}</span>
+                                <ChevronDown />
+                            </button>
+                            <div className={`user-menu ${userMenuActive ? 'active' : ''}`}>
+                                <ul className='user-menu-list'>
+                                    <li><Link href={'/'}>Siteye dön</Link></li>
+                                </ul>
+                                <button type='button' className='sign-out-button' onClick={handleSignOut}>Çıkış yap</button>
+                            </div>
                         </div>
                     </header>
                     <main>
