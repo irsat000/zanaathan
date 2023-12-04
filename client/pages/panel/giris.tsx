@@ -49,7 +49,7 @@ const AdminLogin = () => {
                 // inform the user about successful login
                 setAuthModalSuccess('Giriş başarılı!');
                 // close modal after a second
-                setTimeout(() => router.push('/panel/admin'), 1000);
+                setTimeout(() => router.push('/panel/onay-bekleyenler'), 1000);
             })
             .catch((res) => {
                 if ([400, 401, 404].includes(res.status)) setAuthModalWarning('*Hata*');

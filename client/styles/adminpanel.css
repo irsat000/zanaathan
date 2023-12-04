@@ -65,36 +65,66 @@
   flex-direction: row;
   background-color: #ffffff;
   min-height: 100vh;
+  position: relative;
 }
-.panel-page .panel-nav {
+.panel-page .panel-nav-container.active {
+  display: flex;
+}
+.panel-page .panel-nav-container {
   flex-shrink: 0;
+  display: none;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+@keyframes nav-slide-in {
+  from {
+    left: -100%;
+  }
+}
+.panel-page .panel-nav-container .panel-nav {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  box-shadow: 5px 0px 16px -9px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
+  z-index: 2;
+  animation: nav-slide-in 0.1s ease-in-out forwards;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   border-right: 1px solid #cbcbcb;
 }
-.panel-page .panel-nav .nav-logo {
+.panel-page .panel-nav-container .panel-nav .nav-logo {
   font-size: 1.2rem;
   font-weight: 500;
   font-family: "Poppins", sans-serif;
   padding: 20px 16px;
 }
-.panel-page .panel-nav > ul li.active a {
+.panel-page .panel-nav-container .panel-nav > ul li.active a {
   background-color: #5712a1;
   color: #ffffff;
   pointer-events: none;
 }
-.panel-page .panel-nav > ul li {
+.panel-page .panel-nav-container .panel-nav > ul li {
   margin-bottom: 6px;
 }
-.panel-page .panel-nav > ul li a {
+.panel-page .panel-nav-container .panel-nav > ul li a {
   width: 100%;
   padding: 10px 24px 10px 14px;
   border-radius: 18px;
   cursor: pointer;
   color: #525252;
 }
-.panel-page .panel-nav > ul li a:hover {
+.panel-page .panel-nav-container .panel-nav > ul li a:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 .panel-page .panel {
@@ -109,7 +139,12 @@
   justify-content: space-between;
   align-items: center;
 }
+.panel-page .panel header .drawer-button {
+  display: flex;
+  font-size: 2.4rem;
+}
 .panel-page .panel header h2.tab-name {
+  display: none;
   font-size: 1.2rem;
   font-weight: 500;
 }
@@ -176,4 +211,33 @@
   display: flex;
   flex-direction: column;
   padding: 16px;
+}
+.panel-page .panel main h2.tab-name {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .panel-page .panel-nav-container {
+    display: flex;
+    position: unset;
+    background-color: unset;
+    width: unset;
+    height: unset;
+  }
+  .panel-page .panel-nav-container .panel-nav {
+    position: unset;
+    box-shadow: unset;
+  }
+  .panel-page .panel header h2.tab-name {
+    display: block;
+  }
+  .panel-page .panel header .drawer-button {
+    display: none;
+  }
+  .panel-page .panel main h2.tab-name {
+    display: none;
+  }
 }/*# sourceMappingURL=adminpanel.css.map */

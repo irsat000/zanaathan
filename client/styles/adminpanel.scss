@@ -73,45 +73,83 @@
     flex-direction: row;
     background-color: #ffffff;
     min-height: 100vh;
+    position: relative;
 
-    .panel-nav {
-        flex-shrink: 0;
+    .panel-nav-container.active {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        border-right: 1px solid #cbcbcb;
+    }
 
-        .nav-logo {
-            font-size: 1.2rem;
-            font-weight: 500;
-            font-family: 'Poppins', sans-serif;
-            padding: 20px 16px;
+    .panel-nav-container {
+        flex-shrink: 0;
+
+        display: none;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+
+        @keyframes nav-slide-in {
+            from {
+                left: -100%;
+            }
         }
 
-        >ul {
-            li.active a {
-                background-color: #5712a1;
-                color: #ffffff;
-                pointer-events: none;
+        .panel-nav {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            -webkit-box-shadow: 5px 0px 16px -9px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 5px 0px 16px -9px rgba(0, 0, 0, 0.2);
+            box-shadow: 5px 0px 16px -9px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff;
+            z-index: 2;
+            animation: nav-slide-in 0.1s ease-in-out forwards;
+
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid #cbcbcb;
+
+            .nav-logo {
+                font-size: 1.2rem;
+                font-weight: 500;
+                font-family: 'Poppins', sans-serif;
+                padding: 20px 16px;
             }
 
-            li {
-                margin-bottom: 6px;
+            >ul {
+                li.active a {
+                    background-color: #5712a1;
+                    color: #ffffff;
+                    pointer-events: none;
+                }
 
-                a {
-                    width: 100%;
-                    padding: 10px 24px 10px 14px;
-                    border-radius: 18px;
-                    cursor: pointer;
-                    color: #525252;
+                li {
+                    margin-bottom: 6px;
 
-                    &:hover {
-                        background-color: rgba(0, 0, 0, 0.05);
+                    a {
+                        width: 100%;
+                        padding: 10px 24px 10px 14px;
+                        border-radius: 18px;
+                        cursor: pointer;
+                        color: #525252;
+
+                        &:hover {
+                            background-color: rgba(0, 0, 0, 0.05);
+                        }
                     }
                 }
             }
         }
     }
+
 
     .panel {
         flex-grow: 1;
@@ -125,7 +163,13 @@
             justify-content: space-between;
             align-items: center;
 
+            .drawer-button {
+                display: flex;
+                font-size: 2.4rem;
+            }
+
             h2.tab-name {
+                display: none;
                 font-size: 1.2rem;
                 font-weight: 500;
             }
@@ -208,6 +252,68 @@
             display: flex;
             flex-direction: column;
             padding: 16px;
+
+            h2.tab-name {
+                font-size: 1.2rem;
+                font-weight: 500;
+                margin-bottom: 20px;
+                text-align: center;
+            }
         }
     }
 }
+
+
+
+
+
+// Most phones
+@media (min-width: 340px) {}
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+    .panel-page {
+        .panel-nav-container {
+            display: flex;
+            position: unset;
+            background-color: unset;
+            width: unset;
+            height: unset;
+
+            .panel-nav {
+                position: unset;
+                box-shadow: unset;
+            }
+        }
+
+        .panel {
+            header {
+                h2.tab-name {
+                    display: block;
+                }
+
+                .drawer-button {
+                    display: none;
+                }
+            }
+
+            main {
+                h2.tab-name {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {}
+
+// X-Large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {}
+
+// XX-Large devices (larger desktops, 1400px and up)
+@media (min-width: 1400px) {}

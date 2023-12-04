@@ -1,7 +1,7 @@
 
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
-import { ChevronDown } from 'react-bootstrap-icons';
+import { ChevronDown, List } from 'react-bootstrap-icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useUser } from '@/context/userContext';
@@ -70,6 +70,8 @@ const PanelTemplate: React.FC<{
         };
     }, [userMenuActive]);
 
+    const [drawerActive, setDrawerActive] = useState(false);
+
     return (
         <>
             <Head>
@@ -79,25 +81,30 @@ const PanelTemplate: React.FC<{
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <div className='panel-page'>
-                <nav className='panel-nav'>
-                    <h2 className='nav-logo'>Zanaat.Han Admin</h2>
-                    <ul>
-                        <li className={`${currentPath === '/panel/onay-bekleyenler' ? 'active' : ''}`}>
-                            <Link href={'/panel/onay-bekleyenler'}>Onay bekleyenler</Link>
-                        </li>
-                        <li className={`${currentPath === '/panel/raporlar' ? 'active' : ''}`}>
-                            <Link href={'/panel/raporlar'}>Raporlar</Link>
-                        </li>
-                        <li className={`${currentPath === '/panel/kullanicilar' ? 'active' : ''}`}>
-                            <Link href={'/panel/kullanicilar'}>Kullanıcıları yönet</Link>
-                        </li>
-                        <li className={`${currentPath === '/panel/admin' ? 'active' : ''}`}>
-                            <Link href={'/panel/admin'}>Hesap</Link>
-                        </li>
-                    </ul>
-                </nav>
+                <div className={`panel-nav-container ${drawerActive ? 'active' : ''}`} onClick={() => setDrawerActive(!drawerActive)}>
+                    <nav className='panel-nav' onClick={(e) => e.stopPropagation()}>
+                        <h2 className='nav-logo'>Zanaat.Han Admin</h2>
+                        <ul>
+                            <li className={`${currentPath === '/panel/onay-bekleyenler' ? 'active' : ''}`}>
+                                <Link href={'/panel/onay-bekleyenler'}>Onay bekleyenler</Link>
+                            </li>
+                            <li className={`${currentPath === '/panel/raporlar' ? 'active' : ''}`}>
+                                <Link href={'/panel/raporlar'}>Raporlar</Link>
+                            </li>
+                            <li className={`${currentPath === '/panel/kullanicilar' ? 'active' : ''}`}>
+                                <Link href={'/panel/kullanicilar'}>Kullanıcıları yönet</Link>
+                            </li>
+                            <li className={`${currentPath === '/panel/admin' ? 'active' : ''}`}>
+                                <Link href={'/panel/admin'}>Hesap</Link>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
                 <div className='panel'>
                     <header>
+                        <button type='button' className='drawer-button' onClick={() => setDrawerActive(true)}>
+                            <List />
+                        </button>
                         <h2 className='tab-name'>{tabName}</h2>
                         <div className="admin-container">
                             <button type="button" className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>
@@ -113,6 +120,7 @@ const PanelTemplate: React.FC<{
                         </div>
                     </header>
                     <main>
+                        <h2 className='tab-name'>{tabName}</h2>
                         {children}
                     </main>
                 </div>
