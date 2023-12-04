@@ -1,9 +1,11 @@
 
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import Head from 'next/head'
 import { ChevronDown } from 'react-bootstrap-icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useUser } from '@/context/userContext';
+import { readJwtCookie } from '@/lib/utils/userUtils';
 
 const PanelTemplate: React.FC<{
     children: ReactNode,
@@ -11,6 +13,18 @@ const PanelTemplate: React.FC<{
 }> = ({ children, tabName }) => {
     const router = useRouter();
     const currentPath = router.pathname;
+
+    // User context
+    const { userData, setUserData } = useUser();
+    // Decode jwt and login if token is still there
+    useEffect(() => {
+        const info = readJwtCookie();
+        if (info && info.roles && info.roles.length > 0) {
+            setUserData(info);
+        } else {
+            router.push('/panel/giris');
+        }
+    }, []);
 
     return (
         <>
@@ -42,7 +56,7 @@ const PanelTemplate: React.FC<{
                     <header>
                         <h2 className='tab-name'>{tabName}</h2>
                         <div className="admin-container">
-                            <span>İrşatAkdeniz</span>
+                            <span>{userData?.username}</span>
                             <ChevronDown />
                         </div>
                     </header>

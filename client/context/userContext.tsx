@@ -25,6 +25,7 @@ export interface UserDataType {
     sub: number;
     username: string;
     avatar: string | null;
+    roles?: string[];
 }
 
 const UserData = React.createContext<{

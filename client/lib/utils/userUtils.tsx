@@ -2,7 +2,7 @@
 import Cookies from 'js-cookie';
 import { apiUrl } from './helperUtils';
 import { UserContact } from '@/context/contactsContext';
-import { useGStatus } from '@/context/globalContext';
+import { UserDataType } from '@/context/userContext';
 const jwt = require('jsonwebtoken');
 
 export const decodedJwt = (token: string) => {
@@ -25,7 +25,7 @@ export const readJwtCookie = () => {
         try {
             const decoded = decodedJwt(jwt);
             if (Date.now() <= decoded?.exp) {
-                return decoded;
+                return decoded as UserDataType;
             }
         } catch (error) {
             console.error('Error while reading credentials');

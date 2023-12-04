@@ -1,9 +1,62 @@
 import Head from "next/head";
 import PanelTemplate from "./components/template";
+import { apiUrl } from "@/lib/utils/helperUtils";
+import { decodedJwt, storeJwt } from "@/lib/utils/userUtils";
+import { useEffect, useState } from "react";
+import { useUser } from "@/context/userContext";
+import { useRouter } from "next/router";
 
 
 
-export default function AdminLogin() {
+const AdminLogin = () => {
+    const router = useRouter()
+    // Get user context
+    const { userData, setUserData } = useUser();
+    // Auth modal - informing the user
+    const [authModalWarning, setAuthModalWarning] = useState<string | null>(null);
+    const [authModalSuccess, setAuthModalSuccess] = useState<string | null>(null);
+    // Form data state
+    const [loginFormData, setLoginFormData] = useState({
+        username: '',
+        password: ''
+    });
+
+    // Update login form values
+    const handleLoginFormChange = (e: any) => {
+        const { name, value } = e.target;
+        setLoginFormData((prevData: any) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
+
+    // Login
+    const handleLoginFormSubmit = (e: any) => {
+        e.preventDefault();
+        fetch(`${apiUrl}/sign-in?type=admin`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+            body: JSON.stringify(loginFormData)
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(data => {
+                // store jwt in cookies
+                storeJwt(data.JWT);
+                // set user data in user context
+                setUserData(decodedJwt(data.JWT));
+                // remove warning on modal if there is any
+                setAuthModalWarning(null);
+                // inform the user about successful login
+                setAuthModalSuccess('Giriş başarılı!');
+                // close modal after a second
+                setTimeout(() => router.push('/panel/admin'), 1000);
+            })
+            .catch((res) => {
+                if ([400, 401, 404].includes(res.status)) setAuthModalWarning('*Hata*');
+                else setAuthModalWarning('*Bağlantıda hata*');
+            });
+    }
+
     return (
         <>
             <Head>
@@ -14,14 +67,20 @@ export default function AdminLogin() {
             </Head>
             <div className="admin-login-page">
                 <h1>Zanaat.Han</h1>
-                <form className="login-form" onSubmit={() => { }}>
+                <form className="login-form" onSubmit={handleLoginFormSubmit}>
                     <h3>Admin Girişi</h3>
-                    <input type="text" name="username" placeholder="Admin adı" />
-                    <input type="text" name="password" placeholder="Şifre" />
+                    <input type="text" name="username" placeholder="Admin adı" onChange={handleLoginFormChange} />
+                    <input type="text" name="password" placeholder="Şifre" onChange={handleLoginFormChange} />
                     <button type="submit">Giriş</button>
-                    {/*<span className="warning"></span>*/}
+                    {authModalSuccess ?
+                        <span className='success-text'>{authModalSuccess}</span>
+                        : authModalWarning &&
+                        <span className='warning-text'>{authModalWarning}</span>
+                    }
                 </form>
             </div>
         </>
     )
 }
+
+export default AdminLogin;

@@ -108,8 +108,6 @@ const AuthModal: React.FC<{
             });
     }
 
-    //const realOAuthGoogleButton = useRef<Element | null>(null);
-
     return (
         <div className={`auth-modal-container modal-container ${authModalActive !== 'none' ? 'active' : ''}`} onMouseDown={() => handleAuthModal('none')}>
             <div className='auth-modal' onMouseDown={(e) => { e.stopPropagation() }}>

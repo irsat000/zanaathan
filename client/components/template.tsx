@@ -244,6 +244,9 @@ const Template: React.FC<{
 									</Link>
 									<ul className='user-menu-list'>
 										<li><Link href={'/ayarlar'}>Ayarlar</Link></li>
+										{userData.roles && userData.roles.length > 0 ?
+											<li><Link href={'/panel/onay-bekleyenler'}>Panel</Link></li>
+											: <></>}
 									</ul>
 									<button type='button' className='sign-out-button' onClick={handleSignOut}>Çıkış yap</button>
 								</div>

@@ -182,14 +182,15 @@ CREATE TABLE `Role` (
     PRIMARY KEY (`Id`)
 );
 
-CREATE TABLE `Admin` (
+CREATE TABLE `AccountRole` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
-    `Username` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `Password` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `AccountId` INT NOT NULL,
     `RoleId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Admin_Role` FOREIGN KEY (`RoleId`) REFERENCES `Role`(`Id`)
+    CONSTRAINT `FK_AccountRole_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
+    CONSTRAINT `FK_AccountRole_Role` FOREIGN KEY (`RoleId`) REFERENCES `Role`(`Id`)
 );
+
 
 CREATE TABLE `UserBans` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
@@ -200,5 +201,5 @@ CREATE TABLE `UserBans` (
     `AdminId` INT NOT NULL,
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_BannedAccount_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_BannedAccount_Admin` FOREIGN KEY (`AdminId`) REFERENCES `Admin`(`Id`)
+    CONSTRAINT `FK_BannedAccount_Admin` FOREIGN KEY (`AdminId`) REFERENCES `Account`(`Id`)
 );

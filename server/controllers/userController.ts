@@ -7,7 +7,7 @@ const path = require('path');
 const appDir = path.dirname(require.main?.filename);
 const { OAuth2Client } = require('google-auth-library');
 import { isNullOrEmpty } from '../utils/helperUtils';
-import { createJwt, verifyJwt } from '../utils/userUtils';
+import { createJwt, verifyJwt, JWT } from '../utils/userUtils';
 
 const pool = require('../db/db');
 const client = new OAuth2Client();
@@ -54,15 +54,44 @@ exports.signin = (req: Request, res: Response) => {
                 }
 
                 if (isMatch) {
-                    // Generate JWT
-                    const JWT = createJwt({
+                    // Get login type
+                    const { type } = req.query as {
+                        type?: string
+                    }
+                    const userInfo: JWT = {
                         sub: user.Id,
                         username: user.Username,
                         fullName: user.FullName,
                         email: user.Email,
                         avatar: user.Avatar
-                    });
-                    return res.status(200).json({ JWT });
+                    }
+                    // Check authority if the type is admin
+                    if (type === 'admin') {
+                        const query = `
+                            SELECT Role.RoleCode AS RoleCode
+                            FROM AccountRole
+                            LEFT JOIN Role ON Role.Id = AccountRole.RoleId
+                            WHERE AccountId = ?;
+                        `;
+                        pool.query(query, [user.Id], (qErr: any, results: any) => {
+                            if (qErr) {
+                                return res.status(500).json({ error: 'Query error' });
+                            }
+                            // Not admin
+                            if (results.length === 0) {
+                                return res.status(401).json({ error: 'Not authorized' });
+                            }
+                            // Get roles with a map and add it to the jwt
+                            userInfo.roles = results.map((obj: { RoleCode: string }) => obj.RoleCode);
+                            // Generate JWT
+                            const JWT = createJwt(userInfo);
+                            return res.status(200).json({ JWT });
+                        });
+                    } else {
+                        // Generate JWT
+                        const JWT = createJwt(userInfo);
+                        return res.status(200).json({ JWT });
+                    }
                 } else {
                     return res.status(401).json({ error: 'Invalid email or password' });
                 }
