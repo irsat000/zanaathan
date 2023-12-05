@@ -109,9 +109,7 @@ export default function Category() {
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then((data) => {
-        setPostList(prev => {
-          return data.posts // For infinite scroll -> [...prev, ...data.posts]
-        });
+        setPostList(data.posts); // For infinite scroll -> [...prev, ...data.posts]
         setPostTotalCount(data.postCount);
       })
       .catch((res) => {

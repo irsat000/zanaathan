@@ -219,6 +219,76 @@
   text-align: center;
 }
 
+.approval-listing {
+  margin-top: 20px;
+  display: grid;
+  gap: 24px 3%;
+  grid-template-columns: repeat(1, 1fr);
+}
+.approval-listing .post {
+  display: flex;
+  flex-direction: column;
+}
+.approval-listing .post .images {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.05);
+  flex-grow: 1;
+  margin-bottom: 10px;
+}
+.approval-listing .post .images .image-carousel img.carousel-image.active {
+  display: block;
+}
+.approval-listing .post .images .image-carousel img.carousel-image {
+  display: none;
+  aspect-ratio: 1/0.8;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: center;
+     object-position: center;
+}
+.approval-listing .post .title {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+.approval-listing .post .title:hover {
+  text-decoration: underline;
+}
+.approval-listing .post .actions {
+  display: flex;
+  justify-content: space-around;
+}
+.approval-listing .post .actions button {
+  border-radius: 4px;
+  padding: 5px 10px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  color: #ffffff;
+  transition: all 0.1s ease-in-out;
+}
+.approval-listing .post .actions button.accept-button {
+  background-color: var(--button2-1);
+}
+.approval-listing .post .actions button.accept-button:hover {
+  background-color: var(--button2-2);
+}
+.approval-listing .post .actions button.reject-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--button3-2);
+}
+.approval-listing .post .actions button.reject-menu-button:hover {
+  background-color: var(--button3-1);
+}
+
 @media (min-width: 768px) {
   .panel-page .panel-nav-container {
     display: flex;
@@ -239,5 +309,15 @@
   }
   .panel-page .panel main h2.tab-name {
     display: none;
+  }
+  .approval-listing {
+    padding: 0 10px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1200px) {
+  .approval-listing {
+    padding: 0 20px;
+    grid-template-columns: repeat(3, 1fr);
   }
 }/*# sourceMappingURL=adminpanel.css.map */

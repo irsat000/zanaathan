@@ -50,7 +50,7 @@ WHERE AccountId = ? AND Id = ?;
 # Get contact information of a user
 SELECT CI.Body AS Body, CI.ContactTypeId AS Type
 FROM ContactInformation CI
-WHERE CI.AccountId = ?
+WHERE CI.AccountId = ?;
 
 
 

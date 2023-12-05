@@ -57,7 +57,7 @@ export default function Home() {
 
         // Check jwt
         const jwt = fetchJwt();
-        if (!jwt) return null;
+        if (!jwt) return;
 
         fetch(`${apiUrl}/edit-profile`, {
             method: "PUT",
@@ -91,7 +91,7 @@ export default function Home() {
     const handleAvatarSubmit = (file: File) => {
         // Check jwt
         const jwt = fetchJwt();
-        if (!jwt) return null;
+        if (!jwt) return;
         // Get image
         const avatarForm = new FormData();
         avatarForm.append('image', file);
@@ -122,7 +122,7 @@ export default function Home() {
     const handleDeleteAvatar = () => {
         // Check jwt
         const jwt = fetchJwt();
-        if (!jwt) return null;
+        if (!jwt) return;
 
         fetch(`${apiUrl}/delete-avatar`, {
             method: "PUT",

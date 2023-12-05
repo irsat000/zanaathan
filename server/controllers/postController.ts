@@ -37,7 +37,7 @@ exports.getPosts = (req: Request, res: Response) => {
 
         // Start WHERE after JOIN(s)
         // Filter by category [Mandatory]
-        query += ` WHERE CurrentStatusId = 1 AND SubCategory.CategoryId = ?`;
+        query += ` WHERE CurrentStatusId IN (1, 2, 3) AND SubCategory.CategoryId = ?`;
         parameters.push(category);
 
         // Filter by sub categories

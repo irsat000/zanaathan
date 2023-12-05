@@ -30,10 +30,12 @@ const chatRoutes = require('./routes/chatRoutes');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const imageRoutes = require('./routes/imageRoutes');
+const panelRoutes = require('./routes/panelRoutes');
 app.use('/api', chatRoutes);
 app.use('/api', userRoutes);
 app.use('/api', postRoutes);
 app.use('/api', imageRoutes);
+app.use('/api', panelRoutes);
 
 // Database pool
 const pool = require('./db/db');

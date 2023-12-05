@@ -264,6 +264,88 @@
 }
 
 
+.approval-listing {
+    margin-top: 20px;
+    display: grid;
+    gap: 24px 3%;
+    grid-template-columns: repeat(1, 1fr);
+
+    .post {
+        display: flex;
+        flex-direction: column;
+
+        .images {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.05);
+            flex-grow: 1;
+            margin-bottom: 10px;
+
+            .image-carousel {
+                img.carousel-image.active {
+                    display: block;
+                }
+
+                img.carousel-image {
+                    display: none;
+                    aspect-ratio: 1/0.8;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center; // browser default
+                }
+            }
+        }
+
+        .title {
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 16px;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-around;
+
+            button {
+                border-radius: 4px;
+                padding: 5px 10px;
+                border: none;
+                font-size: 1rem;
+                cursor: pointer;
+                font-family: 'Fira Sans', sans-serif;
+                font-weight: 300;
+                color: #ffffff;
+                transition: all 0.1s ease-in-out;
+            }
+
+            button.accept-button {
+                background-color: var(--button2-1);
+
+                &:hover {
+                    background-color: var(--button2-2);
+                }
+            }
+
+            button.reject-menu-button {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                background-color: var(--button3-2);
+
+                &:hover {
+                    background-color: var(--button3-1);
+                }
+            }
+        }
+    }
+}
+
 
 
 
@@ -307,13 +389,23 @@
             }
         }
     }
+
+    .approval-listing {
+        padding: 0 10px;
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 // Large devices (desktops, 992px and up)
 @media (min-width: 992px) {}
 
 // X-Large devices (large desktops, 1200px and up)
-@media (min-width: 1200px) {}
+@media (min-width: 1200px) {
+    .approval-listing {
+        padding: 0 20px;
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
 
 // XX-Large devices (larger desktops, 1400px and up)
 @media (min-width: 1400px) {}
