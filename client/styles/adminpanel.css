@@ -249,6 +249,53 @@
      object-fit: cover;
   -o-object-position: center;
      object-position: center;
+  cursor: pointer;
+}
+.approval-listing .post .images .prev-img,
+.approval-listing .post .images .next-img {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  padding: 5px;
+  font-size: 1.9rem;
+  border-radius: 50%;
+  box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+  color: #ffffff;
+  z-index: 1;
+}
+.approval-listing .post .images .prev-img {
+  left: 8px;
+}
+.approval-listing .post .images .next-img {
+  right: 8px;
+}
+.approval-listing .post .images .carousel-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 10px 5px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.approval-listing .post .images .carousel-nav span.dot {
+  border-radius: 50%;
+  padding: 4px;
+  border: 1px solid #000000;
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+}
+.approval-listing .post .images .carousel-nav span.dot.active {
+  background-color: #ff0000;
+  border: 1px solid #ff0000;
 }
 .approval-listing .post .title {
   font-size: 1.1rem;

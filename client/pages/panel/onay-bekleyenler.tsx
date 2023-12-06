@@ -3,7 +3,7 @@ import Image from 'next/image'
 import PanelTemplate from "./components/template";
 import { apiUrl, postImageLink } from "@/lib/utils/helperUtils";
 import { fetchJwt } from "@/lib/utils/userUtils";
-import { ChevronDown } from "react-bootstrap-icons";
+import { CaretLeft, CaretRight, ChevronDown } from "react-bootstrap-icons";
 import Link from "next/link";
 
 
@@ -34,11 +34,20 @@ export default function ApprovingPosts() {
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
-                const sanatizePosts = data.posts.map((p: any) => ({ ...p, Images: p.Images.split(';'), ActiveImage: 0 }))
+                const sanatizePosts = data.posts.map((p: any) => ({ ...p, Images: p.Images.split(','), ActiveImage: 0 }))
                 setPosts(sanatizePosts)
             })
             .catch(err => alert('Hata oluştu!'))
     }, [])
+
+    const handleSwipeImage = (pIndex: number, dir: 'r' | 'l') => {
+        const updated = [...posts]
+        const post = updated.find(p => p.Id === pIndex)!
+        post.ActiveImage = dir === 'r'
+            ? (post.ActiveImage + 1) % post.Images.length
+            : (post.ActiveImage - 1 + post.Images.length) % post.Images.length
+        setPosts(updated)
+    }
 
     return (
         <PanelTemplate tabName='Onay bekleyen gönderiler'>
@@ -47,6 +56,15 @@ export default function ApprovingPosts() {
                     posts.map((p: ApprovePost) =>
                         <div className="post">
                             <div className="images">
+                                {p.Images.length > 1 ? <>
+                                    <button type="button" className="prev-img" onClick={() => handleSwipeImage(p.Id, 'l')}><CaretLeft /></button>
+                                    <button type="button" className="next-img" onClick={() => handleSwipeImage(p.Id, 'r')}><CaretRight /></button>
+                                    <div className="carousel-nav">
+                                        {p.Images.map((img, i) =>
+                                            <span className={`dot ${p.ActiveImage === i ? 'active' : ''}`}></span>
+                                        )}
+                                    </div>
+                                </> : <></>}
                                 <div className="image-carousel">
                                     {p.Images.map((img, i) =>
                                         <Image
