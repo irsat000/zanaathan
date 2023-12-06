@@ -35,7 +35,21 @@ exports.signin = (req: Request, res: Response) => {
         const password = body.password;
 
         // Run the query
-        const query = 'SELECT Id, Username, FullName, Email, Avatar, Password FROM Account WHERE Username = ? AND OAuthProviderId IS NULL;';
+        const query = `
+            SELECT
+                A.Id,
+                Username,
+                FullName,
+                Email,
+                Avatar,
+                Password,
+                GROUP_CONCAT(Role.RoleCode) AS Roles
+            FROM Account AS A
+            LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
+            LEFT JOIN Role ON Role.Id = AccountRole.RoleId
+            WHERE Username = ? AND OAuthProviderId IS NULL
+            GROUP BY A.Id;
+        `;
         pool.query(query, [username], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
@@ -54,44 +68,25 @@ exports.signin = (req: Request, res: Response) => {
                 }
 
                 if (isMatch) {
-                    // Get login type
-                    const { type } = req.query as {
-                        type?: string
-                    }
                     const userInfo: JWT = {
                         sub: user.Id,
                         username: user.Username,
                         fullName: user.FullName,
                         email: user.Email,
-                        avatar: user.Avatar
+                        avatar: user.Avatar,
+                        roles: user.Roles ? user.Roles.split(',') : undefined
+                    }
+                    // Get login type
+                    const { type } = req.query as {
+                        type?: string
                     }
                     // Check authority if the type is admin
-                    if (type === 'admin') {
-                        const query = `
-                            SELECT Role.RoleCode AS RoleCode
-                            FROM AccountRole
-                            LEFT JOIN Role ON Role.Id = AccountRole.RoleId
-                            WHERE AccountId = ?;
-                        `;
-                        pool.query(query, [user.Id], (qErr: any, results: any) => {
-                            if (qErr) {
-                                return res.status(500).json({ error: 'Query error' });
-                            }
-                            // Not admin
-                            if (results.length === 0) {
-                                return res.status(401).json({ error: 'Not authorized' });
-                            }
-                            // Get roles with a map and add it to the jwt
-                            userInfo.roles = results.map((obj: { RoleCode: string }) => obj.RoleCode);
-                            // Generate JWT
-                            const JWT = createJwt(userInfo);
-                            return res.status(200).json({ JWT });
-                        });
-                    } else {
-                        // Generate JWT
-                        const JWT = createJwt(userInfo);
-                        return res.status(200).json({ JWT });
+                    if (type === 'admin' && userInfo.roles!.length === 0) {
+                        return res.status(401).json({ error: 'Not authorized' });
                     }
+                    // Generate JWT
+                    const JWT = createJwt(userInfo);
+                    return res.status(200).json({ JWT });
                 } else {
                     return res.status(401).json({ error: 'Invalid email or password' });
                 }
@@ -100,7 +95,7 @@ exports.signin = (req: Request, res: Response) => {
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
-};
+}
 
 
 exports.signup = (req: Request, res: Response) => {
@@ -162,7 +157,7 @@ exports.signup = (req: Request, res: Response) => {
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
-};
+}
 
 
 // TODO: Ask if they are nullable
@@ -171,7 +166,7 @@ interface GoogleUser {
     email: string;
     name: string;
     picture: string | null;
-};
+}
 
 exports.authGoogle = (req: Request, res: Response) => {
     try {
@@ -204,7 +199,12 @@ exports.authGoogle = (req: Request, res: Response) => {
             .then(() => {
                 // Check if user exists
                 const checkQuery = `
-                    SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE ExternalId = ? && OAuthProviderId = 1;
+                    SELECT Id, Username, FullName, Email, Avatar,
+                        GROUP_CONCAT(Role.RoleCode) AS Roles
+                    FROM Account
+                    LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
+                    LEFT JOIN Role ON Role.Id = AccountRole.RoleId
+                    WHERE ExternalId = ? && OAuthProviderId = 1;
                 `;
                 pool.query(checkQuery, [user.sub], async (qErr: any, results: any) => {
                     if (qErr) {
@@ -222,7 +222,8 @@ exports.authGoogle = (req: Request, res: Response) => {
                             username: existing.Username,
                             fullName: existing.FullName,
                             email: existing.Email,
-                            avatar: existing.Avatar
+                            avatar: existing.Avatar,
+                            roles: existing.Roles ? existing.Roles.split(',') : undefined
                         });
 
                         return res.status(200).json({ JWT });
@@ -269,7 +270,7 @@ exports.authGoogle = (req: Request, res: Response) => {
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
-};
+}
 
 
 exports.authFacebook = (req: Request, res: Response) => {
@@ -287,7 +288,12 @@ exports.authFacebook = (req: Request, res: Response) => {
             .then(data => {
                 // Check if user exists
                 const checkQuery = `
-                    SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE ExternalId = ? && OAuthProviderId = 2;
+                    SELECT Id, Username, FullName, Email, Avatar,
+                        GROUP_CONCAT(Role.RoleCode) AS Roles
+                    FROM Account
+                    LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
+                    LEFT JOIN Role ON Role.Id = AccountRole.RoleId
+                    WHERE ExternalId = ? && OAuthProviderId = 2;
                 `;
                 pool.query(checkQuery, [data.id], async (qErr: any, results: any) => {
                     if (qErr) {
@@ -305,7 +311,8 @@ exports.authFacebook = (req: Request, res: Response) => {
                             username: existing.Username,
                             fullName: existing.FullName,
                             email: existing.Email,
-                            avatar: existing.Avatar
+                            avatar: existing.Avatar,
+                            roles: existing.Roles ? existing.Roles.split(',') : undefined
                         });
 
                         return res.status(200).json({ JWT });
@@ -377,7 +384,7 @@ async function fetchAndWriteImage(imgLink: string) {
     }
 }
 
-/* Will be used for target user's info rather than "my info"
+/* May be used for target user's info rather than "my info"
 exports.getUserInfo = (req: Request, res: Response) => {
     try {
         // Verify and decode the token

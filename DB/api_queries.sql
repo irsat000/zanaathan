@@ -3,13 +3,23 @@
 SELECT Id, Username, FullName, Email, Avatar, Password FROM Account WHERE Username = '' AND OAuthProviderId IS NULL;
 
 # Check existing when sign up
-SELECT * FROM Account WHERE Username = '' OR (Email = '' AND IsEmailValid = 1);
+SELECT * FROM Account WHERE Username = ? OR (Email = ? AND IsEmailValid = 1);
+
 # Sign up normally
 INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
 VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL);
 
-# Check existing external account
-SELECT Id, Username, FullName, Email FROM Account WHERE ExternalId = 0 && OAuthProviderId = 0;
+# Check existing external account (OAUTH)
+SELECT Id, Username, FullName, Email FROM Account WHERE ExternalId = ? && OAuthProviderId = 0;
+
+# Oauth with roles
+SELECT Id, Username, FullName, Email, Avatar,
+	GROUP_CONCAT(Role.RoleCode) AS Roles
+FROM Account
+LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
+LEFT JOIN Role ON Role.Id = AccountRole.RoleId
+WHERE ExternalId = ? AND OAuthProviderId = 0;
+
 # Signup with external account
 INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
 VALUES (?, ?, ?, ?, NULL, ?, ?, ?);
