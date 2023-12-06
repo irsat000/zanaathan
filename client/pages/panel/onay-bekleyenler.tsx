@@ -82,12 +82,12 @@ export default function ApprovingPosts() {
         };
 
         // Record clicks
-        document.addEventListener("click", handleDocumentClick);
+        document.addEventListener("click", handleDocumentClick)
 
         return () => {
-            document.removeEventListener("click", handleDocumentClick);
-        };
-    }, [posts]);
+            document.removeEventListener("click", handleDocumentClick)
+        }
+    }, [posts])
 
     // To approve posts
     const handleApprovePost = (postId: number) => {
@@ -106,6 +106,28 @@ export default function ApprovingPosts() {
             .then(data => {
                 const updated = posts.filter(p => p.Id !== postId)
                 setPosts(updated)
+            })
+            .catch(err => alert('Hata oluştu!'))
+    }
+
+    // To reject posts
+    const handleRejectPost = (postId: number) => {
+        // Check jwt
+        const jwt = fetchJwt()
+        if (!jwt) return
+
+        fetch(`${apiUrl}/panel/reject-post/${postId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                Authorization: 'Bearer ' + jwt
+            }
+        })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(data => {
+                const updated = posts.filter(p => p.Id !== postId)
+                setPosts(updated)
+                alert('Gönderi silindi.')
             })
             .catch(err => alert('Hata oluştu!'))
     }
@@ -155,9 +177,10 @@ export default function ApprovingPosts() {
                                     </button>
                                     <div className={`reject-menu ${p.RejectMenuActive ? 'active' : ''}`}>
                                         <ul>
-                                            <li>Fotoğraf hatalı</li>
-                                            <li>Küfür / Müstehcen</li>
-                                            <li>Diğer</li>
+                                            <li onClick={() => handleRejectPost(p.Id)}>Müstehcen fotoğraf</li>
+                                            <li onClick={() => handleRejectPost(p.Id)}>Küfür</li>
+                                            <li onClick={() => handleRejectPost(p.Id)}>Fotoğraf hatalı</li>
+                                            <li onClick={() => handleRejectPost(p.Id)}>Diğer</li>
                                         </ul>
                                         <select name="optional-ban">
                                             <option value="0">Kullanıcıyı Yasakla</option>

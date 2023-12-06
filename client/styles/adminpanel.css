@@ -210,7 +210,7 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 16px 16px 240px;
 }
 .panel-page .panel main h2.tab-name {
   font-size: 1.2rem;

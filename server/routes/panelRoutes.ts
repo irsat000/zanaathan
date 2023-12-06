@@ -7,5 +7,7 @@ const panelController = require('../controllers/panelController');
 router.get('/panel/waiting-approval', panelController.waitingApproval);
 // To approve posts
 router.put('/panel/approve-post/:postId', panelController.approvePost);
+// To reject posts
+router.put('/panel/reject-post/:postId', panelController.rejectPost);
 
 module.exports = router;
