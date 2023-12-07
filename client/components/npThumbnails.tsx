@@ -41,17 +41,19 @@ export const NP_Thumbnails: React.FC<{
         <div className="np-thumbnail-wrapper">
             <span className={`drag-indicator ${hoverIndex != null ? 'active' : ''}`} style={{ order: hoverIndex ?? 'unset' }}></span>
             {formData.selectedImages.length > 0 ? formData.selectedImages.map((image, index) => (
-                <div key={index} className={`image-thumbnail ${draggedIndex == index ? 'dragged' : ''}`}
-                    style={{ order: index }}
-                    draggable="true"
-                    onDragStart={() => setDraggedIndex(index)}
-                    onDragEnter={() => {
-                        setHoverIndex(index)
-                    }}
-                    onDragEnd={() => handleDragEnd(index)}
-                >
-                    <img src={URL.createObjectURL(new Blob([image]))} alt={`Image ${index}`} />
-                </div>
+                <>
+                    <div key={index} className={`image-thumbnail ${draggedIndex == index ? 'dragged' : ''}`}
+                        style={{ order: index }}
+                        draggable="true"
+                        onDragStart={() => setDraggedIndex(index)}
+                        onDragEnter={() => {
+                            setHoverIndex(index)
+                        }}
+                        onDragEnd={() => handleDragEnd(index)}
+                    >
+                        <img src={URL.createObjectURL(new Blob([image]))} alt={`Image ${index}`} />
+                    </div>
+                </>
             )) : <span className='choose-image-warning'>Fotoğraf yok</span>}
         </div>
     )

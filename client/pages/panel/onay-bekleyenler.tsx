@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from 'next/image'
 import PanelTemplate from "./components/template";
 import { apiUrl, postImageLink } from "@/lib/utils/helperUtils";
@@ -14,6 +14,7 @@ interface ApprovePost {
     CategoryCode: string
     ActiveImage: number
     RejectMenuActive: boolean
+    SelectedBanDuration: string
 }
 
 export default function ApprovingPosts() {
@@ -39,7 +40,8 @@ export default function ApprovingPosts() {
                     ...p,
                     Images: p.Images.split(','),
                     ActiveImage: 0,
-                    RejectMenuActive: false
+                    RejectMenuActive: false,
+                    SelectedBanDuration: '0'
                 }))
                 setPosts(sanatizePosts)
             })
@@ -116,12 +118,16 @@ export default function ApprovingPosts() {
         const jwt = fetchJwt()
         if (!jwt) return
 
+
         fetch(`${apiUrl}/panel/reject-post/${postId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 Authorization: 'Bearer ' + jwt
-            }
+            },
+            body: JSON.stringify({
+                banDuration: posts.find(p => p.Id === postId)!.SelectedBanDuration
+            })
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
@@ -130,6 +136,12 @@ export default function ApprovingPosts() {
                 alert('Gönderi silindi.')
             })
             .catch(err => alert('Hata oluştu!'))
+    }
+
+    const handleOptionalBanChange = (e: React.ChangeEvent<HTMLSelectElement>, postId: number) => {
+        const updated = [...posts]
+        updated.find(u => u.Id === postId)!.SelectedBanDuration = e.target.value
+        setPosts(updated)
     }
 
     return (
@@ -182,7 +194,7 @@ export default function ApprovingPosts() {
                                             <li onClick={() => handleRejectPost(p.Id)}>Fotoğraf hatalı</li>
                                             <li onClick={() => handleRejectPost(p.Id)}>Diğer</li>
                                         </ul>
-                                        <select name="optional-ban">
+                                        <select name="optional-ban" value={p.SelectedBanDuration} onChange={(e) => handleOptionalBanChange(e, p.Id)}>
                                             <option value="0">Kullanıcıyı Yasakla</option>
                                             <option value="1">1 gün</option>
                                             <option value="7">7 gün</option>
@@ -196,6 +208,6 @@ export default function ApprovingPosts() {
                         </div>
                     ) : <></>}
             </div>
-        </PanelTemplate>
+        </PanelTemplate >
     )
 }

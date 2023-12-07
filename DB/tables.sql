@@ -196,7 +196,7 @@ CREATE TABLE `UserBans` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `BannedAt` DATETIME NOT NULL,
     `LiftDate` DATETIME NOT NULL,
-    `Reason` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `Reason` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
     `AccountId` INT NOT NULL,
     `AdminId` INT NOT NULL,
     PRIMARY KEY (`Id`),

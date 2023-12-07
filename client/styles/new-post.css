@@ -85,7 +85,6 @@
 .new-post-page .new-post-form .np-primary .np-thumbnail-wrapper .drag-indicator {
   display: none;
   width: 2px;
-  height: 100%;
   background-color: var(--button-white-border);
   position: relative;
 }
