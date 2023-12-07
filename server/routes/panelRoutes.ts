@@ -9,5 +9,7 @@ router.get('/panel/waiting-approval', panelController.waitingApproval);
 router.put('/panel/approve-post/:postId', panelController.approvePost);
 // To reject posts
 router.put('/panel/reject-post/:postId', panelController.rejectPost);
+// To get users by name or id
+router.get('/panel/get-user/:target', panelController.getUser);
 
 module.exports = router;

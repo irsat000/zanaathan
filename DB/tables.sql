@@ -203,3 +203,11 @@ CREATE TABLE `UserBans` (
     CONSTRAINT `FK_BannedAccount_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
     CONSTRAINT `FK_BannedAccount_Admin` FOREIGN KEY (`AdminId`) REFERENCES `Account`(`Id`)
 );
+
+
+CREATE TABLE `Notification` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `AccountId` INT NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Notification_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`)
+);

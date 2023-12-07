@@ -131,6 +131,7 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 .panel-page .panel header {
   padding: 10px 20px;
@@ -372,6 +373,82 @@
   border: 1px solid #cccccc;
 }
 
+.user-listing {
+  padding: 10px 1%;
+  display: flex;
+  flex-direction: column;
+}
+.user-listing .search-user {
+  margin-bottom: 30px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.user-listing .search-user .search-properties {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+}
+.user-listing .search-user .search-properties input,
+.user-listing .search-user .search-properties select {
+  width: 100%;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 1.4rem;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.user-listing .search-user .search-properties input {
+  border: 1px solid #cccccc;
+}
+.user-listing .search-user .search-properties select {
+  cursor: pointer;
+}
+.user-listing .search-user .search-user-button {
+  display: flex;
+  font-size: 2rem;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+.user-listing .search-user .search-user-button:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+.user-listing .user-listing-table-wrapper {
+  padding-bottom: 14px;
+  overflow-x: auto;
+}
+.user-listing .user-listing-table-wrapper table {
+  width: 100%;
+}
+.user-listing .user-listing-table-wrapper table tr th {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+.user-listing .user-listing-table-wrapper table tr td {
+  padding: 8px 4px 8px 12px;
+  font-size: 1.3rem;
+  font-weight: 300;
+}
+.user-listing .user-listing-table-wrapper table tr .col-settings {
+  padding: 6px 10px;
+}
+.user-listing .user-listing-table-wrapper table tr .col-settings .user-settings-button {
+  margin: 0 auto;
+  display: flex;
+  padding: 6px;
+  font-size: 1.5rem;
+  border-radius: 6px;
+  background-color: #627fb6;
+  color: #ffffff;
+}
+.user-listing .user-listing-table-wrapper table tr .col-settings .user-settings-button:hover {
+  background-color: #3266c5;
+}
+
 @media (min-width: 768px) {
   .panel-page .panel-nav-container {
     display: flex;
@@ -396,6 +473,10 @@
   .approval-listing {
     padding: 0 10px;
     grid-template-columns: repeat(2, 1fr);
+  }
+  .user-listing .search-user .search-properties {
+    flex-grow: 0;
+    min-width: 40%;
   }
 }
 @media (min-width: 1200px) {

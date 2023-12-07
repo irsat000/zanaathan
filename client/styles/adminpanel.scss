@@ -155,6 +155,7 @@
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+        overflow: hidden;
 
         header {
             padding: 10px 20px;
@@ -444,6 +445,99 @@
     }
 }
 
+.user-listing {
+    padding: 10px 1%;
+    display: flex;
+    flex-direction: column;
+
+    .search-user {
+        margin-bottom: 30px;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+
+        .search-properties {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 10px;
+
+            input,
+            select {
+                width: 100%;
+                border-radius: 6px;
+                padding: 6px 10px;
+                font-size: 1.4rem;
+                font-family: 'Fira Sans', sans-serif;
+                font-weight: 300;
+                transition: all 0.1s ease-in-out;
+            }
+
+            input {
+                border: 1px solid #cccccc;
+            }
+
+            select {
+                cursor: pointer;
+            }
+        }
+
+        .search-user-button {
+            display: flex;
+            font-size: 2rem;
+            padding: 6px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.03);
+            }
+        }
+    }
+
+    .user-listing-table-wrapper {
+        padding-bottom: 14px;
+        overflow-x: auto;
+
+        table {
+            width: 100%;
+
+            tr {
+                th {
+                    font-size: 1.2rem;
+                    font-weight: 400;
+                }
+
+                td {
+                    padding: 8px 4px 8px 12px;
+                    font-size: 1.3rem;
+                    font-weight: 300;
+                    //line-break: anywhere; // Can save table from overflowing
+                }
+
+                .col-settings {
+                    padding: 6px 10px;
+
+                    .user-settings-button {
+                        margin: 0 auto;
+                        display: flex;
+                        padding: 6px;
+                        font-size: 1.5rem;
+                        border-radius: 6px;
+                        background-color: #627fb6;
+                        color: #ffffff;
+
+                        &:hover {
+                            background-color: #3266c5;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 
 
@@ -491,6 +585,15 @@
     .approval-listing {
         padding: 0 10px;
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .user-listing {
+        .search-user {
+            .search-properties {
+                flex-grow: 0;
+                min-width: 40%;
+            }
+        }
     }
 }
 

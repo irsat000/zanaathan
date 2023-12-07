@@ -485,7 +485,8 @@ const Chatbot: React.FC<{
                                     <li onClick={handleBlockUser}>
                                         {currentContact && currentContact.IsBlocked ? 'Engeli Kaldır' : 'Engelle'}
                                     </li>
-                                    <li>Şikayet et</li>
+                                    {/* coming soon
+                                    <li>Şikayet et</li>*/}
                                 </ul>
                             </div>
                             <button type='button' className='chatbot-shortcut-button usermenu-button' onClick={toggleChatUserMenu}><ThreeDots /></button>

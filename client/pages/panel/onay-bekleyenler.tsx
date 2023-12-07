@@ -147,9 +147,9 @@ export default function ApprovingPosts() {
     return (
         <PanelTemplate tabName='Onay bekleyen gönderiler'>
             <div className="approval-listing">
-                {posts ?
+                {posts && posts.length > 0 ?
                     posts.map((p: ApprovePost) =>
-                        <div className="post">
+                        <div className="post" key={p.Id}>
                             <div className="images">
                                 {p.Images.length > 1 ? <>
                                     <button type="button" className="prev-img" onClick={() => handleSwipeImage(p.Id, 'l')}><CaretLeft /></button>
@@ -172,7 +172,7 @@ export default function ApprovingPosts() {
                                             height={0}
                                             key={i}
                                             onError={() => {
-                                                // TODO: Tell admin this needs to be deleted because image gave error
+                                                // TODO: Tell the admin this needs to be deleted because an image gave error
                                                 // Unlikely to happen
                                                 // Can be automatically deleted
                                             }}
@@ -206,7 +206,8 @@ export default function ApprovingPosts() {
                                 <button type="button" className="accept-button" onClick={() => handleApprovePost(p.Id)}>Kabul et</button>
                             </div>
                         </div>
-                    ) : <></>}
+                    ) :
+                    <h2>Bekleyen gönderi yok</h2>}
             </div>
         </PanelTemplate >
     )

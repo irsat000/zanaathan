@@ -4,6 +4,7 @@ import * as fs from 'fs';
 const path = require('path');
 const appDir = path.dirname(require.main?.filename);
 import { verifyJwt } from '../utils/userUtils';
+import { isNullOrEmpty } from '../utils/helperUtils';
 
 
 const pool = require('../db/db');
@@ -186,6 +187,44 @@ exports.rejectPost = async (req: Request, res: Response) => {
 }
 
 
+exports.getUser = async (req: Request, res: Response) => {
+    try {
+        // Verify and decode the token, check admin role
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const adminId = verifyJwt(jwt);
+        if (!adminId) return res.status(401).send('Not authorized');
+        if (await checkAdminRole(adminId) === false) return res.status(401).json({ error: 'Not authorized' });
+        // Get the target, (username | fullName | id)
+        const target = req.params.target;
+        // Get type
+        const { targetType } = req.query as {
+            targetType?: string,
+        };
+        if (isNullOrEmpty(target) || !targetType || !['0', '1', '2'].includes(targetType)) {
+            return res.status(400).json({ error: 'Bad request' });
+        }
+
+        // Get users with the selected criteria
+        const filter = targetType === '0'
+            ? 'Username LIKE ?'
+            : targetType === '1'
+                ? 'FullName LIKE ?'
+                : 'Id = ?';
+        // Append % to the target based on targetType
+        const targetWithWildcard = targetType !== '2' ? `%${target}%` : target;
+        const query = `SELECT Id, Username, FullName FROM Account WHERE ${filter};`;
+
+        pool.query(query, [targetWithWildcard], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            return res.status(200).json({ users: results });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
 
 
 

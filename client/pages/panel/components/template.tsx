@@ -88,11 +88,11 @@ const PanelTemplate: React.FC<{
                             <li className={`${currentPath === '/panel/onay-bekleyenler' ? 'active' : ''}`}>
                                 <Link href={'/panel/onay-bekleyenler'}>Onay bekleyenler</Link>
                             </li>
-                            <li className={`${currentPath === '/panel/raporlar' ? 'active' : ''}`}>
-                                <Link href={'/panel/raporlar'}>Raporlar</Link>
-                            </li>
                             <li className={`${currentPath === '/panel/kullanicilar' ? 'active' : ''}`}>
                                 <Link href={'/panel/kullanicilar'}>Kullanıcıları yönet</Link>
+                            </li>
+                            <li className={`${currentPath === '/panel/raporlar' ? 'active' : ''}`}>
+                                <Link href={'/panel/raporlar'}>Raporlar</Link>
                             </li>
                             <li className={`${currentPath === '/panel/admin' ? 'active' : ''}`}>
                                 <Link href={'/panel/admin'}>Hesap</Link>

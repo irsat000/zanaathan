@@ -227,7 +227,8 @@ export default function PostDetails() {
 									)}
 									<div className='author-actions'>
 										<button className='message-request' onClick={() => handleMessageRequest(postDetails.A_Id)}>Mesaj Gönder</button>
-										<button className='report-button'>Şikayet et</button>
+										{/* coming soon
+										<button className='report-button'>Şikayet et</button>*/}
 									</div>
 								</div>
 								<h2 className='title'>{postDetails.Title}</h2>

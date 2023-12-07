@@ -190,12 +190,12 @@ export default function Category() {
     setDistrictSearchTerm(e.target.value.toLocaleLowerCase('tr'));
   };
   // Change the filters utility
-  const handleFilterChange = (e: any) => {
+  /*const handleFilterChange = (e: any) => {
     setFilterData({
       ...filterData,
       [e.target.name]: e.target.value
     });
-  }
+  }*/
   // Change city id, reset the district, and close the select2
   const handleCityChange = (cityId: number) => {
     setFilterData({

@@ -5,7 +5,7 @@ import PanelTemplate from "./components/template";
 export default function Reports() {
     return (
         <PanelTemplate tabName='Raporlar'>
-            <span></span>
+            <h2>Yakında gelecek</h2>
         </PanelTemplate>
     )
 }
