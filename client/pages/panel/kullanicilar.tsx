@@ -3,11 +3,14 @@ import PanelTemplate from "./components/template";
 import { Gear, Search } from "react-bootstrap-icons";
 import { apiUrl } from "@/lib/utils/helperUtils";
 import { fetchJwt } from "@/lib/utils/userUtils";
+import PUserEditModal from "./components/pUserEditModal";
 
-interface User {
+export interface PUser {
     Id: number
     Username: string
-    FullName: string
+    FullName: string | null
+    Avatar: string | null
+    Email: string
 }
 
 export default function UserManagement() {
@@ -25,7 +28,7 @@ export default function UserManagement() {
     }
 
     // Get users
-    const [users, setUsers] = useState<User[]>([])
+    const [users, setUsers] = useState<PUser[]>([])
 
     const handleUserSearch = () => {
         if (searchProps.target.length === 0) {
@@ -52,10 +55,13 @@ export default function UserManagement() {
             .catch(err => alert('Hata oluştu!'))
     }
 
-
+    // Edited user properties
+    const [userEditModalActive, setUserEditModalActive] = useState(false)
+    const [editedUser, setEditedUser] = useState<PUser | null>(null)
 
     return (
         <PanelTemplate tabName='Kullanıcı yönetimi'>
+            <PUserEditModal userEditModalActive={userEditModalActive} setUserEditModalActive={setUserEditModalActive} editedUser={editedUser} />
             <div className="user-listing">
                 <div className="search-user">
                     <div className="search-properties">
@@ -85,7 +91,10 @@ export default function UserManagement() {
                                     <td className="col-username">{user.Username}</td>
                                     <td className="col-fullName">{user.FullName ?? '-'}</td>
                                     <td className="col-settings">
-                                        <button type="button" className="user-settings-button"><Gear /></button>
+                                        <button type="button" className="user-settings-button" onClick={() => {
+                                            setEditedUser(user)
+                                            setUserEditModalActive(true)
+                                        }}><Gear /></button>
                                     </td>
                                 </tr>
                             )}

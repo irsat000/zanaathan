@@ -44,10 +44,9 @@
   flex-direction: row;
   align-items: flex-end;
   white-space: nowrap;
-}
-.profile-page .profile-panel .personal-info-container .user-name-email .name > span:nth-child(1) {
-  font-weight: 400;
+  margin-bottom: 7px;
   font-size: 1.5rem;
+  font-weight: 400;
 }
 .profile-page .profile-panel .personal-info-container .user-name-email .name > span:nth-child(2) {
   font-weight: 300;

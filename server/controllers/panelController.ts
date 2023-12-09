@@ -4,7 +4,7 @@ import * as fs from 'fs';
 const path = require('path');
 const appDir = path.dirname(require.main?.filename);
 import { verifyJwt } from '../utils/userUtils';
-import { isNullOrEmpty } from '../utils/helperUtils';
+import { isNullOrEmpty, isPositiveNumeric } from '../utils/helperUtils';
 
 
 const pool = require('../db/db');
@@ -24,6 +24,22 @@ const checkAdminRole = async (userId: number): Promise<boolean> => {
                 resolve(false);
             }
             resolve(results[0].Count > 0);
+        });
+    });
+}
+
+const banUserPromise = async (banDuration: string, reason: string, targetId: number, adminId: number): Promise<boolean> => {
+    const query = `
+        INSERT UserBans(BannedAt, LiftDate, Reason, AccountId, AdminId)
+        VALUES (NOW(), DATE_ADD(NOW(), INTERVAL ? DAY), ?, ?, ?);
+    `;
+    return await new Promise<boolean>((resolve, reject) => {
+        pool.query(query, [banDuration, reason, targetId, adminId], (qErr: any, results: any) => {
+            if (qErr) {
+                resolve(false)
+            }
+
+            resolve(true)
         });
     });
 }
@@ -156,25 +172,8 @@ exports.rejectPost = async (req: Request, res: Response) => {
 
                     // Ban the account
                     if (+body.banDuration > 0) {
-                        const banUserPromise = async (): Promise<void> => {
-                            const reason = `Gönderinizde yasaklanmanızı gerektiren bir problem tesbit ettik.`;
-
-                            const query = `
-                                INSERT UserBans(BannedAt, LiftDate, Reason, AccountId, AdminId)
-                                VALUES (NOW(), DATE_ADD(NOW(), INTERVAL ? DAY), ?, ?, ?);
-                            `;
-                            await new Promise<void>((resolve, reject) => {
-                                pool.query(query, [body.banDuration, reason, postOwnerId, adminId], (qErr: any, results: any) => {
-                                    if (qErr) {
-                                        reject();
-                                        // TODO: Logging
-                                    }
-
-                                    resolve();
-                                });
-                            });
-                        }
-                        await banUserPromise();
+                        const reason = `Gönderinizde yasaklanmanızı gerektiren bir problem tesbit ettik.`;
+                        await banUserPromise(body.banDuration, reason, postOwnerId, adminId);
                     }
 
                     return res.status(200).json({ message: 'Success' });
@@ -212,7 +211,7 @@ exports.getUser = async (req: Request, res: Response) => {
                 : 'Id = ?';
         // Append % to the target based on targetType
         const targetWithWildcard = targetType !== '2' ? `%${target}%` : target;
-        const query = `SELECT Id, Username, FullName FROM Account WHERE ${filter};`;
+        const query = `SELECT Id, Username, FullName, Avatar, Email FROM Account WHERE ${filter};`;
 
         pool.query(query, [targetWithWildcard], (qErr: any, results: any) => {
             if (qErr) {
@@ -221,6 +220,34 @@ exports.getUser = async (req: Request, res: Response) => {
 
             return res.status(200).json({ users: results });
         });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+exports.banUser = async (req: Request, res: Response) => {
+    try {
+        // Verify and decode the token, check admin role
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const adminId = verifyJwt(jwt);
+        if (!adminId) return res.status(401).send('Not authorized');
+        if (await checkAdminRole(adminId) === false) return res.status(401).json({ error: 'Not authorized' });
+        // Get the target, (id)
+        const target = req.params.target;
+        // Get parameters
+        const body: {
+            banDuration?: string
+        } = req.body;
+        if (!body || !body.banDuration || !isPositiveNumeric(body.banDuration)) {
+            return res.status(400).json({ error: 'Bad request' });
+        }
+
+        const isBanned = await banUserPromise(body.banDuration, 'Hesabınız yasaklandı.', +target, adminId)
+
+        if (isBanned)
+            return res.status(200).json({ message: 'Success' });
+        else
+            return res.status(500).json({ message: 'Failed to ban' });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
     }

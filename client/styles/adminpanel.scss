@@ -445,6 +445,113 @@
     }
 }
 
+
+.p-user-edit-modal-container {
+    padding-top: 20vh;
+    padding-bottom: 16px;
+
+    .p-user-edit-modal {
+        animation: fade-in 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 24px 30px;
+        background-color: #ffffff;
+        position: relative;
+        border-radius: 10px;
+        max-width: 260px;
+        -webkit-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+        box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+
+
+        .user-avatar {
+            width: 90px;
+            height: 90px;
+            overflow: hidden;
+            border-radius: 50%;
+            flex-shrink: 0;
+            outline: 3px solid #a6cfed;
+            margin-bottom: 10px;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .name {
+            gap: 6px;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            white-space: nowrap;
+            margin-bottom: 7px;
+            font-size: 1.5rem;
+            font-weight: 400;
+
+            >span:nth-child(2) {
+                font-weight: 300;
+                font-size: 0.9rem;
+                padding-bottom: 4px;
+            }
+        }
+
+        .email {
+            font-size: 0.9rem;
+            font-weight: 400;
+            font-family: 'Poppins', sans-serif;
+            white-space: nowrap;
+            margin-bottom: 18px;
+        }
+
+        .name,
+        .email {
+            flex-wrap: wrap;
+        }
+
+        .action-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            h5 {
+                font-weight: 500;
+            }
+
+            .ban-container {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                justify-content: center;
+
+                input {
+                    padding: 6px 10px;
+                    border-radius: 4px;
+                    border: 1px solid #cccccc;
+                    width: 100%;
+                }
+
+                button {
+                    margin: 0 auto;
+                    display: flex;
+                    padding: 6px 8px;
+                    font-size: 0.9rem;
+                    font-weight: 300;
+                    border-radius: 6px;
+                    background-color: #b82f2f;
+                    color: #ffffff;
+
+                    &:hover {
+                        background-color: #bd4949;
+                    }
+                }
+            }
+        }
+    }
+}
+
 .user-listing {
     padding: 10px 1%;
     display: flex;

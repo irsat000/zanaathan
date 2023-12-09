@@ -11,5 +11,8 @@ router.put('/panel/approve-post/:postId', panelController.approvePost);
 router.put('/panel/reject-post/:postId', panelController.rejectPost);
 // To get users by name or id
 router.get('/panel/get-user/:target', panelController.getUser);
+// To ban user
+router.put('/panel/ban-user/:target', panelController.banUser);
+
 
 module.exports = router;

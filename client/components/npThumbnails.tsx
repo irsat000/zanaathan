@@ -12,7 +12,7 @@ export interface NPFormData {
 // np = new post
 export const NP_Thumbnails: React.FC<{
     formData: NPFormData,
-    setFormData: (value: NPFormData) => void
+    setFormData: React.Dispatch<React.SetStateAction<NPFormData>>
 }> = ({ formData, setFormData }) => {
     // Drag information
     const [hoverIndex, setHoverIndex] = useState<number | null>(null);

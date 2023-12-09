@@ -214,9 +214,10 @@ const Template: React.FC<{
 											<ChatDots />
 										</div>
 									</button>
+									{/* coming soon
 									<button onClick={() => alert("Hi!")}>
 										<Bell />
-									</button>
+									</button>*/}
 								</div>
 								<button type='button' className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>
 									{userData.avatar

@@ -11,7 +11,7 @@ export type AuthModalState = 'signin' | 'signup' | 'none';
 
 const AuthModal: React.FC<{
     authModalActive: AuthModalState,
-    setAuthModalActive: (v: AuthModalState) => void
+    setAuthModalActive: React.Dispatch<React.SetStateAction<AuthModalState>>
 }> = ({ authModalActive, setAuthModalActive }) => {
     // Get user context
     const { setUserData } = useUser();

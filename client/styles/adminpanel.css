@@ -373,6 +373,97 @@
   border: 1px solid #cccccc;
 }
 
+.p-user-edit-modal-container {
+  padding-top: 20vh;
+  padding-bottom: 16px;
+}
+.p-user-edit-modal-container .p-user-edit-modal {
+  animation: fade-in 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 24px 30px;
+  background-color: #ffffff;
+  position: relative;
+  border-radius: 10px;
+  max-width: 260px;
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+}
+.p-user-edit-modal-container .p-user-edit-modal .user-avatar {
+  width: 90px;
+  height: 90px;
+  overflow: hidden;
+  border-radius: 50%;
+  flex-shrink: 0;
+  outline: 3px solid #a6cfed;
+  margin-bottom: 10px;
+}
+.p-user-edit-modal-container .p-user-edit-modal .user-avatar img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.p-user-edit-modal-container .p-user-edit-modal .name {
+  gap: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  white-space: nowrap;
+  margin-bottom: 7px;
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+.p-user-edit-modal-container .p-user-edit-modal .name > span:nth-child(2) {
+  font-weight: 300;
+  font-size: 0.9rem;
+  padding-bottom: 4px;
+}
+.p-user-edit-modal-container .p-user-edit-modal .email {
+  font-size: 0.9rem;
+  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+  white-space: nowrap;
+  margin-bottom: 18px;
+}
+.p-user-edit-modal-container .p-user-edit-modal .name,
+.p-user-edit-modal-container .p-user-edit-modal .email {
+  flex-wrap: wrap;
+}
+.p-user-edit-modal-container .p-user-edit-modal .action-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.p-user-edit-modal-container .p-user-edit-modal .action-container h5 {
+  font-weight: 500;
+}
+.p-user-edit-modal-container .p-user-edit-modal .action-container .ban-container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+.p-user-edit-modal-container .p-user-edit-modal .action-container .ban-container input {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #cccccc;
+  width: 100%;
+}
+.p-user-edit-modal-container .p-user-edit-modal .action-container .ban-container button {
+  margin: 0 auto;
+  display: flex;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  font-weight: 300;
+  border-radius: 6px;
+  background-color: #b82f2f;
+  color: #ffffff;
+}
+.p-user-edit-modal-container .p-user-edit-modal .action-container .ban-container button:hover {
+  background-color: #bd4949;
+}
+
 .user-listing {
   padding: 10px 1%;
   display: flex;

@@ -13,13 +13,20 @@ interface ApprovePost {
     Images: string[]
     CategoryCode: string
     ActiveImage: number
-    RejectMenuActive: boolean
-    SelectedBanDuration: string
 }
 
 export default function ApprovingPosts() {
 
     const [posts, setPosts] = useState<ApprovePost[]>([])
+
+    const [activeRejectMenu, setActiveRejectMenu] = useState<number | null>(null);
+
+    const [selectedBanDuration, setSelectedBanDuration] = useState('0');
+
+    useEffect(() => {
+        setSelectedBanDuration('0')
+    }, [activeRejectMenu])
+
 
     useEffect(() => {
         // Check jwt
@@ -58,28 +65,13 @@ export default function ApprovingPosts() {
         setPosts(updated)
     }
 
-    // Open/Close reject menus
-    const toggleRejectMenu = (pIndex: number) => {
-        const updated = [...posts]
-        updated.map(p => {
-            if (p.Id === pIndex) {
-                p.RejectMenuActive = !p.RejectMenuActive
-            } else {
-                p.RejectMenuActive = false
-            }
-        })
-        setPosts(updated)
-    }
-
     // Handle clicking outside reject-menu
     useEffect(() => {
         const handleDocumentClick = (e: any) => {
             // Check if the click target is outside of the reject-menu container
-            if (posts.some(p => p.RejectMenuActive)
+            if (activeRejectMenu
                 && !e.target.closest('.reject-menu-container')) {
-                const updated = [...posts]
-                updated.map(p => p.RejectMenuActive = false)
-                setPosts(updated)
+                setActiveRejectMenu(null)
             }
         };
 
@@ -126,7 +118,7 @@ export default function ApprovingPosts() {
                 Authorization: 'Bearer ' + jwt
             },
             body: JSON.stringify({
-                banDuration: posts.find(p => p.Id === postId)!.SelectedBanDuration
+                banDuration: selectedBanDuration
             })
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
@@ -136,12 +128,6 @@ export default function ApprovingPosts() {
                 alert('Gönderi silindi.')
             })
             .catch(err => alert('Hata oluştu!'))
-    }
-
-    const handleOptionalBanChange = (e: React.ChangeEvent<HTMLSelectElement>, postId: number) => {
-        const updated = [...posts]
-        updated.find(u => u.Id === postId)!.SelectedBanDuration = e.target.value
-        setPosts(updated)
     }
 
     return (
@@ -183,23 +169,34 @@ export default function ApprovingPosts() {
                             <Link href={`/${p.CategoryCode}/${p.Id}`} className="title">{p.Title}</Link>
                             <div className="actions">
                                 <div className="reject-menu-container">
-                                    <button type="button" className="reject-menu-button" onClick={() => toggleRejectMenu(p.Id)}>
+                                    <button type="button" className="reject-menu-button" onClick={() => {
+                                        setActiveRejectMenu(activeRejectMenu === p.Id ? null : p.Id)
+                                    }}>
                                         Reddet
                                         <ChevronDown />
                                     </button>
-                                    <div className={`reject-menu ${p.RejectMenuActive ? 'active' : ''}`}>
+                                    <div className={`reject-menu ${activeRejectMenu === p.Id ? 'active' : ''}`}>
                                         <ul>
+                                            <li onClick={() => handleRejectPost(p.Id)}>Kaldır</li>
+                                            {/* coming soon
                                             <li onClick={() => handleRejectPost(p.Id)}>Müstehcen fotoğraf</li>
                                             <li onClick={() => handleRejectPost(p.Id)}>Küfür</li>
                                             <li onClick={() => handleRejectPost(p.Id)}>Fotoğraf hatalı</li>
-                                            <li onClick={() => handleRejectPost(p.Id)}>Diğer</li>
+                                            <li onClick={() => handleRejectPost(p.Id)}>Diğer</li>*/}
                                         </ul>
-                                        <select name="optional-ban" value={p.SelectedBanDuration} onChange={(e) => handleOptionalBanChange(e, p.Id)}>
+                                        <select
+                                            name="optional-ban"
+                                            value={selectedBanDuration}
+                                            onChange={(e) => {
+                                                setSelectedBanDuration(e.target.value)
+                                            }}
+                                        >
                                             <option value="0">Kullanıcıyı Yasakla</option>
                                             <option value="1">1 gün</option>
                                             <option value="7">7 gün</option>
                                             <option value="30">1 ay</option>
-                                            <option value="999">Süresiz</option>
+                                            <option value="90">3 ay</option>
+                                            <option value="9999">Süresiz</option>
                                         </select>
                                     </div>
                                 </div>
