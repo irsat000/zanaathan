@@ -64,11 +64,6 @@ exports.signin = (req: Request, res: Response) => {
             // Get user from results
             const user = results[0];
 
-            // Check bans
-            if (user.BanLiftDate > 0) {
-                return res.status(403).json({ error: 'User is banned', banLiftDate: user.BanLiftDate });
-            }
-
             // Authenticate
             bcrypt.compare(password, user.Password, (bErr: any, isMatch: boolean) => {
                 if (bErr) {
@@ -76,6 +71,11 @@ exports.signin = (req: Request, res: Response) => {
                 }
 
                 if (isMatch) {
+                    // Check bans
+                    if (user.BanLiftDate > 0) {
+                        return res.status(403).json({ error: 'User is banned', banLiftDate: user.BanLiftDate });
+                    }
+
                     const userInfo: JWT = {
                         sub: user.Id,
                         username: user.Username,

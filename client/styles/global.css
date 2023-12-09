@@ -178,6 +178,25 @@ body select {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+.icon-wrap {
+  display: flex;
+}
+
+.icon-alert {
+  position: relative;
+}
+.icon-alert::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #e05353;
+  z-index: 1;
+}
+
 .modal-container {
   z-index: 200;
   position: fixed;
@@ -549,13 +568,27 @@ body select {
   background-color: var(--primary-bg-color);
   box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
   text-align: right;
+  padding-top: 20px;
 }
 .drawer-container .drawer .drawer-site-logo {
   padding: 10px 6px 10px;
-  margin: 20px 0 24px;
   font-size: 2rem;
   text-align: center;
   font-family: "Cinzel", serif;
+}
+.drawer-container .drawer .user-image {
+  margin: 0 16px 0 auto;
+  overflow: hidden;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  outline: 2px solid #a6cfed;
+}
+.drawer-container .drawer .user-image img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .drawer-container .drawer .drawer-list {
   display: flex;
@@ -571,6 +604,34 @@ body select {
 }
 .drawer-container .drawer .drawer-list > a:hover {
   background-color: rgba(0, 0, 0, 0.05);
+}
+.drawer-container .drawer .dr-profile-button {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: right;
+  margin: 6px 0;
+  padding: 6px 20px;
+}
+.drawer-container .drawer .dr-profile-button .dr-username {
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+.drawer-container .drawer .dr-profile-button .dr-email {
+  font-size: 1.2rem;
+  font-weight: 300;
+  opacity: 0.8;
+}
+.drawer-container .drawer .sign-out-button {
+  margin-top: auto;
+  text-align: center;
+  padding: 12px 6px;
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: #ffffff;
+  background-color: var(--button3-1);
+  transition: background-color 0.1s ease-in-out;
+  font-family: "Poppins", sans-serif;
 }
 
 .chatbot-container.active {
@@ -697,6 +758,7 @@ body select {
   width: 60px;
   height: 60px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .profile-picture img {
   width: 44px;
@@ -985,6 +1047,12 @@ header > .header-container .site-logo-wrapper span b {
 header > .header-container .site-logo-wrapper span.m {
   display: block;
 }
+header > .header-container .site-logo-wrapper .open-chatbot-button {
+  all: unset;
+  display: flex;
+  font-size: 2rem;
+  padding: 6px;
+}
 header > .header-container .search-bar {
   order: 1;
   flex-grow: 1;
@@ -1057,23 +1125,6 @@ header > .header-container .user-container .shortcut-wrapper {
   flex-direction: row;
   gap: 12px;
   align-items: center;
-}
-header > .header-container .user-container .shortcut-wrapper .icon-wrap {
-  display: flex;
-}
-header > .header-container .user-container .shortcut-wrapper .icon-alert {
-  position: relative;
-}
-header > .header-container .user-container .shortcut-wrapper .icon-alert::before {
-  content: "";
-  position: absolute;
-  top: -3px;
-  right: -4px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: #e05353;
-  z-index: 1;
 }
 header > .header-container .user-container .shortcut-wrapper a,
 header > .header-container .user-container .shortcut-wrapper button {
@@ -1360,6 +1411,7 @@ footer {
     height: 80px;
     padding: 0 5%;
   }
+  header > .header-container .site-logo-wrapper .open-chatbot-button,
   header > .header-container .site-logo-wrapper span.m {
     display: none;
   }

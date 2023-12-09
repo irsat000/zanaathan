@@ -84,7 +84,7 @@ const AuthModal: React.FC<{
                     res.json().then((data: any) => {
                         handleGStatus('informationModal', {
                             type: 'error',
-                            text: 'Bu kullanıcı yasaklıdır. Kaldırılma tarihi: ' + formatDateString(data.banLiftDate)
+                            text: 'Bu kullanıcı yasaklıdır. Yasak kalkma tarihi: ' + formatDateString(data.banLiftDate)
                         })
                         setAuthModalWarning('*Yasaklı*')
                     })

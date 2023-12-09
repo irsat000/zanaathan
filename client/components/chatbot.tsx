@@ -426,6 +426,7 @@ const Chatbot: React.FC<{
                 <div className={`chatbot-menu ${contactMenuActive ? 'active' : ''}`}>
                     <div className="chatbot-menu-header">
                         <h5>Benim ağım</h5>
+                        <button type='button' className='chatbot-shortcut-button' onClick={() => setContactMenuActive(false)}><XLg /></button>
                         {/*<button type='button' className='chatbot-add-user'>Yeni<PlusLg /></button>*/}
                     </div>
                     <div className="chatbot-contacts">

@@ -170,10 +170,39 @@ const Template: React.FC<{
 				<div className={`drawer-container ${drawerActive && 'active'}`} onClick={() => setDrawerActive(false)}>
 					<div className="drawer" onClick={(e) => { e.stopPropagation() }}>
 						<Link href={'/'} className='drawer-site-logo'>Zanaat.Han</Link>
-						<div className="drawer-list">
-							<a className='drawer-button' onClick={() => handleLoginModal('signin')}>Giriş yap</a>
-							<a className='drawer-button' onClick={() => handleLoginModal('signup')}>Kayıt ol</a>
-						</div>
+						{userData ? <>
+							<Link href={'/profil'} className='user-image'>
+								{userData.avatar
+									? <Image
+										loader={() => avatarLink(userData.avatar!)}
+										src={avatarLink(userData.avatar)}
+										alt={'Profile fotoğrafı'}
+										priority={false}
+										width={0}
+										height={0} />
+									: <Image
+										src={require('@/assets/site/user.png')}
+										alt={'Profil fotoğrafı yok'}
+										width={0}
+										height={0} />}
+							</Link>
+							<Link href={'/profil'} className='dr-profile-button'>
+								<span className='dr-username'>{userData.fullName ?? userData.username}</span>
+								<span className='dr-email'>{userData.email}</span>
+							</Link>
+							<div className="drawer-list">
+								<Link href={'/ayarlar'}>Ayarlar</Link>
+								{userData.roles && userData.roles.length > 0 ?
+									<Link href={'/panel/onay-bekleyenler'}>Panel</Link>
+									: <></>}
+							</div>
+							<button type='button' className='sign-out-button' onClick={handleSignOut}>Çıkış yap</button>
+						</> : <>
+							<div className="drawer-list">
+								<a onClick={() => handleLoginModal('signin')}>Giriş yap</a>
+								<a onClick={() => handleLoginModal('signup')}>Kayıt ol</a>
+							</div>
+						</>}
 					</div>
 				</div>
 				<header>
@@ -197,7 +226,13 @@ const Template: React.FC<{
 							</div>
 						</div>
 						<Link href='/' className="site-logo-wrapper">
-							<span className='m'>Z<b>.</b>H</span>
+							{userData ?
+								<button className='open-chatbot-button' onClick={() => handleGStatus('chatbotActive', !gStatus.chatbotActive)}>
+									<div className={`icon-wrap ${hasNotification ? 'icon-alert' : ''}`}>
+										<ChatDots />
+									</div>
+								</button> :
+								<span className='m'>Z<b>.</b>H</span>}
 							<span className='d'>Zanaat<b>.</b>Han</span>
 						</Link>
 						<button className='drawer-button' onClick={() => setDrawerActive(true)}>
