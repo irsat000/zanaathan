@@ -1,11 +1,12 @@
 import { useUser } from '@/context/userContext';
-import { apiUrl } from '@/lib/utils/helperUtils';
+import { apiUrl, formatDateString, toShortLocal } from '@/lib/utils/helperUtils';
 import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import Link from 'next/link';
 import { useRef, useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
 import LoginWithGoogle from './loginWithGoogle';
 import LoginWithFacebook from './loginWithFacebook';
+import { useGStatus } from '@/context/globalContext';
 
 export type AuthModalState = 'signin' | 'signup' | 'none';
 
@@ -13,6 +14,8 @@ const AuthModal: React.FC<{
     authModalActive: AuthModalState,
     setAuthModalActive: React.Dispatch<React.SetStateAction<AuthModalState>>
 }> = ({ authModalActive, setAuthModalActive }) => {
+    // Use global context
+    const { handleGStatus } = useGStatus();
     // Get user context
     const { setUserData } = useUser();
     // Auth modal - informing the user
@@ -77,6 +80,15 @@ const AuthModal: React.FC<{
             })
             .catch((res) => {
                 if ([400, 401, 404].includes(res.status)) setAuthModalWarning('*Kullanıcı adı veya şifre hatalı*');
+                else if (res.status === 403) {
+                    res.json().then((data: any) => {
+                        handleGStatus('informationModal', {
+                            type: 'error',
+                            text: 'Bu kullanıcı yasaklıdır. Kaldırılma tarihi: ' + formatDateString(data.banLiftDate)
+                        })
+                        setAuthModalWarning('*Yasaklı*')
+                    })
+                }
                 else setAuthModalWarning('*Bağlantıda hata*');
             });
     }

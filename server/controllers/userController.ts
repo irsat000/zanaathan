@@ -43,10 +43,12 @@ exports.signin = (req: Request, res: Response) => {
                 Email,
                 Avatar,
                 Password,
-                GROUP_CONCAT(Role.RoleCode) AS Roles
+                GROUP_CONCAT(Role.RoleCode) AS Roles,
+                MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
             FROM Account AS A
             LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
             LEFT JOIN Role ON Role.Id = AccountRole.RoleId
+            LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
             WHERE Username = ? AND OAuthProviderId IS NULL
             GROUP BY A.Id;
         `;
@@ -61,6 +63,12 @@ exports.signin = (req: Request, res: Response) => {
 
             // Get user from results
             const user = results[0];
+
+            // Check bans
+            if (user.BanLiftDate > 0) {
+                return res.status(403).json({ error: 'User is banned', banLiftDate: user.BanLiftDate });
+            }
+
             // Authenticate
             bcrypt.compare(password, user.Password, (bErr: any, isMatch: boolean) => {
                 if (bErr) {
@@ -200,10 +208,12 @@ exports.authGoogle = (req: Request, res: Response) => {
                 // Check if user exists
                 const checkQuery = `
                     SELECT Id, Username, FullName, Email, Avatar,
-                        GROUP_CONCAT(Role.RoleCode) AS Roles
+                        GROUP_CONCAT(Role.RoleCode) AS Roles,
+                        MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
                     FROM Account
                     LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
                     LEFT JOIN Role ON Role.Id = AccountRole.RoleId
+                    LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
                     WHERE ExternalId = ? && OAuthProviderId = 1;
                 `;
                 pool.query(checkQuery, [user.sub], async (qErr: any, results: any) => {
@@ -215,6 +225,11 @@ exports.authGoogle = (req: Request, res: Response) => {
                         // Login if user exists
                         // Get user
                         const existing = results[0];
+
+                        // Check bans
+                        if (existing.BanLiftDate > 0) {
+                            return res.status(403).json({ error: 'User is banned', banLiftDate: existing.BanLiftDate });
+                        }
 
                         // Generate JWT
                         const JWT = createJwt({
@@ -289,10 +304,12 @@ exports.authFacebook = (req: Request, res: Response) => {
                 // Check if user exists
                 const checkQuery = `
                     SELECT Id, Username, FullName, Email, Avatar,
-                        GROUP_CONCAT(Role.RoleCode) AS Roles
+                        GROUP_CONCAT(Role.RoleCode) AS Roles,
+                        MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
                     FROM Account
                     LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
                     LEFT JOIN Role ON Role.Id = AccountRole.RoleId
+                    LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
                     WHERE ExternalId = ? && OAuthProviderId = 2;
                 `;
                 pool.query(checkQuery, [data.id], async (qErr: any, results: any) => {
@@ -304,6 +321,11 @@ exports.authFacebook = (req: Request, res: Response) => {
                         // Login if user exists
                         // Get user
                         const existing = results[0];
+
+                        // Check bans
+                        if (existing.BanLiftDate > 0) {
+                            return res.status(403).json({ error: 'User is banned', banLiftDate: existing.BanLiftDate });
+                        }
 
                         // Generate JWT
                         const JWT = createJwt({

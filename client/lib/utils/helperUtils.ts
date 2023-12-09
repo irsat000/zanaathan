@@ -96,3 +96,13 @@ export const toShortLocal = (dateString: string) => {
 }
 
 export const acceptedImgSet_1 = ['image/webp', 'image/png', 'image/jpg', 'image/jpeg'];
+
+
+export const formatDateString = (input: string) => {
+  const date = new Date(input);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}/${month}/${day}`;
+}

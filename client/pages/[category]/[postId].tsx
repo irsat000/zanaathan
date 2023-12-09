@@ -32,6 +32,7 @@ interface PostDetails {
 	A_Avatar: string | null;
 	ContactInfo: string[];
 	Location: string;
+	BanLiftDate: string | null;
 }
 
 export default function PostDetails() {
@@ -221,6 +222,9 @@ export default function PostDetails() {
 							</div>
 							<div className='post-details'>
 								<div className='author-container'>
+									{postDetails.BanLiftDate ?
+										<span className="ban-warning">-Bu kullanıcı yasaklıdır-</span>
+										: <></>}
 									<h2 className='author-name'>{postDetails.A_FullName ?? postDetails.A_Username}</h2>
 									{postDetails.ContactInfo.map((info, i) =>
 										<span key={i} className='contact-information'>{info}</span>

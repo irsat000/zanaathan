@@ -28,18 +28,23 @@ const checkAdminRole = async (userId: number): Promise<boolean> => {
     });
 }
 
-const banUserPromise = async (banDuration: string, reason: string, targetId: number, adminId: number): Promise<boolean> => {
+const banUserPromise = async (banDuration: string, reason: string, targetId: number, adminId: number): Promise<string | null> => {
     const query = `
         INSERT UserBans(BannedAt, LiftDate, Reason, AccountId, AdminId)
         VALUES (NOW(), DATE_ADD(NOW(), INTERVAL ? DAY), ?, ?, ?);
     `;
-    return await new Promise<boolean>((resolve, reject) => {
+    return await new Promise<string | null>((resolve, reject) => {
         pool.query(query, [banDuration, reason, targetId, adminId], (qErr: any, results: any) => {
             if (qErr) {
-                resolve(false)
+                resolve(null)
             }
 
-            resolve(true)
+            // Calculate the lift date using banDuration
+            const liftDate = new Date();
+            liftDate.setDate(liftDate.getDate() + +banDuration);
+
+            // Resolve with the lift date
+            resolve(liftDate.toISOString());
         });
     });
 }
@@ -208,10 +213,20 @@ exports.getUser = async (req: Request, res: Response) => {
             ? 'Username LIKE ?'
             : targetType === '1'
                 ? 'FullName LIKE ?'
-                : 'Id = ?';
+                : 'Account.Id = ?';
         // Append % to the target based on targetType
         const targetWithWildcard = targetType !== '2' ? `%${target}%` : target;
-        const query = `SELECT Id, Username, FullName, Avatar, Email FROM Account WHERE ${filter};`;
+
+        // TODO: Get ban information
+
+        const query = `
+            SELECT Account.Id, Username, FullName, Avatar, Email,
+                MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
+            FROM Account
+            LEFT JOIN UserBans Ban ON Ban.AccountId = Account.Id
+            WHERE ${filter}
+            GROUP BY Account.Id;
+        `;
 
         pool.query(query, [targetWithWildcard], (qErr: any, results: any) => {
             if (qErr) {
@@ -242,12 +257,35 @@ exports.banUser = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Bad request' });
         }
 
-        const isBanned = await banUserPromise(body.banDuration, 'Hesabınız yasaklandı.', +target, adminId)
+        const liftDate = await banUserPromise(body.banDuration, 'Hesabınız yasaklandı.', +target, adminId)
 
-        if (isBanned)
-            return res.status(200).json({ message: 'Success' });
+        if (liftDate)
+            return res.status(200).json({ message: 'Success', banLiftDate: liftDate });
         else
             return res.status(500).json({ message: 'Failed to ban' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+exports.liftBan = async (req: Request, res: Response) => {
+    try {
+        // Verify and decode the token, check admin role
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const adminId = verifyJwt(jwt);
+        if (!adminId) return res.status(401).send('Not authorized');
+        if (await checkAdminRole(adminId) === false) return res.status(401).json({ error: 'Not authorized' });
+        // Get the target, (id)
+        const target = req.params.target;
+
+        const query = `DELETE FROM UserBans WHERE LiftDate > NOW() AND AccountId = ?;`;
+        pool.query(query, [target], (qErr: any, results: any) => {
+            if (qErr || results.affectedRows < 1) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            return res.status(200).json({ message: 'Success' });
+        });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
     }

@@ -201,6 +201,13 @@
                 border: 1px solid #000;
                 border-radius: 10px;
 
+                .ban-warning {
+                    align-self: center;
+                    color: #b91e1e;
+                    font-weight: 400;
+                    font-size: 1.2rem;
+                }
+
                 .author-name {
                     font-size: 1.2rem;
                     font-weight: 400;

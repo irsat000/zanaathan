@@ -113,20 +113,23 @@ SELECT
 	TIMESTAMPDIFF(SECOND, JP.CreatedAt, NOW()) AS SecondsAgo,
 	JP.Description,
 	GROUP_CONCAT(DISTINCT JPI.Body ORDER BY JPI.ImgIndex SEPARATOR ';') AS Images,
-    A.Id AS A_Id,
-    A.Username AS A_Username,
-    A.FullName AS A_FullName,
-    A.Avatar AS A_Avatar,
-    GROUP_CONCAT(DISTINCT CONCAT(CI.Body, ' - ', CT.Body) ORDER BY CI.Id SEPARATOR ';') AS ContactInfo,
-    CONCAT(D.Name, ' - ', C.Name) AS Location
+	A.Id AS A_Id,
+	A.Username AS A_Username,
+	A.FullName AS A_FullName,
+	A.Avatar AS A_Avatar,
+	GROUP_CONCAT(DISTINCT CONCAT(CI.Body, ' - ', CT.Body) ORDER BY CI.Id SEPARATOR ';') AS ContactInfo,
+	CONCAT(D.Name, ' - ', C.Name) AS Location,
+	SUM(CASE WHEN Ban.LiftDate > NOW() THEN 1 ELSE 0 END) AS Bans,
+    MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
 FROM JobPosting JP
 LEFT JOIN JobPostingImages JPI ON JP.Id = JPI.JobPostingId
 LEFT JOIN Account A ON JP.AccountId = A.Id
+LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
 LEFT JOIN ContactInformation CI ON A.Id = CI.AccountId
 LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
 LEFT JOIN District D ON JP.DistrictId = D.Id
 LEFT JOIN City C ON D.CityId = C.Id
-WHERE JP.Id = 1
+WHERE JP.Id = ?
 GROUP BY JP.Id;
 
 

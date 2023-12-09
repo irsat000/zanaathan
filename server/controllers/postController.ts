@@ -124,10 +124,12 @@ exports.getPostDetails = (req: Request, res: Response) => {
                 A.FullName AS A_FullName,
                 A.Avatar AS A_Avatar,
                 GROUP_CONCAT(DISTINCT CONCAT(CI.Body, ' - ', CT.Body) ORDER BY CI.Id SEPARATOR ';') AS ContactInfo,
-                CONCAT(D.Name, ' - ', C.Name) AS Location
+                CONCAT(D.Name, ' - ', C.Name) AS Location,
+                MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
             FROM JobPosting JP
             LEFT JOIN JobPostingImages JPI ON JP.Id = JPI.JobPostingId
             LEFT JOIN Account A ON JP.AccountId = A.Id
+            LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
             LEFT JOIN ContactInformation CI ON A.Id = CI.AccountId
             LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
             LEFT JOIN District D ON JP.DistrictId = D.Id

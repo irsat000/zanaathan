@@ -438,6 +438,24 @@
 .p-user-edit-modal-container .p-user-edit-modal .action-container h5 {
   font-weight: 500;
 }
+.p-user-edit-modal-container .p-user-edit-modal .action-container .lift-ban-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.p-user-edit-modal-container .p-user-edit-modal .action-container .lift-ban-container button {
+  display: flex;
+  padding: 5px 6px;
+  font-size: 0.8rem;
+  font-weight: 300;
+  border-radius: 6px;
+  background-color: #25a231;
+  color: #ffffff;
+}
+.p-user-edit-modal-container .p-user-edit-modal .action-container .lift-ban-container button:hover {
+  background-color: #4dbb58;
+}
 .p-user-edit-modal-container .p-user-edit-modal .action-container .ban-container {
   display: flex;
   gap: 12px;

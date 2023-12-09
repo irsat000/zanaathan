@@ -13,6 +13,8 @@ router.put('/panel/reject-post/:postId', panelController.rejectPost);
 router.get('/panel/get-user/:target', panelController.getUser);
 // To ban user
 router.put('/panel/ban-user/:target', panelController.banUser);
+// To remove the active bans of user
+router.delete('/panel/lift-ban/:target', panelController.liftBan);
 
 
 module.exports = router;

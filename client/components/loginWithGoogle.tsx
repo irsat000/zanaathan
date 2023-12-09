@@ -1,15 +1,18 @@
 
 import { useUser } from '@/context/userContext';
-import { apiUrl } from '@/lib/utils/helperUtils';
+import { apiUrl, formatDateString, toShortLocal } from '@/lib/utils/helperUtils';
 import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import { GoogleLogin } from '@react-oauth/google';
 import { AuthModalState } from './authModal';
+import { useGStatus } from '@/context/globalContext';
 
 const LoginWithGoogle: React.FC<{
     setAuthModalWarning: React.Dispatch<React.SetStateAction<string | null>>,
     setAuthModalSuccess: React.Dispatch<React.SetStateAction<string | null>>,
     handleAuthModal: (state: AuthModalState) => void
 }> = ({ setAuthModalWarning, setAuthModalSuccess, handleAuthModal }) => {
+    // Use global context
+    const { handleGStatus } = useGStatus();
     // Get user context
     const { setUserData } = useUser();
 
@@ -34,7 +37,16 @@ const LoginWithGoogle: React.FC<{
                     setTimeout(() => handleAuthModal('none'), 1000);
                 })
                 .catch((res) => {
-                    setAuthModalWarning('*Bağlantıda hata*');
+                    if (res.status === 403) {
+                        res.json().then((data: any) => {
+                            handleGStatus('informationModal', {
+                                type: 'error',
+                                text: 'Bu kullanıcı yasaklıdır. Kaldırılma tarihi: ' + formatDateString(data.banLiftDate)
+                            })
+                            setAuthModalWarning('*Yasaklı*')
+                        })
+                    }
+                    else setAuthModalWarning('*Bağlantıda hata*')
                 });
         }}
         onError={() => {

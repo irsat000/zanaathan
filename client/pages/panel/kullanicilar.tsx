@@ -11,6 +11,7 @@ export interface PUser {
     FullName: string | null
     Avatar: string | null
     Email: string
+    BanLiftDate: string | null
 }
 
 export default function UserManagement() {
@@ -56,12 +57,16 @@ export default function UserManagement() {
     }
 
     // Edited user properties
-    const [userEditModalActive, setUserEditModalActive] = useState(false)
-    const [editedUser, setEditedUser] = useState<PUser | null>(null)
+    const [editedUserId, setEditedUserId] = useState<number | null>(null)
 
     return (
         <PanelTemplate tabName='Kullanıcı yönetimi'>
-            <PUserEditModal userEditModalActive={userEditModalActive} setUserEditModalActive={setUserEditModalActive} editedUser={editedUser} />
+            {editedUserId ?
+                <PUserEditModal
+                    editedUser={users.find(u => u.Id === editedUserId)}
+                    setEditedUserId={setEditedUserId}
+                    setUsers={setUsers} />
+                : <></>}
             <div className="user-listing">
                 <div className="search-user">
                     <div className="search-properties">
@@ -92,8 +97,7 @@ export default function UserManagement() {
                                     <td className="col-fullName">{user.FullName ?? '-'}</td>
                                     <td className="col-settings">
                                         <button type="button" className="user-settings-button" onClick={() => {
-                                            setEditedUser(user)
-                                            setUserEditModalActive(true)
+                                            setEditedUserId(user.Id)
                                         }}><Gear /></button>
                                     </td>
                                 </tr>
