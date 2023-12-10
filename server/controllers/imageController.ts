@@ -6,36 +6,7 @@ import { acceptedImgSet_1, removeExtension } from '../utils/helperUtils';
 import sharp from 'sharp';
 const path = require('path');
 const appDir = path.dirname(require.main?.filename);
-/*
-const NodeClam = require('clamscan');
-const ClamScan = new NodeClam().init({
-    removeInfected: true, // If true, removes infected files
-    quarantineInfected: false, // False: Don't quarantine, Path: Moves files to this place.
-    scanLog: null, // Path to a writeable log file to write scan results into
-    debugMode: false, // Whether or not to log info/debug/error msgs to the console
-    fileList: null, // path to file containing list of files to scan (for scanFiles method)
-    scanRecursively: true, // If true, deep scan folders recursively
-    clamscan: {
-        path: '/usr/bin/clamscan', // Path to clamscan binary on your server
-        db: null, // Path to a custom virus definition database
-        scanArchives: true, // If true, scan archives (ex. zip, rar, tar, dmg, iso, etc...)
-        active: true // If true, this module will consider using the clamscan binary
-    },
-    clamdscan: {
-        socket: '/var/run/clamav/clamd.sock', // Socket file for connecting via TCP
-        host: '127.0.0.1', // IP of host to connect to TCP interface
-        port: 8123, // Port of host to use when connecting via TCP interface
-        timeout: 60000, // Timeout for scanning files
-        localFallback: true, // Use local preferred binary to scan if socket/tcp fails
-        path: '/usr/bin/clamdscan', // Path to the clamdscan binary on your server
-        configFile: null, // Specify config file if it's in an unusual place
-        multiscan: true, // Scan using all available cores! Yay!
-        reloadDb: false, // If true, will re-load the DB on every call (slow)
-        active: true, // If true, this module will consider using the clamdscan binary
-        bypassTest: false, // Check to see if socket is available when applicable
-    },
-    preference: 'clamdscan' // If clamdscan is found and active, it will be used by default
-});*/
+
 
 
 /*files.forEach(file => {
@@ -85,37 +56,28 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
         }
 
 
-        // Check files for viruses
+        // Get files
         const files = req.files as Express.Multer.File[];
 
-        // Reject all if one is infected
+        // Remove uploaded
         const removeAllUploaded = () => {
-            // Remove uploaded
             files.forEach(async (file) => {
                 if (fs.existsSync(file.path)) {
                     await fs.unlink(file.path, (err) => {
-                        if (err) throw err;
+                        if (err) {
+                            return res.status(500).json({ error: 'Error while deleting uploaded images' });
+                        }
                     });
                 }
             });
         }
 
         try {
-            for (const file of files) {
-                // Virus scan
-                /*await ClamScan.isInfected(file.path, (err: any, file: File, isInfected: boolean, viruses: any) => {
-                    if (err) throw new Error('ClamScan throw errow while scanning')
-
-                    console.log('infected:', isInfected)
-                    if (isInfected) {
-                        removeAllUploaded()
-                        return res.status(406).json({ error: 'Infected file detected.' });
-                    }
-                });*/
-
+            // Iterate and reformat the uploaded images
+            for (const image of files) {
                 // Shrink, reformat, remove metadata etc
                 // - Create the new file in the same path
-                const sanitizedImage = await sharp(file.path)
+                const sanitizedImage = await sharp(image.path)
                     .resize({ fit: 'inside', width: 720, height: 720 })
                     .toColorspace('srgb')
                     .flatten()
@@ -125,21 +87,22 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
                 // Check new size, 5 mb is the limit
                 const stillExceeded5MB = sanitizedImage.length > 5000000;
                 if (stillExceeded5MB) {
-                    removeAllUploaded()
+                    removeAllUploaded();
                     return res.status(413).json({ error: 'A file exceeded the 5 megabyte sanitized limit' });
                 }
 
-                // Replace the file with sanitized one
-                //const newPath = removeExtension(file.path) + '.webp';
-                /*if (fs.existsSync(file.path)) {
-                    console.log("heyy")
-                    fs.unlinkSync(file.path);
-                }*/
-                await fs.promises.writeFile(file.path, sanitizedImage);
+                // Virus scan
+                if (false) {
+                    removeAllUploaded();
+                    return res.status(406).json({ error: 'Infected file detected.' });
+                }
+
+                // Replace file
+                await fs.promises.writeFile(image.path, sanitizedImage);
             }
-        } catch (error) {
-            removeAllUploaded()
-            return res.status(500).json({ error: 'Error while handling files' });
+        } catch (err) {
+            removeAllUploaded();
+            return res.status(500).json({ error: 'Error while handling files: ' + err });
         }
 
         // To route handler
@@ -156,7 +119,7 @@ const avatarStorage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         // Define the filename for the uploaded image
-        cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
+        cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + '.webp');
     },
 });
 
@@ -164,7 +127,7 @@ const avatarStorage = multer.diskStorage({
 export const uploadAvatar = (req: Request, res: Response, next: NextFunction) => {
     const multerMiddleware = multer({
         storage: avatarStorage,
-        limits: { fileSize: 5000000 }, // 5 megabyte
+        limits: { fileSize: 10000000 }, // 10 megabyte
         fileFilter: (req, file, cb) => {
             // Accept only images, excluding gif
             if (acceptedImgSet_1.includes(file.mimetype))
@@ -175,13 +138,51 @@ export const uploadAvatar = (req: Request, res: Response, next: NextFunction) =>
     }).single('image');
 
     // Apply multer middleware
-    multerMiddleware(req, res, (multerError: any) => {
+    multerMiddleware(req, res, async (multerError: any) => {
         if (multerError) {
             if (multerError.code === 'LIMIT_FILE_SIZE') {
-                // 5mb limit, if one exceeds, return 413, payload too large error
-                return res.status(413).json({ error: 'A file exceeded the 5 megabyte limit' });
+                // 10mb limit, if the file exceeds, return 413, payload too large error
+                return res.status(413).json({ error: 'The file exceeded the 10 megabyte initial limit' });
             }
             return next(multerError);
+        }
+
+        // Get file
+        const image = req.file as Express.Multer.File;
+
+        // Remove uploaded
+        const removeUploaded = () => {
+            try {
+                if (fs.existsSync(image.path)) {
+                    fs.unlinkSync(image.path);
+                }
+            } catch (error) {
+                return res.status(500).json({ error: 'Error while deleting uploaded avatar' });
+            }
+        }
+
+        try {
+            // Shrink, reformat, remove metadata etc
+            // - Create the new file in the same path
+            const sanitizedImage = await sharp(image.path)
+                .resize({ fit: 'fill', width: 400, height: 400 })
+                .toColorspace('srgb')
+                .flatten()
+                .toFormat('webp')
+                .toBuffer();
+
+            // Check new size, 3 mb is the limit
+            const stillExceeded3MB = sanitizedImage.length > 3000000;
+            if (stillExceeded3MB) {
+                removeUploaded();
+                return res.status(413).json({ error: 'A file exceeded the 3 megabyte sanitized avatar limit' });
+            }
+
+            // Replace file
+            await fs.promises.writeFile(image.path, sanitizedImage);
+        } catch (err) {
+            removeUploaded();
+            return res.status(500).json({ error: 'Error while handling files: ' + err });
         }
 
         // To route handler
@@ -243,11 +244,11 @@ export const uploadAvatar = multer({
 exports.servePostImage = (req: Request, res: Response) => {
     const imageName = req.params.imageName;
     const imagePath = appDir + `/uploaded/post/${imageName}`;
+    // Serve if file exists
     if (fs.existsSync(imagePath)) {
-        // The file exists, so you can send it
         return res.sendFile(imagePath);
     } else {
-        // The file doesn't exist, so you can send an error response or handle it as needed
+        // The file doesn't exist
         return res.status(404).send('File not found');
     }
 };
@@ -255,11 +256,10 @@ exports.servePostImage = (req: Request, res: Response) => {
 exports.serveAvatar = (req: Request, res: Response) => {
     const imageName = req.params.imageName;
     const imagePath = appDir + `/uploaded/avatar/${imageName}`;
+    // Serve if file exists
     if (fs.existsSync(imagePath)) {
-        // The file exists, so you can send it
         return res.sendFile(imagePath);
     } else {
-        // The file doesn't exist, so you can send an error response or handle it as needed
         return res.status(404).send('File not found');
     }
 };
