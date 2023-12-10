@@ -142,6 +142,7 @@ export default function NewPost() {
           type: 'success',
           text: 'Başarılı! Gönderi onaylandıktan sonra yayınlanacaktır.'
         })
+        setCreatingPost(false);
       })
       .catch((res) => {
         if (res.status === 400) {
@@ -155,10 +156,8 @@ export default function NewPost() {
             text: 'Bağlantıda hata.'
           })
         }
+        setCreatingPost(null);
       })
-      .finally(() => {
-        setCreatingPost(false);
-      });
   }
 
   // Resets all values

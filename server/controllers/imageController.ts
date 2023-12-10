@@ -3,11 +3,46 @@ import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
 import * as fs from 'fs';
 import { acceptedImgSet_1 } from '../utils/helperUtils';
+import sharp from 'sharp';
 const path = require('path');
 const appDir = path.dirname(require.main?.filename);
+/*
+const NodeClam = require('clamscan');
+const ClamScan = new NodeClam().init({
+    removeInfected: true, // If true, removes infected files
+    quarantineInfected: false, // False: Don't quarantine, Path: Moves files to this place.
+    scanLog: null, // Path to a writeable log file to write scan results into
+    debugMode: false, // Whether or not to log info/debug/error msgs to the console
+    fileList: null, // path to file containing list of files to scan (for scanFiles method)
+    scanRecursively: true, // If true, deep scan folders recursively
+    clamscan: {
+        path: '/usr/bin/clamscan', // Path to clamscan binary on your server
+        db: null, // Path to a custom virus definition database
+        scanArchives: true, // If true, scan archives (ex. zip, rar, tar, dmg, iso, etc...)
+        active: true // If true, this module will consider using the clamscan binary
+    },
+    clamdscan: {
+        socket: '/var/run/clamav/clamd.sock', // Socket file for connecting via TCP
+        host: '127.0.0.1', // IP of host to connect to TCP interface
+        port: 8123, // Port of host to use when connecting via TCP interface
+        timeout: 60000, // Timeout for scanning files
+        localFallback: true, // Use local preferred binary to scan if socket/tcp fails
+        path: '/usr/bin/clamdscan', // Path to the clamdscan binary on your server
+        configFile: null, // Specify config file if it's in an unusual place
+        multiscan: true, // Scan using all available cores! Yay!
+        reloadDb: false, // If true, will re-load the DB on every call (slow)
+        active: true, // If true, this module will consider using the clamdscan binary
+        bypassTest: false, // Check to see if socket is available when applicable
+    },
+    preference: 'clamdscan' // If clamdscan is found and active, it will be used by default
+});*/
 
 
-
+/*files.forEach(file => {
+    if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path);
+    }
+});*/
 
 // Define storage for uploaded files
 const postImageStorage = multer.diskStorage({
@@ -25,7 +60,7 @@ const postImageStorage = multer.diskStorage({
 export const uploadPostImage = (req: Request, res: Response, next: NextFunction) => {
     const multerMiddleware = multer({
         storage: postImageStorage,
-        limits: { fileSize: 5000000, files: 10 }, // 5 megabyte
+        limits: { fileSize: 10000000, files: 10 }, // 10 megabyte
         fileFilter: (req, file, cb) => {
             // Accept only images, excluding gif
             if (acceptedImgSet_1.includes(file.mimetype))
@@ -36,26 +71,82 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
     }).array('postImages', 10);
 
     // Apply multer middleware
-    multerMiddleware(req, res, (multerError: any) => {
+    multerMiddleware(req, res, async (multerError: any) => {
         if (multerError) {
-            // Probably deletes automatically upon error
-            // Delete all the uploaded files upon error
-            /*const uploadedList = Array.isArray(req.files) ? req.files : [];
-            uploadedList.forEach(file => {
-                if (fs.existsSync(file.path)) {
-                    fs.unlinkSync(file.path);
-                }
-            });*/
-
             if (multerError.code === 'LIMIT_FILE_SIZE') {
-                // 5mb limit, if one exceeds, return 413, payload too large error
-                return res.status(413).json({ error: 'A file exceeded the 5 megabyte limit' });
+                // 10mb limit, if one exceeds, return 413, payload too large error
+                return res.status(413).json({ error: 'A file exceeded the 10 megabyte initial limit' });
             }
             else if (multerError.code === 'LIMIT_FILE_COUNT') {
                 // 10 image limit
                 return res.status(417).json({ error: 'Maximum of 10 files can be sent' });
             }
             return next(multerError);
+        }
+
+
+        // Check files for viruses
+        const files = req.files as Express.Multer.File[];
+
+        // Reject all if one is infected
+        const removeAllUploaded = () => {
+            // Remove uploaded
+            files.forEach(file => {
+                if (fs.existsSync(file.path)) {
+                    fs.unlinkSync(file.path);
+                }
+            });
+        }
+
+        try {
+            for (const file of files) {
+                // Virus scan
+                /*await ClamScan.isInfected(file.path, (err: any, file: File, isInfected: boolean, viruses: any) => {
+                    if (err) throw new Error('ClamScan throw errow while scanning')
+
+                    console.log('infected:', isInfected)
+                    if (isInfected) {
+                        removeAllUploaded()
+                        return res.status(406).json({ error: 'Infected file detected.' });
+                    }
+                });*/
+
+                const handleSharpError = () => {
+                    removeAllUploaded()
+                    return res.status(500).json({ error: 'Error while sanitizing image' });
+                }
+                // Shrink, reformat, remove metadata etc
+                // - Create the new file in the same path
+                sharp(file.path)
+                    .resize({ fit: 'inside', width: 720, height: 720 })
+                    .toColorspace('srgb')
+                    .flatten()
+                    .toFormat('webp')
+                    .toBuffer((err, buffer) => {
+                        if (err) {
+                            handleSharpError()
+                            return
+                        };
+
+                        // Check new size, 5 mb is the limit
+                        const stillExceeded5MB = buffer.length > 5000000;
+                        if (stillExceeded5MB) {
+                            removeAllUploaded()
+                            return res.status(413).json({ error: 'A file exceeded the 5 megabyte sanitized limit' });
+                        }
+
+                        // Overwrite the file with sanitized one
+                        fs.writeFile(file.path, buffer, (err) => {
+                            if (err) {
+                                handleSharpError()
+                                return
+                            };
+                        });
+                    });
+            }
+        } catch (error) {
+            removeAllUploaded()
+            return res.status(500).json({ error: 'hahaha' });
         }
 
         // To route handler

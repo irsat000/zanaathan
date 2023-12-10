@@ -45,10 +45,8 @@ export default function ApprovingPosts() {
             .then(data => {
                 const sanatizePosts = data.posts.map((p: any) => ({
                     ...p,
-                    Images: p.Images.split(','),
-                    ActiveImage: 0,
-                    RejectMenuActive: false,
-                    SelectedBanDuration: '0'
+                    Images: p.Images ? p.Images.split(',') : [],
+                    ActiveImage: 0
                 }))
                 setPosts(sanatizePosts)
             })

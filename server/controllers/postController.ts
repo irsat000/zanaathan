@@ -221,7 +221,6 @@ exports.createPost = (req: Request, res: Response) => {
         const subCategory = body.subCategory;
         const district = body.district;
 
-        // Note: This can be done with a middleware before image uploading
         // Validate the inputs
         if (!req.body || title.length < 5 || title.length > 255
             || description.length < 50 || description.length > 2000
