@@ -189,6 +189,7 @@ interface CreatePost {
 
 exports.createPost = (req: Request, res: Response) => {
     try {
+        console.log("Route handler baby!")
         // Get uploaded file list
         // Filtered in multer instance
         const files = req.files;

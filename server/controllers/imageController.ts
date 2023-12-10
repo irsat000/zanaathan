@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
 import * as fs from 'fs';
-import { acceptedImgSet_1 } from '../utils/helperUtils';
+import { acceptedImgSet_1, removeExtension } from '../utils/helperUtils';
 import sharp from 'sharp';
 const path = require('path');
 const appDir = path.dirname(require.main?.filename);
@@ -52,7 +52,7 @@ const postImageStorage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         // Define the filename for the uploaded image
-        cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
+        cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + '.webp' /*path.extname(file.originalname)*/);
     },
 });
 
@@ -91,9 +91,11 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
         // Reject all if one is infected
         const removeAllUploaded = () => {
             // Remove uploaded
-            files.forEach(file => {
+            files.forEach(async (file) => {
                 if (fs.existsSync(file.path)) {
-                    fs.unlinkSync(file.path);
+                    await fs.unlink(file.path, (err) => {
+                        if (err) throw err;
+                    });
                 }
             });
         }
@@ -111,42 +113,33 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
                     }
                 });*/
 
-                const handleSharpError = () => {
-                    removeAllUploaded()
-                    return res.status(500).json({ error: 'Error while sanitizing image' });
-                }
                 // Shrink, reformat, remove metadata etc
                 // - Create the new file in the same path
-                sharp(file.path)
+                const sanitizedImage = await sharp(file.path)
                     .resize({ fit: 'inside', width: 720, height: 720 })
                     .toColorspace('srgb')
                     .flatten()
                     .toFormat('webp')
-                    .toBuffer((err, buffer) => {
-                        if (err) {
-                            handleSharpError()
-                            return
-                        };
+                    .toBuffer();
 
-                        // Check new size, 5 mb is the limit
-                        const stillExceeded5MB = buffer.length > 5000000;
-                        if (stillExceeded5MB) {
-                            removeAllUploaded()
-                            return res.status(413).json({ error: 'A file exceeded the 5 megabyte sanitized limit' });
-                        }
+                // Check new size, 5 mb is the limit
+                const stillExceeded5MB = sanitizedImage.length > 5000000;
+                if (stillExceeded5MB) {
+                    removeAllUploaded()
+                    return res.status(413).json({ error: 'A file exceeded the 5 megabyte sanitized limit' });
+                }
 
-                        // Overwrite the file with sanitized one
-                        fs.writeFile(file.path, buffer, (err) => {
-                            if (err) {
-                                handleSharpError()
-                                return
-                            };
-                        });
-                    });
+                // Replace the file with sanitized one
+                //const newPath = removeExtension(file.path) + '.webp';
+                /*if (fs.existsSync(file.path)) {
+                    console.log("heyy")
+                    fs.unlinkSync(file.path);
+                }*/
+                await fs.promises.writeFile(file.path, sanitizedImage);
             }
         } catch (error) {
             removeAllUploaded()
-            return res.status(500).json({ error: 'hahaha' });
+            return res.status(500).json({ error: 'Error while handling files' });
         }
 
         // To route handler
