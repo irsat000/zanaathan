@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { XLg } from "react-bootstrap-icons";
 
 
 export interface NPFormData {
@@ -50,7 +51,14 @@ export const NP_Thumbnails: React.FC<{
                     }}
                     onDragEnd={() => handleDragEnd(index)}
                 >
-                    <img src={URL.createObjectURL(new Blob([image]))} alt={`Image ${index}`} />
+                    <div className="image-wrapper">
+                        <img src={URL.createObjectURL(new Blob([image]))} alt={`Image ${index}`} />
+                    </div>
+                    <button type="button" className="delete" onClick={() => {
+                        const updated = { ...formData }
+                        updated.selectedImages = updated.selectedImages.filter((img, i) => i !== index)
+                        setFormData(updated)
+                    }}><XLg /></button>
                 </div>
             )) : <span className='choose-image-warning'>Fotoğraf yok</span>}
         </div>

@@ -51,13 +51,27 @@ export default function NewPost() {
   }
   // Change the selectedAmages from formData
   const handleImageChange = (e: any) => {
+    const files = e.target.files;
+
+    // Check if more than 10 files
+    if (files.length + formData.selectedImages.length > 10) {
+      handleGStatus('informationModal', {
+        type: 'error',
+        text: 'En fazla 10 fotoğraf yüklenebilir.'
+      })
+      return;
+    }
+
+    // New array of files
     const newImages: File[] = [];
-    for (let i = 0; i < e.target.files.length; i++) {
-      const file = e.target.files[i];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
       if (file) {
         newImages.push(file);
       }
     }
+
+    // Push to the selectedImages
     setFormData({
       ...formData,
       selectedImages: [...formData.selectedImages, ...newImages]
@@ -145,17 +159,20 @@ export default function NewPost() {
         setCreatingPost(false);
       })
       .catch((res) => {
+        let errorMessage = 'Bağlantıda hata.'
         if (res.status === 400) {
-          handleGStatus('informationModal', {
-            type: 'error',
-            text: 'Form verisi geçersiz, gönderi oluşturulamadı.'
-          })
-        } else {
-          handleGStatus('informationModal', {
-            type: 'error',
-            text: 'Bağlantıda hata.'
-          })
+          errorMessage = 'Form verisi geçersiz, gönderi oluşturulamadı.'
+        } else if (res.status === 413) {
+          errorMessage = `Fotoğraf çok büyük. İşlenmiş fotoğraf boyutu en fazla 5 MB olabilir.`
+        } else if (res.status === 417) {
+          errorMessage = `En fazla 10 fotoğraf yüklenebilir.`
+        } else if (res.status === 401) {
+          errorMessage = `Giriş yapmanız gerekmektedir.`
         }
+        handleGStatus('informationModal', {
+          type: 'error',
+          text: errorMessage
+        })
         setCreatingPost(null);
       })
   }

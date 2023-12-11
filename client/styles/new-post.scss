@@ -41,7 +41,6 @@
 
             .description-container {
                 display: flex;
-                margin-bottom: 44px;
 
                 .np-description {
                     width: 100%;
@@ -49,6 +48,8 @@
                     font-weight: 300;
                     font-family: 'Poppins', sans-serif;
                     font-size: 1.1rem;
+                    display: flex;
+                    flex-direction: column;
 
                     .ql-container {
                         font-size: inherit !important;
@@ -83,7 +84,7 @@
             .np-thumbnail-wrapper {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 10px;
+                gap: 14px;
                 padding: 10px;
                 justify-content: space-around;
 
@@ -100,6 +101,7 @@
                     width: 2px;
                     background-color: var(--button-white-border);
                     position: relative;
+                    height: 100px;
 
                     &::before,
                     &::after {
@@ -132,30 +134,53 @@
                 }
 
                 .image-thumbnail {
-                    transition: width 0.1s ease-in-out;
-                    height: 100px;
-                    width: 100px;
-                    overflow: hidden;
-                    background-color: rgba(0, 0, 0, 0.1);
-                    border-radius: 4px;
                     display: flex;
+                    flex-direction: column;
+                    gap: 10px;
                     align-items: center;
-                    justify-content: center;
-                    cursor: grab;
-                    border: 2px solid var(--primary-bg-color);
 
                     &:first-of-type {
-                        border: 2px solid #0389ff;
-                        -webkit-box-shadow: 0px 0px 13px 0px rgba(3, 137, 255, 0.5);
-                        -moz-box-shadow: 0px 0px 13px 0px rgba(3, 137, 255, 0.5);
-                        box-shadow: 0px 0px 13px 0px rgba(3, 137, 255, 0.5);
+                        border: 2px solid var(--primary-bg-color);
+
+                        .image-wrapper {
+                            border: 2px solid #0389ff;
+                            -webkit-box-shadow: 0px 0px 13px 0px rgba(3, 137, 255, 0.5);
+                            -moz-box-shadow: 0px 0px 13px 0px rgba(3, 137, 255, 0.5);
+                            box-shadow: 0px 0px 13px 0px rgba(3, 137, 255, 0.5);
+                        }
                     }
 
-                    img {
-                        max-width: 100%;
-                        max-height: 100%;
-                        object-fit: contain;
-                        border-radius: 2px;
+                    .image-wrapper {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: rgba(0, 0, 0, 0.1);
+                        border-radius: 4px;
+                        height: 100px;
+                        width: 100px;
+                        overflow: hidden;
+                        cursor: grab;
+                        transition: width 0.1s ease-in-out;
+
+                        img {
+                            max-width: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                            border-radius: 2px;
+                        }
+                    }
+
+                    .delete {
+                        padding: 4px;
+                        font-size: 1rem;
+                        background-color: var(--button3-2);
+                        border-radius: 50%;
+                        color: #ffffff;
+                        display: flex;
+
+                        &:hover {
+                            background-color: var(--button3-1);
+                        }
                     }
                 }
             }
