@@ -50,8 +50,10 @@ export default function NewPost() {
     });
   }
   // Change the selectedAmages from formData
-  const handleImageChange = (e: any) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+    if (!files) return
+    let above10MB: number[] = [];
 
     // Check if more than 10 files
     if (files.length + formData.selectedImages.length > 10) {
@@ -65,8 +67,10 @@ export default function NewPost() {
     // New array of files
     const newImages: File[] = [];
     for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (file) {
+      const file = files[i] as File | null;
+      if (file && file.size > 1024 * 1024 * 10) {
+        above10MB.push(i);
+      } else if (file) {
         newImages.push(file);
       }
     }
@@ -76,6 +80,13 @@ export default function NewPost() {
       ...formData,
       selectedImages: [...formData.selectedImages, ...newImages]
     });
+
+    if (above10MB.length > 0) {
+      handleGStatus('informationModal', {
+        type: 'error',
+        text: `${above10MB.length} adet fotoğraf 10 MB'dan büyük olduğu için eklenmedi.`
+      })
+    }
   };
   // Change the dependencies of payload, city and category
   const handleExtraChange = (e: any) => {

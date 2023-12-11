@@ -88,7 +88,20 @@ export default function Home() {
     }
 
     // Function for submitting avatar
-    const handleAvatarSubmit = (file: File) => {
+    const handleAvatarSubmit = (file: File | null) => {
+        if (!file || !acceptedImgSet_1.includes(file.type)) {
+            handleGStatus('informationModal', {
+                type: 'error',
+                text: 'Desteklenmeyen dosya biçimi!'
+            })
+            return;
+        } else if (file.size < 1024 * 1024 * 10) {
+            handleGStatus('informationModal', {
+                type: 'error',
+                text: '10 MB altı fotoğraf yüklenebilir.'
+            })
+            return;
+        }
         // Check jwt
         const jwt = fetchJwt();
         if (!jwt) return;
@@ -111,9 +124,16 @@ export default function Home() {
                 setUserData(decodedJwt(data.JWT));
             })
             .catch((res) => {
+                let errorMessage = 'Profil fotoğrafı değiştirilemedi, bağlantıda hata olabilir.'
+                if (res.status === 413) {
+                    errorMessage = `Fotoğraf çok büyük. İşlenmiş fotoğraf boyutu en fazla 3 MB olabilir.`
+                } else if (res.status === 401) {
+                    // For expired jwt
+                    errorMessage = `Giriş yapmanız gerekmektedir.`
+                }
                 handleGStatus('informationModal', {
                     type: 'error',
-                    text: 'Profil fotoğrafı değiştirilemedi!'
+                    text: errorMessage
                 })
             });
     }
@@ -201,20 +221,13 @@ export default function Home() {
                                             accept="image/*"
                                             onClick={(e) => {
                                                 // Reset to trigger onChange properly
-                                                const targetInput = e.target as HTMLInputElement;
+                                                const targetInput = e.target as HTMLInputElement
                                                 targetInput.value = ''
                                             }}
                                             onChange={(e) => {
                                                 // Get file and submit or give error if it's not image
                                                 const file = e.target.files ? e.target.files[0] : null
-                                                if (file && acceptedImgSet_1.includes(file.type)) {
-                                                    handleAvatarSubmit(file)
-                                                } else {
-                                                    handleGStatus('informationModal', {
-                                                        type: 'error',
-                                                        text: 'Desteklenmeyen dosya biçimi!'
-                                                    })
-                                                }
+                                                handleAvatarSubmit(file)
                                             }}
                                         />
                                         <span className="change">Değiştir</span>

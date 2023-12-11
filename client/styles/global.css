@@ -1384,6 +1384,9 @@ footer {
     width: 1.1rem;
     transform: unset;
   }
+  .chatbot-container .chatbot .chatbot-menu .chatbot-menu-header .chatbot-shortcut-button {
+    display: none;
+  }
   .chatbot-container .chatbot .chatbot-body {
     width: 60vw;
   }
