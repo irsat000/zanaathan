@@ -624,32 +624,49 @@ exports.uploadAvatar = (req: Request, res: Response) => {
             return res.status(401).send('Not authorized');
         }
 
-        // Update the avatar
-        const query = `UPDATE Account SET Avatar = ? WHERE Id = ?`;
-        pool.query(query, [newAvatar.name, userId], (qErr: any, results: any) => {
+
+        // Get old avatar name
+        const query = `SELECT Avatar FROM Account WHERE Id = ?;`;
+        pool.query(query, [userId], (qErr: any, results: any) => {
             if (qErr) {
                 deleteUploadedOnError();
                 return res.status(500).json({ error: 'Query error' });
             }
+            // Delete from storage if there is an old avatar
+            if (results.length > 0 && results[0].Avatar) {
+                const imgPath = `${appDir}/uploaded/avatar/${results[0].Avatar}`;
+                if (fs.existsSync(imgPath)) {
+                    fs.unlinkSync(imgPath)
+                }
+            }
 
-            // Get updated user
-            const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;';
-            pool.query(selectQuery, [userId], (qErr: any, results: any) => {
+            // Update the avatar
+            const query = `UPDATE Account SET Avatar = ? WHERE Id = ?`;
+            pool.query(query, [newAvatar.name, userId], (qErr: any, results: any) => {
                 if (qErr) {
-                    // We don't call deleteUploadedOnError(); because it didn't fail during UPDATE
+                    deleteUploadedOnError();
                     return res.status(500).json({ error: 'Query error' });
                 }
-                // Get user from results
-                const user = results[0];
-                // Generate JWT
-                const JWT = createJwt({
-                    sub: user.Id,
-                    username: user.Username,
-                    fullName: user.FullName,
-                    email: user.Email,
-                    avatar: user.Avatar
+
+                // Get updated user
+                const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;';
+                pool.query(selectQuery, [userId], (qErr: any, results: any) => {
+                    if (qErr) {
+                        // We don't call deleteUploadedOnError(); because it didn't fail during UPDATE
+                        return res.status(500).json({ error: 'Query error' });
+                    }
+                    // Get user from results
+                    const user = results[0];
+                    // Generate JWT
+                    const JWT = createJwt({
+                        sub: user.Id,
+                        username: user.Username,
+                        fullName: user.FullName,
+                        email: user.Email,
+                        avatar: user.Avatar
+                    });
+                    return res.status(200).json({ JWT });
                 });
-                return res.status(200).json({ JWT });
             });
         });
     } catch (error) {

@@ -426,6 +426,7 @@ body select {
 .auth-modal-container .auth-modal .login-form .register-button-container .submit-button,
 .auth-modal-container .auth-modal .register-form .login-button-container .submit-button,
 .auth-modal-container .auth-modal .register-form .register-button-container .submit-button {
+  margin: 0 auto;
   border-radius: 20px;
   padding: 6px 30px;
   border: 1px solid var(--button-white-border);
@@ -448,6 +449,7 @@ body select {
 .auth-modal-container .auth-modal .login-form .register-button-container a,
 .auth-modal-container .auth-modal .register-form .login-button-container a,
 .auth-modal-container .auth-modal .register-form .register-button-container a {
+  display: none;
   font-size: 0.9rem;
   font-weight: 300;
   color: var(--link-color);

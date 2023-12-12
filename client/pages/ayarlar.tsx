@@ -95,7 +95,7 @@ export default function Home() {
                 text: 'Desteklenmeyen dosya biçimi!'
             })
             return;
-        } else if (file.size < 1024 * 1024 * 10) {
+        } else if (file.size > 1024 * 1024 * 10) {
             handleGStatus('informationModal', {
                 type: 'error',
                 text: '10 MB altı fotoğraf yüklenebilir.'

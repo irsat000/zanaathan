@@ -78,7 +78,7 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
                 // Shrink, reformat, remove metadata etc
                 // - Create the new file in the same path
                 const sanitizedImage = await sharp(image.path)
-                    .resize({ fit: 'inside', width: 720, height: 720 })
+                    .resize({ fit: 'inside', width: 720, height: 720, withoutEnlargement: true })
                     .toColorspace('srgb')
                     .flatten()
                     .toFormat('webp')
@@ -165,7 +165,7 @@ export const uploadAvatar = (req: Request, res: Response, next: NextFunction) =>
             // Shrink, reformat, remove metadata etc
             // - Create the new file in the same path
             const sanitizedImage = await sharp(image.path)
-                .resize({ fit: 'fill', width: 400, height: 400 })
+                .resize({ fit: 'fill', width: 400, height: 400, withoutEnlargement: true })
                 .toColorspace('srgb')
                 .flatten()
                 .toFormat('webp')

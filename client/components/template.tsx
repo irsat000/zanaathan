@@ -192,6 +192,7 @@ const Template: React.FC<{
 							</Link>
 							<div className="drawer-list">
 								<Link href={'/ayarlar'}>Ayarlar</Link>
+								<Link href={'/yeni-ilan'}>İlan oluştur</Link>
 								{userData.roles && userData.roles.length > 0 ?
 									<Link href={'/panel/onay-bekleyenler'}>Panel</Link>
 									: <></>}

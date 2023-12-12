@@ -460,6 +460,7 @@ body {
                 justify-content: space-between;
 
                 .submit-button {
+                    margin: 0 auto; // Without forgot password
                     border-radius: 20px;
                     padding: 6px 30px;
                     border: 1px solid var(--button-white-border);
@@ -478,6 +479,7 @@ body {
                 }
 
                 a {
+                    display: none;
                     font-size: 0.9rem;
                     font-weight: 300;
                     color: var(--link-color);
