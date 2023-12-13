@@ -13,6 +13,7 @@ interface ApprovePost {
     Images: string[]
     CategoryCode: string
     ActiveImage: number
+    OwnerId: number
 }
 
 export default function ApprovingPosts() {
@@ -103,13 +104,13 @@ export default function ApprovingPosts() {
     }
 
     // To reject posts
-    const handleRejectPost = (postId: number) => {
+    const handleRejectPost = (post: ApprovePost) => {
         // Check jwt
         const jwt = fetchJwt()
         if (!jwt) return
 
 
-        fetch(`${apiUrl}/panel/reject-post/${postId}`, {
+        fetch(`${apiUrl}/panel/reject-post/${post.Id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
@@ -121,9 +122,17 @@ export default function ApprovingPosts() {
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
-                const updated = posts.filter(p => p.Id !== postId)
+                // If user is not going to be banned, just reject this one
+                // Otherwise delete all their post that are waiting for approval
+                const updated = posts.filter(p => {
+                    return selectedBanDuration === '0' ? p.Id !== post.Id : p.OwnerId !== post.OwnerId
+                })
                 setPosts(updated)
-                alert('Gönderi silindi.')
+                if (selectedBanDuration === '0') {
+                    alert('Gönderi silindi.')
+                } else {
+                    alert('Kullanıcıya ait tüm onay bekleyen gönderiler silindi.')
+                }
             })
             .catch(err => alert('Hata oluştu!'))
     }
@@ -175,7 +184,7 @@ export default function ApprovingPosts() {
                                     </button>
                                     <div className={`reject-menu ${activeRejectMenu === p.Id ? 'active' : ''}`}>
                                         <ul>
-                                            <li onClick={() => handleRejectPost(p.Id)}>Kaldır</li>
+                                            <li onClick={() => handleRejectPost(p)}>Kaldır</li>
                                             {/* coming soon
                                             <li onClick={() => handleRejectPost(p.Id)}>Müstehcen fotoğraf</li>
                                             <li onClick={() => handleRejectPost(p.Id)}>Küfür</li>

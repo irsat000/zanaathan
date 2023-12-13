@@ -28,7 +28,7 @@ const checkAdminRole = async (userId: number): Promise<boolean> => {
     });
 }
 
-const banUserPromise = async (banDuration: string, reason: string, targetId: number, adminId: number): Promise<string | null> => {
+const banUserPromise = async (banDuration: number, reason: string, targetId: number, adminId: number): Promise<string | null> => {
     const query = `
         INSERT UserBans(BannedAt, LiftDate, Reason, AccountId, AdminId)
         VALUES (NOW(), DATE_ADD(NOW(), INTERVAL ? DAY), ?, ?, ?);
@@ -41,12 +41,70 @@ const banUserPromise = async (banDuration: string, reason: string, targetId: num
 
             // Calculate the lift date using banDuration
             const liftDate = new Date();
-            liftDate.setDate(liftDate.getDate() + +banDuration);
+            liftDate.setDate(liftDate.getDate() + banDuration);
 
             // Resolve with the lift date
             resolve(liftDate.toISOString());
         });
     });
+}
+
+// Deletes an individual post, its images and the images from the storage
+// If user is banned, it deletes all the unapproved job postings of the person
+const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: string, postId?: string): Promise<boolean> => {
+    return await new Promise<boolean>(async (resolve, reject) => {
+        // Make sure post id exists in case user is not banned
+        if (!userBanned && !postId) {
+            resolve(false)
+        }
+        console.log({ userBanned, accountId, postId })
+        // Update post(s) to set current status to 4 (deleted)
+        const filterType = userBanned ? 'CurrentStatusId = 5 AND AccountId' : 'Id'
+        const filterId = userBanned ? accountId : postId
+        const query = `UPDATE JobPosting SET CurrentStatusId = 4 WHERE ${filterType} = ?;`
+        pool.query(query, [filterId], (qErr: any, results: any) => {
+            if (qErr) {
+                resolve(false)
+            }
+            console.log("heyy???")
+
+            // FOR IMAGES
+            let queryPostImages = ` FROM JobPostingImages JPI`
+            if (userBanned) {
+                queryPostImages += ` LEFT JOIN JobPosting JP ON JPI.JobPostingId = JP.Id WHERE JP.AccountId = ? AND JP.CurrentStatusId = 4;`
+            } else {
+                queryPostImages += ` WHERE JobPostingId = ?;`
+            }
+            // Get images of the post(s) if there are any
+            pool.query('SELECT JPI.Body' + queryPostImages, [filterId], async (qErr: any, imageResults: any) => {
+                if (qErr) {
+                    resolve(false)
+                }
+
+                // Delete all these images
+                if (imageResults.length > 0) {
+                    // Delete from database
+                    pool.query('DELETE JPI' + queryPostImages, [filterId], (qErr: any, results: any) => {
+                        if (qErr) {
+                            resolve(false)
+                        }
+
+                        // Delete from storage
+                        imageResults.forEach((obj: { Body: string }) => {
+                            const path = appDir + '/uploaded/post/' + obj.Body
+                            if (fs.existsSync(path)) {
+                                fs.unlinkSync(path)
+                            }
+                        })
+
+                        resolve(true)
+                    });
+                }
+
+                resolve(true)
+            })
+        })
+    })
 }
 
 exports.waitingApproval = async (req: Request, res: Response) => {
@@ -63,7 +121,8 @@ exports.waitingApproval = async (req: Request, res: Response) => {
                     JP.Id,
                     JP.Title,
                     GROUP_CONCAT(JPI.Body ORDER BY JPI.ImgIndex) AS Images,
-                    Category.Code AS CategoryCode
+                    Category.Code AS CategoryCode,
+                    JP.AccountId AS OwnerId
                 FROM JobPosting AS JP
                 LEFT JOIN JobPostingImages JPI ON JPI.JobPostingId = JP.Id
                 LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
@@ -126,64 +185,33 @@ exports.rejectPost = async (req: Request, res: Response) => {
 
         // Check job posting and get the account id
         const query = `SELECT AccountId FROM JobPosting WHERE Id = ?;`;
-        pool.query(query, [postId], (qErr: any, results: any) => {
+        pool.query(query, [postId], async (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
             }
-            if (results.length < 1) {
+            if (results.length === 0) {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
             const postOwnerId = results[0].AccountId;
 
-            // Update post to set current status to 4 (deleted)
-            const query = `UPDATE JobPosting SET CurrentStatusId = 4 WHERE Id = ?;`;
-            pool.query(query, [postId], (qErr: any, results: any) => {
-                if (qErr) {
-                    return res.status(500).json({ error: 'Query error' });
+            // Delete the unapproved post(s)
+            const success = await deleteUnapprovedPostsPromise(+body.banDuration > 0, postOwnerId, postId);
+
+            // Ban the account
+            if (+body.banDuration > 0) {
+                const reason = `Gönderinizde yasaklanmanızı gerektiren bir problem tesbit ettik.`;
+                const liftDate = await banUserPromise(+body.banDuration, reason, postOwnerId, adminId);
+                if (!liftDate) {
+                    return res.status(500).json({ message: 'Failed to ban' });
                 }
+            }
 
-                // Get images of the post if there are any
-                const query = `SELECT Body FROM JobPostingImages WHERE JobPostingId = ?;`;
-                pool.query(query, [postId], async (qErr: any, imageResults: any) => {
-                    if (qErr) {
-                        return res.status(500).json({ error: 'Query error' });
-                    }
+            if (!success) {
+                return res.status(500).json({ message: 'Failed to remove the post or posts' });
+            }
 
-                    // Delete images
-                    if (imageResults.length > 0) {
-                        const deleteImagesPromise = async (): Promise<void> => {
-                            // Delete from database
-                            const query = `DELETE FROM JobPostingImages WHERE JobPostingId = ?;`;
-                            await new Promise<void>((resolve, reject) => {
-                                pool.query(query, [postId], (qErr: any, results: any) => {
-                                    if (qErr) {
-                                        reject();
-                                        // TODO: Logging maybe, not supposed to give error
-                                    }
-
-                                    // Delete from storage
-                                    imageResults.forEach((obj: { Body: string }) => {
-                                        const path = appDir + '/uploaded/post/' + obj.Body;
-                                        fs.existsSync(path) && fs.unlinkSync(path)
-                                    })
-
-                                    resolve();
-                                });
-                            });
-                        }
-                        await deleteImagesPromise();
-                    }
-
-                    // Ban the account
-                    if (+body.banDuration > 0) {
-                        const reason = `Gönderinizde yasaklanmanızı gerektiren bir problem tesbit ettik.`;
-                        await banUserPromise(body.banDuration, reason, postOwnerId, adminId);
-                    }
-
-                    return res.status(200).json({ message: 'Success' });
-                });
-            });
+            return res.status(200).json({ message: 'Success' });
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
@@ -257,10 +285,12 @@ exports.banUser = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Bad request' });
         }
 
-        const liftDate = await banUserPromise(body.banDuration, 'Hesabınız yasaklandı.', +target, adminId)
+        const liftDate = await banUserPromise(+body.banDuration, 'Hesabınız yasaklandı.', +target, adminId)
 
-        if (liftDate)
+        if (liftDate) {
+            await deleteUnapprovedPostsPromise(true, target)
             return res.status(200).json({ message: 'Success', banLiftDate: liftDate });
+        }
         else
             return res.status(500).json({ message: 'Failed to ban' });
     } catch (error) {

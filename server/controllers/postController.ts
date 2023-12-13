@@ -248,10 +248,10 @@ exports.createPost = (req: Request, res: Response) => {
 
         // Get connection for transaction and rollback
         pool.getConnection((connErr: any, connection: any) => {
-            if (connErr) return handleError(connection);
+            if (connErr) handleError(connection);
 
             connection.beginTransaction((beginErr: any) => {
-                if (beginErr) return handleError(connection);
+                if (beginErr) handleError(connection);
             });
 
             const query = "INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 5, ?);";
