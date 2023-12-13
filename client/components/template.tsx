@@ -13,6 +13,7 @@ import { useContacts } from '@/context/contactsContext'
 import { useGStatus } from '@/context/globalContext'
 import { apiUrl, avatarLink } from '@/lib/utils/helperUtils'
 import router from 'next/router'
+import { HashLoader } from 'react-spinners'
 
 
 interface SearchRecommendation {
@@ -105,11 +106,15 @@ const Template: React.FC<{
 		// Set value for input
 		setSearchBar(value);
 
-		// Create empty recommendations array or initialize it with written text
-		const updated = value !== '' ? [{
+		// Create empty recommendations array
+		const updated: { text: string, link: string }[] = [];
+
+		// Coming soon
+		// or initialize it with written text
+		/*value !== '' ? [{
 			text: value + ' - Ara',
 			link: "/search?key=" + encodeURIComponent(value)
-		}] : [];
+		}] : [];*/
 
 		// Get categories and subcategories that includes the value substring
 		categoryList.forEach(c => {
@@ -159,7 +164,9 @@ const Template: React.FC<{
 									? <CheckCircle style={{ color: '#34c532' }} />
 									: gStatus.informationModal.type === 'error'
 										? <XCircle style={{ color: '#c53232' }} />
-										: <></>}
+										: gStatus.informationModal.type === 'loading'
+											? <HashLoader color="#36d7b7" />
+											: <></>}
 
 							</div>
 							<span dangerouslySetInnerHTML={{ __html: gStatus.informationModal.text }} />

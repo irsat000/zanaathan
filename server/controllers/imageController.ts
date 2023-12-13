@@ -65,7 +65,7 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
                 if (fs.existsSync(file.path)) {
                     await fs.unlink(file.path, (err) => {
                         if (err) {
-                            return res.status(500).json({ error: 'Error while deleting uploaded images' });
+                            console.error('Error while deleting existing image.')
                         }
                     });
                 }

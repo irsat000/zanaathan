@@ -6,7 +6,7 @@ import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
-import { apiUrl } from '@/lib/utils/helperUtils'
+import { apiUrl, checkUnallowed, imageDataFromFile } from '@/lib/utils/helperUtils'
 import { fetchJwt } from '@/lib/utils/userUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts, getSubsByCategory } from '@/lib/utils/fetchUtils'
 //import ReactQuill from 'react-quill';
@@ -117,11 +117,10 @@ export default function NewPost() {
   }
 
 
-
   const [creatingPost, setCreatingPost] = useState<boolean | null>(null);
 
   // Send form
-  const handleNewPostSubmit = (e: any) => {
+  const handleNewPostSubmit = async (e: any) => {
     e.preventDefault();
 
     // Basic validation
@@ -140,6 +139,22 @@ export default function NewPost() {
       return;
     }
 
+    // Image control loading info
+    handleGStatus('informationModal', {
+      type: 'loading',
+      text: 'Fotoğraflar kontrol edilirken bekleyiniz...'
+    })
+    // Check if the images contain inappropriate content
+    if (await checkUnallowed(formData.selectedImages)) {
+      handleGStatus('informationModal', {
+        type: 'error',
+        text: 'Uygunsuz içerikli fotoğraf tesbit edildi.'
+      })
+      return;
+    }
+    handleGStatus('informationModal', null)
+
+    // Create multipart form data (necessary for image upload)
     const multiPartFormData = new FormData();
     multiPartFormData.append('title', formData.title);
     multiPartFormData.append('description', description);
