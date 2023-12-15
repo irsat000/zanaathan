@@ -1,3 +1,4 @@
+import * as tf from '@tensorflow/tfjs'
 import * as nsfwjs from 'nsfwjs'
 import { imageDataFromFile } from './helperUtils'
 

@@ -428,6 +428,7 @@ export default function Category() {
                           className='post-image'
                           loader={() => postImageLink(post.MainImage!)}
                           priority={true}
+                          unoptimized={true}
                           src={postImageLink(post.MainImage)}
                           alt={`${i + 1}. ilanın birincil fotoğrafı`}
                           width={0}
@@ -472,7 +473,7 @@ export default function Category() {
               : <></>}
             <div className='page-numbers'>
               {pageNumbers.map(number =>
-                <a className={`page-link ${number === activePage ? 'current' : ''}`} onClick={() => handlePageChange(number)}>{number}</a>
+                <a className={`page-link ${number === activePage ? 'current' : ''}`} key={number} onClick={() => handlePageChange(number)}>{number}</a>
               )}
             </div>
             {pageNumbers.includes(activePage + 1) ?

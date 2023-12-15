@@ -452,6 +452,7 @@ const Chatbot: React.FC<{
                                             src={avatarLink(contact.ReceiverAvatar)}
                                             alt={'Kişinin profil fotoğrafı'}
                                             priority={false}
+                                            unoptimized={true}
                                             width={0}
                                             height={0} />
                                         : <Person className='no-ppic' />}

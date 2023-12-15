@@ -185,6 +185,7 @@ const Template: React.FC<{
 										src={avatarLink(userData.avatar)}
 										alt={'Profile fotoğrafı'}
 										priority={false}
+										unoptimized={true}
 										width={0}
 										height={0} />
 									: <Image
@@ -269,6 +270,7 @@ const Template: React.FC<{
 											src={avatarLink(userData.avatar)}
 											alt={'Profile fotoğrafı'}
 											priority={false}
+											unoptimized={true}
 											width={0}
 											height={0} />
 										: <Image

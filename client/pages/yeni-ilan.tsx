@@ -15,6 +15,7 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false }); // Reac
 import 'react-quill/dist/quill.snow.css';
 import { useGStatus } from '@/context/globalContext'
 import { checkUnallowed } from '@/lib/utils/nsfwjsUtils'
+import { checkProfanity } from '@/lib/utils/profanityUtils'
 
 
 interface SubCategory {
@@ -143,8 +144,16 @@ export default function NewPost() {
     // Image control loading info
     handleGStatus('informationModal', {
       type: 'loading',
-      text: 'Fotoğraf kontrol edilirken bekleyiniz...'
+      text: 'Fotoğraflar kontrol edilirken bekleyiniz...'
     })
+    // Check if the title or description contains profanity
+    if (checkProfanity([formData.title, description])) {
+      handleGStatus('informationModal', {
+        type: 'error',
+        text: 'Başlıkta veya açıklamada uygunsuz kelime tesbit edildi.'
+      })
+      return;
+    }
     // Check if the images contain inappropriate content
     if (await checkUnallowed(formData.selectedImages)) {
       handleGStatus('informationModal', {
@@ -154,6 +163,8 @@ export default function NewPost() {
       return;
     }
     handleGStatus('informationModal', null)
+
+    return
 
     // Create multipart form data (necessary for image upload)
     const multiPartFormData = new FormData();

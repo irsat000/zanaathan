@@ -107,7 +107,7 @@ export default function Home() {
         // Image control loading info
         handleGStatus('informationModal', {
             type: 'loading',
-            text: 'Fotoğraflar kontrol edilirken bekleyiniz...'
+            text: 'Fotoğraf kontrol edilirken bekleyiniz...'
         })
         // Check if the images contain inappropriate content
         if (await checkUnallowed([file])) {
