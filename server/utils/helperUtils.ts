@@ -1,3 +1,4 @@
+import rateLimit from "express-rate-limit";
 
 
 export const isNullOrEmpty = (value: any): boolean => {
@@ -34,3 +35,10 @@ export const removeExtension = (fullPath: string) => {
     // If no dot is found, return the original full path
     return fullPath;
 }
+
+export const rateLimiter = (args?: { minute: number, max: number }) => rateLimit({
+    windowMs: (args ? args.minute : 15) * 60 * 1000,
+    max: args ? args.max : 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+})

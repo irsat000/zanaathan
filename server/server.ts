@@ -4,7 +4,7 @@ import { Server } from 'socket.io';
 const cors = require('cors');
 import { Request, Response } from 'express';
 import { verifyJwt } from './utils/userUtils';
-import { isNullOrEmpty, isPositiveNumeric } from './utils/helperUtils';
+import { isNullOrEmpty, isPositiveNumeric, rateLimiter } from './utils/helperUtils';
 
 // Configuration
 const app = express();
@@ -17,7 +17,6 @@ const io = new Server(httpServer, {
             : ['https://localhost:3000']
     }
 })
-
 
 // MIDDLEWARES
 app.use(express.json());

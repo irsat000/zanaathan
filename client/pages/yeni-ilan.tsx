@@ -123,7 +123,7 @@ export default function NewPost() {
 
   // Send form
   const handleNewPostSubmit = async (e: any) => {
-    e.preventDefault();
+    e.preventDefault()
 
     // Basic validation
     if (formData.title.length < 5 || formData.title.length > 255
@@ -138,13 +138,13 @@ export default function NewPost() {
         <li ${formData.subCategory === '0' ? 'class="fail"' : ''}>Kategori seçimi</li>
         <li ${formData.district === '0' ? 'class="fail"' : ''}>Bölge seçimi</li></ul>`
       })
-      return;
+      return
     }
 
     // Image control loading info
     handleGStatus('informationModal', {
       type: 'loading',
-      text: 'Fotoğraflar kontrol edilirken bekleyiniz...'
+      text: 'Başlık, açıklama ve fotoğraflar kontrol edilirken bekleyiniz... 🤖'
     })
     // Check if the title or description contains profanity
     if (checkProfanity([formData.title, description])) {
@@ -152,7 +152,7 @@ export default function NewPost() {
         type: 'error',
         text: 'Başlıkta veya açıklamada uygunsuz kelime tesbit edildi.'
       })
-      return;
+      return
     }
     // Check if the images contain inappropriate content
     if (await checkUnallowed(formData.selectedImages)) {
@@ -160,11 +160,9 @@ export default function NewPost() {
         type: 'error',
         text: 'Uygunsuz içerikli fotoğraf tesbit edildi.'
       })
-      return;
+      return
     }
     handleGStatus('informationModal', null)
-
-    return
 
     // Create multipart form data (necessary for image upload)
     const multiPartFormData = new FormData();

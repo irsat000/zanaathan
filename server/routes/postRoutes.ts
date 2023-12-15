@@ -1,20 +1,21 @@
 import { Router } from 'express';
 import { uploadPostImage } from '../controllers/imageController';
+import { rateLimiter } from '../utils/helperUtils';
 const router = Router();
 const postController = require('../controllers/postController');
 
 
 // To get posts
-router.get('/get-posts/:category', postController.getPosts);
+router.get('/get-posts/:category', rateLimiter(), postController.getPosts);
 // To get post details
-router.get('/get-post-details/:postId', postController.getPostDetails);
+router.get('/get-post-details/:postId', rateLimiter(), postController.getPostDetails);
 // To get cities
-router.get('/get-cities', postController.getCities);
+router.get('/get-cities', rateLimiter(), postController.getCities);
 // To get districts of a specific city
-router.get('/get-districts', postController.getDistricts);
+router.get('/get-districts', rateLimiter(), postController.getDistricts);
 // To create a new post
-router.post('/create-post', uploadPostImage, postController.createPost);
+router.post('/create-post', rateLimiter({ minute: 10, max: 10 }), uploadPostImage, postController.createPost);
 // To update post status by post owner
-router.put('/update-post-status/:postId', postController.updatePostStatus);
+router.put('/update-post-status/:postId', rateLimiter({ minute: 15, max: 15 }), postController.updatePostStatus);
 
 module.exports = router;
