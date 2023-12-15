@@ -9,6 +9,7 @@ import { decodedJwt, fetchJwt, storeJwt } from '@/lib/utils/userUtils';
 import { acceptedImgSet_1, apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
 import { ChevronDown, XLg } from 'react-bootstrap-icons';
 import { useGStatus } from '@/context/globalContext';
+import { checkUnallowed } from '@/lib/utils/nsfwjsUtils';
 
 
 export default function Home() {
@@ -88,7 +89,7 @@ export default function Home() {
     }
 
     // Function for submitting avatar
-    const handleAvatarSubmit = (file: File | null) => {
+    const handleAvatarSubmit = async (file: File | null) => {
         if (!file || !acceptedImgSet_1.includes(file.type)) {
             handleGStatus('informationModal', {
                 type: 'error',
@@ -102,6 +103,22 @@ export default function Home() {
             })
             return;
         }
+
+        // Image control loading info
+        handleGStatus('informationModal', {
+            type: 'loading',
+            text: 'Fotoğraflar kontrol edilirken bekleyiniz...'
+        })
+        // Check if the images contain inappropriate content
+        if (await checkUnallowed([file])) {
+            handleGStatus('informationModal', {
+                type: 'error',
+                text: 'Uygunsuz içerikli fotoğraf tesbit edildi.'
+            })
+            return;
+        }
+        handleGStatus('informationModal', null)
+
         // Check jwt
         const jwt = fetchJwt();
         if (!jwt) return;

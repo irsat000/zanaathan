@@ -767,6 +767,8 @@ body select {
   width: 44px;
   height: 44px;
   border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .chatbot-container .chatbot .chatbot-menu .chatbot-contacts .contact-item .profile-picture .no-ppic {
   font-size: 44px;

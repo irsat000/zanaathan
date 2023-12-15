@@ -57,7 +57,6 @@ const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: stri
         if (!userBanned && !postId) {
             resolve(false)
         }
-        console.log({ userBanned, accountId, postId })
         // Update post(s) to set current status to 4 (deleted)
         const filterType = userBanned ? 'CurrentStatusId = 5 AND AccountId' : 'Id'
         const filterId = userBanned ? accountId : postId
@@ -66,7 +65,6 @@ const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: stri
             if (qErr) {
                 resolve(false)
             }
-            console.log("heyy???")
 
             // FOR IMAGES
             let queryPostImages = ` FROM JobPostingImages JPI`

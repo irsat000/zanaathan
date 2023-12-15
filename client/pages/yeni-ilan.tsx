@@ -6,7 +6,7 @@ import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
-import { apiUrl, checkUnallowed, imageDataFromFile } from '@/lib/utils/helperUtils'
+import { apiUrl } from '@/lib/utils/helperUtils'
 import { fetchJwt } from '@/lib/utils/userUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts, getSubsByCategory } from '@/lib/utils/fetchUtils'
 //import ReactQuill from 'react-quill';
@@ -14,6 +14,7 @@ import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false }); // ReactQuill doesn't work on server side, ssr is no good
 import 'react-quill/dist/quill.snow.css';
 import { useGStatus } from '@/context/globalContext'
+import { checkUnallowed } from '@/lib/utils/nsfwjsUtils'
 
 
 interface SubCategory {
@@ -116,7 +117,7 @@ export default function NewPost() {
     });
   }
 
-
+  // SUBMIT LOADING
   const [creatingPost, setCreatingPost] = useState<boolean | null>(null);
 
   // Send form
@@ -142,7 +143,7 @@ export default function NewPost() {
     // Image control loading info
     handleGStatus('informationModal', {
       type: 'loading',
-      text: 'Fotoğraflar kontrol edilirken bekleyiniz...'
+      text: 'Fotoğraf kontrol edilirken bekleyiniz...'
     })
     // Check if the images contain inappropriate content
     if (await checkUnallowed(formData.selectedImages)) {

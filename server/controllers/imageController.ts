@@ -165,7 +165,7 @@ export const uploadAvatar = (req: Request, res: Response, next: NextFunction) =>
             // Shrink, reformat, remove metadata etc
             // - Create the new file in the same path
             const sanitizedImage = await sharp(image.path)
-                .resize({ fit: 'fill', width: 400, height: 400, withoutEnlargement: true })
+                .resize({ fit: 'inside', width: 400, height: 400, withoutEnlargement: true })
                 .toColorspace('srgb')
                 .flatten()
                 .toFormat('webp')
