@@ -179,7 +179,6 @@
   height: 0;
 }
 .new-post-page .new-post-form .np-primary .np-image-upload .icon {
-  display: flex;
   position: relative;
   transition: all 0.1s ease-in-out;
 }

@@ -2,7 +2,7 @@
 import Template from '@/components/template'
 import Image from 'next/image'
 import Link from 'next/link'
-import { CheckLg } from 'react-bootstrap-icons'
+import { CheckLg, Plus } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 
 
@@ -17,12 +17,12 @@ export default function Home() {
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem animi reiciendis debitis beatae temporibus, voluptatibus earum molestiae. Dolores tempora consectetur ad possimus veritatis quibusdam aspernatur quod natus unde quas. Culpa.
             </p>
             <div className="intro-buttons">
-              <Link href='/yeni-ilan' className='intro-button-1'>İlan ver</Link>
+              <Link href='/yeni-ilan' className='intro-button-1'>Yeni ilan oluştur <Plus className='icon' /></Link>
               {/* coming soon
               <button className='intro-button-2'>İş ara</button>*/}
             </div>
           </div>
-          <Image src={require('@/assets/site/intro.png')} priority={true} className='intro-image' alt={'Intro image'} />
+          <Image src={require('@/assets/site/intro.webp')} priority={true} className='intro-image' alt={'Intro image'} />
         </div>
         <div className='category-list-heading-container'>
           <h2>Hizmetler</h2>

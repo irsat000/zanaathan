@@ -42,8 +42,8 @@
   color: #ff0000;
 }
 .index-page .intro .intro-content p {
-  font-size: 1rem;
-  margin-bottom: 20px;
+  font-size: 1.1rem;
+  margin-bottom: 32px;
   font-weight: 300;
 }
 .index-page .intro .intro-content .intro-buttons {
@@ -52,18 +52,36 @@
   gap: 20px;
 }
 .index-page .intro .intro-content .intro-buttons .intro-button-1 {
-  color: #ffffff;
   background-color: var(--button1-1);
   border-radius: 4px;
-  padding: 7px 20px;
+  padding: 10px 20px;
   font-size: 1.1rem;
   cursor: pointer;
   font-family: "Fira Sans", sans-serif;
-  font-weight: 300;
+  font-weight: 400;
+  letter-spacing: 3px;
   transition: all 0.1s ease-in-out;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
 }
-.index-page .intro .intro-content .intro-buttons .intro-button-1:hover {
-  background-color: var(--button1-2);
+.index-page .intro .intro-content .intro-buttons .intro-button-1::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  left: -100%;
+  transition: all 0.25s ease-in-out;
+}
+.index-page .intro .intro-content .intro-buttons .intro-button-1:hover::before {
+  left: 100%;
+}
+.index-page .intro .intro-content .intro-buttons .intro-button-1 .icon {
+  font-size: 1.8rem;
 }
 .index-page .intro .intro-content .intro-buttons .intro-button-2 {
   border: 1px solid var(--button2-2);

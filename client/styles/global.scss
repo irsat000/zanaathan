@@ -202,7 +202,8 @@ body {
 }
 
 // Icon settings
-.icon-wrap {
+.icon-wrap,
+.icon {
     display: flex;
 }
 
@@ -287,7 +288,6 @@ body {
         box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
 
         .icon {
-            display: flex;
             font-size: 50px;
             margin-bottom: 20px;
         }
