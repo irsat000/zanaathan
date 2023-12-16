@@ -1,25 +1,22 @@
 .index-page {
   display: flex;
   flex-direction: column;
-  padding: var(--site-padding);
 }
 .index-page .intro {
   display: flex;
   flex-direction: column;
-  font-size: 16px;
-  margin: 30px 0 45px;
-  gap: 20px;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   gap: 10%;
+  padding: 20px 4% 35px;
 }
 .index-page .intro .intro-content {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
   align-items: center;
   text-align: center;
-  position: relative;
   /*&:before {
       background-image: url(../paint2.png);
       background-position: 20% 20%;
@@ -36,12 +33,16 @@
   }*/
 }
 .index-page .intro .intro-content h2 {
-  font-size: 1.4em;
+  font-size: 1.6rem;
   margin-bottom: 16px;
   font-weight: 400;
+  font-family: "Righteous", sans-serif;
+}
+.index-page .intro .intro-content h2 span.red {
+  color: #ff0000;
 }
 .index-page .intro .intro-content p {
-  font-size: 1em;
+  font-size: 1rem;
   margin-bottom: 20px;
   font-weight: 300;
 }
@@ -50,22 +51,34 @@
   flex-direction: row;
   gap: 20px;
 }
-.index-page .intro .intro-content button {
-  margin-top: auto;
-  border: 1px solid var(--button-white-border);
-  background-color: var(--button-white);
-  border-radius: 20px;
+.index-page .intro .intro-content .intro-buttons .intro-button-1 {
+  color: #ffffff;
+  background-color: var(--button1-1);
+  border-radius: 4px;
   padding: 7px 20px;
-  font-size: 1.1em;
+  font-size: 1.1rem;
   cursor: pointer;
   font-family: "Fira Sans", sans-serif;
   font-weight: 300;
   transition: all 0.1s ease-in-out;
 }
-.index-page .intro .intro-content button:hover {
+.index-page .intro .intro-content .intro-buttons .intro-button-1:hover {
+  background-color: var(--button1-2);
+}
+.index-page .intro .intro-content .intro-buttons .intro-button-2 {
+  border: 1px solid var(--button2-2);
+  background-color: var(--button-white);
+  border-radius: 4px;
+  padding: 7px 20px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  transition: all 0.1s ease-in-out;
+}
+.index-page .intro .intro-content .intro-buttons .intro-button-2:hover {
   color: #ffffff;
-  border: 1px solid var(--button1-1);
-  background-color: var(--button1-1);
+  background-color: var(--button2-2);
 }
 .index-page .intro .intro-image {
   flex-shrink: 0;
@@ -74,12 +87,11 @@
   max-height: 300px;
   width: auto;
   height: auto;
-  border-top-left-radius: 50% 40%;
-  border-top-right-radius: 30% 60%;
-  border-bottom-left-radius: 30% 30%;
-  border-bottom-right-radius: 50% 40%;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .index-page .category-list-heading-container {
+  padding: var(--site-padding);
   margin-bottom: 20px;
 }
 .index-page .category-list-heading-container h2 {
@@ -88,6 +100,7 @@
   font-weight: 500;
 }
 .index-page .category-list {
+  padding: var(--site-padding);
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 20px 3%;
@@ -158,12 +171,18 @@
 }
 @media (min-width: 768px) {
   .index-page .intro {
-    font-size: 18px;
-    margin: 40px 0 80px;
+    padding: 40px 5% 60px;
     flex-direction: row;
   }
-  .index-page .intro .intro-image {
-    display: flex;
+  .index-page .intro .intro-content {
+    text-align: unset;
+    align-items: unset;
+  }
+  .index-page .intro .intro-content h2 {
+    font-size: 3rem;
+  }
+  .index-page .intro .intro-content p {
+    font-size: 1.1rem;
   }
   .index-page .category-list-heading-container {
     text-align: left;
@@ -179,6 +198,9 @@
 @media (min-width: 992px) {
   .index-page .intro {
     font-size: 20px;
+  }
+  .index-page .intro .intro-image {
+    display: flex;
   }
   .index-page .category-list {
     grid-template-columns: repeat(4, 1fr);

@@ -6,25 +6,22 @@ html[data-colorset-1] {}
 .index-page {
     display: flex;
     flex-direction: column;
-    padding: var(--site-padding);
 
     .intro {
         display: flex;
         flex-direction: column;
-        font-size: 16px;
-        margin: 30px 0 45px;
-        gap: 20px;
-        align-items: center;
         justify-content: space-between;
+        align-items: center;
         gap: 10%;
+        padding: 20px 4% 35px;
 
         .intro-content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            position: relative;
             align-items: center;
             text-align: center;
-            position: relative;
 
             /*&:before {
                 background-image: url(../paint2.png);
@@ -42,13 +39,18 @@ html[data-colorset-1] {}
             }*/
 
             h2 {
-                font-size: 1.4em;
+                font-size: 1.6rem;
                 margin-bottom: 16px;
                 font-weight: 400;
+                font-family: 'Righteous', sans-serif;
+
+                span.red {
+                    color: #ff0000;
+                }
             }
 
             p {
-                font-size: 1em;
+                font-size: 1rem;
                 margin-bottom: 20px;
                 font-weight: 300;
             }
@@ -57,24 +59,38 @@ html[data-colorset-1] {}
                 display: flex;
                 flex-direction: row;
                 gap: 20px;
-            }
 
-            button {
-                margin-top: auto;
-                border: 1px solid var(--button-white-border);
-                background-color: var(--button-white);
-                border-radius: 20px;
-                padding: 7px 20px;
-                font-size: 1.1em;
-                cursor: pointer;
-                font-family: 'Fira Sans', sans-serif;
-                font-weight: 300;
-                transition: all 0.1s ease-in-out;
-
-                &:hover {
+                .intro-button-1 {
                     color: #ffffff;
-                    border: 1px solid var(--button1-1);
                     background-color: var(--button1-1);
+                    border-radius: 4px;
+                    padding: 7px 20px;
+                    font-size: 1.1rem;
+                    cursor: pointer;
+                    font-family: 'Fira Sans', sans-serif;
+                    font-weight: 300;
+                    transition: all 0.1s ease-in-out;
+
+                    &:hover {
+                        background-color: var(--button1-2);
+                    }
+                }
+
+                .intro-button-2 {
+                    border: 1px solid var(--button2-2);
+                    background-color: var(--button-white);
+                    border-radius: 4px;
+                    padding: 7px 20px;
+                    font-size: 1.1rem;
+                    cursor: pointer;
+                    font-family: 'Fira Sans', sans-serif;
+                    font-weight: 300;
+                    transition: all 0.1s ease-in-out;
+
+                    &:hover {
+                        color: #ffffff;
+                        background-color: var(--button2-2);
+                    }
                 }
             }
         }
@@ -86,15 +102,12 @@ html[data-colorset-1] {}
             max-height: 300px;
             width: auto;
             height: auto;
-
-            border-top-left-radius: 50% 40%;
-            border-top-right-radius: 30% 60%;
-            border-bottom-left-radius: 30% 30%;
-            border-bottom-right-radius: 50% 40%;
+            object-fit: contain;
         }
     }
 
     .category-list-heading-container {
+        padding: var(--site-padding);
         margin-bottom: 20px;
 
         h2 {
@@ -105,6 +118,7 @@ html[data-colorset-1] {}
     }
 
     .category-list {
+        padding: var(--site-padding);
         display: grid;
         grid-template-columns: repeat(1, 1fr);
         gap: 20px 3%;
@@ -205,12 +219,20 @@ html[data-colorset-1] {}
 @media (min-width: 768px) {
     .index-page {
         .intro {
-            font-size: 18px;
-            margin: 40px 0 80px;
+            padding: 40px 5% 60px;
             flex-direction: row;
 
-            .intro-image {
-                display: flex;
+            .intro-content {
+                text-align: unset;
+                align-items: unset;
+
+                h2 {
+                    font-size: 3rem;
+                }
+
+                p {
+                    font-size: 1.1rem;
+                }
             }
         }
 
@@ -234,6 +256,10 @@ html[data-colorset-1] {}
     .index-page {
         .intro {
             font-size: 20px;
+
+            .intro-image {
+                display: flex;
+            }
         }
 
         .category-list {

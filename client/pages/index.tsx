@@ -12,16 +12,17 @@ export default function Home() {
       <div className='index-page'>
         <div className="intro">
           <div className="intro-content">
-            <h2>Zanaat sanattır.</h2>
+            <h2>Zanaat <span className='red'>Sanattır.</span><br />Zanaat Han'a Hoşgeldiniz!</h2>
             <p>
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem animi reiciendis debitis beatae temporibus, voluptatibus earum molestiae. Dolores tempora consectetur ad possimus veritatis quibusdam aspernatur quod natus unde quas. Culpa.
             </p>
             <div className="intro-buttons">
-              <button>İlan ver</button>
-              <button>İş ara</button>
+              <Link href='/yeni-ilan' className='intro-button-1'>İlan ver</Link>
+              {/* coming soon
+              <button className='intro-button-2'>İş ara</button>*/}
             </div>
           </div>
-          <Image src={require('@/assets/site/painter2.jpg')} priority={true} className='intro-image' alt={'Intro image'} />
+          <Image src={require('@/assets/site/intro.png')} priority={true} className='intro-image' alt={'Intro image'} />
         </div>
         <div className='category-list-heading-container'>
           <h2>Hizmetler</h2>

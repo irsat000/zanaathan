@@ -157,8 +157,13 @@ export default function PostDetails() {
 						<span><ChevronRight /></span>
 						<Link href={'/' + categoryInfo.code}>{categoryInfo.name}</Link>
 					</div>
-					: <></>
-				}
+					: <></>}
+				{/* coming soon
+				userData?.roles && userData?.roles.length > 0 ?
+					<div className="admin-settings-container">
+						<button type="button" className="post-admin-settings">Admin</button>
+					</div>
+					: <></> */}
 				{postLoading || postLoading === null ?
 					<div className="post-loading">
 						<RotateLoader color="#598dcc" />

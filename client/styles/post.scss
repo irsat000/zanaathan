@@ -31,6 +31,37 @@
         width: 100%;
     }
 
+    .admin-settings-container {
+        max-width: 1300px;
+        width: 100%;
+        margin-top: 16px;
+        padding: 0 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .post-admin-settings {
+        align-self: flex-start;
+        border: 1px solid var(--button-white-border);
+        background-color: var(--button-white);
+        border-radius: 20px;
+        padding: 7px 20px;
+        font-size: 1.1em;
+        cursor: pointer;
+        font-family: 'Fira Sans', sans-serif;
+        font-weight: 300;
+        transition: all 0.1s ease-in-out;
+
+        &:hover {
+            color: #ffffff;
+            border: 1px solid var(--button1-1);
+            background-color: var(--button1-1);
+        }
+    }
+
     .post-container {
         margin-top: 20px;
         max-width: 1300px;
