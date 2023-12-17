@@ -6,16 +6,12 @@ import { useRef, useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
 import LoginWithGoogle from './loginWithGoogle';
 import LoginWithFacebook from './loginWithFacebook';
-import { useGStatus } from '@/context/globalContext';
+import { AuthModalState, useGStatus } from '@/context/globalContext';
 
-export type AuthModalState = 'signin' | 'signup' | 'none';
 
-const AuthModal: React.FC<{
-    authModalActive: AuthModalState,
-    setAuthModalActive: React.Dispatch<React.SetStateAction<AuthModalState>>
-}> = ({ authModalActive, setAuthModalActive }) => {
+const AuthModal = () => {
     // Use global context
-    const { handleGStatus } = useGStatus();
+    const { gStatus, handleGStatus } = useGStatus();
     // Get user context
     const { setUserData } = useUser();
     // Auth modal - informing the user
@@ -37,7 +33,7 @@ const AuthModal: React.FC<{
     const handleAuthModal = (state: AuthModalState) => {
         setAuthModalWarning(null);
         setAuthModalSuccess(null);
-        setAuthModalActive(state);
+        handleGStatus('authModalActive', state);
     }
 
     // Update login form values
@@ -121,16 +117,16 @@ const AuthModal: React.FC<{
     }
 
     return (
-        <div className={`auth-modal-container modal-container ${authModalActive !== 'none' ? 'active' : ''}`} onMouseDown={() => handleAuthModal('none')}>
+        <div className={`auth-modal-container modal-container ${gStatus.authModalActive !== 'none' ? 'active' : ''}`} onMouseDown={() => handleAuthModal('none')}>
             <div className='auth-modal' onMouseDown={(e) => { e.stopPropagation() }}>
                 <button type='button' className='close-modal-button' onClick={() => handleAuthModal('none')}><XLg /></button>
                 <div className="auth-tab-buttons">
-                    <span className={`login-tab-button ${authModalActive === 'signin' ? 'active' : 'inactive'}`}
+                    <span className={`login-tab-button ${gStatus.authModalActive === 'signin' ? 'active' : 'inactive'}`}
                         onClick={() => handleAuthModal('signin')}>Giriş Yap</span>
-                    <span className={`register-tab-button ${authModalActive === 'signup' ? 'active' : 'inactive'}`}
+                    <span className={`register-tab-button ${gStatus.authModalActive === 'signup' ? 'active' : 'inactive'}`}
                         onClick={() => handleAuthModal('signup')}>Kayıt Ol</span>
                 </div>
-                <form className={`login-form ${authModalActive === 'signin' && 'active'}`} onSubmit={handleLoginFormSubmit}>
+                <form className={`login-form ${gStatus.authModalActive === 'signin' && 'active'}`} onSubmit={handleLoginFormSubmit}>
                     <input type='text' placeholder='Kullanıcı Adı' className='form-input' name='username' onChange={handleLoginFormChange} />
                     <input type='password' placeholder='Şifre' className='form-input' name='password' onChange={handleLoginFormChange} />
                     <div className="login-button-container">
@@ -138,7 +134,7 @@ const AuthModal: React.FC<{
                         <Link href={'/'}>Unuttum</Link>
                     </div>
                 </form>
-                <form className={`register-form ${authModalActive === 'signup' && 'active'}`} onSubmit={handleRegisterFormSubmit}>
+                <form className={`register-form ${gStatus.authModalActive === 'signup' && 'active'}`} onSubmit={handleRegisterFormSubmit}>
                     <input type='text' placeholder='E-Posta' className='form-input' name='email' onChange={handleRegisterFormChange} />
                     <input type='text' placeholder='Kullanıcı Adı' className='form-input' name='username' onChange={handleRegisterFormChange} />
                     <input type='password' placeholder='Şifre' className='form-input' name='password' onChange={handleRegisterFormChange} />

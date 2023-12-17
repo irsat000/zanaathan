@@ -3,8 +3,7 @@ import { useUser } from '@/context/userContext';
 import { apiUrl, formatDateString, toShortLocal } from '@/lib/utils/helperUtils';
 import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import { GoogleLogin } from '@react-oauth/google';
-import { AuthModalState } from './authModal';
-import { useGStatus } from '@/context/globalContext';
+import { AuthModalState, useGStatus } from '@/context/globalContext';
 
 const LoginWithGoogle: React.FC<{
     setAuthModalWarning: React.Dispatch<React.SetStateAction<string | null>>,

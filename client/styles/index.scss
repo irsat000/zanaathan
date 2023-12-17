@@ -75,6 +75,7 @@ html[data-colorset-1] {}
                     align-items: center;
                     gap: 4px;
                     position: relative;
+                    overflow: hidden;
 
                     &::before {
                         content: "";

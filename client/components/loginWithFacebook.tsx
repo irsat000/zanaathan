@@ -2,8 +2,7 @@ import { useUser } from '@/context/userContext';
 import { apiUrl, formatDateString, toShortLocal } from '@/lib/utils/helperUtils';
 import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import { FacebookProvider, LoginButton } from 'react-facebook';
-import { AuthModalState } from './authModal';
-import { useGStatus } from '@/context/globalContext';
+import { AuthModalState, useGStatus } from '@/context/globalContext';
 
 const LoginWithFacebook: React.FC<{
     setAuthModalWarning: React.Dispatch<React.SetStateAction<string | null>>,

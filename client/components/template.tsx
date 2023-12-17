@@ -5,12 +5,12 @@ import Image from 'next/image'
 import { Bell, ChatDots, CheckCircle, List, PersonPlus, PlusSquare, XCircle, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
-import AuthModal, { AuthModalState } from './authModal'
+import AuthModal from './authModal'
 import { useUser } from '@/context/userContext'
 import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
 import Chatbot from './chatbot'
 import { useContacts } from '@/context/contactsContext'
-import { useGStatus } from '@/context/globalContext'
+import { AuthModalState, useGStatus } from '@/context/globalContext'
 import { apiUrl, avatarLink } from '@/lib/utils/helperUtils'
 import router from 'next/router'
 import { HashLoader } from 'react-spinners'
@@ -66,7 +66,6 @@ const Template: React.FC<{
 		} catch (e) { }
 	}
 
-	const [authModalActive, setAuthModalActive] = useState<AuthModalState>('none'); // Login/Register modal = auth modal
 	const [drawerActive, setDrawerActive] = useState(false); // Drawer for mobile
 	const [userMenuActive, setUserMenuActive] = useState(false); // User menu drop down
 
@@ -75,7 +74,7 @@ const Template: React.FC<{
 		if (drawerActive) {
 			setDrawerActive(false);
 		}
-		setAuthModalActive(type);
+		handleGStatus('authModalActive', type);
 	}
 
 	// Handle clicking outside user-menu
@@ -153,9 +152,7 @@ const Template: React.FC<{
 			</Head>
 			<div className='page-content'>
 				{userData ? <Chatbot /> : <></>}
-				<AuthModal
-					authModalActive={authModalActive} setAuthModalActive={setAuthModalActive}
-				/>
+				<AuthModal />
 				{gStatus.informationModal ?
 					<div className={`information-modal-container modal-container ${gStatus.informationModal ? 'active' : ''}`}>
 						<div className="information-modal">
@@ -176,7 +173,7 @@ const Template: React.FC<{
 					: <></>}
 				<div className={`drawer-container ${drawerActive && 'active'}`} onClick={() => setDrawerActive(false)}>
 					<div className="drawer" onClick={(e) => { e.stopPropagation() }}>
-						<Link href={'/'} className='drawer-site-logo'>Zanaat.Han</Link>
+						<Link href={'/'} className='drawer-site-logo'>Zanaat Han</Link>
 						{userData ? <>
 							<Link href={'/profil'} className='user-image'>
 								{userData.avatar
@@ -241,8 +238,8 @@ const Template: React.FC<{
 										<ChatDots />
 									</div>
 								</button> :
-								<span className='m'>Z<b>.</b>H</span>}
-							<span className='d'>Zanaat<b>.</b>Han</span>
+								<span className='m'>Z.H</span>}
+							<span className='d'>Zanaat Han</span>
 						</Link>
 						<button className='drawer-button' onClick={() => setDrawerActive(true)}>
 							<List />
@@ -297,8 +294,8 @@ const Template: React.FC<{
 								</div>
 							</> : <>
 								<div className="user-auth-buttons">
-									<button type='button' className='signin-button' onClick={() => setAuthModalActive('signin')}>Giriş yap</button>
-									<button type='button' className='signup-button' onClick={() => setAuthModalActive('signup')}><PersonPlus /></button>
+									<button type='button' className='signin-button' onClick={() => handleGStatus('authModalActive', 'signin')}>Giriş yap</button>
+									<button type='button' className='signup-button' onClick={() => handleGStatus('authModalActive', 'signup')}><PersonPlus /></button>
 								</div>
 							</>}
 						</div>

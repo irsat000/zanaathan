@@ -1048,9 +1048,6 @@ header > .header-container .site-logo-wrapper span {
   padding-top: 4px;
   display: none;
 }
-header > .header-container .site-logo-wrapper span b {
-  color: #307fca;
-}
 header > .header-container .site-logo-wrapper span.m {
   display: block;
 }

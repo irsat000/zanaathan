@@ -6,10 +6,13 @@ interface InformationModal {
     text: string;
 }
 
+export type AuthModalState = 'signin' | 'signup' | 'none';
+
 export interface GStatus {
     chatbotActive: boolean; // Chatbot window on/off
     activeContact: number | null; // Switch between contacts. Default: null
     informationModal: InformationModal | null;
+    authModalActive: AuthModalState
 }
 
 const GStatusContext = React.createContext
@@ -21,7 +24,8 @@ const GStatusContext = React.createContext
         gStatus: {
             chatbotActive: false,
             activeContact: null,
-            informationModal: null
+            informationModal: null,
+            authModalActive: 'none'
         },
         setGStatus: () => { },
         handleGStatus: () => { }
@@ -33,7 +37,8 @@ export const GStatusProvider: React.FC<{
     const [gStatus, setGStatus] = useState<GStatus>({
         chatbotActive: false,
         activeContact: null,
-        informationModal: null
+        informationModal: null,
+        authModalActive: 'none'
     });
 
     const handleGStatus = (propertyName: keyof GStatus, newValue: any) => {

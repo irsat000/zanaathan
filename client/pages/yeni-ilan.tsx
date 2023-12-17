@@ -16,6 +16,8 @@ import 'react-quill/dist/quill.snow.css';
 import { useGStatus } from '@/context/globalContext'
 import { checkUnallowed } from '@/lib/utils/nsfwjsUtils'
 import { checkProfanity } from '@/lib/utils/profanityUtils'
+import { useUser } from '@/context/userContext'
+import { useRouter } from 'next/router'
 
 
 interface SubCategory {
@@ -26,6 +28,17 @@ interface SubCategory {
 export default function NewPost() {
   // Use global context
   const { handleGStatus } = useGStatus();
+  // Use user context
+  const { userData } = useUser();
+  // Router
+  const router = useRouter()
+
+  // Redirect to index if user did not log in
+  useEffect(() => {
+    if (!userData) {
+      router.push('/')
+    }
+  }, [userData])
 
   // Create post payload
   const [formData, setFormData] = useState<NPFormData>({
