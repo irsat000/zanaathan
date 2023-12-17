@@ -305,7 +305,10 @@ const Template: React.FC<{
 					{children}
 				</main>
 				<footer>
-
+					<h1>Zanaat Han</h1>
+					<div className="copyright">
+						<p>Telif Hakkı © 2024 - Tüm haklar saklıdır.</p>
+					</div>
 				</footer>
 			</div>
 		</>

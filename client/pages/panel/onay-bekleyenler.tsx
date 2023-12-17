@@ -149,7 +149,7 @@ export default function ApprovingPosts() {
                                     <button type="button" className="next-img" onClick={() => handleSwipeImage(p.Id, 'r')}><CaretRight /></button>
                                     <div className="carousel-nav">
                                         {p.Images.map((img, i) =>
-                                            <span className={`dot ${p.ActiveImage === i ? 'active' : ''}`}></span>
+                                            <span key={i} className={`dot ${p.ActiveImage === i ? 'active' : ''}`}></span>
                                         )}
                                     </div>
                                 </> : <></>}
