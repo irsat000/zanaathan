@@ -1351,7 +1351,6 @@ header>.header-container {
             position: absolute;
             top: 40px;
             right: 0;
-            min-height: 300px;
             border-radius: 8px 0 8px 8px;
             background-color: var(--primary-bg-color);
             -webkit-box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.2);
@@ -1434,7 +1433,7 @@ header>.header-container {
             }
 
             .sign-out-button {
-                margin: auto 20px 14px;
+                margin: 28px 20px 14px;
                 align-self: center;
                 padding: 4px 14px;
                 font-size: 0.8rem;

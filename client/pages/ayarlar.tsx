@@ -10,13 +10,25 @@ import { acceptedImgSet_1, apiUrl, avatarLink, formatSecondsAgo, postImageLink }
 import { ChevronDown, XLg } from 'react-bootstrap-icons';
 import { useGStatus } from '@/context/globalContext';
 import { checkUnallowed } from '@/lib/utils/nsfwjsUtils';
+import { useRouter } from 'next/router';
 
 
 export default function Home() {
+    const router = useRouter();
     // Get global context
     const { handleGStatus } = useGStatus();
     // Get user context
     const { userData, setUserData } = useUser();
+    //Check login
+    useEffect(() => {
+        // Check jwt
+        const jwt = fetchJwt();
+        if (!jwt) {
+            router.push('/')
+            return
+        };
+    }, [userData])
+
     // User form
     const [userForm, setUserForm] = useState<{
         email: string;

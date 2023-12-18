@@ -10,6 +10,7 @@ import { apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils
 import { ChevronDown, XLg } from 'react-bootstrap-icons';
 import GridLoader from 'react-spinners/GridLoader';
 import { useGStatus } from '@/context/globalContext';
+import { useRouter } from 'next/router';
 
 type CurrentStatus = 1 | 2 | 3 | 5;
 
@@ -31,10 +32,20 @@ const ContactTypes = new Map([
 ]);
 
 export default function Home() {
+  const router = useRouter();
   // Use global context
   const { handleGStatus } = useGStatus();
   // Get user context
   const { userData } = useUser();
+  //Check login
+  useEffect(() => {
+    // Check jwt
+    const jwt = fetchJwt();
+    if (!jwt) {
+      router.push('/')
+      return
+    };
+  }, [userData])
 
   // Fetch profile
   const [postList, setPostList] = useState<UserPost[]>([]);
