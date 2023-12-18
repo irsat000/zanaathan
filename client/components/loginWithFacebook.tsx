@@ -60,6 +60,7 @@ const LoginWithFacebook: React.FC<{
     }
 
     function handleError(error: any) {
+        console.log(error)
         setAuthModalWarning('*Bağlantıda hata*');
     }
 

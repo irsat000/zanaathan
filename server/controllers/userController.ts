@@ -10,7 +10,7 @@ import { isNullOrEmpty } from '../utils/helperUtils';
 import { createJwt, verifyJwt, JWT } from '../utils/userUtils';
 
 const pool = require('../db/db');
-const client = new OAuth2Client();
+const googleOAuthClient = new OAuth2Client();
 
 interface SigninBody {
     username: string;
@@ -21,6 +21,31 @@ interface SignupBody {
     fullName: string;
     email: string;
     password: string;
+}
+
+
+const logClient = async (userId: number, req: Request): Promise<boolean> => {
+    const ip = req.header('x-forwarded-for') || req.ip;
+    const userAgent = req.get('User-Agent');
+
+    if (!ip || !userAgent) {
+        return false;
+    }
+
+    // Log sign-in
+    const query = `
+        INSERT INTO SignInLog (IpAddress, UserAgent, AccountId)
+        VALUES (?, ?, ?)
+    `;
+
+    return new Promise((resolve, reject) => {
+        pool.query(query, [ip, userAgent, userId], (qErr: any, results: any) => {
+            if (qErr) {
+                resolve(false);
+            }
+            resolve(true);
+        });
+    });
 }
 
 exports.signin = (req: Request, res: Response) => {
@@ -65,7 +90,7 @@ exports.signin = (req: Request, res: Response) => {
             const user = results[0];
 
             // Authenticate
-            bcrypt.compare(password, user.Password, (bErr: any, isMatch: boolean) => {
+            bcrypt.compare(password, user.Password, async (bErr: any, isMatch: boolean) => {
                 if (bErr) {
                     return res.status(500).json({ error: 'Bcrypt compare error' });
                 }
@@ -74,6 +99,12 @@ exports.signin = (req: Request, res: Response) => {
                     // Check bans
                     if (user.BanLiftDate > 0) {
                         return res.status(403).json({ error: 'User is banned', banLiftDate: user.BanLiftDate });
+                    }
+
+                    // Log
+                    const isLogged = await logClient(user.Id, req);
+                    if (!isLogged) {
+                        return res.status(406).json({ error: 'Headers are not right' });
                     }
 
                     const userInfo: JWT = {
@@ -146,9 +177,15 @@ exports.signup = (req: Request, res: Response) => {
                 INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
                 VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL);
             `;
-            pool.query(signUpQuery, [username, fullName, email, 0, hash], (qErr: any, results: any) => {
+            pool.query(signUpQuery, [username, fullName, email, 0, hash], async (qErr: any, results: any) => {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error' });
+                }
+
+                // Log
+                const isLogged = await logClient(results.insertId, req);
+                if (!isLogged) {
+                    return res.status(406).json({ error: 'Headers are not right' });
                 }
 
                 // Generate JWT
@@ -192,7 +229,7 @@ exports.authGoogle = (req: Request, res: Response) => {
         };
         // Verify google credentials response
         async function verify() {
-            const ticket = await client.verifyIdToken({
+            const ticket = await googleOAuthClient.verifyIdToken({
                 idToken: body.credentials.credential,
                 audience: '714554272496-8aan1i53sdgkp9o9s78mlnu5af214ipk.apps.googleusercontent.com' // Not from body
             });
@@ -232,6 +269,12 @@ exports.authGoogle = (req: Request, res: Response) => {
                             return res.status(403).json({ error: 'User is banned', banLiftDate: existing.BanLiftDate });
                         }
 
+                        // Log
+                        const isLogged = await logClient(existing.Id, req);
+                        if (!isLogged) {
+                            return res.status(406).json({ error: 'Headers are not right' });
+                        }
+
                         // Generate JWT
                         const JWT = createJwt({
                             sub: existing.Id,
@@ -261,9 +304,15 @@ exports.authGoogle = (req: Request, res: Response) => {
                             INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
                             VALUES (?, ?, ?, 1, NULL, ?, ?, 1);
                         `;
-                        pool.query(signUpQuery, [uniqueUsername, user.name, user.email, newAvatar, user.sub], (qErr: any, results: any) => {
+                        pool.query(signUpQuery, [uniqueUsername, user.name, user.email, newAvatar, user.sub], async (qErr: any, results: any) => {
                             if (qErr) {
                                 return res.status(500).json({ error: 'Query error' });
+                            }
+
+                            // Log
+                            const isLogged = await logClient(results.insertId, req);
+                            if (!isLogged) {
+                                return res.status(406).json({ error: 'Headers are not right' });
                             }
 
                             // Generate JWT
@@ -329,6 +378,12 @@ exports.authFacebook = (req: Request, res: Response) => {
                             return res.status(403).json({ error: 'User is banned', banLiftDate: existing.BanLiftDate });
                         }
 
+                        // Log
+                        const isLogged = await logClient(existing.Id, req);
+                        if (!isLogged) {
+                            return res.status(406).json({ error: 'Headers are not right' });
+                        }
+
                         // Generate JWT
                         const JWT = createJwt({
                             sub: existing.Id,
@@ -358,9 +413,15 @@ exports.authFacebook = (req: Request, res: Response) => {
                             INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
                             VALUES (?, ?, ?, 1, NULL, ?, ?, 2);
                         `;
-                        pool.query(signUpQuery, [uniqueUsername, data.name, data.email, newAvatar, data.id], (qErr: any, results: any) => {
+                        pool.query(signUpQuery, [uniqueUsername, data.name, data.email, newAvatar, data.id], async (qErr: any, results: any) => {
                             if (qErr) {
                                 return res.status(500).json({ error: 'Query error' });
+                            }
+
+                            // Log
+                            const isLogged = await logClient(results.insertId, req);
+                            if (!isLogged) {
+                                return res.status(406).json({ error: 'Headers are not right' });
                             }
 
                             // Generate JWT
