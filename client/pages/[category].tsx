@@ -42,6 +42,7 @@ export default function Category() {
 
   // Get category info by category code
   useEffect(() => {
+    // Will be undefined at first, dependency array will make sure it runs properly
     if (!category) return;
 
     // Get name by searching with code in category list from categories.json file
@@ -53,6 +54,10 @@ export default function Category() {
       const name = categoryObj.Name;
       const subCates = categoryObj.SubCategories;
       setCategoryInfo({ id, code, name, subCates });
+    } else {
+      // Send to 404
+      router.push('/404')
+      return
     }
   }, [router.query]);
 

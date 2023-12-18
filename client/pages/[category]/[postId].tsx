@@ -3,7 +3,7 @@ import Template from '@/components/template'
 import { useContacts } from '@/context/contactsContext';
 import { useGStatus } from '@/context/globalContext';
 import { useUser } from '@/context/userContext';
-import { apiUrl, formatSecondsAgo, postImageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters } from '@/lib/utils/helperUtils';
+import { apiUrl, formatSecondsAgo, postImageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters, isPositiveNumeric } from '@/lib/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
@@ -67,7 +67,13 @@ export default function PostDetails() {
 	const [postDetails, setPostDetails] = useState<PostDetails | null>(null);
 	const [postLoading, setPostLoading] = useState<boolean | null>(null);
 	useEffect(() => {
+		// Will be undefined at first, dependency array will make sure it runs properly
 		if (!postId) return;
+		if (!isPositiveNumeric(postId)) {
+			// Send to 404
+			router.push('/404')
+			return
+		}
 		// LOADING
 		setPostLoading(true);
 		fetch(`${apiUrl}/get-post-details/${postId}`, {

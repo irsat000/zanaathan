@@ -1361,6 +1361,27 @@ footer .copyright p {
   text-align: center;
 }
 
+.page-not-found {
+  margin-top: 20vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.page-not-found .wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.page-not-found .wrapper h1 {
+  font-size: 2.6rem;
+  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+}
+.page-not-found .wrapper p {
+  font-size: 1.1rem;
+  font-weight: 300;
+}
+
 @media (min-width: 576px) {
   .auth-modal-container .auth-modal {
     max-width: 360px;

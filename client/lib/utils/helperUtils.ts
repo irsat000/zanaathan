@@ -143,3 +143,7 @@ export const imageDataFromFile = (file: File): Promise<ImageData | null> => {
     reader.readAsDataURL(file);
   });
 }
+
+export const isPositiveNumeric = (value: any): boolean => {
+    return /^[1-9]\d*$/.test(value);
+}
