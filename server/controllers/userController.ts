@@ -168,7 +168,7 @@ exports.signup = (req: Request, res: Response) => {
 }
 
 
-// TODO: Ask if they are nullable
+// Picture is not nullable, but may be in old account
 interface GoogleUser {
     sub: string;
     email: string;
@@ -207,14 +207,15 @@ exports.authGoogle = (req: Request, res: Response) => {
             .then(() => {
                 // Check if user exists
                 const checkQuery = `
-                    SELECT Id, Username, FullName, Email, Avatar,
+                    SELECT A.Id, Username, FullName, Email, Avatar,
                         GROUP_CONCAT(Role.RoleCode) AS Roles,
                         MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
-                    FROM Account
+                    FROM Account A
                     LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
                     LEFT JOIN Role ON Role.Id = AccountRole.RoleId
                     LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
-                    WHERE ExternalId = ? && OAuthProviderId = 1;
+                    WHERE ExternalId = ? && OAuthProviderId = 1
+                    GROUP BY A.Id;
                 `;
                 pool.query(checkQuery, [user.sub], async (qErr: any, results: any) => {
                     if (qErr) {
@@ -303,14 +304,15 @@ exports.authFacebook = (req: Request, res: Response) => {
             .then(data => {
                 // Check if user exists
                 const checkQuery = `
-                    SELECT Id, Username, FullName, Email, Avatar,
+                    SELECT A.Id, Username, FullName, Email, Avatar,
                         GROUP_CONCAT(Role.RoleCode) AS Roles,
                         MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
-                    FROM Account
+                    FROM Account A
                     LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
                     LEFT JOIN Role ON Role.Id = AccountRole.RoleId
                     LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
-                    WHERE ExternalId = ? && OAuthProviderId = 2;
+                    WHERE ExternalId = ? && OAuthProviderId = 2
+                    GROUP BY A.Id;
                 `;
                 pool.query(checkQuery, [data.id], async (qErr: any, results: any) => {
                     if (qErr) {
