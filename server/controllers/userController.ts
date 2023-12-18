@@ -34,8 +34,8 @@ const logClient = async (userId: number, req: Request): Promise<boolean> => {
 
     // Log sign-in
     const query = `
-        INSERT INTO SignInLog (IpAddress, UserAgent, AccountId)
-        VALUES (?, ?, ?)
+        INSERT INTO SignInLog (IpAddress, UserAgent, Date, AccountId)
+        VALUES (?, ?, NOW(), ?)
     `;
 
     return new Promise((resolve, reject) => {

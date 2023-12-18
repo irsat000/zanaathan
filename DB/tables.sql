@@ -212,12 +212,11 @@ CREATE TABLE `Notification` (
     CONSTRAINT `FK_Notification_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`)
 );
 
-
-
 CREATE TABLE `SignInLog` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `IpAddress` TEXT NOT NULL,
     `UserAgent` TEXT NOT NULL,
+    `Date` DATETIME NOT NULL,
     `AccountId` INT NOT NULL,
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_SignInLog_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`)

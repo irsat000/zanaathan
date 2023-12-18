@@ -1,27 +1,41 @@
 const express = require('express');
+//const https = require('https');
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 import { Request, Response } from 'express';
 import { verifyJwt } from './utils/userUtils';
 import { isNullOrEmpty, isPositiveNumeric, rateLimiter } from './utils/helperUtils';
+const appDir = path.dirname(require.main?.filename);
 
 // Configuration
 const app = express();
 const PORT = 8123;
+
+const options = {
+    key: fs.readFileSync(appDir + '/key.pem'),
+    cert: fs.readFileSync(appDir + '/cert.pem'),
+};
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: process.env.NODE_ENV === 'development'
-            ? ['https://localhost:3000', 'https://127.0.0.1:3000']
-            : ['https://localhost:3000']
+        origin: ['https://localhost:3000',
+            'http://localhost:3000',
+            'https://192.168.1.106:3000',
+            'http://192.168.1.106:3000']
     }
 })
 
 // MIDDLEWARES
 app.use(express.json());
 app.use(cors({
-    origin: 'https://localhost:3000',
+    origin: ['https://localhost:3000',
+        'http://localhost:3000',
+        'https://192.168.1.106:3000',
+        'http://192.168.1.106:3000'],
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 // - Route middlewares
@@ -187,6 +201,10 @@ io.on('connection', (socket: any) => {
 
 
 // Tests
+app.get("/", (req: Request, res: Response) => {
+    res.send('online');
+});
+
 app.get("/api/test", (req: Request, res: Response) => {
     res.json({ message: "Success" });
 });
@@ -204,5 +222,5 @@ app.get("/api/dbtest", (req: Request, res: Response) => {
 
 
 httpServer.listen(PORT, () => {
-    console.log(`Server started on http://localhost:${PORT}`);
+    console.log(`Server started on https://localhost:${PORT}`);
 });

@@ -34,11 +34,6 @@ const Chatbot: React.FC<{
         fetchUserContacts().then(data => {
             if (data) {
                 setUserContacts(data);
-            } else {
-                handleGStatus('informationModal', {
-                    type: 'error',
-                    text: 'Mesajlaşmalarınız getirilemedi. Üzgünüz!'
-                })
             }
         });
     }, [userData]);
