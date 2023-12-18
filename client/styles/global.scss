@@ -607,7 +607,7 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 100vh;
+    height: 100%;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(3px);
@@ -628,7 +628,7 @@ body {
         top: 0;
         bottom: 0;
         right: 0;
-        height: 100vh;
+        height: 100%;
         width: 70%;
         animation: slide-drawer 0.2s ease-in-out;
         overflow-y: auto;
@@ -732,11 +732,13 @@ body {
     position: fixed;
     bottom: 0;
     right: 0;
+    width: 100%;
+    height: 100%;
     z-index: 196;
 
     .chatbot {
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
         background-color: var(--primary-bg-color);
         display: flex;
         flex-direction: row;
@@ -1612,12 +1614,11 @@ footer {
     }
 
     .chatbot-container {
-        width: 100%;
         align-items: flex-end;
         justify-content: flex-end;
 
         .chatbot.fullscreen {
-            height: 100vh;
+            height: 100%;
             width: 100%;
             margin-right: unset;
             border-radius: unset;
@@ -1636,15 +1637,15 @@ footer {
 
         .chatbot {
             width: unset;
-            margin-right: 3vw;
-            height: 94vh;
+            margin-right: 20px;
+            height: 94%;
             border-radius: 12px 12px 0 0;
             -webkit-box-shadow: 0px 0px 16px -6px rgba(0, 0, 0, 0.3);
             -moz-box-shadow: 0px 0px 16px -6px rgba(0, 0, 0, 0.3);
             box-shadow: 0px 0px 16px -6px rgba(0, 0, 0, 0.3);
 
             .chatbot-menu {
-                width: 30vw;
+                width: 260px;
                 position: unset;
                 transform: unset;
 
@@ -1671,7 +1672,7 @@ footer {
             }
 
             .chatbot-body {
-                width: 60vw;
+                width: 440px;
 
                 .chatbot-body-header {
                     gap: 16px;
@@ -1739,14 +1740,15 @@ footer {
 // Large devices (desktops, 992px and up)
 @media (min-width: 992px) {
     .chatbot-container .chatbot {
-        height: 80vh;
+        margin-right: 30px;
+        height: 80%;
 
         .chatbot-menu {
-            width: 20vw;
+            width: 300px;
         }
 
         .chatbot-body {
-            width: 50vw;
+            width: 600px;
         }
     }
 }
