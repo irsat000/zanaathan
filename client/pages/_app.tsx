@@ -6,6 +6,7 @@ import '@/styles/post.css'
 import '@/styles/new-post.css'
 import '@/styles/profile.css'
 import '@/styles/settings.css'
+import '@/styles/legal.css'
 import '@/styles/adminpanel.css'
 import type { AppProps } from 'next/app'
 
