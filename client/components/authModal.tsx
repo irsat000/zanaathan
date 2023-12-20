@@ -58,7 +58,7 @@ const AuthModal = () => {
         e.preventDefault();
         // Don't send request upon small accidents
         if (loginFormData.username === ''
-            || registerFormData.password === '') {
+            || loginFormData.password === '') {
             return
         }
         fetch(`${apiUrl}/sign-in`, {

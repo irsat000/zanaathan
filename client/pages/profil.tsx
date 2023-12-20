@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { ChangeEvent, ChangeEventHandler, useEffect, useRef, useState } from 'react';
 import { Post } from './[category]';
 import { fetchJwt } from '@/lib/utils/userUtils';
-import { apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
+import { apiUrl, avatarLink, formatSecondsAgo, postImageLink, titleToUrl } from '@/lib/utils/helperUtils';
 import { ChevronDown, XLg } from 'react-bootstrap-icons';
 import GridLoader from 'react-spinners/GridLoader';
 import { useGStatus } from '@/context/globalContext';
@@ -360,7 +360,7 @@ export default function Home() {
                             </div>
                           }
                         </div>
-                        <Link href={`/${post.CategoryCode}/${post.Id}`} className='title'>{post.Title}</Link>
+                        <Link href={`/${post.CategoryCode}/${post.Id}/${titleToUrl(post.Title)}`} className='title'>{post.Title}</Link>
                       </div>
                       <div className="date-container">
                         <span className="date">{formatSecondsAgo(post.SecondsAgo)}</span>

@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react';
 import { ChevronRight } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import ReactHtmlParser from 'html-react-parser';
-import DOMPurify from 'dompurify';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 
@@ -142,6 +141,7 @@ export default function PostDetails({
 				type: 'error',
 				text: 'Kendinize mesaj gönderemezsiniz'
 			})
+			return
 		};
 		if (!postDetails) return; // To ignore warning, postDetails is not null in this function
 
@@ -265,7 +265,7 @@ export default function PostDetails({
 					<div className='post-description'>
 						<h2 className='description-heading'>Açıklama</h2>
 						<div className='description'>
-							{ReactHtmlParser(DOMPurify.sanitize(postDetails.Description))}
+							{ReactHtmlParser(postDetails.Description)}
 						</div>
 					</div>
 				</> :
