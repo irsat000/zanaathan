@@ -223,8 +223,8 @@ exports.createPost = (req: Request, res: Response) => {
         const district = body.district;
 
         // Validate the inputs
-        if (!req.body || title.length < 5 || title.length > 255
-            || description.length < 50 || description.length > 2000
+        if (!req.body || title.trim().length < 5 || title.trim().length > 255
+            || description.trim().length < 50 || description.trim().length > 2000
             || !isPositiveNumeric(subCategory) || !isPositiveNumeric(district)
         ) {
             deleteUploadedOnError();

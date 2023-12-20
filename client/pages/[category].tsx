@@ -335,7 +335,7 @@ export default function Category() {
           <span className="f-heading">Alt Kategoriler</span>
           <div className="f-container">
             {categoryInfo.subCates.map((c, i) => {
-              return <label key={i} className='sub-category-label'>
+              return <label key={i} className='checkbox-1'>
                 <input
                   type='checkbox'
                   checked={filterData.subcategory.includes(c.Id)}

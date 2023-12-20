@@ -96,6 +96,21 @@ body select {
     opacity: 1;
   }
 }
+.checkbox-1 {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.checkbox-1 input {
+  height: 20px;
+  width: 18px;
+  accent-color: #0bac00;
+}
+.checkbox-1 span {
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
 .select2.list-active .s2-chosen {
   border: 1px solid var(--focus-border);
 }
@@ -294,8 +309,8 @@ body select {
 }
 
 .auth-modal-container {
-  padding-top: 20vh;
-  padding-bottom: 16px;
+  padding-top: 10vh;
+  padding-bottom: 34px;
 }
 .auth-modal-container .auth-modal {
   animation: fade-in 0.3s ease-in-out;
@@ -415,6 +430,11 @@ body select {
   font-family: "Fira Sans", sans-serif;
   border: 1px solid var(--button-white-border);
 }
+.auth-modal-container .auth-modal .login-form .accept-legal a,
+.auth-modal-container .auth-modal .register-form .accept-legal a {
+  all: revert;
+  display: inline;
+}
 .auth-modal-container .auth-modal .login-form .login-button-container,
 .auth-modal-container .auth-modal .login-form .register-button-container,
 .auth-modal-container .auth-modal .register-form .login-button-container,
@@ -513,14 +533,25 @@ body select {
   border: 1px solid var(--button1-1);
   background-color: var(--button1-1);
 }
-.auth-modal-container .auth-modal .line-seperator {
+.auth-modal-container .auth-modal .oauth-legal-note {
+  font-size: 0.7rem;
+  font-weight: 300;
+}
+.auth-modal-container .auth-modal .oauth-legal-note br {
   display: none;
+}
+.auth-modal-container .auth-modal .oauth-legal-note a {
+  display: inline;
+}
+.auth-modal-container .auth-modal .oauth-legal-note a:hover {
+  text-decoration: underline;
+}
+.auth-modal-container .auth-modal .line-seperator {
   width: 90%;
   border-bottom: 1px solid #b4b4b4;
   margin-bottom: 14px;
 }
 .auth-modal-container .auth-modal .signup-instead {
-  display: none;
   font-weight: 300;
 }
 .auth-modal-container .auth-modal .signup-instead a {
@@ -1456,11 +1487,11 @@ footer .copyright p {
   .information-modal-container .information-modal {
     max-width: 500px;
   }
-  .auth-modal-container {
-    padding-top: 10vh;
-  }
   .auth-modal-container .auth-modal {
     max-width: 500px;
+  }
+  .auth-modal-container .auth-modal .oauth-legal-note br {
+    display: block;
   }
   header > .header-container {
     height: 80px;
@@ -1496,9 +1527,6 @@ footer .copyright p {
   }
 }
 @media (min-width: 1200px) {
-  .auth-modal-container {
-    padding-top: 20vh;
-  }
   header > .header-container .user-container .user-auth-buttons .signin-button {
     font-size: 1.2rem;
   }

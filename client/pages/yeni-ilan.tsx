@@ -139,15 +139,15 @@ export default function NewPost() {
     e.preventDefault()
 
     // Basic validation
-    if (formData.title.length < 5 || formData.title.length > 255
-      || description.length < 50 || description.length > 2000
+    if (formData.title.trim().length < 5 || formData.title.trim().length > 255
+      || description.trim().length < 50 || description.trim().length > 2000
       || formData.subCategory === '0' || formData.district === '0'
     ) {
       handleGStatus('informationModal', {
         type: 'error',
         text: `Form geçersiz. Kurallar;<br /><ul>
-        <li ${formData.title.length < 5 || formData.title.length > 255 ? 'class="fail"' : ''}>Başlık 5-255 karakter arasında olmalıdır</li>
-        <li ${description.length < 50 || description.length > 2000 ? 'class="fail"' : ''}>Açıklama 50-2000 karakter arası olmalıdır</li>
+        <li ${formData.title.trim().length < 5 || formData.title.trim().length > 255 ? 'class="fail"' : ''}>Başlık 5-255 karakter arasında olmalıdır</li>
+        <li ${description.trim().length < 50 || description.trim().length > 2000 ? 'class="fail"' : ''}>Açıklama 50-2000 karakter arası olmalıdır</li>
         <li ${formData.subCategory === '0' ? 'class="fail"' : ''}>Kategori seçimi</li>
         <li ${formData.district === '0' ? 'class="fail"' : ''}>Bölge seçimi</li></ul>`
       })

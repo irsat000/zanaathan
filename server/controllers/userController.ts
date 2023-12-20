@@ -145,13 +145,16 @@ exports.signup = (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        const username = body.username;
-        const fullName = isNullOrEmpty(body.fullName) ? null : body.fullName;
-        const email = body.email;
+        const username = body.username.trim();
+        const fullName = isNullOrEmpty(body.fullName) ? null : body.fullName.trim();
+        const email = body.email.trim();
         const password = body.password;
 
         // Check value lengths
-        if (username.trim().length < 3 || password.trim().length < 5) {
+        if (username.length < 3
+            || username.length > 20
+            || password.length < 5
+            || password.length > 30) {
             return res.status(400).json({ error: 'Form data is not good enough' });
         }
 

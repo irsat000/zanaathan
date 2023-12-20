@@ -28,6 +28,10 @@ const AuthModal = () => {
         password: '',
         fullName: ''
     });
+    const [registerFormExtra, setRegisterFormExtra] = useState({
+        passwordRepeat: '',
+        acceptLegal: false
+    })
 
     // On and off auth modal by value
     const handleAuthModal = (state: AuthModalState) => {
@@ -36,19 +40,15 @@ const AuthModal = () => {
         handleGStatus('authModalActive', state);
     }
 
-    // Update login form values
-    const handleLoginFormChange = (e: any) => {
+    // Update forms
+    const handleFormChange = (e: any, form: string) => {
         const { name, value } = e.target;
-        setLoginFormData((prevData: any) => ({
-            ...prevData,
-            [name]: value
-        }));
-    };
-
-    // Update register form values
-    const handleRegisterFormChange = (e: any) => {
-        const { name, value } = e.target;
-        setRegisterFormData((prevData: any) => ({
+        const setForm = form === 'login'
+            ? setLoginFormData
+            : form === 'register'
+                ? setRegisterFormData
+                : setRegisterFormExtra
+        setForm((prevData: any) => ({
             ...prevData,
             [name]: value
         }));
@@ -56,6 +56,11 @@ const AuthModal = () => {
 
     const handleLoginFormSubmit = (e: any) => {
         e.preventDefault();
+        // Don't send request upon small accidents
+        if (loginFormData.username === ''
+            || registerFormData.password === '') {
+            return
+        }
         fetch(`${apiUrl}/sign-in`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
@@ -82,15 +87,39 @@ const AuthModal = () => {
                             type: 'error',
                             text: 'Bu kullanıcı yasaklıdır. Yasak kalkma tarihi: ' + formatDateString(data.banLiftDate)
                         })
-                        setAuthModalWarning('*Yasaklı*')
+                        setAuthModalWarning('Yasaklı')
                     })
                 }
-                else setAuthModalWarning('*Bağlantıda hata*');
+                else setAuthModalWarning('Bağlantıda hata');
             });
     }
 
     const handleRegisterFormSubmit = (e: any) => {
         e.preventDefault();
+        if (registerFormData.username.trim().length < 3
+            || registerFormData.username.trim().length > 20
+            || registerFormData.password.length < 5
+            || registerFormData.password.length > 30) {
+            handleGStatus('informationModal', {
+                type: 'error',
+                text: `Form geçersiz. Kurallar;<br /><ul>
+                <li ${registerFormData.username.trim().length < 3
+                        || registerFormData.username.trim().length > 20 ? 'class="fail"' : ''}>Kullanıcı adı 3-20 karakter arasında olmalıdır</li>
+                <li ${registerFormData.password.length < 5
+                        || registerFormData.password.length > 30 ? 'class="fail"' : ''}>Şifre 5-30 karakter arası olmalıdır</li></ul>`
+            })
+            setAuthModalWarning('Form bilgileri yetersiz')
+            return
+        }
+        if (registerFormExtra.passwordRepeat !== registerFormData.password) {
+            setAuthModalWarning('Şifreler uyuşmuyor')
+            return
+        }
+        if (!registerFormExtra.acceptLegal) {
+            setAuthModalWarning('Kullanım koşullarını onaylamadan kayıt olamazsınız')
+            return
+        }
+
         fetch(`${apiUrl}/sign-up`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
@@ -110,9 +139,9 @@ const AuthModal = () => {
                 setTimeout(() => handleAuthModal('none'), 1000);
             })
             .catch((res) => {
-                if (res.status === 400) setAuthModalWarning('*Form bilgileri yetersiz*');
+                if (res.status === 400) setAuthModalWarning('Form bilgileri yetersiz');
                 else if (res.status === 409) setAuthModalWarning('Bu kullanıcı adı ya da eposta kullanılıyor');
-                else setAuthModalWarning('*Bağlantıda hata*');
+                else setAuthModalWarning('Bağlantıda hata');
             });
     }
 
@@ -127,18 +156,27 @@ const AuthModal = () => {
                         onClick={() => handleAuthModal('signup')}>Kayıt Ol</span>
                 </div>
                 <form className={`login-form ${gStatus.authModalActive === 'signin' && 'active'}`} onSubmit={handleLoginFormSubmit}>
-                    <input type='text' placeholder='Kullanıcı Adı' className='form-input' name='username' onChange={handleLoginFormChange} />
-                    <input type='password' placeholder='Şifre' className='form-input' name='password' onChange={handleLoginFormChange} />
+                    <input type='text' placeholder='Kullanıcı Adı' className='form-input' name='username' value={loginFormData.username} onChange={(e) => handleFormChange(e, 'login')} />
+                    <input type='password' placeholder='Şifre' className='form-input' name='password' value={loginFormData.password} onChange={(e) => handleFormChange(e, 'login')} />
                     <div className="login-button-container">
                         <button type='submit' className='submit-button'>Giriş</button>
                         <Link href={'/'}>Unuttum</Link>
                     </div>
                 </form>
                 <form className={`register-form ${gStatus.authModalActive === 'signup' && 'active'}`} onSubmit={handleRegisterFormSubmit}>
-                    <input type='text' placeholder='E-Posta' className='form-input' name='email' onChange={handleRegisterFormChange} />
-                    <input type='text' placeholder='Kullanıcı Adı' className='form-input' name='username' onChange={handleRegisterFormChange} />
-                    <input type='password' placeholder='Şifre' className='form-input' name='password' onChange={handleRegisterFormChange} />
-                    <input type='text' placeholder='İsim (isteğe bağlı)' className='form-input' name='fullName' onChange={handleRegisterFormChange} />
+                    <input type='text' placeholder='E-Posta' className='form-input' name='email' value={registerFormData.email} onChange={(e) => handleFormChange(e, 'register')} />
+                    <input type='text' placeholder='Kullanıcı Adı' className='form-input' name='username' value={registerFormData.username} onChange={(e) => handleFormChange(e, 'register')} />
+                    <input type='password' placeholder='Şifre' className='form-input' name='password' value={registerFormData.password} onChange={(e) => handleFormChange(e, 'register')} />
+                    <input type='password' placeholder='Şifre tekrar' className='form-input' name='passwordRepeat' value={registerFormExtra.passwordRepeat} onChange={(e) => handleFormChange(e, 'extra')} />
+                    <input type='text' placeholder='İsim (isteğe bağlı)' className='form-input' name='fullName' value={registerFormData.fullName} onChange={(e) => handleFormChange(e, 'register')} />
+                    <label className='accept-legal checkbox-1'>
+                        <input
+                            type='checkbox'
+                            checked={registerFormExtra.acceptLegal}
+                            onChange={() => setRegisterFormExtra(prev => ({ ...prev, acceptLegal: !prev.acceptLegal }))}
+                        />
+                        <span><Link href='/sozlesmeler' target='_blank'>Kullanım koşullarını</Link> ve <Link href='/sozlesmeler/gizlilik-politikasi' target='_blank'>Gizlilik Politikasını</Link><br />okudum ve onaylıyorum.</span>
+                    </label>
                     <div className="register-button-container">
                         <button type='submit' className='submit-button'>Kayıt ol</button>
                     </div>
@@ -155,8 +193,9 @@ const AuthModal = () => {
                 <div className="facebook-login-wrapper">
                     <LoginWithFacebook setAuthModalWarning={setAuthModalWarning} setAuthModalSuccess={setAuthModalSuccess} handleAuthModal={handleAuthModal} />
                 </div>
-                <span className='line-seperator'></span>
-                <span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>
+                <p className='oauth-legal-note'>3. parti ile hesap oluşturursanız <Link href='/sozlesmeler' target='_blank'>Kullanım koşullarını</Link> ve <br /><Link href='/sozlesmeler/gizlilik-politikasi' target='_blank'>Gizlilik Politikasını</Link> onaylamış sayılırsınız.</p>
+                {/*<span className='line-seperator'></span>
+                <span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>*/}
             </div>
         </div>
     );

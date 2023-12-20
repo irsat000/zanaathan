@@ -106,6 +106,24 @@ body {
     }
 }
 
+
+.checkbox-1 {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    input {
+        height: 20px;
+        width: 18px;
+        accent-color: #0bac00;
+    }
+
+    span {
+        font-weight: 400;
+        font-size: 0.9rem;
+    }
+}
+
 .select2.list-active {
     .s2-chosen {
         border: 1px solid var(--focus-border);
@@ -337,8 +355,8 @@ body {
 }
 
 .auth-modal-container {
-    padding-top: 20vh;
-    padding-bottom: 16px;
+    padding-top: 10vh;
+    padding-bottom: 34px;
 
     .auth-modal {
         animation: fade-in 0.3s ease-in-out;
@@ -454,6 +472,13 @@ body {
                 border: 1px solid var(--button-white-border);
             }
 
+            .accept-legal {
+                a {
+                    all: revert;
+                    display: inline;
+                }
+            }
+
             .login-button-container,
             .register-button-container {
                 display: flex;
@@ -551,6 +576,23 @@ body {
             }
         }
 
+        .oauth-legal-note {
+            font-size: 0.7rem;
+            font-weight: 300;
+
+            br {
+                display: none;
+            }
+
+            a {
+                display: inline;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+
         /*.google-button {
             border-radius: 20px;
             padding: 6px 20px;
@@ -571,14 +613,12 @@ body {
         }*/
 
         .line-seperator {
-            display: none;
             width: 90%;
             border-bottom: 1px solid #b4b4b4;
             margin-bottom: 14px;
         }
 
         .signup-instead {
-            display: none;
             font-weight: 300;
 
             a {
@@ -1700,10 +1740,14 @@ footer {
     }
 
     .auth-modal-container {
-        padding-top: 10vh;
-
         .auth-modal {
             max-width: 500px;
+
+            .oauth-legal-note {
+                br {
+                    display: block;
+                }
+            }
         }
     }
 
@@ -1755,10 +1799,6 @@ footer {
 
 // X-Large devices (large desktops, 1200px and up)
 @media (min-width: 1200px) {
-    .auth-modal-container {
-        padding-top: 20vh;
-    }
-
     header>.header-container {
         .user-container {
             .user-auth-buttons {

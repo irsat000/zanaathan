@@ -36,23 +36,6 @@
             flex-wrap: wrap;
             gap: 10px 16px;
             margin-top: 16px;
-
-            .sub-category-label {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-
-                input {
-                    height: 20px;
-                    width: 18px;
-                    accent-color: #0bac00;
-                }
-
-                span {
-                    font-weight: 400;
-                    font-size: 0.9rem;
-                }
-            }
         }
 
         .filter-action-container {
