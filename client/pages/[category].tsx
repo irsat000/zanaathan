@@ -6,7 +6,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, EmojiFrown, Search, XLg } from 
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { apiUrl, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils'
+import { apiUrl, formatSecondsAgo, postImageLink, titleToUrl } from '@/lib/utils/helperUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/lib/utils/fetchUtils'
 import GridLoader from 'react-spinners/GridLoader'
 import { useGStatus } from '@/context/globalContext'
@@ -426,7 +426,7 @@ export default function Category() {
             <div className="listing">
               {postList.map((post, i) =>
                 <div className="post" key={post.Id}>
-                  <Link href={`/${categoryInfo.code}/${post.Id}`} className='post-link'>
+                  <Link href={`/${categoryInfo.code}/${post.Id}/${titleToUrl(post.Title)}`} className='post-link'>
                     <div className="post-image-carousel">
                       {post.MainImage && !post.ImageError ?
                         <Image
