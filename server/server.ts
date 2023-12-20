@@ -7,7 +7,10 @@ const fs = require('fs');
 const path = require('path');
 import { Request, Response } from 'express';
 import { verifyJwt } from './utils/userUtils';
-import { isNullOrEmpty, isPositiveNumeric, rateLimiter } from './utils/helperUtils';
+import { isNullOrEmpty, isPositiveNumeric, rateLimiter, titleToUrl } from './utils/helperUtils';
+import { SitemapStream, streamToPromise } from 'sitemap';
+import { createGzip } from 'zlib';
+import { Readable } from 'stream';
 const appDir = path.dirname(require.main?.filename);
 
 // Configuration
@@ -198,6 +201,92 @@ io.on('connection', (socket: any) => {
         }
     });
 });
+
+
+// Site map generation
+interface PostForLink {
+    Id: number
+    Title: string
+    CategoryCode: string
+}
+interface SiteMapObj {
+    url: string
+    changefreq: string
+    priority: number
+}
+
+let sitemap: Buffer
+
+app.get('/sitemap.xml', rateLimiter({ minute: 10, max: 91 }), (req: Request, res: Response) => {
+    res.header('Content-Type', 'application/xml');
+    res.header('Content-Encoding', 'gzip');
+    // if we have a cached entry send it
+    if (sitemap) {
+        return res.send(sitemap)
+    }
+
+    try {
+        const smStream = new SitemapStream({ hostname: 'http://localhost:3000/' })
+        const pipeline = smStream.pipe(createGzip())
+
+        // pipe your entries or directly write them.
+        smStream.write({ url: '/', changefreq: 'monthly', priority: 0.3 })
+        smStream.write({ url: '/sozlesmeler', changefreq: 'monthly', priority: 0.2 })
+        smStream.write({ url: '/sozlesmeler/gizlilik-politikasi', changefreq: 'monthly', priority: 0.2 })
+        smStream.write({ url: '/sozlesmeler/cerez-politikasi', changefreq: 'monthly', priority: 0.2 })
+
+        // Get category list
+        const codesQuery = `SELECT Code FROM Category;`;
+        pool.query(codesQuery, (qErr: any, results: any) => {
+            if (qErr) {
+                throw qErr
+            }
+
+            // Get dynamic urls
+            const categoryUrls: SiteMapObj[] = results.map((c: { Code: string }) =>
+                ({ url: `/${c.Code}`, changefreq: 'daily', priority: 0.5 }))
+
+            // Get posts for creating urls
+            const postsQuery = `
+                SELECT JP.Id, SUBSTRING(JP.Title, 1, 71) as Title, Category.Code as CategoryCode
+                FROM JobPosting JP
+                LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
+                LEFT JOIN Category ON Category.Id = SubCategory.CategoryId
+                WHERE CurrentStatusId = 1;
+            `;
+            pool.query(postsQuery, (qErr: any, results: any) => {
+                if (qErr) {
+                    throw qErr
+                }
+
+                // Get dynamic urls
+                const postUrls: SiteMapObj[] = results.map((p: PostForLink) =>
+                    ({ url: `/${p.CategoryCode}/${p.Id}/${titleToUrl(p.Title)}`, changefreq: 'weekly', priority: 0.7 }))
+
+                // Write dynamic url
+                Readable.from([...categoryUrls, ...postUrls]).pipe(smStream)
+
+                streamToPromise(pipeline).then(sm => {
+                    // cache the response
+                    sitemap = sm
+                    // end
+                    smStream.end()
+                })
+                // stream write the response
+                pipeline.pipe(res).on('error', (e) => { throw e })
+            });
+        });
+    } catch (e) {
+        console.error(e)
+        return res.status(500).end()
+    }
+})
+
+
+
+
+
+
 
 
 // Tests

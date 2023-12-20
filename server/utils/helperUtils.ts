@@ -42,3 +42,23 @@ export const rateLimiter = (args?: { minute: number, max: number }) => rateLimit
     standardHeaders: true,
     legacyHeaders: false,
 })
+
+
+export const titleToUrl = (title: string) => {
+    // Encode the title to handle Turkish characters and special characters
+    const encodedTitle = encodeURIComponent(title.toLocaleLowerCase("tr-TR"));
+  
+    // Replace encoded spaces with hyphens and remove additional special characters
+    let urlFriendlyTitle = encodedTitle
+      .replace(/%20/g, '-') // Replace encoded spaces with hyphens
+      .replace(/[^a-zA-Z0-9-]/g, ''); // Remove additional special characters
+  
+    // Cut if longer than 70 characters
+    if (urlFriendlyTitle.length > 70) {
+      urlFriendlyTitle = urlFriendlyTitle.substring(0, 70);
+      const lastUnderscoreIndex = urlFriendlyTitle.lastIndexOf('-');
+      urlFriendlyTitle = urlFriendlyTitle.substring(0, lastUnderscoreIndex);
+    }
+  
+    return urlFriendlyTitle
+  }

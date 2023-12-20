@@ -93,11 +93,13 @@ exports.getPosts = (req: Request, res: Response) => {
                 postsExclusiveParameters.push((page - 1) * 20);
             }
 
+            // Get posts
             pool.query(postsSelect + query + postsExclusive, [...parameters, ...postsExclusiveParameters], (qErr: any, posts: any) => {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error 2' });
                 }
 
+                // Send posts and post count for pagination
                 return res.status(200).json({ posts: posts, postCount: count[0].Count });
             });
         });
@@ -189,7 +191,6 @@ interface CreatePost {
 
 exports.createPost = (req: Request, res: Response) => {
     try {
-        console.log("Route handler baby!")
         // Get uploaded file list
         // Filtered in multer instance
         const files = req.files;
