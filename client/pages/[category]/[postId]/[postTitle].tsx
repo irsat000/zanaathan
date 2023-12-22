@@ -12,6 +12,7 @@ import { ChevronRight } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import ReactHtmlParser from 'html-react-parser';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import AdminModal from '@/components/adminModal';
 
 
 
@@ -77,6 +78,10 @@ export default function PostDetails({
 	// General status context
 	const { handleGStatus } = useGStatus();
 
+	// For moderation
+	const [adminModalActive, setAdminModalActive] = useState('none')
+	const [adminArgs, setAdminArgs] = useState<any>({})
+
 	// Check post
 	useEffect(() => {
 		if (!_postDetails) {
@@ -84,7 +89,9 @@ export default function PostDetails({
 				type: 'error',
 				text: 'Gönderi getirilemedi!'
 			})
+			return
 		}
+		setAdminArgs({ postId: _postDetails.Id })
 	}, [])
 
 	// Get category info by category code
@@ -179,12 +186,12 @@ export default function PostDetails({
 						<Link href={'/' + categoryInfo.code}>{categoryInfo.name}</Link>
 					</div>
 					: <></>}
-				{/* coming soon
-				userData?.roles && userData?.roles.length > 0 ?
+				{userData?.roles && userData?.roles.length > 0 ?
 					<div className="admin-settings-container">
-						<button type="button" className="post-admin-settings">Admin</button>
+						<button type="button" className="post-admin-settings" onClick={() => setAdminModalActive('post-details')}>Admin</button>
+						<AdminModal adminModalActive={adminModalActive} setAdminModalActive={setAdminModalActive} args={adminArgs} />
 					</div>
-					: <></> */}
+					: <></>}
 				{postDetails ? <>
 					<div className="post-container">
 						<div className="gallery-container">

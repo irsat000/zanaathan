@@ -354,6 +354,53 @@ body {
     }
 }
 
+.admin-modal-container {
+    padding-top: 6vh;
+    padding-bottom: 34px;
+
+    .admin-modal {
+        animation: fade-in 0.2s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 60px 24px 40px;
+        background-color: var(--primary-bg-color);
+        position: relative;
+        border-radius: 10px;
+        max-width: 260px;
+        -webkit-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+        box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+
+        .post-action {
+            display: flex;
+            gap: 12px;
+
+            select {
+                padding: 5px 6px;
+                font-size: 1rem;
+                border-radius: 4px;
+                border: 1px solid var(--button-white-border);
+                font-weight: 300;
+            }
+
+            button {
+                padding: 5px 10px;
+                border-radius: 4px;
+                background-color: var(--button2-1);
+                color: #ffffff;
+                transition: background-color 0.1s ease-in-out;
+                font-weight: 300;
+                font-size: 1rem;
+
+                &:hover {
+                    background-color: var(--button2-2);
+                }
+            }
+        }
+    }
+}
+
 .auth-modal-container {
     padding-top: 10vh;
     padding-bottom: 34px;
@@ -1638,6 +1685,10 @@ footer {
 
 // Small devices (landscape phones, 576px and up)
 @media (min-width: 576px) {
+    .admin-modal-container .admin-modal {
+        max-width: 360px;
+    }
+
     .auth-modal-container .auth-modal {
         max-width: 360px;
     }
@@ -1739,14 +1790,16 @@ footer {
         }
     }
 
-    .auth-modal-container {
-        .auth-modal {
-            max-width: 500px;
+    .admin-modal-container .admin-modal {
+        max-width: 500px;
+    }
 
-            .oauth-legal-note {
-                br {
-                    display: block;
-                }
+    .auth-modal-container .auth-modal {
+        max-width: 500px;
+
+        .oauth-legal-note {
+            br {
+                display: block;
             }
         }
     }

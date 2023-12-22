@@ -47,7 +47,8 @@ export const NP_Thumbnails: React.FC<{
                     draggable="true"
                     onDragStart={() => setDraggedIndex(index)}
                     onDragEnter={() => {
-                        setHoverIndex(index)
+                        if (hoverIndex !== index)
+                            setHoverIndex(index)
                     }}
                     onDragEnd={() => handleDragEnd(index)}
                 >
