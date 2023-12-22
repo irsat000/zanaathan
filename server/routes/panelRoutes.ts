@@ -6,10 +6,8 @@ const panelController = require('../controllers/panelController');
 
 // Get posts that are waiting for approval
 router.get('/panel/waiting-approval', rateLimiter(), panelController.waitingApproval);
-// To approve posts
-router.put('/panel/approve-post/:postId', rateLimiter(), panelController.approvePost);
-// To reject posts
-router.put('/panel/reject-post/:postId', rateLimiter(), panelController.rejectPost);
+// To update posts
+router.put('/panel/update-post/:action/:postId', rateLimiter(), panelController.adminUpdatePost);
 // To get users by name or id
 router.get('/panel/get-user/:target', rateLimiter(), panelController.getUser);
 // To ban user

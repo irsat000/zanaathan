@@ -26,6 +26,9 @@ export const checkUnallowed = async (images: File[]): Promise<boolean> => {
                         || prediction.className === 'Hentai')
                         && prediction.probability > 0.5) || (prediction.className === 'Sexy' && prediction.probability > 0.6)
                 )
+
+                console.log(predictions)
+
                 return problematic
             })
             .catch((err) => {

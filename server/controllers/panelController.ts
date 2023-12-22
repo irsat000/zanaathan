@@ -141,6 +141,77 @@ exports.waitingApproval = async (req: Request, res: Response) => {
 }
 
 
+
+exports.adminUpdatePost = async (req: Request, res: Response) => {
+    try {
+        // Verify and decode the token, check admin role
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const adminId = verifyJwt(jwt);
+        if (!adminId) return res.status(401).send('Not authorized');
+        if (await checkAdminRole(adminId) === false) return res.status(401).json({ error: 'Not authorized' });
+        // Get post id and the action
+        const postId = req.params.postId;
+        const action = req.params.action;
+
+        if (action === 'approve' || action === 'complete') {
+            const query = `UPDATE JobPosting SET CurrentStatusId = ${action === 'approve' ? '1' : '3'} WHERE Id = ?;`;
+            pool.query(query, [postId], (qErr: any, results: any) => {
+                if (qErr) {
+                    return res.status(500).json({ error: 'Query error' });
+                }
+
+                return res.status(200).json({ message: 'Success' });
+            });
+        } else if (action === 'reject') {
+            // Get reject parameters
+            const body: {
+                banDuration: string
+            } = req.body;
+            if (!body) {
+                return res.status(400).json({ error: 'Bad request' });
+            }
+
+            // Check job posting and get the account id
+            const query = `SELECT AccountId FROM JobPosting WHERE Id = ?;`;
+            pool.query(query, [postId], async (qErr: any, results: any) => {
+                if (qErr) {
+                    return res.status(500).json({ error: 'Query error' });
+                }
+                if (results.length === 0) {
+                    return res.status(404).json({ error: 'Post not found' });
+                }
+
+                const postOwnerId = results[0].AccountId;
+
+                // Delete the unapproved post(s)
+                const success = await deleteUnapprovedPostsPromise(+body.banDuration > 0, postOwnerId, postId);
+
+                // Ban the account
+                if (+body.banDuration > 0) {
+                    const reason = `Gönderinizde yasaklanmanızı gerektiren bir problem tesbit ettik.`;
+                    const liftDate = await banUserPromise(+body.banDuration, reason, postOwnerId, adminId);
+                    if (!liftDate) {
+                        return res.status(500).json({ message: 'Failed to ban' });
+                    }
+                }
+
+                if (!success) {
+                    return res.status(500).json({ message: 'Failed to remove the post or posts' });
+                }
+
+                return res.status(200).json({ message: 'Success' });
+            });
+        } else {
+            return res.status(400).json({ error: 'Bad request' });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+
+
+/*
 exports.approvePost = async (req: Request, res: Response) => {
     try {
         // Verify and decode the token, check admin role
@@ -215,7 +286,7 @@ exports.rejectPost = async (req: Request, res: Response) => {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
 }
-
+*/
 
 exports.getUser = async (req: Request, res: Response) => {
     try {

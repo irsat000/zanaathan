@@ -327,8 +327,14 @@ body select {
 .admin-modal-container .admin-modal .post-action {
   display: flex;
   gap: 12px;
+  align-items: center;
 }
-.admin-modal-container .admin-modal .post-action select {
+.admin-modal-container .admin-modal .post-action .post-action-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.admin-modal-container .admin-modal .post-action .post-action-options select {
   padding: 5px 6px;
   font-size: 1rem;
   border-radius: 4px;

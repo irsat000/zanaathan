@@ -88,7 +88,7 @@ export default function ApprovingPosts() {
         const jwt = fetchJwt()
         if (!jwt) return
 
-        fetch(`${apiUrl}/panel/approve-post/${postId}`, {
+        fetch(`${apiUrl}/panel/update-post/approve/${postId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
@@ -110,7 +110,7 @@ export default function ApprovingPosts() {
         if (!jwt) return
 
 
-        fetch(`${apiUrl}/panel/reject-post/${post.Id}`, {
+        fetch(`${apiUrl}/panel/update-post/reject/${post.Id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
@@ -198,7 +198,7 @@ export default function ApprovingPosts() {
                                                 setSelectedBanDuration(e.target.value)
                                             }}
                                         >
-                                            <option value="0">Kullanıcıyı Yasakla</option>
+                                            <option value="0">Kullanıcıyı Yasakla?</option>
                                             <option value="1">1 gün</option>
                                             <option value="7">7 gün</option>
                                             <option value="30">1 ay</option>
