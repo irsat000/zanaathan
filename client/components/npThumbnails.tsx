@@ -65,6 +65,7 @@ export const NP_Thumbnails: React.FC<{
                     onDragEnd={() => handleDragEnd(index)}
                     onDragOver={(e) => e.preventDefault()}
                 >
+                    <span className="image-size">{(image.size / 1000 / 1000).toFixed(1)} MB</span>
                     <div className="image-wrapper">
                         <img src={URL.createObjectURL(new Blob([image]))} alt={`Image ${index}`} />
                     </div>

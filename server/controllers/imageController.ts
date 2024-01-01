@@ -31,7 +31,7 @@ const postImageStorage = multer.diskStorage({
 export const uploadPostImage = (req: Request, res: Response, next: NextFunction) => {
     const multerMiddleware = multer({
         storage: postImageStorage,
-        limits: { fileSize: 10000000, files: 10 }, // 10 megabyte
+        limits: { fileSize: 1000 * 1000 * 5, files: 10 }, // 5 megabyte
         fileFilter: (req, file, cb) => {
             // Accept only images, excluding gif
             if (acceptedImgSet_1.includes(file.mimetype))
@@ -45,8 +45,8 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
     multerMiddleware(req, res, async (multerError: any) => {
         if (multerError) {
             if (multerError.code === 'LIMIT_FILE_SIZE') {
-                // 10mb limit, if one exceeds, return 413, payload too large error
-                return res.status(413).json({ error: 'A file exceeded the 10 megabyte initial limit' });
+                // 5mb limit, if one exceeds, return 413, payload too large error
+                return res.status(413).json({ error: 'A file exceeded the 5 megabyte limit' });
             }
             else if (multerError.code === 'LIMIT_FILE_COUNT') {
                 // 10 image limit
@@ -54,7 +54,6 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
             }
             return next(multerError);
         }
-
 
         // Get files
         const files = req.files as Express.Multer.File[];
@@ -84,18 +83,19 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
                     .toFormat('webp')
                     .toBuffer();
 
+                // DEPRECATION -- REMOVED INITIAL LIMIT, SHARP ALSO RUNS ON CLIENT SIDE AND WE CHECK WITH MULTER
                 // Check new size, 5 mb is the limit
-                const stillExceeded5MB = sanitizedImage.length > 5000000;
+                /*const stillExceeded5MB = sanitizedImage.length > 1000 * 1000 * 5;
                 if (stillExceeded5MB) {
                     removeAllUploaded();
-                    return res.status(413).json({ error: 'A file exceeded the 5 megabyte sanitized limit' });
-                }
+                    return res.status(413).json({ error: 'A file exceeded the 5 megabyte  limit' });
+                }*/
 
-                // Virus scan
-                if (false) {
+                // Virus scan maybe
+                /*if (false) {
                     removeAllUploaded();
                     return res.status(406).json({ error: 'Infected file detected.' });
-                }
+                }*/
 
                 // Replace file
                 await fs.promises.writeFile(image.path, sanitizedImage);
@@ -127,7 +127,7 @@ const avatarStorage = multer.diskStorage({
 export const uploadAvatar = (req: Request, res: Response, next: NextFunction) => {
     const multerMiddleware = multer({
         storage: avatarStorage,
-        limits: { fileSize: 10000000 }, // 10 megabyte
+        limits: { fileSize: 1000 * 1000 * 5 }, // 5 megabyte
         fileFilter: (req, file, cb) => {
             // Accept only images, excluding gif
             if (acceptedImgSet_1.includes(file.mimetype))
@@ -141,8 +141,8 @@ export const uploadAvatar = (req: Request, res: Response, next: NextFunction) =>
     multerMiddleware(req, res, async (multerError: any) => {
         if (multerError) {
             if (multerError.code === 'LIMIT_FILE_SIZE') {
-                // 10mb limit, if the file exceeds, return 413, payload too large error
-                return res.status(413).json({ error: 'The file exceeded the 10 megabyte initial limit' });
+                // 5mb limit, if the file exceeds, return 413, payload too large error
+                return res.status(413).json({ error: 'The file exceeded the 5 megabyte limit' });
             }
             return next(multerError);
         }
@@ -171,12 +171,13 @@ export const uploadAvatar = (req: Request, res: Response, next: NextFunction) =>
                 .toFormat('webp')
                 .toBuffer();
 
+            // DEPRECATION
             // Check new size, 3 mb is the limit
-            const stillExceeded3MB = sanitizedImage.length > 3000000;
+            /*const stillExceeded3MB = sanitizedImage.length > 3000000;
             if (stillExceeded3MB) {
                 removeUploaded();
                 return res.status(413).json({ error: 'A file exceeded the 3 megabyte sanitized avatar limit' });
-            }
+            }*/
 
             // Replace file
             await fs.promises.writeFile(image.path, sanitizedImage);
@@ -223,7 +224,7 @@ export const uploadAvatar = multer({
         }
         // Reject the file if it's too large, > 5mb
         // Reducing file size will be in client side
-        else if (file.size > 5000000) {
+        else if (file.size > 1000 * 1000 * 5) {
             // Delete the uploaded files
             files.forEach((uploadedFile) =>
                 fs.existsSync(uploadedFile.path) && fs.unlinkSync(uploadedFile.path)

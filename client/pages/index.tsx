@@ -21,7 +21,7 @@ const Home = () => {
           <div className="intro-content">
             <h2>Zanaat <span className='red'>Sanattır.</span><br />Zanaat Han'a Hoşgeldiniz!</h2>
             <p>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem animi reiciendis debitis beatae temporibus, voluptatibus earum molestiae. Dolores tempora consectetur ad possimus veritatis quibusdam aspernatur quod natus unde quas. Culpa.
+              Zanaat Han, iş ilanı verme ve iş arama sürecini tamamen ücretsiz kılarak, becerilerinizi ve taleplerinizi karşılamayı amaçlar. Ustaların ve iş verenlerin bir araya gelerek projelerini hayata geçirmelerini sağlamak için buradayız.
             </p>
             <div className="intro-buttons">
               <Link href='/yeni-ilan' className='intro-button-1' onClick={(e) => {

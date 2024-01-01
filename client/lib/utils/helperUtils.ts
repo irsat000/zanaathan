@@ -149,6 +149,34 @@ export const imageDataFromFile = (file: File): Promise<ImageData | null> => {
   });
 }
 
+// Strip and convert image for minimum data traffic
+// async for parallelism
+export const processImage = async (pic: File, index: number) => {
+  const img = new Image();
+  img.src = URL.createObjectURL(pic);
+
+  return new Promise<File | null>((resolve) => {
+    img.onload = () => {
+      // Create a brand new canvas and fill it with same sizes
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(null);
+        return;
+      }
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+
+      // Convert to blob, then file and resolve
+      canvas.toBlob((blob) => {
+        resolve(blob ? new File([blob], `img${index}.webp`, { type: 'image/webp' }) : null);
+      }, 'image/webp');
+    };
+  });
+};
+
+
 export const isPositiveNumeric = (value: any): boolean => {
   return /^[1-9]\d*$/.test(value);
 }

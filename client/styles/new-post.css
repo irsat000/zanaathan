@@ -93,6 +93,7 @@
   background-color: var(--button-white-border);
   position: relative;
   height: 100px;
+  margin-top: 20px;
 }
 .new-post-page .new-post-form .np-primary .np-thumbnail-wrapper .drag-indicator::before, .new-post-page .new-post-form .np-primary .np-thumbnail-wrapper .drag-indicator::after {
   content: "";
@@ -120,7 +121,6 @@
 .new-post-page .new-post-form .np-primary .np-thumbnail-wrapper .image-thumbnail {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   align-items: center;
 }
 .new-post-page .new-post-form .np-primary .np-thumbnail-wrapper .image-thumbnail:first-of-type {
@@ -129,6 +129,11 @@
 .new-post-page .new-post-form .np-primary .np-thumbnail-wrapper .image-thumbnail:first-of-type .image-wrapper {
   border: 2px solid #0389ff;
   box-shadow: 0px 0px 13px 0px rgba(3, 137, 255, 0.5);
+}
+.new-post-page .new-post-form .np-primary .np-thumbnail-wrapper .image-thumbnail .image-size {
+  font-size: 0.9rem;
+  font-weight: 300;
+  height: 20px;
 }
 .new-post-page .new-post-form .np-primary .np-thumbnail-wrapper .image-thumbnail .image-wrapper {
   display: flex;
@@ -141,6 +146,7 @@
   overflow: hidden;
   cursor: grab;
   transition: width 0.1s ease-in-out;
+  margin-bottom: 10px;
 }
 .new-post-page .new-post-form .np-primary .np-thumbnail-wrapper .image-thumbnail .image-wrapper img {
   max-width: 100%;

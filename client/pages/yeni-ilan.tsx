@@ -6,7 +6,7 @@ import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
-import { apiUrl } from '@/lib/utils/helperUtils'
+import { apiUrl, processImage } from '@/lib/utils/helperUtils'
 import { fetchJwt } from '@/lib/utils/userUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts, getSubsByCategory } from '@/lib/utils/fetchUtils'
 //import ReactQuill from 'react-quill';
@@ -67,8 +67,7 @@ export default function NewPost() {
   // Change the selectedAmages from formData
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files) return
-    let above10MB: number[] = [];
+    if (!files) return;
 
     // Check if more than 10 files
     if (files.length + formData.selectedImages.length > 10) {
@@ -83,9 +82,7 @@ export default function NewPost() {
     const newImages: File[] = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i] as File | null;
-      if (file && file.size > 1024 * 1024 * 10) {
-        above10MB.push(i);
-      } else if (file) {
+      if (file) {
         newImages.push(file);
       }
     }
@@ -95,13 +92,6 @@ export default function NewPost() {
       ...formData,
       selectedImages: [...formData.selectedImages, ...newImages]
     });
-
-    if (above10MB.length > 0) {
-      handleGStatus('informationModal', {
-        type: 'error',
-        text: `${above10MB.length} adet fotoğraf 10 MB'dan büyük olduğu için eklenmedi.`
-      })
-    }
   };
   // Change the dependencies of payload, city and category
   const handleExtraChange = (e: any) => {
@@ -136,7 +126,7 @@ export default function NewPost() {
 
   // Send form
   const handleNewPostSubmit = async (e: any) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Basic validation
     if (formData.title.trim().length < 5 || formData.title.trim().length > 255
@@ -150,33 +140,51 @@ export default function NewPost() {
         <li ${description.trim().length < 50 || description.trim().length > 2000 ? 'class="fail"' : ''}>Açıklama 50-2000 karakter arası olmalıdır</li>
         <li ${formData.subCategory === '0' ? 'class="fail"' : ''}>Kategori seçimi</li>
         <li ${formData.district === '0' ? 'class="fail"' : ''}>Bölge seçimi</li></ul>`
-      })
-      return
+      });
+      return;
     }
 
     // Image control loading info
     handleGStatus('informationModal', {
       type: 'loading',
       text: 'Başlık, açıklama ve fotoğraflar kontrol edilirken bekleyiniz... 🤖'
-    })
+    });
     // Check if the title or description contains profanity
     if (checkProfanity([formData.title, description])) {
       handleGStatus('informationModal', {
         type: 'error',
         text: 'Başlıkta veya açıklamada uygunsuz kelime tesbit edildi.'
-      })
-      return
+      });
+      return;
     }
+    // Image processing for less traffic
+    const imagePromises = formData.selectedImages.map(processImage);
+    const processedImages = await Promise.all(imagePromises);
+    // Check if proccessed images have any error
+    if (processedImages.some(img => !img)) {
+      handleGStatus('informationModal', {
+        type: 'error',
+        text: 'Fotoğraflar üzerinde çalışılırken hata oluştu, üzgünüz.'
+      });
+      return;
+    }
+    else if (processedImages.some(img => img!.size > 1000 * 1000 * 5)) {
+      handleGStatus('informationModal', {
+        type: 'error',
+        text: '5 MB altı fotoğraflar yüklenebilir.'
+      });
+      return;
+    };
     // Check if the images contain inappropriate content
     const inappropriate = await checkUnallowed(formData.selectedImages)
     if (inappropriate) {
       handleGStatus('informationModal', {
         type: 'error',
         text: 'Uygunsuz içerikli fotoğraf tesbit edildi.'
-      })
-      return
+      });
+      return;
     }
-    handleGStatus('informationModal', null)
+    handleGStatus('informationModal', null);
 
     // Create multipart form data (necessary for image upload)
     const multiPartFormData = new FormData();
@@ -184,9 +192,7 @@ export default function NewPost() {
     multiPartFormData.append('description', description);
     multiPartFormData.append('subCategory', formData.subCategory);
     multiPartFormData.append('district', formData.district);
-    formData.selectedImages.forEach((pic, index) => {
-      multiPartFormData.append(`postImages`, pic);
-    });
+    processedImages.forEach(picFile => multiPartFormData.append('postImages', picFile!));
 
     // Check jwt
     const jwt = fetchJwt();
@@ -213,7 +219,7 @@ export default function NewPost() {
         if (res.status === 400) {
           errorMessage = 'Form verisi geçersiz, gönderi oluşturulamadı.'
         } else if (res.status === 413) {
-          errorMessage = `Fotoğraf çok büyük. İşlenmiş fotoğraf boyutu en fazla 5 MB olabilir.`
+          errorMessage = `En az bir fotoğraf çok büyük.`
         } else if (res.status === 417) {
           errorMessage = `En fazla 10 fotoğraf yüklenebilir.`
         } else if (res.status === 401) {

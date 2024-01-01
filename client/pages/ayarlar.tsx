@@ -2,12 +2,10 @@
 import Template from '@/components/template'
 import { useUser } from '@/context/userContext';
 import Image from 'next/image'
-import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react';
-import { Post } from './[category]';
+import { useEffect, useState } from 'react';
 import { decodedJwt, fetchJwt, storeJwt } from '@/lib/utils/userUtils';
-import { acceptedImgSet_1, apiUrl, avatarLink, formatSecondsAgo, postImageLink } from '@/lib/utils/helperUtils';
-import { ChevronDown, XLg } from 'react-bootstrap-icons';
+import { acceptedImgSet_1, apiUrl, avatarLink, processImage } from '@/lib/utils/helperUtils';
+import { XLg } from 'react-bootstrap-icons';
 import { useGStatus } from '@/context/globalContext';
 import { checkUnallowed } from '@/lib/utils/nsfwjsUtils';
 import { useRouter } from 'next/router';
@@ -102,20 +100,17 @@ export default function Home() {
 
     // Function for submitting avatar
     const handleAvatarSubmit = async (file: File | null) => {
+        // Check jwt
+        const jwt = fetchJwt();
+        if (!jwt) return;
+        // Check file type
         if (!file || !acceptedImgSet_1.includes(file.type)) {
             handleGStatus('informationModal', {
                 type: 'error',
                 text: 'Desteklenmeyen dosya biçimi!'
             })
             return;
-        } else if (file.size > 1024 * 1024 * 10) {
-            handleGStatus('informationModal', {
-                type: 'error',
-                text: '10 MB altı fotoğraf yüklenebilir.'
-            })
-            return;
         }
-
         // Image control loading info
         handleGStatus('informationModal', {
             type: 'loading',
@@ -130,13 +125,24 @@ export default function Home() {
             return;
         }
         handleGStatus('informationModal', null)
-
-        // Check jwt
-        const jwt = fetchJwt();
-        if (!jwt) return;
         // Get image
         const avatarForm = new FormData();
-        avatarForm.append('image', file);
+        // Sanitize image for less data traffic
+        const processedImage = await processImage(file, 0);
+        if (!processedImage) {
+            handleGStatus('informationModal', {
+                type: 'error',
+                text: 'Fotoğraf üzerinde çalışılırken hata oluştu, üzgünüz.'
+            })
+            return;
+        } else if (processedImage.size > 1000 * 1000 * 5) {
+            handleGStatus('informationModal', {
+                type: 'error',
+                text: '5 MB altı fotoğraf yüklenebilir.'
+            })
+            return;
+        }
+        avatarForm.append('image', processedImage);
 
         fetch(`${apiUrl}/set-new-avatar`, {
             method: "POST",
@@ -155,7 +161,7 @@ export default function Home() {
             .catch((res) => {
                 let errorMessage = 'Profil fotoğrafı değiştirilemedi, bağlantıda hata olabilir.'
                 if (res.status === 413) {
-                    errorMessage = `Fotoğraf çok büyük. İşlenmiş fotoğraf boyutu en fazla 3 MB olabilir.`
+                    errorMessage = `Fotoğraf çok büyük.`
                 } else if (res.status === 401) {
                     // For expired jwt
                     errorMessage = `Giriş yapmanız gerekmektedir.`
@@ -191,7 +197,7 @@ export default function Home() {
             .catch((res) => {
                 handleGStatus('informationModal', {
                     type: 'error',
-                    text: 'Profile fotoğrafı silinemedi!'
+                    text: 'Profil fotoğrafı silinemedi!'
                 })
             });
     }

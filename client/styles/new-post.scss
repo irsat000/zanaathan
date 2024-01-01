@@ -107,6 +107,7 @@
                     background-color: var(--button-white-border);
                     position: relative;
                     height: 100px;
+                    margin-top: 20px;
 
                     &::before,
                     &::after {
@@ -141,7 +142,6 @@
                 .image-thumbnail {
                     display: flex;
                     flex-direction: column;
-                    gap: 10px;
                     align-items: center;
 
                     &:first-of-type {
@@ -155,6 +155,12 @@
                         }
                     }
 
+                    .image-size{
+                        font-size: 0.9rem;
+                        font-weight: 300;
+                        height: 20px;
+                    }
+
                     .image-wrapper {
                         display: flex;
                         align-items: center;
@@ -166,6 +172,7 @@
                         overflow: hidden;
                         cursor: grab;
                         transition: width 0.1s ease-in-out;
+                        margin-bottom: 10px;
 
                         img {
                             max-width: 100%;
