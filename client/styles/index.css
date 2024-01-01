@@ -187,6 +187,14 @@
   .index-page .category-list {
     grid-template-columns: repeat(2, 1fr);
   }
+  .index-page .category-list .category-card .category-image {
+    height: 130px;
+  }
+}
+@media (min-width: 576px) {
+  .index-page .category-list .category-card .category-image {
+    height: 200px;
+  }
 }
 @media (min-width: 768px) {
   .index-page .intro {
@@ -208,10 +216,6 @@
   }
   .index-page .category-list {
     grid-template-columns: repeat(3, 1fr);
-    /*.category-card {
-        .category-details {
-        }
-    }*/
   }
 }
 @media (min-width: 992px) {

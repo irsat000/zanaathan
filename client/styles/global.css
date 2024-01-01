@@ -231,6 +231,7 @@ body select {
   justify-content: center;
   align-items: flex-start;
   overflow-y: auto;
+  overscroll-behavior: none;
 }
 .modal-container .close-modal-button {
   all: unset;
@@ -643,13 +644,14 @@ body select {
   height: 100%;
   width: 70%;
   animation: slide-drawer 0.2s ease-in-out;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   background-color: var(--primary-bg-color);
   box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
   text-align: right;
   padding-top: 20px;
+  overflow-y: auto;
+  overscroll-behavior: none;
 }
 .drawer-container .drawer .drawer-site-logo {
   margin-bottom: 10px;
@@ -800,6 +802,7 @@ body select {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overscroll-behavior: none;
   /*.contact-item{
       &::before{
           content: '';
@@ -994,6 +997,7 @@ body select {
   gap: 10px;
   padding: 14px 10px;
   overflow-y: auto;
+  overscroll-behavior: none;
 }
 .chatbot-container .chatbot .chatbot-body .message-box .messages .show-all-messages {
   align-self: center;

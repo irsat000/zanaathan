@@ -110,37 +110,42 @@ export const formatDateString = (input: string) => {
 
 export const imageDataFromFile = (file: File): Promise<ImageData | null> => {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+    try {
+      const reader = new FileReader();
 
-    reader.onload = function (e) {
-      const img = new Image();
-      if (!e.target || typeof e.target.result !== 'string') {
-        resolve(null)
-        return
-      }
-
-      img.src = e.target.result;
-
-      img.onload = function () {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
+      reader.onload = function (e) {
+        const img = new Image();
+        if (!e.target || typeof e.target.result !== 'string') {
           resolve(null)
           return
         }
 
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0, img.width, img.height);
-        const imageData = ctx.getImageData(0, 0, img.width, img.height);
-        resolve(imageData);
-      };
-      img.onerror = function (err) {
-        resolve(null);
-      };
-    };
+        img.src = e.target.result;
 
-    reader.readAsDataURL(file);
+        img.onload = function () {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(null)
+            return
+          }
+
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          const imageData = ctx.getImageData(0, 0, img.width, img.height);
+          resolve(imageData);
+        };
+        img.onerror = function (err) {
+          resolve(null);
+        };
+      };
+
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.log(error);
+      resolve(null);
+    }
   });
 }
 

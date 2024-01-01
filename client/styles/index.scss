@@ -229,17 +229,22 @@ html[data-colorset-1] {}
             grid-template-columns: repeat(2, 1fr);
 
             .category-card .category-image {
-
-                img {
-                    //aspect-ratio: 1.4/1;
-                }
+                height: 130px;
             }
         }
     }
 }
 
 // Small devices (landscape phones, 576px and up)
-@media (min-width: 576px) {}
+@media (min-width: 576px) {
+    .index-page {
+        .category-list {
+            .category-card .category-image {
+                height: 200px;
+            }
+        }
+    }
+}
 
 // Medium devices (tablets, 768px and up)
 @media (min-width: 768px) {
@@ -268,11 +273,6 @@ html[data-colorset-1] {}
 
         .category-list {
             grid-template-columns: repeat(3, 1fr);
-
-            /*.category-card {
-                .category-details {
-                }
-            }*/
         }
     }
 }

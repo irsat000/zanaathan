@@ -18,20 +18,17 @@ export const checkUnallowed = async (images: File[]): Promise<boolean> => {
         const unallowed = await nsfwjs.load()
             .then((model) => model.classify(imageData))
             .then((predictions) => {
-                // To test
-                // console.log(predictions)
                 // If any of the selected class names have high probability, return true, which means it's unallowed
                 const problematic = predictions.some(prediction =>
                     ((prediction.className === 'Porn'
                         || prediction.className === 'Hentai')
-                        && prediction.probability > 0.5) || (prediction.className === 'Sexy' && prediction.probability > 0.6)
+                        && prediction.probability > 0.8) || (prediction.className === 'Sexy' && prediction.probability > 0.8)
                 )
-
-                console.log(predictions)
 
                 return problematic
             })
             .catch((err) => {
+                console.log("--", err)
                 return false
             })
         // Break the loop by returning if we hit an unallowed

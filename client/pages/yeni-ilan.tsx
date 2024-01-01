@@ -169,7 +169,6 @@ export default function NewPost() {
     }
     // Check if the images contain inappropriate content
     const inappropriate = await checkUnallowed(formData.selectedImages)
-    console.log(inappropriate)
     if (inappropriate) {
       handleGStatus('informationModal', {
         type: 'error',
