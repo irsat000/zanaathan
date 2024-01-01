@@ -7,7 +7,8 @@ import sharp from 'sharp';
 const path = require('path');
 const appDir = path.dirname(require.main?.filename);
 
-
+// CRITICAL - Sharp caches files which prevents deletion with EBUSY error, because they are "used".
+sharp.cache(false);
 
 /*files.forEach(file => {
     if (fs.existsSync(file.path)) {
@@ -59,23 +60,20 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
         const files = req.files as Express.Multer.File[];
 
         // Remove uploaded
-        const removeAllUploaded = () => {
-            files.forEach(async (file) => {
+        const removeAllUploaded = async () => {
+            await Promise.all(files.map(async (file) => {
                 if (fs.existsSync(file.path)) {
-                    await fs.unlink(file.path, (err) => {
-                        if (err) {
-                            console.error('Error while deleting existing image.')
-                        }
+                    fs.unlink(file.path, (err) => {
+                        if (err) console.error(err);
                     });
                 }
-            });
+            }));
         }
 
         try {
             // Iterate and reformat the uploaded images
             for (const image of files) {
                 // Shrink, reformat, remove metadata etc
-                // - Create the new file in the same path
                 const sanitizedImage = await sharp(image.path)
                     .resize({ fit: 'inside', width: 720, height: 720, withoutEnlargement: true })
                     .toColorspace('srgb')
@@ -83,25 +81,11 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
                     .toFormat('webp')
                     .toBuffer();
 
-                // DEPRECATION -- REMOVED INITIAL LIMIT, SHARP ALSO RUNS ON CLIENT SIDE AND WE CHECK WITH MULTER
-                // Check new size, 5 mb is the limit
-                /*const stillExceeded5MB = sanitizedImage.length > 1000 * 1000 * 5;
-                if (stillExceeded5MB) {
-                    removeAllUploaded();
-                    return res.status(413).json({ error: 'A file exceeded the 5 megabyte  limit' });
-                }*/
-
-                // Virus scan maybe
-                /*if (false) {
-                    removeAllUploaded();
-                    return res.status(406).json({ error: 'Infected file detected.' });
-                }*/
-
-                // Replace file
+                // Overwrite the existing file
                 await fs.promises.writeFile(image.path, sanitizedImage);
             }
         } catch (err) {
-            removeAllUploaded();
+            await removeAllUploaded();
             return res.status(500).json({ error: 'Error while handling files: ' + err });
         }
 
@@ -163,7 +147,6 @@ export const uploadAvatar = (req: Request, res: Response, next: NextFunction) =>
 
         try {
             // Shrink, reformat, remove metadata etc
-            // - Create the new file in the same path
             const sanitizedImage = await sharp(image.path)
                 .resize({ fit: 'inside', width: 400, height: 400, withoutEnlargement: true })
                 .toColorspace('srgb')
@@ -171,15 +154,7 @@ export const uploadAvatar = (req: Request, res: Response, next: NextFunction) =>
                 .toFormat('webp')
                 .toBuffer();
 
-            // DEPRECATION
-            // Check new size, 3 mb is the limit
-            /*const stillExceeded3MB = sanitizedImage.length > 3000000;
-            if (stillExceeded3MB) {
-                removeUploaded();
-                return res.status(413).json({ error: 'A file exceeded the 3 megabyte sanitized avatar limit' });
-            }*/
-
-            // Replace file
+            // Overwrite the existing file
             await fs.promises.writeFile(image.path, sanitizedImage);
         } catch (err) {
             removeUploaded();
