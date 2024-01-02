@@ -97,52 +97,21 @@
                     font-weight: 300;
                 }
 
-                .drag-indicator.active {
-                    display: block;
-                }
-
-                .drag-indicator {
-                    display: none;
-                    width: 2px;
-                    background-color: var(--button-white-border);
-                    position: relative;
-                    height: 100px;
-                    margin-top: 20px;
-
-                    &::before,
-                    &::after {
-                        content: "";
-                        position: absolute;
-                        right: 0;
-                        left: -2px;
-                        width: 6px;
-                        height: 6px;
-                        border-radius: 50%;
-                        background-color: var(--button-white-border);
-                        z-index: 1;
-                    }
-
-                    &::before {
-                        top: 0;
-                    }
-
-                    &::after {
-                        bottom: 0;
-                    }
-                }
-
                 .image-thumbnail.dragged {
-                    opacity: 0.5;
+                    opacity: 0.3;
                 }
 
-                .image-thumbnail.drag-hover::before {
-                    display: block;
+                .image-thumbnail.drag-hovered {
+                    .image-wrapper {
+                        border: 2px solid #ffa703 !important;
+                    }
                 }
 
                 .image-thumbnail {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
+                    touch-action: none;
 
                     &:first-of-type {
                         border: 2px solid var(--primary-bg-color);
@@ -155,7 +124,7 @@
                         }
                     }
 
-                    .image-size{
+                    .image-size {
                         font-size: 0.9rem;
                         font-weight: 300;
                         height: 20px;
@@ -179,6 +148,7 @@
                             max-height: 100%;
                             object-fit: contain;
                             border-radius: 2px;
+                            pointer-events: none;
                         }
                     }
 

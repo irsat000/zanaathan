@@ -281,7 +281,7 @@ export default function NewPost() {
               </span>
               <span className='text'>Fotoğraf Ekle</span>
             </label>
-            <span className='image-upload-note'>Not: İlk sıradaki birincil fotoğraf olarak seçilir. Sürükleyip fotoğraf sırasını değiştirebilirsiniz.</span>
+            <span className='image-upload-note'>Not: İlk sıradaki birincil fotoğraf olarak seçilir. Basılı tutup, sürükleyerek fotoğraf sırasını değiştirebilirsiniz.</span>
           </div>
           <div className="np-secondary">
             <select name='category' onChange={(e) => {
