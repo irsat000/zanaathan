@@ -13,6 +13,7 @@ export const sanatizeInputString = (value: string): string => {
 }
 
 export const isPositiveNumeric = (value: any): boolean => {
+    // 0 not included
     return /^[1-9]\d*$/.test(value);
 }
 

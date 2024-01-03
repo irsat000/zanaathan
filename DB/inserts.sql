@@ -52,15 +52,26 @@ INSERT INTO `Category`(`Id`, `Code`) VALUES(6, 'ev-tadilati');
 INSERT INTO `Category`(`Id`, `Code`) VALUES(7, 'boya-badana');
 INSERT INTO `Category`(`Id`, `Code`) VALUES(8, 'beyaz-esya-tamiri');
 INSERT INTO `Category`(`Id`, `Code`) VALUES(9, 'elektronik-onarimi');
-
 INSERT INTO `Category`(`Id`, `Code`) VALUES(30, 'temizlik');
 INSERT INTO `Category`(`Id`, `Code`) VALUES(31, 'bag-bahce');
 INSERT INTO `Category`(`Id`, `Code`) VALUES(32, 'nakliye-ve-tasima');
-
 INSERT INTO `Category`(`Id`, `Code`) VALUES(50, 'hurda-satis');
 INSERT INTO `Category`(`Id`, `Code`) VALUES(60, 'diger');
 
-UPDATE `Category` SET Code = 'ev-tadilati' WHERE id = 6;
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(10, 'Elektrik', 1);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(20, 'Isıtma ve Soğutma', 2);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(30, 'Ahşap', 3);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(40, 'Metal Kaynak', 4);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(50, 'Sıhhi Tesisat', 5);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(60, 'Ev Tadilatı', 6);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(70, 'Boya Badana', 7);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(80, 'Beyaz Eşya Tamiri', 8);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(90, 'Elektronik Onarımı', 9);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(300, 'Temizlik', 30);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(310, 'Bağ Bahçe', 31);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(320, 'Nakliye ve Taşıma', 32);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(500, 'Hurda Satış', 50);
+INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(600, 'Diğer', 60);
 
 
 

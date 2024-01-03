@@ -180,9 +180,10 @@ body select {
   font-size: 1.1rem;
 }
 .select2 .option-container .option-list {
-  overflow-y: auto;
   max-height: 140px;
   padding-bottom: 10px;
+  overflow-y: auto;
+  overscroll-behavior: none;
 }
 .select2 .option-container .option-list li.hidden {
   display: none;

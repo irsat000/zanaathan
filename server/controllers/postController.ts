@@ -8,7 +8,20 @@ const appDir = path.dirname(require.main?.filename);
 
 const pool = require('../db/db');
 
-// TODO: USE PROCEDURES INSTEAD
+
+const getFirstSubCategoryId = async (category: string): Promise<number | null> => {
+    return new Promise((resolve, reject) => {
+        pool.query(`SELECT Id FROM SubCategory WHERE CategoryId = ? LIMIT 1;`, [category], (qErr: any, results: any) => {
+            if (qErr) {
+                // Todo: Log error
+                resolve(null);
+            }
+            resolve(results[0].Id);
+        });
+    });
+}
+
+
 
 exports.getPosts = (req: Request, res: Response) => {
     try {
@@ -185,6 +198,7 @@ exports.getDistricts = (req: Request, res: Response) => {
 interface CreatePost {
     title: string;
     description: string;
+    category: string; // Id
     subCategory: string; // Id
     district: string; // Id
 }
@@ -220,13 +234,14 @@ exports.createPost = (req: Request, res: Response) => {
         const body: CreatePost = req.body;
         const title = sanatizeInputString(body.title);
         const description = body.description.trim();
-        const subCategory = body.subCategory;
+        const category = body.category;
+        let subCategory = body.subCategory;
         const district = body.district;
 
         // Validate the inputs
         if (!req.body || title.trim().length < 5 || title.trim().length > 255
             || description.trim().length < 50 || description.trim().length > 2000
-            || !isPositiveNumeric(subCategory) || !isPositiveNumeric(district)
+            || (!isPositiveNumeric(subCategory) && !isPositiveNumeric(category)) || !isPositiveNumeric(district)
         ) {
             deleteUploadedOnError();
             return res.status(400).json({ error: 'Bad payload' });
@@ -248,12 +263,23 @@ exports.createPost = (req: Request, res: Response) => {
         };
 
         // Get connection for transaction and rollback
-        pool.getConnection((connErr: any, connection: any) => {
+        pool.getConnection(async (connErr: any, connection: any) => {
             if (connErr) handleError(connection);
 
             connection.beginTransaction((beginErr: any) => {
                 if (beginErr) handleError(connection);
             });
+
+            // If sub category is not selected, get the default
+            // WILL ALWAYS GO IN HERE because sub categories are planned to exist later
+            if (!isPositiveNumeric(subCategory)) {
+                // Get the first sub category under the selected category
+                const newId = await getFirstSubCategoryId(category);
+                // Check error
+                if (newId == null) connection.rollback(() => handleError(connection));
+                // Re-assign sub category with a valid one
+                subCategory = newId!.toString();
+            }
 
             const query = "INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 5, ?);";
             connection.query(query, [title, description, district, subCategory, userId], (qErr: any, results: any) => {

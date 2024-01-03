@@ -1,14 +1,9 @@
+import { NPFormData } from "@/pages/yeni-ilan";
 import React, { useRef } from "react";
 import { useState } from "react";
 import { XLg } from "react-bootstrap-icons";
 
 
-export interface NPFormData {
-    title: string,
-    subCategory: string,
-    district: string,
-    selectedImages: File[]
-}
 
 // np = new post
 export const NP_Thumbnails: React.FC<{

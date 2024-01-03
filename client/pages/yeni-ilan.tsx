@@ -5,7 +5,7 @@ import { ImageFill as ImageFillIcon, PlusSquareFill } from 'react-bootstrap-icon
 import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
-import { NPFormData, NP_Thumbnails } from '@/components/npThumbnails'
+import { NP_Thumbnails } from '@/components/npThumbnails'
 import { apiUrl, processImage } from '@/lib/utils/helperUtils'
 import { fetchJwt } from '@/lib/utils/userUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts, getSubsByCategory } from '@/lib/utils/fetchUtils'
@@ -19,6 +19,14 @@ import { checkProfanity } from '@/lib/utils/profanityUtils'
 import { useUser } from '@/context/userContext'
 import { useRouter } from 'next/router'
 
+
+export interface NPFormData {
+  title: string,
+  category: string,
+  subCategory: string,
+  district: string,
+  selectedImages: File[]
+}
 
 interface SubCategory {
   Id: number;
@@ -43,6 +51,7 @@ export default function NewPost() {
   // Create post payload
   const [formData, setFormData] = useState<NPFormData>({
     title: '',
+    category: '0',
     subCategory: '0',
     district: '0',
     selectedImages: []
@@ -53,7 +62,6 @@ export default function NewPost() {
   // Extra data that's used for user experience.
   // Example: City selection changing or disabling district select
   const [extraData, setExtraData] = useState({
-    category: '0',
     city: '0'
   });
 
@@ -131,14 +139,14 @@ export default function NewPost() {
     // Basic validation
     if (formData.title.trim().length < 5 || formData.title.trim().length > 255
       || description.trim().length < 50 || description.trim().length > 2000
-      || formData.subCategory === '0' || formData.district === '0'
+      || formData.category === '0' || formData.district === '0'
     ) {
       handleGStatus('informationModal', {
         type: 'error',
         text: `Form geçersiz. Kurallar;<br /><ul>
         <li ${formData.title.trim().length < 5 || formData.title.trim().length > 255 ? 'class="fail"' : ''}>Başlık 5-255 karakter arasında olmalıdır</li>
         <li ${description.trim().length < 50 || description.trim().length > 2000 ? 'class="fail"' : ''}>Açıklama 50-2000 karakter arası olmalıdır</li>
-        <li ${formData.subCategory === '0' ? 'class="fail"' : ''}>Kategori seçimi</li>
+        <li ${formData.category === '0' ? 'class="fail"' : ''}>Kategori seçimi</li>
         <li ${formData.district === '0' ? 'class="fail"' : ''}>Bölge seçimi</li></ul>`
       });
       return;
@@ -190,6 +198,7 @@ export default function NewPost() {
     const multiPartFormData = new FormData();
     multiPartFormData.append('title', formData.title);
     multiPartFormData.append('description', description);
+    multiPartFormData.append('category', formData.category);
     multiPartFormData.append('subCategory', formData.subCategory);
     multiPartFormData.append('district', formData.district);
     processedImages.forEach(picFile => multiPartFormData.append('postImages', picFile!));
@@ -237,13 +246,13 @@ export default function NewPost() {
   const resetForm = () => {
     setFormData({
       title: '',
+      category: '0',
       subCategory: '0',
       district: '0',
       selectedImages: []
     });
     setDescription('');
     setExtraData({
-      category: '0',
       city: '0'
     });
     setSubCategories([]);
@@ -285,7 +294,7 @@ export default function NewPost() {
           </div>
           <div className="np-secondary">
             <select name='category' onChange={(e) => {
-              handleExtraChange(e); // For reset
+              handleFormChange(e); // For reset
               // We change sub categories here with the new category id
               setSubCategories(getSubsByCategory(e.target.value));
             }}>

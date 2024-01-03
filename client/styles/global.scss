@@ -199,9 +199,10 @@ body {
         }
 
         .option-list {
-            overflow-y: auto;
             max-height: 140px;
             padding-bottom: 10px;
+            overflow-y: auto;
+            overscroll-behavior: none;
 
             li.hidden {
                 display: none;
