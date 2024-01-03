@@ -253,9 +253,14 @@ export default function Home() {
                     loader={() => avatarLink(userData.avatar!)}
                     src={avatarLink(userData.avatar)}
                     alt={'Profile fotoğrafı'}
-                    priority={false}
+                    priority={true}
+                    unoptimized={true}
                     width={0}
-                    height={0} />
+                    height={0}
+                    onError={(e: any) => {
+                      e.target.onerror = null;
+                      e.target.src = "/user.webp";
+                    }} />
                   : <Image
                     src={require('@/assets/site/user.webp')}
                     alt={'Profil fotoğrafı yok'}

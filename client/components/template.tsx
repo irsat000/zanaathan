@@ -180,11 +180,15 @@ const Template: React.FC<{
 									? <Image
 										loader={() => avatarLink(userData.avatar!)}
 										src={avatarLink(userData.avatar)}
-										alt={'Profile fotoğrafı'}
+										alt={'Profil fotoğrafı'}
 										priority={false}
 										unoptimized={true}
 										width={0}
-										height={0} />
+										height={0}
+										onError={(e: any) => {
+											e.target.onerror = null;
+											e.target.src = "/user.webp";
+										}} />
 									: <Image
 										src={require('@/assets/site/user.webp')}
 										alt={'Profil fotoğrafı yok'}
@@ -265,11 +269,15 @@ const Template: React.FC<{
 										? <Image
 											loader={() => avatarLink(userData.avatar!)}
 											src={avatarLink(userData.avatar)}
-											alt={'Profile fotoğrafı'}
+											alt={'Profil fotoğrafı'}
 											priority={false}
 											unoptimized={true}
 											width={0}
-											height={0} />
+											height={0}
+                                            onError={(e: any) => {
+                                                e.target.onerror = null;
+                                                e.target.src = "/user.webp";
+                                            }} />
 										: <Image
 											src={require('@/assets/site/user.webp')}
 											alt={'Profil fotoğrafı yok'}

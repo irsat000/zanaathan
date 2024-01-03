@@ -449,7 +449,11 @@ const Chatbot: React.FC<{
                                             priority={false}
                                             unoptimized={true}
                                             width={0}
-                                            height={0} />
+                                            height={0}
+                                            onError={(e: any) => {
+                                                e.target.onerror = null;
+                                                e.target.src = "/user.webp";
+                                            }} />
                                         : <Person className='no-ppic' />}
                                 </div>
                                 <div className="body">
