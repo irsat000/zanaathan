@@ -1,7 +1,6 @@
 
-
-export const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-export const apiWebSocketUrl = process.env.NEXT_PUBLIC_WS_URL;
+export const apiUrl = process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_API_URL : process.env.NEXT_PROD_PUBLIC_API_URL;
+export const apiWebSocketUrl = process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_WS_URL : process.env.NEXT_PROD_PUBLIC_WS_URL;
 
 
 export const isNullOrEmpty = (value: any): boolean => {
@@ -143,7 +142,6 @@ export const imageDataFromFile = (file: File): Promise<ImageData | null> => {
 
       reader.readAsDataURL(file);
     } catch (error) {
-      console.log(error);
       resolve(null);
     }
   });

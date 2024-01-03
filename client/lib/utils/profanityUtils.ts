@@ -11,7 +11,6 @@ export const checkProfanity = (inputs: string[]): boolean => {
         // Check if any of the inputs contain profanity
         return inputs.some(input => filter.isProfane(input))
     } catch (error) {
-        console.error(error)
         // Skip the profanity if error is thrown
         return false
     }

@@ -64,7 +64,7 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
             await Promise.all(files.map(async (file) => {
                 if (fs.existsSync(file.path)) {
                     fs.unlink(file.path, (err) => {
-                        if (err) console.error(err);
+                        // Logging
                     });
                 }
             }));

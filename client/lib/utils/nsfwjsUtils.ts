@@ -24,7 +24,6 @@ export const checkUnallowed = async (images: File[]): Promise<boolean> => {
                 return problematic;
             })
             .catch((err) => {
-                console.log("--", err);
                 return false;
             });
     });

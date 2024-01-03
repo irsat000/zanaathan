@@ -32,7 +32,7 @@ export const readJwtCookie = () => {
                 return decoded as UserDataType;
             }
         } catch (error) {
-            console.error('Error while reading credentials');
+            return undefined;
         }
     }
 

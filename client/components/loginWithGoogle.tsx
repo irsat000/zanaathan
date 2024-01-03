@@ -1,6 +1,6 @@
 
 import { useUser } from '@/context/userContext';
-import { apiUrl, formatDateString, toShortLocal } from '@/lib/utils/helperUtils';
+import { apiUrl, formatDateString } from '@/lib/utils/helperUtils';
 import { decodedJwt, storeJwt } from '@/lib/utils/userUtils';
 import { GoogleLogin } from '@react-oauth/google';
 import { AuthModalState, useGStatus } from '@/context/globalContext';

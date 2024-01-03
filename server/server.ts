@@ -61,7 +61,7 @@ const userSocketMap: Map<number, string> = new Map();
 
 // Web socket
 io.on('connection', (socket: any) => {
-    console.log(`Client ${socket.id} connected`);
+    // console.log(`Client ${socket.id} connected`);
 
     socket.on('setUserId', (jwt: string) => {
         const userId = verifyJwt(jwt);
@@ -187,12 +187,12 @@ io.on('connection', (socket: any) => {
                 }
             });
         } catch (error) {
-            console.error("Error:", error);
+            // Logging
         }
     });
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+        // console.log('Client disconnected');
         // Delete pairs after disconnect
         const userId = socketUserMap.get(socket.id);
         if (userId) {
@@ -278,7 +278,6 @@ app.get('/sitemap.xml', rateLimiter({ minute: 10, max: 91 }), (req: Request, res
             });
         });
     } catch (e) {
-        console.error(e)
         return res.status(500).end()
     }
 })
@@ -312,5 +311,5 @@ app.get("/api/dbtest", (req: Request, res: Response) => {
 
 
 httpServer.listen(PORT, () => {
-    console.log(`Server started on https://localhost:${PORT}`);
+    console.log(`Server started on port :${PORT}`);
 });
