@@ -231,9 +231,10 @@ app.get('/sitemap.xml', rateLimiter({ minute: 10, max: 91 }), (req: Request, res
 
         // pipe your entries or directly write them.
         smStream.write({ url: '/', changefreq: 'monthly', priority: 0.3 })
-        smStream.write({ url: '/sozlesmeler', changefreq: 'monthly', priority: 0.2 })
-        smStream.write({ url: '/sozlesmeler/gizlilik-politikasi', changefreq: 'monthly', priority: 0.2 })
-        smStream.write({ url: '/sozlesmeler/cerez-politikasi', changefreq: 'monthly', priority: 0.2 })
+        smStream.write({ url: '/politika', changefreq: 'monthly', priority: 0.2 })
+        smStream.write({ url: '/politika/gizlilik-politikasi', changefreq: 'monthly', priority: 0.2 })
+        smStream.write({ url: '/politika/cerez-politikasi', changefreq: 'monthly', priority: 0.2 })
+        smStream.write({ url: '/politika/fb-data-deletion', changefreq: 'monthly', priority: 0.2 })
 
         // Get category list
         const codesQuery = `SELECT Code FROM Category;`;

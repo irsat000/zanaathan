@@ -2,7 +2,7 @@ import Template from "@/components/template";
 import LegalNav from "./components/legal-nav";
 
 
-const TermsAndConditions = () => {
+const PrivacyPolicy = () => {
     return (
         <Template>
             <div className="legal-page">
@@ -73,4 +73,4 @@ const TermsAndConditions = () => {
     );
 };
 
-export default TermsAndConditions;
+export default PrivacyPolicy;

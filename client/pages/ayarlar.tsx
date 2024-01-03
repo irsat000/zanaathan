@@ -240,10 +240,6 @@ export default function Home() {
                                             unoptimized={true}
                                             width={0}
                                             height={0}
-                                            onError={(e: any) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/user.webp";
-                                            }}
                                         /> :
                                         <Image
                                             src={require('@/assets/site/image-not-found.webp')}

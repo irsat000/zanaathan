@@ -258,8 +258,8 @@ export default function Home() {
                     width={0}
                     height={0}
                     onError={(e: any) => {
-                      e.target.onerror = null;
                       e.target.src = "/user.webp";
+                      e.target.onerror = null;
                     }} />
                   : <Image
                     src={require('@/assets/site/user.webp')}
