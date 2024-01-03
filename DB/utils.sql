@@ -24,20 +24,6 @@ USE ZanaatHan;
 
 INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('Helloooo!', NOW(), 0, 9, 11);
 INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('Hi, how are you? What are you up to?', NOW(), 0, 11, 9);
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('Just working on a project.', NOW(), 0, 9, 11);
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('No money?', NOW(), 0, 11, 9);
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('No money...', NOW(), 0, 9, 11);
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('But I have some time.', NOW(), 0, 9, 11);
-
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('1111111!', NOW(), 0, 9, 11);
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('2222222222222', NOW(), 0, 11, 9);
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('33333333', NOW(), 0, 11, 9);
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('44444444444444444444', NOW(), 0, 11, 9);
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('55555555555', NOW(), 0, 9, 11);
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('666666666666666666666', NOW(), 0, 9, 11);
-
-
-INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES('12 received message from 9', NOW(), 0, 12, 9);
 
 
 SET SQL_SAFE_UPDATES = 0;
@@ -56,5 +42,16 @@ INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId,
 
 
 
+
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM `JobPostingImages`;
+DELETE FROM `JobPosting`;
+DELETE FROM `SubCategory`;
+DELETE FROM `Category`;
+SET SQL_SAFE_UPDATES = 1;
+
+
+DELETE FROM `District` WHERE CityId NOT IN (10, 16, 34);
+DELETE FROM `City` WHERE Id NOT IN (10, 16, 34);
 
 

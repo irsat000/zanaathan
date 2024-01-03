@@ -1,297 +1,100 @@
 [
     {
         "Id": 1,
-        "Name": "Boya Badana",
-        "Code": "boya-badana",
-        "Image": "boya-badana.webp",
-        "SubCategories": [
-            {
-                "Id": 10,
-                "Name": "Boya Badana"
-            },
-            {
-                "Id": 11,
-                "Name": "Diğer"
-            }
-        ]
+        "Name": "Elektrik",
+        "Code": "elektrik",
+        "Image": "elektrik.webp",
+        "SubCategories": []
     },
     {
         "Id": 2,
-        "Name": "Sıhhi Tesisat",
-        "Code": "sihhi-tesisat",
-        "Image": "sihhi-tesisat.jpg",
-        "SubCategories": [
-            {
-                "Id": 20,
-                "Name": "Sıhhi Tesisat Kurulumu"
-            },
-            {
-                "Id": 21,
-                "Name": "Arıza Tespiti ve Onarımı"
-            },
-            {
-                "Id": 22,
-                "Name": "Diğer"
-            }
-        ]
+        "Name": "Isıtma ve Soğutma",
+        "Code": "isitma-ve-sogutma",
+        "Image": "isitma-ve-sogutma.webp",
+        "SubCategories": []
     },
     {
         "Id": 3,
-        "Name": "Nakliye ve Taşıma",
-        "Code": "nakliye-ve-tasima",
-        "Image": "nakliye-ve-tasima.webp",
-        "SubCategories": [
-            {
-                "Id": 30,
-                "Name": "Ev Taşıma"
-            },
-            {
-                "Id": 31,
-                "Name": "Kargo ve Kurye Hizmetleri"
-            },
-            {
-                "Id": 32,
-                "Name": "Uluslararası Nakliye"
-            },
-            {
-                "Id": 33,
-                "Name": "Diğer"
-            }
-        ]
+        "Name": "Ahşap",
+        "Code": "ahsap",
+        "Image": "ahsap.webp",
+        "SubCategories": []
     },
     {
         "Id": 4,
-        "Name": "Elektrik",
-        "Code": "elektrik",
-        "Image": "elektrik.jpg",
-        "SubCategories": [
-            {
-                "Id": 40,
-                "Name": "Elektrik Tesisatı Kurulumu"
-            },
-            {
-                "Id": 41,
-                "Name": "Arıza Tespiti ve Onarımı"
-            },
-            {
-                "Id": 42,
-                "Name": "Diğer"
-            }
-        ]
+        "Name": "Metal ve Kaynak",
+        "Code": "metal-kaynak",
+        "Image": "metal-kaynak.webp",
+        "SubCategories": []
     },
     {
         "Id": 5,
-        "Name": "Marangozluk",
-        "Code": "marangozluk",
-        "Image": "marangozluk.jpg",
-        "SubCategories": [
-            {
-                "Id": 50,
-                "Name": "Üretim"
-            },
-            {
-                "Id": 51,
-                "Name": "Kurulum"
-            },
-            {
-                "Id": 52,
-                "Name": "Tamir"
-            },
-            {
-                "Id": 53,
-                "Name": "Diğer"
-            }
-        ]
+        "Name": "Sıhhi Tesisat",
+        "Code": "sihhi-tesisat",
+        "Image": "sihhi-tesisat.webp",
+        "SubCategories": []
     },
     {
         "Id": 6,
-        "Name": "Temizlik",
-        "Code": "temizlik",
-        "Image": "temizlik.jpg",
-        "SubCategories": [
-            {
-                "Id": 60,
-                "Name": "Ev Temizliği"
-            },
-            {
-                "Id": 61,
-                "Name": "Halı ve Mobilya Temizliği"
-            },
-            {
-                "Id": 62,
-                "Name": "Diğer"
-            }
-        ]
+        "Name": "Ev Tadilatı",
+        "Code": "ev-tadilati",
+        "Image": "ev-tadilati.webp",
+        "SubCategories": []
     },
     {
         "Id": 7,
-        "Name": "İnşaat ve Tadilat",
-        "Code": "insaat-ve-tadilat",
-        "Image": "insaat-ve-tadilat.jpg",
-        "SubCategories": [
-            {
-                "Id": 70,
-                "Name": "Yenileme İşleri"
-            },
-            {
-                "Id": 71,
-                "Name": "Fayans Döşeme"
-            },
-            {
-                "Id": 72,
-                "Name": "Zemin Kaplama"
-            },
-            {
-                "Id": 73,
-                "Name": "Diğer"
-            }
-        ]
+        "Name": "Boya Badana",
+        "Code": "boya-badana",
+        "Image": "boya-badana.webp",
+        "SubCategories": []
     },
     {
         "Id": 8,
-        "Name": "Soğutma ve Isıtma",
-        "Code": "sogutma-ve-isitma",
-        "Image": "sogutma-ve-isitma.jpg",
-        "SubCategories": [
-            {
-                "Id": 80,
-                "Name": "Klima"
-            },
-            {
-                "Id": 81,
-                "Name": "Kombi"
-            },
-            {
-                "Id": 82,
-                "Name": "Şömine"
-            },
-            {
-                "Id": 83,
-                "Name": "Soba"
-            },
-            {
-                "Id": 84,
-                "Name": "Zemin Isıtma Sistemi"
-            },
-            {
-                "Id": 85,
-                "Name": "Havalandırma Sistemi"
-            },
-            {
-                "Id": 86,
-                "Name": "Diğer"
-            }
-        ]
+        "Name": "Beyaz Eşya Tamiri",
+        "Code": "beyaz-esya-tamiri",
+        "Image": "beyaz-esya-tamiri.webp",
+        "SubCategories": []
     },
     {
         "Id": 9,
-        "Name": "Bahçe Bakımı",
-        "Code": "bahce-bakimi",
-        "Image": "bahce-bakimi.jpg",
-        "SubCategories": [
-            {
-                "Id": 90,
-                "Name": "Çim Biçme"
-            },
-            {
-                "Id": 91,
-                "Name": "Ağaç Budama"
-            },
-            {
-                "Id": 92,
-                "Name": "Bitki Bakımı"
-            },
-            {
-                "Id": 93,
-                "Name": "Çiçek Dikimi"
-            },
-            {
-                "Id": 94,
-                "Name": "Sulama Sistemi"
-            },
-            {
-                "Id": 95,
-                "Name": "Bahçe Temizliği"
-            },
-            {
-                "Id": 96,
-                "Name": "Çit Yapımı ve Kurulumu"
-            },
-            {
-                "Id": 97,
-                "Name": "Diğer"
-            }
-        ]
-    },
-    {
-        "Id": 10,
-        "Name": "Beyaz Eşya Tamiri",
-        "Code": "beyaz-esya-tamiri",
-        "Image": "beyaz-esya-tamiri.jpg",
-        "SubCategories": [
-            {
-                "Id": 100,
-                "Name": "Buzdolabı"
-            },
-            {
-                "Id": 101,
-                "Name": "Çamaşır Makinesi"
-            },
-            {
-                "Id": 102,
-                "Name": "Bulaşık Makinesi"
-            },
-            {
-                "Id": 103,
-                "Name": "Fırın ve Ocak"
-            },
-            {
-                "Id": 104,
-                "Name": "Parça Değişimi"
-            },
-            {
-                "Id": 105,
-                "Name": "Diğer"
-            }
-        ]
-    },
-    {
-        "Id": 11,
         "Name": "Elektronik Onarımı",
         "Code": "elektronik-onarimi",
-        "Image": "elektronik-onarimi.jpg",
-        "SubCategories": [
-            {
-                "Id": 110,
-                "Name": "Televizyon"
-            },
-            {
-                "Id": 111,
-                "Name": "Bilgisayar"
-            },
-            {
-                "Id": 112,
-                "Name": "Cep Telefonu ve Tablet"
-            },
-            {
-                "Id": 113,
-                "Name": "Oyun Konsolu"
-            },
-            {
-                "Id": 114,
-                "Name": "Kamera"
-            },
-            {
-                "Id": 115,
-                "Name": "Diğer"
-            }
-        ]
+        "Image": "elektronik-onarimi.webp",
+        "SubCategories": []
     },
     {
-        "Id": 12,
+        "Id": 30,
+        "Name": "Temizlik",
+        "Code": "temizlik",
+        "Image": "temizlik.webp",
+        "SubCategories": []
+    },
+    {
+        "Id": 31,
+        "Name": "Bağ Bahçe",
+        "Code": "bag-bahce",
+        "Image": "bag-bahce.webp",
+        "SubCategories": []
+    },
+    {
+        "Id": 32,
+        "Name": "Nakliye ve Taşıma",
+        "Code": "nakliye-ve-tasima",
+        "Image": "nakliye-ve-tasima.webp",
+        "SubCategories": []
+    },
+    {
+        "Id": 50,
+        "Name": "Hurda Satış",
+        "Code": "hurda-satis",
+        "Image": "hurda-satis.webp",
+        "SubCategories": []
+    },
+    {
+        "Id": 60,
         "Name": "Diğer",
         "Code": "diger",
-        "Image": "diger.jpg",
+        "Image": "diger.webp",
         "SubCategories": []
     }
 ]

@@ -257,7 +257,7 @@ export default function Home() {
                     width={0}
                     height={0} />
                   : <Image
-                    src={require('@/assets/site/user.png')}
+                    src={require('@/assets/site/user.webp')}
                     alt={'Profil fotoğrafı yok'}
                     width={0}
                     height={0} />}

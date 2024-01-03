@@ -332,19 +332,21 @@ export default function Category() {
         }}>
           <button type='button' className='close-modal-button' onClick={handleFilterModalClose}><XLg /></button>
           <span className='modal-heading'>Filtrele</span>
-          <span className="f-heading">Alt Kategoriler</span>
-          <div className="f-container">
-            {categoryInfo.subCates.map((c, i) => {
-              return <label key={i} className='checkbox-1'>
-                <input
-                  type='checkbox'
-                  checked={filterData.subcategory.includes(c.Id)}
-                  onChange={() => handleSubCateChange(c.Id)}
-                />
-                <span>{c.Name}</span>
-              </label>;
-            })}
-          </div>
+          {categoryInfo.subCates.length > 0 ? <>
+            <span className="f-heading">Alt Kategoriler</span>
+            <div className="f-container">
+              {categoryInfo.subCates.map((c, i) => {
+                return <label key={i} className='checkbox-1'>
+                  <input
+                    type='checkbox'
+                    checked={filterData.subcategory.includes(c.Id)}
+                    onChange={() => handleSubCateChange(c.Id)}
+                  />
+                  <span>{c.Name}</span>
+                </label>;
+              })}
+            </div>
+          </> : <></>}
           <span className="f-heading">Bölge Seç</span>
           <div className="f-container">
             <div className={`select2 ${citySelectActive ? 'list-active' : ''}`}>

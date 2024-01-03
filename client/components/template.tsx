@@ -123,7 +123,7 @@ const Template: React.FC<{
 					link: '/' + c.Code
 				});
 			}
-			c.SubCategories.forEach(s => {
+			c.SubCategories.forEach((s: any) => {
 				if (s.Name.toLocaleLowerCase('tr').includes(value.toLocaleLowerCase('tr'))) {
 					updated.push({
 						text: c.Name + ' > ' + s.Name,
@@ -186,7 +186,7 @@ const Template: React.FC<{
 										width={0}
 										height={0} />
 									: <Image
-										src={require('@/assets/site/user.png')}
+										src={require('@/assets/site/user.webp')}
 										alt={'Profil fotoğrafı yok'}
 										width={0}
 										height={0} />}
@@ -271,7 +271,7 @@ const Template: React.FC<{
 											width={0}
 											height={0} />
 										: <Image
-											src={require('@/assets/site/user.png')}
+											src={require('@/assets/site/user.webp')}
 											alt={'Profil fotoğrafı yok'}
 											width={0}
 											height={0} />}

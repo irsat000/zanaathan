@@ -12,6 +12,64 @@ INSERT INTO `ContactType`(`Id`, `Body`) VALUES(5, 'İnstagram');
 INSERT INTO `OAuthProvider`(`Id`, `Body`) VALUES(1, 'Google');
 INSERT INTO `OAuthProvider`(`Id`, `Body`) VALUES(2, 'Facebook');
 
+
+
+INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(1, 'Cevap bekliyor');
+INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(2, 'Anlaşıldı');
+INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(3, 'Tamamlandı');
+INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(4, 'Kaldırıldı');
+INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(5, 'Onay bekliyor');
+
+
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM `ContactType`;
+SET SQL_SAFE_UPDATES = 1;
+
+select * from category;
+select * from SubCategory;
+select * from CurrentStatus;
+
+
+
+
+INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(1, 'developer');
+INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(2, 'admin');
+INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(3, 'moderator');
+
+
+INSERT INTO `Admin`(`Username`, `Password`, `RoleId`) VALUES('', '', 2);
+
+
+
+
+
+INSERT INTO `Category`(`Id`, `Code`) VALUES(1, 'elektrik');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(2, 'isitma-ve-sogutma');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(3, 'ahsap');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(4, 'metal-kaynak');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(5, 'sihhi-tesisat');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(6, 'ev-tadilati');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(7, 'boya-badana');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(8, 'beyaz-esya-tamiri');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(9, 'elektronik-onarimi');
+
+INSERT INTO `Category`(`Id`, `Code`) VALUES(30, 'temizlik');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(31, 'bag-bahce');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(32, 'nakliye-ve-tasima');
+
+INSERT INTO `Category`(`Id`, `Code`) VALUES(50, 'hurda-satis');
+INSERT INTO `Category`(`Id`, `Code`) VALUES(60, 'diger');
+
+UPDATE `Category` SET Code = 'ev-tadilati' WHERE id = 6;
+
+
+
+
+
+
+
+
+
 INSERT INTO `Category`(`Id`, `Code`) VALUES(1, 'boya-badana');
 INSERT INTO `Category`(`Id`, `Code`) VALUES(2, 'sihhi-tesisat');
 INSERT INTO `Category`(`Id`, `Code`) VALUES(3, 'nakliye-ve-tasima');
@@ -89,33 +147,6 @@ INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(114, 'Kamera', 11);
 INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(115, 'Diğer', 11);
 
 # INSERT INTO `SubCategory`(`Id`, `Name`, `CategoryId`) VALUES(, '', );
-
-
-
-INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(1, 'Cevap bekliyor');
-INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(2, 'Anlaşıldı');
-INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(3, 'Tamamlandı');
-INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(4, 'Kaldırıldı');
-INSERT INTO `CurrentStatus`(`Id`, `Body`) VALUES(5, 'Onay bekliyor');
-
-
-SET SQL_SAFE_UPDATES = 0;
-DELETE FROM `ContactType`;
-SET SQL_SAFE_UPDATES = 1;
-
-select * from category;
-select * from SubCategory;
-select * from CurrentStatus;
-
-
-
-
-INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(1, 'developer');
-INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(2, 'admin');
-INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(3, 'moderator');
-
-
-INSERT INTO `Admin`(`Username`, `Password`, `RoleId`) VALUES('', '', 2);
 
 
 
