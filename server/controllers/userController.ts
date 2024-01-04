@@ -817,7 +817,7 @@ exports.updateContactInfo = (req: Request, res: Response) => {
                 break;
             }
             // Check, then push
-            if (isNullOrEmpty(info.Body) || info.Body.trim().length > 30 || ![1, 2, 3, 4, 5].includes(info.Type)) return;
+            if (isNullOrEmpty(info.Body) || info.Body.trim().length > 60 || ![1, 2, 3, 4, 5].includes(info.Type)) continue;
             queries.push('INSERT INTO ContactInformation(Body, ContactTypeId, AccountId) VALUES(?, ?, ?);')
             parameters.push(info.Body, info.Type, userId);
         }

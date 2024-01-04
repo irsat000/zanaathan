@@ -91,6 +91,8 @@
   align-items: flex-start;
   gap: 10px;
   margin: 0 auto;
+  width: 100%;
+  overflow: hidden;
 }
 .profile-page .profile-panel .contact-options .contact-header {
   display: flex;
@@ -364,6 +366,7 @@
     padding: 10px 20px 40px;
     min-height: 60vh;
     border-right: 1px solid var(--primary-light-border);
+    max-width: 45%;
   }
   .profile-page .profile-panel .personal-info-container {
     margin: unset;
