@@ -558,6 +558,8 @@ exports.editProfile = (req: Request, res: Response) => {
             if (!isNullOrEmpty(newEmail) && newEmail !== prev.Email) {
                 sets.push('Email = ?')
                 parameters.push(newEmail);
+                // Reset email verification because email is changed
+                sets.push('IsEmailValid = 0')
                 validChanges = true;
             }
             // Verify password and set
@@ -808,12 +810,17 @@ exports.updateContactInfo = (req: Request, res: Response) => {
         // New contact queries
         const queries: string[] = []
         const parameters: (number | string)[] = [];
-        contactInfo.forEach((info: { Body: string, Type: number }) => {
+        for (let i = 0; i < contactInfo.length; i++) {
+            const info: { Body: string, Type: number } = contactInfo[i];
+            // Only 5 contact info is allowed
+            if (i > 4) {
+                break;
+            }
             // Check, then push
-            if (isNullOrEmpty(info.Body) || ![1, 2, 3, 4, 5].includes(info.Type)) return;
+            if (isNullOrEmpty(info.Body) || info.Body.trim().length > 30 || ![1, 2, 3, 4, 5].includes(info.Type)) return;
             queries.push('INSERT INTO ContactInformation(Body, ContactTypeId, AccountId) VALUES(?, ?, ?);')
             parameters.push(info.Body, info.Type, userId);
-        });
+        }
 
         // Delete the existing contact information
         const deleteQuery = `DELETE FROM ContactInformation WHERE AccountId = ?;`;
@@ -822,7 +829,7 @@ exports.updateContactInfo = (req: Request, res: Response) => {
                 return res.status(500).json({ error: 'Query error' });
             }
 
-            // Return empty list if user deleted all, no contact info is allowed
+            // Return empty list if user deleted all. It's okay
             if (queries.length === 0) {
                 return res.status(200).json({ contactInfo: [] });
             }
