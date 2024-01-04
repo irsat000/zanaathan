@@ -1,17 +1,15 @@
 import Head from "next/head";
-import PanelTemplate from "./components/template";
 import { apiUrl } from "@/lib/utils/helperUtils";
 import { decodedJwt, storeJwt } from "@/lib/utils/userUtils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useUser } from "@/context/userContext";
-import { useRouter } from "next/router";
+import Router from "next/router";
 
 
 
 const AdminLogin = () => {
-    const router = useRouter()
     // Get user context
-    const { userData, setUserData } = useUser();
+    const { setUserData } = useUser();
     // Auth modal - informing the user
     const [authModalWarning, setAuthModalWarning] = useState<string | null>(null);
     const [authModalSuccess, setAuthModalSuccess] = useState<string | null>(null);
@@ -49,7 +47,7 @@ const AdminLogin = () => {
                 // inform the user about successful login
                 setAuthModalSuccess('Giriş başarılı!');
                 // close modal after a second
-                setTimeout(() => router.push('/panel/onay-bekleyenler'), 1000);
+                setTimeout(() => Router.push('/panel/onay-bekleyenler'), 1000);
             })
             .catch((res) => {
                 if ([400, 401, 404].includes(res.status)) setAuthModalWarning('*Hata*');

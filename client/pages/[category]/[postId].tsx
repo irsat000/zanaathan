@@ -1,5 +1,5 @@
 
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 export default function PostRedirect() {
@@ -10,7 +10,7 @@ export default function PostRedirect() {
     useEffect(() => {
         if (!category) return
         // Redirect to page with title
-        router.push(`/${category}/${postId}/gonderi`)
+        Router.push(`/${category}/${postId}/gonderi`)
     }, [category])
 
     return (

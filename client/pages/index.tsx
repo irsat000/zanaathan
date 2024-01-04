@@ -19,7 +19,7 @@ const Home = () => {
       <div className='index-page'>
         <div className="intro">
           <div className="intro-content">
-            <h2>Zanaat <span className='red'>Sanattır.</span><br />Zanaat Han'a Hoşgeldiniz!</h2>
+            <h2>Zanaat <span className='red'>Sanattır.</span><br />Zanaat Han&apos;a Hoşgeldiniz!</h2>
             <p>
               Zanaat Han, iş ilanı verme ve iş arama sürecini tamamen ücretsiz kılarak, becerilerinizi ve taleplerinizi karşılamayı amaçlar. Ustaların ve iş verenlerin bir araya gelerek projelerini hayata geçirmelerini sağlamak için buradayız.
             </p>

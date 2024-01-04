@@ -9,6 +9,7 @@ const appDir = path.dirname(require.main?.filename);
 const pool = require('../db/db');
 
 
+// Get the first sub category under category. This is used when sub category is not selected.
 const getFirstSubCategoryId = async (category: string): Promise<number | null> => {
     return new Promise((resolve, reject) => {
         pool.query(`SELECT Id FROM SubCategory WHERE CategoryId = ? LIMIT 1;`, [category], (qErr: any, results: any) => {

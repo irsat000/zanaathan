@@ -1,13 +1,11 @@
 
 import Template from '@/components/template'
-import Image from 'next/image'
 import { ImageFill as ImageFillIcon, PlusSquareFill } from 'react-bootstrap-icons'
-import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import { NP_Thumbnails } from '@/components/npThumbnails'
 import { apiUrl, processImage } from '@/lib/utils/helperUtils'
-import { fetchJwt } from '@/lib/utils/userUtils'
+import { fetchJwt, readJwtCookie } from '@/lib/utils/userUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts, getSubsByCategory } from '@/lib/utils/fetchUtils'
 //import ReactQuill from 'react-quill';
 import dynamic from 'next/dynamic'
@@ -16,8 +14,7 @@ import 'react-quill/dist/quill.snow.css';
 import { useGStatus } from '@/context/globalContext'
 import { checkUnallowed } from '@/lib/utils/nsfwjsUtils'
 import { checkProfanity } from '@/lib/utils/profanityUtils'
-import { useUser } from '@/context/userContext'
-import { useRouter } from 'next/router'
+import Router from 'next/router'
 
 
 export interface NPFormData {
@@ -36,17 +33,14 @@ interface SubCategory {
 export default function NewPost() {
   // Use global context
   const { handleGStatus } = useGStatus();
-  // Use user context
-  const { userData } = useUser();
-  // Router
-  const router = useRouter()
 
   // Redirect to index if user did not log in
   useEffect(() => {
-    if (!userData) {
-      router.push('/')
+    const info = readJwtCookie();
+    if (!info) {
+      Router.push('/')
     }
-  }, [userData])
+  }, []);
 
   // Create post payload
   const [formData, setFormData] = useState<NPFormData>({

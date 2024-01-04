@@ -8,11 +8,10 @@ import { acceptedImgSet_1, apiUrl, avatarLink, processImage } from '@/lib/utils/
 import { XLg } from 'react-bootstrap-icons';
 import { useGStatus } from '@/context/globalContext';
 import { checkUnallowed } from '@/lib/utils/nsfwjsUtils';
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 
 
 export default function Home() {
-    const router = useRouter();
     // Get global context
     const { handleGStatus } = useGStatus();
     // Get user context
@@ -22,7 +21,7 @@ export default function Home() {
         // Check jwt
         const jwt = fetchJwt();
         if (!jwt) {
-            router.push('/')
+            Router.push('/')
             return
         };
     }, [userData])

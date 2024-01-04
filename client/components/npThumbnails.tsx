@@ -1,4 +1,5 @@
 import { NPFormData } from "@/pages/yeni-ilan";
+import Image from 'next/image'
 import React, { useRef } from "react";
 import { useState } from "react";
 import { XLg } from "react-bootstrap-icons";
@@ -77,7 +78,12 @@ export const NP_Thumbnails: React.FC<{
                     >
                         <span className="image-size">{(image.size / 1000 / 1000).toFixed(1)} MB</span>
                         <div className="image-wrapper">
-                            <img src={URL.createObjectURL(new Blob([image]))} alt={`Image ${index}`} />
+                            <Image
+                                src={URL.createObjectURL(new Blob([image]))}
+                                alt={`Image ${index}`}
+                                unoptimized={true}
+                                width={0}
+                                height={0} />
                         </div>
                         <button type="button" className="delete" onClick={() => {
                             const updated = { ...formData }

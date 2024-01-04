@@ -42,30 +42,6 @@ const Chatbot: React.FC<{
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     // Scrolls down for sure when chat is retrieved for the first time
     const [isInitialScroll, setIsInitialScroll] = useState(true);
-    // Check if someone is above the height of the box.
-    // If yes, don't touch it. If close to bottom, scroll down
-    const shouldScrollToBottom = () => {
-        if (!messagesEndRef.current) return;
-        const { scrollTop, scrollHeight, clientHeight } = messagesEndRef.current;
-        //console.log(scrollTop, scrollHeight, clientHeight);
-        // Check if the user has manually scrolled up
-        const should = scrollHeight - (clientHeight * 2) < scrollTop;
-        return should;
-    };
-    // Scroll action
-    const scrollToBottom = () => {
-        // isInitialScroll makes sure first time scroll works but manual doesn't
-        // shouldScrollToBottom makes sure new message doesn't force scroll down if the user is scrolled up a certain height
-        if (messagesEndRef.current && (shouldScrollToBottom() === true || isInitialScroll)) {
-            messagesEndRef.current.scrollTo({
-                top: messagesEndRef.current.scrollHeight,
-                behavior: isInitialScroll ? 'instant' : 'smooth'
-            });
-        }
-        if (isInitialScroll) {
-            setIsInitialScroll(false);
-        }
-    }
 
     // Function for fetching a thread's messages
     const fetchThreadMessages = async (contactId: number, method: 'initial' | 'all') => {
@@ -203,7 +179,7 @@ const Chatbot: React.FC<{
                 return updatedContacts;
             }
         });
-    }
+    };
 
     // WEB SOCKET
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -337,7 +313,7 @@ const Chatbot: React.FC<{
                 setUserContacts(updatedContacts);
             }
         });
-    }
+    };
 
     // currentThread rendering for better and easier async scroll
     const [currentThread, setCurrentThread] = useState<ThreadMessage[] | null>(null)
@@ -361,6 +337,30 @@ const Chatbot: React.FC<{
     useEffect(() => {
         // Prevents initial run, only need this afterwards, also fixes message request from post not scrolling down
         if (!currentThread) return;
+        // Check if someone is above the height of the box.
+        // If yes, don't touch it. If close to bottom, scroll down
+        const shouldScrollToBottom = () => {
+            if (!messagesEndRef.current) return;
+            const { scrollTop, scrollHeight, clientHeight } = messagesEndRef.current;
+            //console.log(scrollTop, scrollHeight, clientHeight);
+            // Check if the user has manually scrolled up
+            const should = scrollHeight - (clientHeight * 2) < scrollTop;
+            return should;
+        };
+        // Scroll action
+        const scrollToBottom = () => {
+            // isInitialScroll makes sure first time scroll works but manual doesn't
+            // shouldScrollToBottom makes sure new message doesn't force scroll down if the user is scrolled up a certain height
+            if (messagesEndRef.current && (shouldScrollToBottom() === true || isInitialScroll)) {
+                messagesEndRef.current.scrollTo({
+                    top: messagesEndRef.current.scrollHeight,
+                    behavior: isInitialScroll ? 'instant' : 'smooth'
+                });
+            }
+            if (isInitialScroll) {
+                setIsInitialScroll(false);
+            }
+        };
         // Scroll down the chat everytime currentThread changes if right conditions are met
         scrollToBottom();
         // Stop animation of the last message

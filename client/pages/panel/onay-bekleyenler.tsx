@@ -80,7 +80,7 @@ export default function ApprovingPosts() {
         return () => {
             document.removeEventListener("click", handleDocumentClick)
         }
-    }, [posts])
+    }, [posts]);
 
     // To approve posts
     const handleApprovePost = (postId: number) => {

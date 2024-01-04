@@ -3,7 +3,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import { ChevronDown, List } from 'react-bootstrap-icons';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useUser } from '@/context/userContext';
 import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils';
 import { useContacts } from '@/context/contactsContext';
@@ -27,7 +27,7 @@ const PanelTemplate: React.FC<{
         if (info && info.roles && info.roles.length > 0) {
             setUserData(info);
         } else {
-            router.push('/panel/giris');
+            Router.push('/panel/giris');
         }
     }, []);
 
@@ -45,7 +45,7 @@ const PanelTemplate: React.FC<{
                 }
             });
         } catch (e) { }
-        router.push('/');
+        Router.push('/');
     }
 
     // User menu drop down

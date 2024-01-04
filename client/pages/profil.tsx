@@ -3,14 +3,14 @@ import Template from '@/components/template'
 import { useUser } from '@/context/userContext';
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChangeEvent, ChangeEventHandler, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Post } from './[category]';
 import { fetchJwt } from '@/lib/utils/userUtils';
 import { apiUrl, avatarLink, formatSecondsAgo, postImageLink, titleToUrl } from '@/lib/utils/helperUtils';
 import { ChevronDown, XLg } from 'react-bootstrap-icons';
 import GridLoader from 'react-spinners/GridLoader';
 import { useGStatus } from '@/context/globalContext';
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 
 type CurrentStatus = 1 | 2 | 3 | 5;
 
@@ -32,7 +32,6 @@ const ContactTypes = new Map([
 ]);
 
 export default function Home() {
-  const router = useRouter();
   // Use global context
   const { handleGStatus } = useGStatus();
   // Get user context
@@ -42,7 +41,7 @@ export default function Home() {
     // Check jwt
     const jwt = fetchJwt();
     if (!jwt) {
-      router.push('/')
+      Router.push('/')
       return
     };
   }, [userData])
@@ -307,10 +306,10 @@ export default function Home() {
                 <ul className="contact-information">
                   {contactEditMode ?
                     contactInfoEdited.map((info, index) =>
-                      <li><button type="button" className="remove" onClick={() => deleteContactOption(index)}><XLg /></button><span className='body'>{info.Body}</span> - <span className='type'>{ContactTypes.get(info.Type) ?? '???'}</span></li>
+                      <li key={index}><button type="button" className="remove" onClick={() => deleteContactOption(index)}><XLg /></button><span className='body'>{info.Body}</span> - <span className='type'>{ContactTypes.get(info.Type) ?? '???'}</span></li>
                     ) :
                     contactInfo.map((info, index) =>
-                      <li><span className='body'>{info.Body}</span> - <span className='type'>{ContactTypes.get(info.Type) ?? '???'}</span></li>
+                      <li key={index}><span className='body'>{info.Body}</span> - <span className='type'>{ContactTypes.get(info.Type) ?? '???'}</span></li>
                     )
                   }
                 </ul>

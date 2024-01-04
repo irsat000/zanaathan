@@ -2,7 +2,7 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { Bell, ChatDots, CheckCircle, List, PersonPlus, PlusSquare, XCircle, XLg } from 'react-bootstrap-icons'
+import { ChatDots, CheckCircle, List, PersonPlus, PlusSquare, XCircle, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import AuthModal from './authModal'
@@ -11,9 +11,9 @@ import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
 import Chatbot from './chatbot'
 import { useContacts } from '@/context/contactsContext'
 import { AuthModalState, useGStatus } from '@/context/globalContext'
-import { apiUrl, avatarLink } from '@/lib/utils/helperUtils'
-import router from 'next/router'
+import { avatarLink } from '@/lib/utils/helperUtils'
 import { HashLoader } from 'react-spinners'
+import Router from 'next/router'
 
 
 interface SearchRecommendation {
@@ -226,10 +226,10 @@ const Template: React.FC<{
 							/>
 							<div className="search-recommendations">
 								<ul>
-									{searchRecommendations.slice(0, 5).map(r =>
-										<li><Link href={r.link} onMouseDown={() => {
+									{searchRecommendations.slice(0, 5).map((r, index) =>
+										<li key={index}><Link href={r.link} onMouseDown={() => {
 											setSearchBar('')
-											router.push(r.link)
+											Router.push(r.link)
 										}}>{r.text}</Link></li>
 									)}
 								</ul>
@@ -274,10 +274,10 @@ const Template: React.FC<{
 											unoptimized={true}
 											width={0}
 											height={0}
-                                            onError={(e: any) => {
-                                                e.target.src = "/user.webp";
-                                                e.target.onerror = null;
-                                            }} />
+											onError={(e: any) => {
+												e.target.src = "/user.webp";
+												e.target.onerror = null;
+											}} />
 										: <Image
 											src={require('@/assets/site/user.webp')}
 											alt={'Profil fotoğrafı yok'}

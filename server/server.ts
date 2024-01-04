@@ -3,42 +3,46 @@ const express = require('express');
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
 import { Request, Response } from 'express';
 import { verifyJwt } from './utils/userUtils';
 import { isNullOrEmpty, isPositiveNumeric, rateLimiter, titleToUrl } from './utils/helperUtils';
 import { SitemapStream, streamToPromise } from 'sitemap';
 import { createGzip } from 'zlib';
 import { Readable } from 'stream';
-const appDir = path.dirname(require.main?.filename);
 
 // Configuration
 const app = express();
 const PORT = 8123;
 
-const options = {
-    key: fs.readFileSync(appDir + '/key.pem'),
-    cert: fs.readFileSync(appDir + '/cert.pem'),
-};
-
 const httpServer = createServer(app);
+
+// Set env
+const environment = 'development';
+
 const io = new Server(httpServer, {
     cors: {
-        origin: ['https://localhost:3000',
-            'http://localhost:3000',
-            'https://192.168.1.106:3000',
-            'http://192.168.1.106:3000']
+        origin: environment === 'development'
+            ? [
+                'https://localhost:3000',
+                'http://localhost:3000',
+                'https://192.168.1.106:3000',
+                'http://192.168.1.106:3000'
+            ]
+            : ['https://zanaathan.com']
     }
 })
 
 // MIDDLEWARES
 app.use(express.json());
 app.use(cors({
-    origin: ['https://localhost:3000',
-        'http://localhost:3000',
-        'https://192.168.1.106:3000',
-        'http://192.168.1.106:3000'],
+    origin: environment === 'development'
+        ? [
+            'https://localhost:3000',
+            'http://localhost:3000',
+            'https://192.168.1.106:3000',
+            'http://192.168.1.106:3000'
+        ]
+        : ['https://zanaathan.com'],
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 // - Route middlewares

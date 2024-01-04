@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ChevronDown, ChevronLeft, ChevronRight, EmojiFrown, Search, XLg } from 'react-bootstrap-icons'
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import { apiUrl, formatSecondsAgo, postImageLink, titleToUrl } from '@/lib/utils/helperUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/lib/utils/fetchUtils'
 import GridLoader from 'react-spinners/GridLoader'
@@ -56,7 +56,7 @@ export default function Category() {
       setCategoryInfo({ id, code, name, subCates });
     } else {
       // Send to 404
-      router.push('/404')
+      Router.push('/404')
       return
     }
   }, [router.query]);
@@ -258,7 +258,7 @@ export default function Category() {
     delete updatedQuery.page;
 
     // Use the push method to update the query string
-    router.push({
+    Router.push({
       pathname,
       query: { ...updatedQuery, ...newParams },
     });
@@ -282,7 +282,7 @@ export default function Category() {
     else delete updatedQuery.sortby;
 
     // Use the push method to update the query string
-    router.push({
+    Router.push({
       pathname,
       query: { ...updatedQuery, ...newParams },
     });
@@ -314,7 +314,7 @@ export default function Category() {
     if (pageNumber !== 1) newParams.page = pageNumber;
     else delete updatedQuery.page;
 
-    router.push({
+    Router.push({
       pathname,
       query: { ...updatedQuery, ...newParams },
     });
