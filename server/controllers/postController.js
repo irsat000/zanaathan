@@ -42,7 +42,7 @@ const pool = require('../db/db');
 // Get the first sub category under category. This is used when sub category is not selected.
 const getFirstSubCategoryId = (category) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
-        pool.query(`SELECT Id FROM SubCategory WHERE CategoryId = ? LIMIT 1;`, [category], (qErr, results) => {
+        pool.query(`SELECT Id FROM sub_category WHERE CategoryId = ? LIMIT 1;`, [category], (qErr, results) => {
             if (qErr) {
                 // Todo: Log error
                 resolve(null);
@@ -58,18 +58,18 @@ exports.getPosts = (req, res) => {
         const { subc, sortby, city, district, page } = req.query;
         // SUBSTRING(Description, 1, 200) // If description is needed, it's best to shorten it
         let query = `
-            FROM JobPosting JP
-            LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
+            FROM job_posting JP
+            LEFT JOIN sub_category ON sub_category.Id = JP.SubCategoryId
         `;
         const parameters = [];
         // Join district to get city afterwards
         // No need for district table and city id if district is selected, we can use DistrictId of JP
         if (city && !district) {
-            query += ` LEFT JOIN District ON District.Id = JP.DistrictId`;
+            query += ` LEFT JOIN district ON district.Id = JP.DistrictId`;
         }
         // Start WHERE after JOIN(s)
         // Filter by category [Mandatory]
-        query += ` WHERE CurrentStatusId IN (1, 2, 3) AND SubCategory.CategoryId = ?`;
+        query += ` WHERE CurrentStatusId IN (1, 2, 3) AND sub_category.CategoryId = ?`;
         parameters.push(category);
         // Filter by sub categories
         if (subc) {
@@ -85,7 +85,7 @@ exports.getPosts = (req, res) => {
         else {
             // Filter by city
             if (city) {
-                query += ` AND District.CityId = ?`;
+                query += ` AND district.CityId = ?`;
                 parameters.push(city);
             }
         }
@@ -100,7 +100,7 @@ exports.getPosts = (req, res) => {
                 SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
                 (
                     SELECT JPI.Body
-                    FROM JobPostingImages JPI
+                    FROM job_posting_images JPI
                     WHERE JP.Id = JPI.JobPostingId
                     ORDER BY JPI.ImgIndex
                     LIMIT 1
@@ -151,14 +151,14 @@ exports.getPostDetails = (req, res) => {
                 GROUP_CONCAT(DISTINCT CONCAT(CI.Body, ' - ', CT.Body) ORDER BY CI.Id SEPARATOR ';') AS ContactInfo,
                 CONCAT(D.Name, ' - ', C.Name) AS Location,
                 MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
-            FROM JobPosting JP
-            LEFT JOIN JobPostingImages JPI ON JP.Id = JPI.JobPostingId
-            LEFT JOIN Account A ON JP.AccountId = A.Id
-            LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
-            LEFT JOIN ContactInformation CI ON A.Id = CI.AccountId
-            LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
-            LEFT JOIN District D ON JP.DistrictId = D.Id
-            LEFT JOIN City C ON D.CityId = C.Id
+            FROM job_posting JP
+            LEFT JOIN job_posting_images JPI ON JP.Id = JPI.JobPostingId
+            LEFT JOIN account A ON JP.AccountId = A.Id
+            LEFT JOIN user_bans Ban ON Ban.AccountId = A.Id
+            LEFT JOIN contact_information CI ON A.Id = CI.AccountId
+            LEFT JOIN contact_type CT ON CI.ContactTypeId = CT.Id
+            LEFT JOIN district D ON JP.DistrictId = D.Id
+            LEFT JOIN city C ON D.CityId = C.Id
             WHERE JP.Id = ?
             GROUP BY JP.Id;`;
         pool.query(query, [postId], (qErr, results) => {
@@ -174,7 +174,7 @@ exports.getPostDetails = (req, res) => {
 };
 exports.getCities = (req, res) => {
     try {
-        const query = "SELECT * FROM City;";
+        const query = "SELECT * FROM city;";
         pool.query(query, (qErr, results) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
@@ -189,7 +189,7 @@ exports.getCities = (req, res) => {
 exports.getDistricts = (req, res) => {
     try {
         const cityId = req.query.city_id;
-        const query = "SELECT District.Id, District.Name FROM District INNER JOIN City ON District.CityId = City.Id WHERE District.CityId = ?;";
+        const query = "SELECT district.Id, district.Name FROM district INNER JOIN city ON district.CityId = city.Id WHERE district.CityId = ?;";
         pool.query(query, [cityId], (qErr, results) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error: ' + qErr });
@@ -273,7 +273,7 @@ exports.createPost = (req, res) => {
                 // Re-assign sub category with a valid one
                 subCategory = newId.toString();
             }
-            const query = "INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 5, ?);";
+            const query = "INSERT INTO job_posting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 5, ?);";
             connection.query(query, [title, description, district, subCategory, userId], (qErr, results) => {
                 if (qErr)
                     connection.rollback(() => handleError(connection));
@@ -292,7 +292,7 @@ exports.createPost = (req, res) => {
                 let imageQueries = '';
                 const imageParameters = [];
                 imageNameList.forEach((file, index) => {
-                    imageQueries += "INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
+                    imageQueries += "INSERT INTO job_posting_images(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
                     imageParameters.push(file.name, index, postId);
                 });
                 // Run the image queries in one go
@@ -334,7 +334,7 @@ exports.updatePostStatus = (req, res) => {
             res.status(400).json({ error: 'Bad request' });
         // Update post current status if authorized(using AccountId)
         const query = `
-            UPDATE JobPosting 
+            UPDATE job_posting 
             SET CurrentStatusId = ? 
             WHERE AccountId = ? AND Id = ?;
         `;

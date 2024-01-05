@@ -19,22 +19,22 @@ exports.getContacts = (req, res) => {
                 A.Avatar AS ReceiverAvatar,
                 MAX(M.CreatedAt) AS LastMessageDate,
                 ( SELECT Body
-                    FROM Message AS M2
+                    FROM message AS M2
                     WHERE (M2.SenderId = A.Id OR M2.ReceiverId = A.Id)
                         AND M2.CreatedAt = MAX(M.CreatedAt)
                 ) AS LastMessage,
                 CASE WHEN COUNT(UB.TargetId) > 0 THEN true ELSE false END AS IsBlocked,
                 ( SELECT COUNT(*)
-                    FROM MNotification AS MN
+                    FROM mnotification AS MN
                     WHERE MN.SenderId = A.Id AND MN.ReceiverId = ?
                 ) AS NotificationCount
             FROM
-                Message AS M
+                message AS M
             JOIN
-                Account A ON (M.SenderId = A.Id AND M.ReceiverId = ?)
+                account A ON (M.SenderId = A.Id AND M.ReceiverId = ?)
                 OR (M.ReceiverId = A.Id AND M.SenderId = ?)
             LEFT JOIN
-                UserBlock UB ON A.Id = UB.TargetId AND UB.AccountId = ?
+                user_block UB ON A.Id = UB.TargetId AND UB.AccountId = ?
             GROUP BY A.Id
             ORDER BY LastMessageDate DESC;
         `;
@@ -67,7 +67,7 @@ exports.getThread = (req, res) => {
         // Reversed for latest 50, needs .reverse() in client side
         const query = `
             SELECT M.Id, M.SenderId, M.CreatedAt, M.Body
-            FROM Message AS M
+            FROM message AS M
             WHERE (SenderId = ? AND ReceiverId = ?)
             OR (SenderId = ? AND ReceiverId = ?)
             ORDER BY CreatedAt DESC
@@ -104,7 +104,7 @@ exports.blockUserToggle = (req, res) => {
             return res.status(401).send('Not authorized');
         // Check block status between two users
         const query = `
-            SELECT COUNT(*) AS Count FROM UserBlock
+            SELECT COUNT(*) AS Count FROM user_block
             WHERE AccountId = ? AND TargetId = ?;
         `;
         pool.query(query, [userId, targetId], (qErr, results) => {
@@ -113,7 +113,7 @@ exports.blockUserToggle = (req, res) => {
             }
             if (results[0].Count > 0) {
                 // If user is already blocked, toggle and lift the block
-                const query2 = `DELETE FROM UserBlock WHERE AccountId = ? AND TargetId = ?;`;
+                const query2 = `DELETE FROM user_block WHERE AccountId = ? AND TargetId = ?;`;
                 pool.query(query2, [userId, targetId], (qErr2) => {
                     if (qErr2) {
                         return res.status(500).json({ error: 'Query error' });
@@ -123,7 +123,7 @@ exports.blockUserToggle = (req, res) => {
             }
             else {
                 // Block if user is not blocked
-                const query2 = `INSERT INTO UserBlock(AccountId, TargetId) VALUES(?, ?);`;
+                const query2 = `INSERT INTO user_block(AccountId, TargetId) VALUES(?, ?);`;
                 pool.query(query2, [userId, targetId], (qErr2) => {
                     if (qErr2) {
                         return res.status(500).json({ error: 'Query error' });

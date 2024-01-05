@@ -241,7 +241,7 @@ export default function Home() {
                                             height={0}
                                         /> :
                                         <Image
-                                            src={require('@/assets/site/image-not-found.webp')}
+                                            src={'/image-not-found.webp'}
                                             alt={'Profil fotoğrafı yok'}
                                             width={0}
                                             height={0}

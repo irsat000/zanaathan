@@ -84,7 +84,7 @@ io.on('connection', (socket: any) => {
         const userId = verifyJwt(parsed.jwt);
         if (!userId) return; //Not authorized
 
-        const query = `DELETE FROM MNotification WHERE SenderId = ? AND ReceiverId = ?;`;
+        const query = `DELETE FROM mnotification WHERE SenderId = ? AND ReceiverId = ?;`;
         pool.query(query, [parsed.contact, userId], (qErr: any, results: any) => {
             if (qErr) return;
         });
@@ -111,7 +111,7 @@ io.on('connection', (socket: any) => {
 
             // Check block status between two users
             const checkBlockQuery = `
-                SELECT COUNT(*) AS Count FROM UserBlock
+                SELECT COUNT(*) AS Count FROM user_block
                 WHERE (AccountId = ? AND TargetId = ?)
                 OR (AccountId = ? AND TargetId = ?);
             `;
@@ -140,7 +140,7 @@ io.on('connection', (socket: any) => {
                     if (target_2) connsToSendMessage.push(target_2);
 
                     // Create message in db
-                    const query = 'INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES(?, NOW(), 0, ?, ?);';
+                    const query = 'INSERT INTO message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES(?, NOW(), 0, ?, ?);';
                     pool.query(query, [parsed.content, receiverId, userId], (qErr: any, results: any) => {
                         if (qErr) {
                             const errorMessage = {
@@ -156,8 +156,8 @@ io.on('connection', (socket: any) => {
                         const query2 = `
                             SELECT M.Id AS Id, Body, SenderId, M.CreatedAt,
                                 A.Username, A.FullName, A.Avatar
-                            FROM Message AS M
-                            LEFT JOIN Account AS A ON A.Id = M.SenderId
+                            FROM message AS M
+                            LEFT JOIN account AS A ON A.Id = M.SenderId
                             WHERE M.Id = ?;
                         `;
                         pool.query(query2, [results.insertId], (qErr2: any, results2: any) => {
@@ -184,7 +184,7 @@ io.on('connection', (socket: any) => {
                             // Create only if target_2(receiver) is offline
                             if (!target_2) {
                                 // Create notification and send it to receiver
-                                const query3 = 'INSERT INTO MNotification(ReceiverId, SenderId) VALUES(?, ?);';
+                                const query3 = 'INSERT INTO mnotification(ReceiverId, SenderId) VALUES(?, ?);';
                                 pool.query(query3, [receiverId, userId], (qErr3: any, results3: any) => {
                                     if (qErr3) return;
                                 });
@@ -244,7 +244,7 @@ app.get('/sitemap.xml', rateLimiter({ minute: 10, max: 91 }), (req: Request, res
         smStream.write({ url: '/politika/fb-data-deletion', changefreq: 'monthly', priority: 0.2 })
 
         // Get category list
-        const codesQuery = `SELECT Code FROM Category;`;
+        const codesQuery = `SELECT Code FROM category;`;
         pool.query(codesQuery, (qErr: any, results: any) => {
             if (qErr) {
                 throw qErr
@@ -256,10 +256,10 @@ app.get('/sitemap.xml', rateLimiter({ minute: 10, max: 91 }), (req: Request, res
 
             // Get posts for creating urls
             const postsQuery = `
-                SELECT JP.Id, SUBSTRING(JP.Title, 1, 71) as Title, Category.Code as CategoryCode
-                FROM JobPosting JP
-                LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
-                LEFT JOIN Category ON Category.Id = SubCategory.CategoryId
+                SELECT JP.Id, SUBSTRING(JP.Title, 1, 71) as Title, category.Code as CategoryCode
+                FROM job_posting JP
+                LEFT JOIN sub_category ON sub_category.Id = JP.SubCategoryId
+                LEFT JOIN category ON category.Id = sub_category.CategoryId
                 WHERE CurrentStatusId = 1;
             `;
             pool.query(postsQuery, (qErr: any, results: any) => {

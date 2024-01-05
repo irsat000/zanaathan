@@ -245,7 +245,7 @@ export default function PostDetails({
 								</div></>
 								:
 								<div className="gallery-no-image">
-									<Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
+									<Image src={'/image-not-found.webp'} alt="No image" />
 								</div>
 							}
 						</div>

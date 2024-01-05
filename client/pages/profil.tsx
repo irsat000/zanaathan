@@ -261,7 +261,7 @@ export default function Home() {
                       e.target.onerror = null;
                     }} />
                   : <Image
-                    src={require('@/assets/site/user.webp')}
+                    src={'/user.webp'}
                     alt={'Profil fotoğrafı yok'}
                     width={0}
                     height={0} />}
@@ -360,7 +360,7 @@ export default function Home() {
                             />
                             :
                             <div className="image-error">
-                              <Image src={require('@/assets/site/image-not-found.webp')} alt="No image" />
+                              <Image src={'/image-not-found.webp'} alt="No image" />
                             </div>
                           }
                         </div>

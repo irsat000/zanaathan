@@ -26,7 +26,8 @@ const io = new socket_io_1.Server(httpServer, {
                 'https://192.168.1.106:3000',
                 'http://192.168.1.106:3000'
             ]
-            : ['https://zanaathan.com']
+            : ['https://zanaathan.com',
+                'http://zanaathan.com']
     }
 });
 // MIDDLEWARES
@@ -39,7 +40,8 @@ app.use(cors({
             'https://192.168.1.106:3000',
             'http://192.168.1.106:3000'
         ]
-        : ['https://zanaathan.com'],
+        : ['https://zanaathan.com',
+            'http://zanaathan.com'],
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 // - Route middlewares
@@ -74,7 +76,7 @@ io.on('connection', (socket) => {
         const userId = (0, userUtils_1.verifyJwt)(parsed.jwt);
         if (!userId)
             return; //Not authorized
-        const query = `DELETE FROM MNotification WHERE SenderId = ? AND ReceiverId = ?;`;
+        const query = `DELETE FROM mnotification WHERE SenderId = ? AND ReceiverId = ?;`;
         pool.query(query, [parsed.contact, userId], (qErr, results) => {
             if (qErr)
                 return;
@@ -103,7 +105,7 @@ io.on('connection', (socket) => {
                 connsToSendMessage.push(target_1);
             // Check block status between two users
             const checkBlockQuery = `
-                SELECT COUNT(*) AS Count FROM UserBlock
+                SELECT COUNT(*) AS Count FROM user_block
                 WHERE (AccountId = ? AND TargetId = ?)
                 OR (AccountId = ? AND TargetId = ?);
             `;
@@ -134,7 +136,7 @@ io.on('connection', (socket) => {
                     if (target_2)
                         connsToSendMessage.push(target_2);
                     // Create message in db
-                    const query = 'INSERT INTO Message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES(?, NOW(), 0, ?, ?);';
+                    const query = 'INSERT INTO message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES(?, NOW(), 0, ?, ?);';
                     pool.query(query, [parsed.content, receiverId, userId], (qErr, results) => {
                         if (qErr) {
                             const errorMessage = {
@@ -150,8 +152,8 @@ io.on('connection', (socket) => {
                         const query2 = `
                             SELECT M.Id AS Id, Body, SenderId, M.CreatedAt,
                                 A.Username, A.FullName, A.Avatar
-                            FROM Message AS M
-                            LEFT JOIN Account AS A ON A.Id = M.SenderId
+                            FROM message AS M
+                            LEFT JOIN account AS A ON A.Id = M.SenderId
                             WHERE M.Id = ?;
                         `;
                         pool.query(query2, [results.insertId], (qErr2, results2) => {
@@ -177,7 +179,7 @@ io.on('connection', (socket) => {
                             // Create only if target_2(receiver) is offline
                             if (!target_2) {
                                 // Create notification and send it to receiver
-                                const query3 = 'INSERT INTO MNotification(ReceiverId, SenderId) VALUES(?, ?);';
+                                const query3 = 'INSERT INTO mnotification(ReceiverId, SenderId) VALUES(?, ?);';
                                 pool.query(query3, [receiverId, userId], (qErr3, results3) => {
                                     if (qErr3)
                                         return;
@@ -220,7 +222,7 @@ app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 91 }),
         smStream.write({ url: '/politika/cerez-politikasi', changefreq: 'monthly', priority: 0.2 });
         smStream.write({ url: '/politika/fb-data-deletion', changefreq: 'monthly', priority: 0.2 });
         // Get category list
-        const codesQuery = `SELECT Code FROM Category;`;
+        const codesQuery = `SELECT Code FROM category;`;
         pool.query(codesQuery, (qErr, results) => {
             if (qErr) {
                 throw qErr;
@@ -229,10 +231,10 @@ app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 91 }),
             const categoryUrls = results.map((c) => ({ url: `/${c.Code}`, changefreq: 'daily', priority: 0.5 }));
             // Get posts for creating urls
             const postsQuery = `
-                SELECT JP.Id, SUBSTRING(JP.Title, 1, 71) as Title, Category.Code as CategoryCode
-                FROM JobPosting JP
-                LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
-                LEFT JOIN Category ON Category.Id = SubCategory.CategoryId
+                SELECT JP.Id, SUBSTRING(JP.Title, 1, 71) as Title, category.Code as CategoryCode
+                FROM job_posting JP
+                LEFT JOIN sub_category ON sub_category.Id = JP.SubCategoryId
+                LEFT JOIN category ON category.Id = sub_category.CategoryId
                 WHERE CurrentStatusId = 1;
             `;
             pool.query(postsQuery, (qErr, results) => {

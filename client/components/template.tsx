@@ -191,7 +191,7 @@ const Template: React.FC<{
 											e.target.onerror = null;
 										}} />
 									: <Image
-										src={require('@/assets/site/user.webp')}
+										src={'/user.webp'}
 										alt={'Profil fotoğrafı yok'}
 										width={0}
 										height={0} />}
@@ -280,7 +280,7 @@ const Template: React.FC<{
 												e.target.onerror = null;
 											}} />
 										: <Image
-											src={require('@/assets/site/user.webp')}
+											src={'/user.webp'}
 											alt={'Profil fotoğrafı yok'}
 											width={0}
 											height={0} />}

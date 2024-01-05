@@ -16,8 +16,8 @@ SELECT Id, Username, FullName, Email FROM Account WHERE ExternalId = ? && OAuthP
 SELECT Id, Username, FullName, Email, Avatar,
 	GROUP_CONCAT(Role.RoleCode) AS Roles
 FROM Account
-LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
-LEFT JOIN Role ON Role.Id = AccountRole.RoleId
+LEFT JOIN account_role ON account_role.AccountId = A.Id
+LEFT JOIN Role ON Role.Id = account_role.RoleId
 WHERE ExternalId = ? AND OAuthProviderId = 0;
 
 # Signup with external account
@@ -39,27 +39,27 @@ SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;
 SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
 	(
 		SELECT JPI.Body
-		FROM JobPostingImages JPI
+		FROM job_posting_images JPI
 		WHERE JP.Id = JPI.JobPostingId
 		ORDER BY JPI.ImgIndex
 		LIMIT 1
 	) AS MainImage,
 	JP.CurrentStatusId,
 	C.Code AS CategoryCode
-FROM JobPosting JP
-LEFT JOIN SubCategory SC ON SC.Id = JP.SubCategoryId
+FROM job_posting JP
+LEFT JOIN sub_category SC ON SC.Id = JP.SubCategoryId
 LEFT JOIN Category C ON C.Id = SC.CategoryId
 WHERE JP.CurrentStatusId != 4 AND AccountId = ?
 ORDER BY SecondsAgo DESC;
 
 # To let the user change their posts' current status
-UPDATE JobPosting 
+UPDATE job_posting 
 SET CurrentStatusId = ? 
 WHERE AccountId = ? AND Id = ?;
 
 # Get contact information of a user
 SELECT CI.Body AS Body, CI.ContactTypeId AS Type
-FROM ContactInformation CI
+FROM contact_information CI
 WHERE CI.AccountId = ?;
 
 
@@ -71,15 +71,15 @@ WHERE CI.AccountId = ?;
 SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
 	(
 		SELECT JPI.Body
-		FROM JobPostingImages JPI
+		FROM job_posting_images JPI
 		WHERE JP.Id = JPI.JobPostingId
 		ORDER BY JPI.ImgIndex
 		LIMIT 1
 	) AS MainImage
-FROM JobPosting JP
-LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
+FROM job_posting JP
+LEFT JOIN sub_category ON sub_category.Id = JP.SubCategoryId
 LEFT JOIN District ON District.Id = JP.DistrictId
-WHERE SubCategory.CategoryId = ?
+WHERE sub_category.CategoryId = ?
 	AND JP.SubCategoryId IN (?)
 	AND JP.DistrictId = ?
 	AND District.CityId = ?
@@ -89,18 +89,18 @@ ORDER BY SecondsAgo DESC;
 SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
 (
 	SELECT JPI.Body
-	FROM JobPostingImages JPI
+	FROM job_posting_images JPI
 	WHERE JP.Id = JPI.JobPostingId
 	ORDER BY JPI.ImgIndex
     LIMIT 1
-) AS FirstImage FROM JobPosting JP;
+) AS FirstImage FROM job_posting JP;
 
 
 # Get posts with all their images in a column
 SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, JP.CreatedAt, NOW()) AS SecondsAgo,
 	GROUP_CONCAT(JPI.Body ORDER BY JPI.ImgIndex) AS Images
-FROM JobPosting JP
-LEFT JOIN JobPostingImages JPI ON JP.Id = JPI.JobPostingId
+FROM job_posting JP
+LEFT JOIN job_posting_images JPI ON JP.Id = JPI.JobPostingId
 GROUP BY JP.Id;
 
 
@@ -121,12 +121,12 @@ SELECT
 	CONCAT(D.Name, ' - ', C.Name) AS Location,
 	SUM(CASE WHEN Ban.LiftDate > NOW() THEN 1 ELSE 0 END) AS Bans,
     MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
-FROM JobPosting JP
-LEFT JOIN JobPostingImages JPI ON JP.Id = JPI.JobPostingId
+FROM job_posting JP
+LEFT JOIN job_posting_images JPI ON JP.Id = JPI.JobPostingId
 LEFT JOIN Account A ON JP.AccountId = A.Id
-LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
-LEFT JOIN ContactInformation CI ON A.Id = CI.AccountId
-LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
+LEFT JOIN user_bans Ban ON Ban.AccountId = A.Id
+LEFT JOIN contact_information CI ON A.Id = CI.AccountId
+LEFT JOIN contact_type CT ON CI.ContactTypeId = CT.Id
 LEFT JOIN District D ON JP.DistrictId = D.Id
 LEFT JOIN City C ON D.CityId = C.Id
 WHERE JP.Id = ?
@@ -157,7 +157,7 @@ JOIN
 	Account A ON (M.SenderId = A.Id AND M.ReceiverId = 9)
 	OR (M.ReceiverId = A.Id AND M.SenderId = 9)
 LEFT JOIN
-    UserBlock UB ON A.Id = UB.TargetId AND UB.AccountId = 9
+    user_block UB ON A.Id = UB.TargetId AND UB.AccountId = 9
 GROUP BY A.Id
 ORDER BY LastMessageDate DESC;
 
@@ -177,16 +177,16 @@ ORDER BY CreatedAt;
 
 USE ZanaatHan;
 # Get user block
-SELECT COUNT(*) AS Count FROM UserBlock
+SELECT COUNT(*) AS Count FROM user_block
 WHERE AccountId = 9 AND TargetId = 11;
 
-SELECT COUNT(*) AS Count FROM UserBlock
+SELECT COUNT(*) AS Count FROM user_block
 WHERE (AccountId = 9 AND TargetId = 11)
 OR (AccountId = 11 AND TargetId = 9);
 
-INSERT INTO UserBlock(AccountId, TargetId) VALUES(9, 11);
-INSERT INTO UserBlock(AccountId, TargetId) VALUES(11, 9);
-DELETE FROM UserBlock WHERE AccountId = 9 AND TargetId = 11;
+INSERT INTO user_block(AccountId, TargetId) VALUES(9, 11);
+INSERT INTO user_block(AccountId, TargetId) VALUES(11, 9);
+DELETE FROM user_block WHERE AccountId = 9 AND TargetId = 11;
 
 
 

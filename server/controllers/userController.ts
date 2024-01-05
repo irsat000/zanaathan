@@ -34,7 +34,7 @@ const logClient = async (userId: number, req: Request): Promise<boolean> => {
 
     // Log sign-in
     const query = `
-        INSERT INTO SignInLog (IpAddress, UserAgent, Date, AccountId)
+        INSERT INTO sign_in_log (IpAddress, UserAgent, Date, AccountId)
         VALUES (?, ?, NOW(), ?)
     `;
 
@@ -68,12 +68,12 @@ exports.signin = (req: Request, res: Response) => {
                 Email,
                 Avatar,
                 Password,
-                GROUP_CONCAT(Role.RoleCode) AS Roles,
+                GROUP_CONCAT(role.RoleCode) AS Roles,
                 MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
-            FROM Account AS A
-            LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
-            LEFT JOIN Role ON Role.Id = AccountRole.RoleId
-            LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
+            FROM account AS A
+            LEFT JOIN account_role ON account_role.AccountId = A.Id
+            LEFT JOIN role ON role.Id = account_role.RoleId
+            LEFT JOIN user_bans Ban ON Ban.AccountId = A.Id
             WHERE Username = ? AND OAuthProviderId IS NULL
             GROUP BY A.Id;
         `;
@@ -159,7 +159,7 @@ exports.signup = (req: Request, res: Response) => {
         }
 
         // Check if username or verified account already exists
-        const checkExistingQuery = 'SELECT * FROM Account WHERE Username = ? OR (Email = ? AND IsEmailValid = 1)';
+        const checkExistingQuery = 'SELECT * FROM account WHERE Username = ? OR (Email = ? AND IsEmailValid = 1)';
         pool.query(checkExistingQuery, [username, email], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
@@ -177,7 +177,7 @@ exports.signup = (req: Request, res: Response) => {
 
             // Run the query
             const signUpQuery = `
-                INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
+                INSERT INTO account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
                 VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL);
             `;
             pool.query(signUpQuery, [username, fullName, email, 0, hash], async (qErr: any, results: any) => {
@@ -248,12 +248,12 @@ exports.authGoogle = (req: Request, res: Response) => {
                 // Check if user exists
                 const checkQuery = `
                     SELECT A.Id, Username, FullName, Email, Avatar,
-                        GROUP_CONCAT(Role.RoleCode) AS Roles,
+                        GROUP_CONCAT(role.RoleCode) AS Roles,
                         MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
-                    FROM Account A
-                    LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
-                    LEFT JOIN Role ON Role.Id = AccountRole.RoleId
-                    LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
+                    FROM account A
+                    LEFT JOIN account_role ON account_role.AccountId = A.Id
+                    LEFT JOIN role ON Role.Id = account_role.RoleId
+                    LEFT JOIN user_bans Ban ON Ban.AccountId = A.Id
                     WHERE ExternalId = ? && OAuthProviderId = 1
                     GROUP BY A.Id;
                 `;
@@ -304,7 +304,7 @@ exports.authGoogle = (req: Request, res: Response) => {
 
                         // Run the query
                         const signUpQuery = `
-                            INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
+                            INSERT INTO account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
                             VALUES (?, ?, ?, 1, NULL, ?, ?, 1);
                         `;
                         pool.query(signUpQuery, [uniqueUsername, user.name, user.email, newAvatar, user.sub], async (qErr: any, results: any) => {
@@ -357,12 +357,12 @@ exports.authFacebook = (req: Request, res: Response) => {
                 // Check if user exists
                 const checkQuery = `
                     SELECT A.Id, Username, FullName, Email, Avatar,
-                        GROUP_CONCAT(Role.RoleCode) AS Roles,
+                        GROUP_CONCAT(role.RoleCode) AS Roles,
                         MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
-                    FROM Account A
-                    LEFT JOIN AccountRole ON AccountRole.AccountId = A.Id
-                    LEFT JOIN Role ON Role.Id = AccountRole.RoleId
-                    LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
+                    FROM account A
+                    LEFT JOIN account_role ON account_role.AccountId = A.Id
+                    LEFT JOIN role ON Role.Id = account_role.RoleId
+                    LEFT JOIN user_bans Ban ON Ban.AccountId = A.Id
                     WHERE ExternalId = ? && OAuthProviderId = 2
                     GROUP BY A.Id;
                 `;
@@ -413,7 +413,7 @@ exports.authFacebook = (req: Request, res: Response) => {
 
                         // Run the query
                         const signUpQuery = `
-                            INSERT INTO Account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
+                            INSERT INTO account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
                             VALUES (?, ?, ?, 1, NULL, ?, ?, 2);
                         `;
                         pool.query(signUpQuery, [uniqueUsername, data.name, data.email, newAvatar, data.id], async (qErr: any, results: any) => {
@@ -535,7 +535,7 @@ exports.editProfile = (req: Request, res: Response) => {
         const passwordNew = body.passwordNew;
 
         // Get user information for comparing
-        const query = 'SELECT FullName, Email, Password FROM Account WHERE Id = ?;';
+        const query = 'SELECT FullName, Email, Password FROM account WHERE Id = ?;';
         pool.query(query, [userId], async (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
@@ -579,7 +579,7 @@ exports.editProfile = (req: Request, res: Response) => {
             if (validChanges === false) return res.status(400).json({ error: 'Missing required fields' });
             // Combine the query
             const setSection = sets.join(', ');
-            const updateQuery = 'UPDATE Account SET ' + setSection + ' WHERE Id = ?;';
+            const updateQuery = 'UPDATE account SET ' + setSection + ' WHERE Id = ?;';
             parameters.push(userId);
 
             // Finally, update
@@ -589,7 +589,7 @@ exports.editProfile = (req: Request, res: Response) => {
                 }
 
                 // Get updated user
-                const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;';
+                const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM account WHERE Id = ?;';
                 pool.query(selectQuery, [userId], (qErr: any, results: any) => {
                     if (qErr) {
                         return res.status(500).json({ error: 'Query error' });
@@ -621,7 +621,7 @@ exports.deleteAvatar = (req: Request, res: Response) => {
         const userId = verifyJwt(jwt);
         if (!userId) return res.status(401).send('Not authorized');
         // Get image name
-        const query = `SELECT Avatar FROM Account WHERE Id = ?;`;
+        const query = `SELECT Avatar FROM account WHERE Id = ?;`;
         pool.query(query, [userId], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
@@ -637,14 +637,14 @@ exports.deleteAvatar = (req: Request, res: Response) => {
                 fs.unlinkSync(imgPath)
             }
             // Delete from Account table
-            const deleteAvatarQuery = `UPDATE Account SET Avatar = NULL WHERE Id = ?;`;
+            const deleteAvatarQuery = `UPDATE account SET Avatar = NULL WHERE Id = ?;`;
             pool.query(deleteAvatarQuery, [userId], (qErr: any, results: any) => {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error' });
                 }
 
                 // Get updated user
-                const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;';
+                const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM account WHERE Id = ?;';
                 pool.query(selectQuery, [userId], (qErr: any, results: any) => {
                     if (qErr) {
                         return res.status(500).json({ error: 'Query error' });
@@ -694,7 +694,7 @@ exports.uploadAvatar = (req: Request, res: Response) => {
 
 
         // Get old avatar name
-        const query = `SELECT Avatar FROM Account WHERE Id = ?;`;
+        const query = `SELECT Avatar FROM account WHERE Id = ?;`;
         pool.query(query, [userId], (qErr: any, results: any) => {
             if (qErr) {
                 deleteUploadedOnError();
@@ -709,7 +709,7 @@ exports.uploadAvatar = (req: Request, res: Response) => {
             }
 
             // Update the avatar
-            const query = `UPDATE Account SET Avatar = ? WHERE Id = ?`;
+            const query = `UPDATE account SET Avatar = ? WHERE Id = ?`;
             pool.query(query, [newAvatar.name, userId], (qErr: any, results: any) => {
                 if (qErr) {
                     deleteUploadedOnError();
@@ -717,7 +717,7 @@ exports.uploadAvatar = (req: Request, res: Response) => {
                 }
 
                 // Get updated user
-                const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM Account WHERE Id = ?;';
+                const selectQuery = 'SELECT Id, Username, FullName, Email, Avatar FROM account WHERE Id = ?;';
                 pool.query(selectQuery, [userId], (qErr: any, results: any) => {
                     if (qErr) {
                         // We don't call deleteUploadedOnError(); because it didn't fail during UPDATE
@@ -755,16 +755,16 @@ exports.getUserProfile = (req: Request, res: Response) => {
             SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
                 (
                     SELECT JPI.Body
-                    FROM JobPostingImages JPI
+                    FROM job_posting_images JPI
                     WHERE JP.Id = JPI.JobPostingId
                     ORDER BY JPI.ImgIndex
                     LIMIT 1
                 ) AS MainImage,
                 JP.CurrentStatusId,
                 C.Code AS CategoryCode
-            FROM JobPosting JP
-            LEFT JOIN SubCategory SC ON SC.Id = JP.SubCategoryId
-            LEFT JOIN Category C ON C.Id = SC.CategoryId
+            FROM job_posting JP
+            LEFT JOIN sub_category SC ON SC.Id = JP.SubCategoryId
+            LEFT JOIN category C ON C.Id = SC.CategoryId
             WHERE JP.CurrentStatusId != 4 AND JP.AccountId = ?
             ORDER BY SecondsAgo DESC;
         `;
@@ -776,7 +776,7 @@ exports.getUserProfile = (req: Request, res: Response) => {
 
             const query2 = `
                 SELECT CI.Body AS Body, CI.ContactTypeId AS Type
-                FROM ContactInformation CI
+                FROM contact_information CI
                 WHERE CI.AccountId = ?
             `;
             pool.query(query2, [userId], (qErr2: any, results2: any) => {
@@ -818,12 +818,12 @@ exports.updateContactInfo = (req: Request, res: Response) => {
             }
             // Check, then push
             if (isNullOrEmpty(info.Body) || info.Body.trim().length > 60 || ![1, 2, 3, 4, 5].includes(info.Type)) continue;
-            queries.push('INSERT INTO ContactInformation(Body, ContactTypeId, AccountId) VALUES(?, ?, ?);')
+            queries.push('INSERT INTO contact_information(Body, ContactTypeId, AccountId) VALUES(?, ?, ?);')
             parameters.push(info.Body, info.Type, userId);
         }
 
         // Delete the existing contact information
-        const deleteQuery = `DELETE FROM ContactInformation WHERE AccountId = ?;`;
+        const deleteQuery = `DELETE FROM contact_information WHERE AccountId = ?;`;
         pool.query(deleteQuery, [userId], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
@@ -842,7 +842,7 @@ exports.updateContactInfo = (req: Request, res: Response) => {
 
                 const selectQuery = `
                     SELECT CI.Body AS Body, CI.ContactTypeId AS Type
-                    FROM ContactInformation CI
+                    FROM contact_information CI
                     WHERE CI.AccountId = ?
                 `;
                 pool.query(selectQuery, [userId], (qErr: any, results: any) => {

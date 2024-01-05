@@ -43,7 +43,7 @@ const checkAdminRole = (userId) => __awaiter(void 0, void 0, void 0, function* (
     // Check authorization
     const query = `
         SELECT COUNT(*) AS Count
-        FROM AccountRole
+        FROM account_role
         WHERE AccountId = ?;
     `;
     return new Promise((resolve, reject) => {
@@ -58,7 +58,7 @@ const checkAdminRole = (userId) => __awaiter(void 0, void 0, void 0, function* (
 });
 const banUserPromise = (banDuration, reason, targetId, adminId) => __awaiter(void 0, void 0, void 0, function* () {
     const query = `
-        INSERT UserBans(BannedAt, LiftDate, Reason, AccountId, AdminId)
+        INSERT INTO user_bans(BannedAt, LiftDate, Reason, AccountId, AdminId)
         VALUES (NOW(), DATE_ADD(NOW(), INTERVAL ? DAY), ?, ?, ?);
     `;
     return yield new Promise((resolve, reject) => {
@@ -85,15 +85,15 @@ const deleteUnapprovedPostsPromise = (userBanned, accountId, postId) => __awaite
         // Update post(s) to set current status to 4 (deleted)
         const filterType = userBanned ? 'CurrentStatusId = 5 AND AccountId' : 'Id';
         const filterId = userBanned ? accountId : postId;
-        const query = `UPDATE JobPosting SET CurrentStatusId = 4 WHERE ${filterType} = ?;`;
+        const query = `UPDATE job_posting SET CurrentStatusId = 4 WHERE ${filterType} = ?;`;
         pool.query(query, [filterId], (qErr, results) => {
             if (qErr) {
                 resolve(false);
             }
             // FOR IMAGES
-            let queryPostImages = ` FROM JobPostingImages JPI`;
+            let queryPostImages = ` FROM job_posting_images JPI`;
             if (userBanned) {
-                queryPostImages += ` LEFT JOIN JobPosting JP ON JPI.JobPostingId = JP.Id WHERE JP.AccountId = ? AND JP.CurrentStatusId = 4;`;
+                queryPostImages += ` LEFT JOIN job_posting JP ON JPI.JobPostingId = JP.Id WHERE JP.AccountId = ? AND JP.CurrentStatusId = 4;`;
             }
             else {
                 queryPostImages += ` WHERE JobPostingId = ?;`;
@@ -141,12 +141,12 @@ exports.waitingApproval = (req, res) => __awaiter(void 0, void 0, void 0, functi
                     JP.Id,
                     JP.Title,
                     GROUP_CONCAT(JPI.Body ORDER BY JPI.ImgIndex) AS Images,
-                    Category.Code AS CategoryCode,
+                    category.Code AS CategoryCode,
                     JP.AccountId AS OwnerId
-                FROM JobPosting AS JP
-                LEFT JOIN JobPostingImages JPI ON JPI.JobPostingId = JP.Id
-                LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
-                LEFT JOIN Category ON Category.Id = SubCategory.CategoryId
+                FROM job_posting AS JP
+                LEFT JOIN job_posting_images JPI ON JPI.JobPostingId = JP.Id
+                LEFT JOIN sub_category ON sub_category.Id = JP.SubCategoryId
+                LEFT JOIN category ON category.Id = sub_category.CategoryId
                 WHERE CurrentStatusId = 5
                 GROUP BY JP.Id;
             `;
@@ -175,7 +175,7 @@ exports.adminUpdatePost = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const postId = req.params.postId;
         const action = req.params.action;
         if (action === 'approve' || action === 'complete') {
-            const query = `UPDATE JobPosting SET CurrentStatusId = ${action === 'approve' ? '1' : '3'} WHERE Id = ?;`;
+            const query = `UPDATE job_posting SET CurrentStatusId = ${action === 'approve' ? '1' : '3'} WHERE Id = ?;`;
             pool.query(query, [postId], (qErr, results) => {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error' });
@@ -190,7 +190,7 @@ exports.adminUpdatePost = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 return res.status(400).json({ error: 'Bad request' });
             }
             // Check job posting and get the account id
-            const query = `SELECT AccountId FROM JobPosting WHERE Id = ?;`;
+            const query = `SELECT AccountId FROM job_posting WHERE Id = ?;`;
             pool.query(query, [postId], (qErr, results) => __awaiter(void 0, void 0, void 0, function* () {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error' });
@@ -321,17 +321,17 @@ exports.getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             ? 'Username LIKE ?'
             : targetType === '1'
                 ? 'FullName LIKE ?'
-                : 'Account.Id = ?';
+                : 'account.Id = ?';
         // Append % to the target based on targetType
         const targetWithWildcard = targetType !== '2' ? `%${target}%` : target;
         // TODO: Get ban information
         const query = `
-            SELECT Account.Id, Username, FullName, Avatar, Email,
+            SELECT account.Id, Username, FullName, Avatar, Email,
                 MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
-            FROM Account
-            LEFT JOIN UserBans Ban ON Ban.AccountId = Account.Id
+            FROM account
+            LEFT JOIN user_bans Ban ON Ban.AccountId = account.Id
             WHERE ${filter}
-            GROUP BY Account.Id;
+            GROUP BY account.Id;
         `;
         pool.query(query, [targetWithWildcard], (qErr, results) => {
             if (qErr) {
@@ -385,7 +385,7 @@ exports.liftBan = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(401).json({ error: 'Not authorized' });
         // Get the target, (id)
         const target = req.params.target;
-        const query = `DELETE FROM UserBans WHERE LiftDate > NOW() AND AccountId = ?;`;
+        const query = `DELETE FROM user_bans WHERE LiftDate > NOW() AND AccountId = ?;`;
         pool.query(query, [target], (qErr, results) => {
             if (qErr || results.affectedRows < 1) {
                 return res.status(500).json({ error: 'Query error' });

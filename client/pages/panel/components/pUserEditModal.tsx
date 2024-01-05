@@ -89,7 +89,7 @@ const PUserEditModal: React.FC<{
                             width={0}
                             height={0} />
                         : <Image
-                            src={require('@/assets/site/user.webp')}
+                            src={'/user.webp'}
                             alt={'Profil fotoğrafı yok'}
                             width={0}
                             height={0} />}
