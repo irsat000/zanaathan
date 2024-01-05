@@ -154,8 +154,9 @@ const Template: React.FC<{
 				{userData ? <Chatbot /> : <></>}
 				<AuthModal />
 				{gStatus.informationModal ?
-					<div className={`information-modal-container modal-container ${gStatus.informationModal ? 'active' : ''}`}>
-						<div className="information-modal">
+					<div className={`information-modal-container modal-container ${gStatus.informationModal ? 'active' : ''}`}
+						onClick={() => handleGStatus('informationModal', null)}>
+						<div className="information-modal" onClick={(e) => e.stopPropagation()}>
 							<div className='icon'>
 								{gStatus.informationModal.type === 'success'
 									? <CheckCircle style={{ color: '#34c532' }} />

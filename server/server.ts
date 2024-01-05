@@ -29,7 +29,8 @@ const io = new Server(httpServer, {
                 'https://192.168.1.106:3000',
                 'http://192.168.1.106:3000'
             ]
-            : ['https://zanaathan.com']
+            : ['https://zanaathan.com',
+                'http://zanaathan.com']
     }
 })
 
@@ -43,7 +44,8 @@ app.use(cors({
             'https://192.168.1.106:3000',
             'http://192.168.1.106:3000'
         ]
-        : ['https://zanaathan.com'],
+        : ['https://zanaathan.com',
+            'http://zanaathan.com'],
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 // - Route middlewares

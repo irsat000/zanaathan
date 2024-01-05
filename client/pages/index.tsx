@@ -7,6 +7,9 @@ import categoryList from '@/assets/site/categories.json'
 import { useUser } from '@/context/userContext'
 import { useGStatus } from '@/context/globalContext'
 
+// Must fetch here
+import introImage from '@/assets/site/intro.webp';
+const categoryImages = categoryList.map((cate) => require('@/assets/categoryImages/' + cate.Image));
 
 const Home = () => {
   // Use global context
@@ -34,7 +37,12 @@ const Home = () => {
               <button className='intro-button-2'>İş ara</button>*/}
             </div>
           </div>
-          <Image src={require('@/assets/site/intro.webp')} priority={true} className='intro-image' alt={'Intro image'} />
+          <Image
+            src={introImage}
+            priority={true}
+            unoptimized={true}
+            className='intro-image'
+            alt={'Intro image'} />
         </div>
         <div className='category-list-heading-container'>
           <h2>Hizmetler</h2>
@@ -44,7 +52,10 @@ const Home = () => {
             return (
               <Link href={'/' + cate.Code} className='category-card' key={i}>
                 <div className="category-image">
-                  <Image src={require('@/assets/categoryImages/' + cate.Image)} alt={cate.Name} />
+                  <Image
+                    src={categoryImages[i]}
+                    unoptimized={true}
+                    alt={cate.Name} />
                 </div>
                 <div className="category-details">
                   <span className="category-title">{cate.Name}</span>
