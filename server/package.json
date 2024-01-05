@@ -5,8 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server",
-    "dev": "nodemon server"
+    "start": "set NODE_ENV=production & node server",
+    "dev": "set NODE_ENV=development & nodemon server"
   },
   "author": "İrşat Akdeniz",
   "license": "ISC",

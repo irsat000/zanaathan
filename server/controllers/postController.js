@@ -1,0 +1,368 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var _a;
+Object.defineProperty(exports, "__esModule", { value: true });
+const helperUtils_1 = require("../utils/helperUtils");
+const fs = __importStar(require("fs"));
+const userUtils_1 = require("../utils/userUtils");
+const path = require('path');
+const appDir = path.dirname((_a = require.main) === null || _a === void 0 ? void 0 : _a.filename);
+const pool = require('../db/db');
+// Get the first sub category under category. This is used when sub category is not selected.
+const getFirstSubCategoryId = (category) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve, reject) => {
+        pool.query(`SELECT Id FROM SubCategory WHERE CategoryId = ? LIMIT 1;`, [category], (qErr, results) => {
+            if (qErr) {
+                // Todo: Log error
+                resolve(null);
+            }
+            resolve(results[0].Id);
+        });
+    });
+});
+exports.getPosts = (req, res) => {
+    try {
+        // Get necessary filter data from query strings and path
+        const category = req.params.category;
+        const { subc, sortby, city, district, page } = req.query;
+        // SUBSTRING(Description, 1, 200) // If description is needed, it's best to shorten it
+        let query = `
+            FROM JobPosting JP
+            LEFT JOIN SubCategory ON SubCategory.Id = JP.SubCategoryId
+        `;
+        const parameters = [];
+        // Join district to get city afterwards
+        // No need for district table and city id if district is selected, we can use DistrictId of JP
+        if (city && !district) {
+            query += ` LEFT JOIN District ON District.Id = JP.DistrictId`;
+        }
+        // Start WHERE after JOIN(s)
+        // Filter by category [Mandatory]
+        query += ` WHERE CurrentStatusId IN (1, 2, 3) AND SubCategory.CategoryId = ?`;
+        parameters.push(category);
+        // Filter by sub categories
+        if (subc) {
+            // subc can be string[] or string
+            query += ` AND JP.SubCategoryId IN (?)`;
+            parameters.push(subc);
+        }
+        // Filter by district
+        if (district) {
+            query += ` AND JP.DistrictId = ?`;
+            parameters.push(district);
+        }
+        else {
+            // Filter by city
+            if (city) {
+                query += ` AND District.CityId = ?`;
+                parameters.push(city);
+            }
+        }
+        // Get post total count
+        const countSelect = `SELECT COUNT(*) as Count `;
+        pool.query(countSelect + query, parameters, (qErr, count) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error 1' });
+            }
+            // Get filtered 50 posts
+            const postsSelect = `
+                SELECT JP.Id, JP.Title, TIMESTAMPDIFF(SECOND, CreatedAt, NOW()) AS SecondsAgo,
+                (
+                    SELECT JPI.Body
+                    FROM JobPostingImages JPI
+                    WHERE JP.Id = JPI.JobPostingId
+                    ORDER BY JPI.ImgIndex
+                    LIMIT 1
+                ) AS MainImage `;
+            // Post exclusive is to get the post count with same filtering
+            // Sort by seconds ago, default is DESC, meaning old first
+            let postsExclusive = ` ORDER BY SecondsAgo`;
+            if (!sortby || sortby === 'old') {
+                postsExclusive += ` DESC`;
+            }
+            // Page
+            postsExclusive += ` LIMIT 20`;
+            const postsExclusiveParameters = [];
+            if (page != undefined) {
+                // - Offset will be 0 when page is set to 1, same as when it doesn't exist
+                postsExclusive += ` OFFSET ?`;
+                postsExclusiveParameters.push((page - 1) * 20);
+            }
+            // Get posts
+            pool.query(postsSelect + query + postsExclusive, [...parameters, ...postsExclusiveParameters], (qErr, posts) => {
+                if (qErr) {
+                    return res.status(500).json({ error: 'Query error 2' });
+                }
+                // Send posts and post count for pagination
+                return res.status(200).json({ posts: posts, postCount: count[0].Count });
+            });
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+};
+exports.getPostDetails = (req, res) => {
+    try {
+        const postId = req.params.postId;
+        if (!postId)
+            res.status(400).json({ error: 'Bad request' });
+        const query = `SELECT
+                JP.Id,
+                JP.Title,
+                TIMESTAMPDIFF(SECOND, JP.CreatedAt, NOW()) AS SecondsAgo,
+                JP.Description,
+                GROUP_CONCAT(DISTINCT JPI.Body ORDER BY JPI.ImgIndex SEPARATOR ';') AS Images,
+                A.Id AS A_Id,
+                A.Username AS A_Username,
+                A.FullName AS A_FullName,
+                A.Avatar AS A_Avatar,
+                GROUP_CONCAT(DISTINCT CONCAT(CI.Body, ' - ', CT.Body) ORDER BY CI.Id SEPARATOR ';') AS ContactInfo,
+                CONCAT(D.Name, ' - ', C.Name) AS Location,
+                MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
+            FROM JobPosting JP
+            LEFT JOIN JobPostingImages JPI ON JP.Id = JPI.JobPostingId
+            LEFT JOIN Account A ON JP.AccountId = A.Id
+            LEFT JOIN UserBans Ban ON Ban.AccountId = A.Id
+            LEFT JOIN ContactInformation CI ON A.Id = CI.AccountId
+            LEFT JOIN ContactType CT ON CI.ContactTypeId = CT.Id
+            LEFT JOIN District D ON JP.DistrictId = D.Id
+            LEFT JOIN City C ON D.CityId = C.Id
+            WHERE JP.Id = ?
+            GROUP BY JP.Id;`;
+        pool.query(query, [postId], (qErr, results) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+            return res.status(200).json({ postDetails: results[0] });
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+};
+exports.getCities = (req, res) => {
+    try {
+        const query = "SELECT * FROM City;";
+        pool.query(query, (qErr, results) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+            return res.status(200).json({ cities: results });
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+};
+exports.getDistricts = (req, res) => {
+    try {
+        const cityId = req.query.city_id;
+        const query = "SELECT District.Id, District.Name FROM District INNER JOIN City ON District.CityId = City.Id WHERE District.CityId = ?;";
+        pool.query(query, [cityId], (qErr, results) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error: ' + qErr });
+            }
+            return res.status(200).json({ districts: results });
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+};
+exports.createPost = (req, res) => {
+    var _a, _b;
+    try {
+        // Get uploaded file list
+        // Filtered in multer instance
+        const files = req.files;
+        const imageNameList = Array.isArray(files) ? files.map(file => {
+            return {
+                name: file.filename,
+                path: file.path // Full directory path
+            };
+        }) : [];
+        // Deletes the uploaded images when called
+        const deleteUploadedOnError = () => {
+            imageNameList.forEach((file) => fs.existsSync(file.path) && fs.unlinkSync(file.path));
+        };
+        // Verify and decode the token
+        const jwt = (_b = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
+        const userId = (0, userUtils_1.verifyJwt)(jwt);
+        if (!userId) {
+            deleteUploadedOnError();
+            return res.status(401).send('Not authorized');
+        }
+        // Get inputs
+        const body = req.body;
+        const title = (0, helperUtils_1.sanatizeInputString)(body.title);
+        const description = body.description.trim();
+        const category = body.category;
+        let subCategory = body.subCategory;
+        const district = body.district;
+        // Validate the inputs
+        if (!req.body || title.trim().length < 5 || title.trim().length > 255
+            || description.trim().length < 50 || description.trim().length > 2000
+            || (!(0, helperUtils_1.isPositiveNumeric)(subCategory) && !(0, helperUtils_1.isPositiveNumeric)(category)) || !(0, helperUtils_1.isPositiveNumeric)(district)) {
+            deleteUploadedOnError();
+            return res.status(400).json({ error: 'Bad payload' });
+        }
+        // Shortens the error handling
+        const handleError = (connection) => {
+            try {
+                // Release connection
+                connection.release();
+                // Delete uploaded images on error
+                deleteUploadedOnError();
+            }
+            catch (error) {
+                // Do nothing
+            }
+            finally {
+                // Return to client
+                return res.status(500).json({ error: 'Database error' });
+            }
+        };
+        // Get connection for transaction and rollback
+        pool.getConnection((connErr, connection) => __awaiter(void 0, void 0, void 0, function* () {
+            if (connErr)
+                handleError(connection);
+            connection.beginTransaction((beginErr) => {
+                if (beginErr)
+                    handleError(connection);
+            });
+            // If sub category is not selected, get the default
+            // WILL ALWAYS GO IN HERE because sub categories are planned to exist later
+            if (!(0, helperUtils_1.isPositiveNumeric)(subCategory)) {
+                // Get the first sub category under the selected category
+                const newId = yield getFirstSubCategoryId(category);
+                // Check error
+                if (newId == null)
+                    connection.rollback(() => handleError(connection));
+                // Re-assign sub category with a valid one
+                subCategory = newId.toString();
+            }
+            const query = "INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 5, ?);";
+            connection.query(query, [title, description, district, subCategory, userId], (qErr, results) => {
+                if (qErr)
+                    connection.rollback(() => handleError(connection));
+                // Get post id
+                const postId = results.insertId;
+                // If no image is uploaded, finish it here
+                if (imageNameList.length === 0) {
+                    connection.commit((commitErr) => {
+                        if (commitErr)
+                            connection.rollback(() => handleError(connection));
+                        connection.release();
+                        return res.status(200).json({ postId });
+                    });
+                }
+                // Iterate image names to get necessary image insert queries
+                let imageQueries = '';
+                const imageParameters = [];
+                imageNameList.forEach((file, index) => {
+                    imageQueries += "INSERT INTO JobPostingImages(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
+                    imageParameters.push(file.name, index, postId);
+                });
+                // Run the image queries in one go
+                connection.query(imageQueries, imageParameters, (qErr2) => {
+                    if (qErr2)
+                        connection.rollback(() => handleError(connection));
+                    // COMMIT
+                    connection.commit((commitErr) => {
+                        if (commitErr)
+                            connection.rollback(() => handleError(connection));
+                        connection.release();
+                        return res.status(200).json({ postId });
+                    });
+                });
+            });
+        }));
+    }
+    catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+exports.updatePostStatus = (req, res) => {
+    var _a, _b;
+    try {
+        const body = req.body;
+        // Validate the newStatusId, it can only be -> 1 | 2 | 3
+        // 4 (Kaldırıldı) and 5 (Onay bekliyor) are out of option
+        if (!body || ![1, 2, 3].includes(body.newStatusId)) {
+            return res.status(400).json({ error: 'Bad request' });
+        }
+        // Verify and decode the token
+        const jwt = (_b = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
+        const userId = (0, userUtils_1.verifyJwt)(jwt);
+        if (!userId)
+            return res.status(401).send('Not authorized');
+        // Get post id
+        const postId = req.params.postId;
+        if (!postId)
+            res.status(400).json({ error: 'Bad request' });
+        // Update post current status if authorized(using AccountId)
+        const query = `
+            UPDATE JobPosting 
+            SET CurrentStatusId = ? 
+            WHERE AccountId = ? AND Id = ?;
+        `;
+        pool.query(query, [body.newStatusId, userId, postId], (qErr, results) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+            if (results.affectedRows === 0) {
+                return res.status(401).send('Not authorized');
+            }
+            return res.status(200).json({ message: 'Success!' });
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+};
+exports.asdf = (req, res) => {
+    try {
+        const query = ``;
+        pool.query(query, (qErr, results) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+            return res.status(200).json({});
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+};

@@ -42,12 +42,19 @@ INSERT INTO JobPosting(Title, CreatedAt, Description, DistrictId, SubCategoryId,
 
 
 
+USE ZANAATHAN;
 
 SET SQL_SAFE_UPDATES = 0;
 DELETE FROM `JobPostingImages`;
 DELETE FROM `JobPosting`;
-DELETE FROM `SubCategory`;
-DELETE FROM `Category`;
+DELETE FROM `AccountRole`;
+DELETE FROM `ContactInformation`;
+DELETE FROM `Message`;
+DELETE FROM `MNotification`;
+DELETE FROM `SignInLog`;
+DELETE FROM `UserBans`;
+DELETE FROM `UserBlock`;
+DELETE FROM `Account`;
 SET SQL_SAFE_UPDATES = 1;
 
 
