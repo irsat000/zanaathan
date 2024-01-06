@@ -4,9 +4,7 @@ import multer from 'multer';
 import * as fs from 'fs';
 import { acceptedImgSet_1, removeExtension } from '../utils/helperUtils';
 import sharp from 'sharp';
-const path = require('path');
-const appDir = path.dirname(require.main?.filename);
-
+const appDir = process.cwd();
 // CRITICAL - Sharp caches files which prevents deletion with EBUSY error, because they are "used".
 sharp.cache(false);
 

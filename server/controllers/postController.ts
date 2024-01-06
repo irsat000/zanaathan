@@ -3,8 +3,7 @@ import { Request, Response } from 'express';
 import { isNullOrEmpty, isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
 import * as fs from 'fs';
 import { verifyJwt } from '../utils/userUtils';
-const path = require('path');
-const appDir = path.dirname(require.main?.filename);
+const appDir = process.cwd();
 
 const pool = require('../db/db');
 
@@ -89,11 +88,11 @@ exports.getPosts = (req: Request, res: Response) => {
                     WHERE JP.Id = JPI.JobPostingId
                     ORDER BY JPI.ImgIndex
                     LIMIT 1
-                ) AS MainImage `;
+                ) AS MainImage, CurrentStatusId `;
 
             // Post exclusive is to get the post count with same filtering
             // Sort by seconds ago, default is DESC, meaning old first
-            let postsExclusive = ` ORDER BY SecondsAgo`;
+            let postsExclusive = ` ORDER BY CurrentStatusId, SecondsAgo`;
             if (!sortby || sortby === 'old') {
                 postsExclusive += ` DESC`;
             }

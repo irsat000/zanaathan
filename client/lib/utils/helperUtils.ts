@@ -9,6 +9,14 @@ export const isNullOrEmpty = (value: any): boolean => {
   return false;
 }
 
+// Current status map for id and value
+export const CSMap = {
+  1: 'Cevap bekliyor',
+  2: 'Anlaşıldı',
+  3: 'Tamamlandı',
+  5: 'Onay bekliyor'
+};
+
 export const replaceTurkishCharacters = (text: string) => {
   const replacements: { [key: string]: string } = {
     'ü': 'u',

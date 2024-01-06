@@ -31,13 +31,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const helperUtils_1 = require("../utils/helperUtils");
 const fs = __importStar(require("fs"));
 const userUtils_1 = require("../utils/userUtils");
-const path = require('path');
-const appDir = path.dirname((_a = require.main) === null || _a === void 0 ? void 0 : _a.filename);
+const appDir = process.cwd();
 const pool = require('../db/db');
 // Get the first sub category under category. This is used when sub category is not selected.
 const getFirstSubCategoryId = (category) => __awaiter(void 0, void 0, void 0, function* () {
@@ -104,10 +102,10 @@ exports.getPosts = (req, res) => {
                     WHERE JP.Id = JPI.JobPostingId
                     ORDER BY JPI.ImgIndex
                     LIMIT 1
-                ) AS MainImage `;
+                ) AS MainImage, CurrentStatusId `;
             // Post exclusive is to get the post count with same filtering
             // Sort by seconds ago, default is DESC, meaning old first
-            let postsExclusive = ` ORDER BY SecondsAgo`;
+            let postsExclusive = ` ORDER BY CurrentStatusId, SecondsAgo`;
             if (!sortby || sortby === 'old') {
                 postsExclusive += ` DESC`;
             }

@@ -6,7 +6,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, EmojiFrown, Search, XLg } from 
 import categoryList from '@/assets/site/categories.json'
 import { useEffect, useState } from 'react'
 import Router, { useRouter } from 'next/router'
-import { apiUrl, formatSecondsAgo, postImageLink, titleToUrl } from '@/lib/utils/helperUtils'
+import { CSMap, apiUrl, formatSecondsAgo, postImageLink, titleToUrl } from '@/lib/utils/helperUtils'
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/lib/utils/fetchUtils'
 import GridLoader from 'react-spinners/GridLoader'
 import { useGStatus } from '@/context/globalContext'
@@ -16,6 +16,7 @@ export interface Post {
   Title: string;
   SecondsAgo: number;
   MainImage: string | null;
+  CurrentStatusId: 1 | 2 | 3 | 5; // Look up CSMap when update is needed
   ImageError: undefined | boolean;
 }
 
@@ -459,7 +460,10 @@ export default function Category() {
                     </div>
                     <h4 className='title'>{post.Title}</h4>
                   </Link>
-                  <span className="date">{formatSecondsAgo(post.SecondsAgo)}</span>
+                  <div className="date-container">
+                    <span className="date">{formatSecondsAgo(post.SecondsAgo)}</span>
+                    <span className={`status cs-${post.CurrentStatusId}`}>{CSMap[post.CurrentStatusId]}</span>
+                  </div>
                 </div>
               )}
             </div>

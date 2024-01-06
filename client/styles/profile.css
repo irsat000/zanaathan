@@ -261,27 +261,6 @@
   padding: unset !important;
 }
 
-.profile-page .listing .cs-1 {
-  color: #de0000;
-}
-.profile-page .listing .cs-2 {
-  color: #0046de;
-}
-.profile-page .listing .cs-3 {
-  color: #12bc0c;
-}
-.profile-page .listing .date-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-}
-.profile-page .listing .date-container .status {
-  margin-left: auto;
-  font-size: 0.8rem;
-  font-weight: 400;
-}
 .profile-page .listing .update-post {
   padding: 10px 0;
   display: flex;

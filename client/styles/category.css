@@ -136,6 +136,15 @@
   grid-template-columns: repeat(1, 1fr);
   padding: 10px 0;
 }
+.listing .cs-1 {
+  color: #de0000;
+}
+.listing .cs-2 {
+  color: #0046de;
+}
+.listing .cs-3 {
+  color: #12bc0c;
+}
 .listing .post {
   display: flex;
   flex-direction: column;
@@ -194,7 +203,19 @@
   font-weight: 400;
   margin-bottom: 6px;
 }
-.listing .post span.date {
+.listing .post .date-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.listing .post .date-container span.date {
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+.listing .post .date-container span.status {
+  margin-left: auto;
   font-size: 0.8rem;
   font-weight: 400;
 }

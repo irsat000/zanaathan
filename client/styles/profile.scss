@@ -313,32 +313,6 @@
 
 .profile-page {
     .listing {
-        .cs-1 {
-            color: #de0000;
-        }
-
-        .cs-2 {
-            color: #0046de;
-        }
-
-        .cs-3 {
-            color: #12bc0c;
-        }
-
-        .date-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 6px;
-            align-items: center;
-
-            .status {
-                margin-left: auto;
-                font-size: 0.8rem;
-                font-weight: 400;
-            }
-        }
-
         .update-post {
             padding: 10px 0;
             display: flex;

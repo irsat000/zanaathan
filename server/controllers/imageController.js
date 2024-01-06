@@ -34,15 +34,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadAvatar = exports.uploadPostImage = void 0;
 const multer_1 = __importDefault(require("multer"));
 const fs = __importStar(require("fs"));
 const helperUtils_1 = require("../utils/helperUtils");
 const sharp_1 = __importDefault(require("sharp"));
-const path = require('path');
-const appDir = path.dirname((_a = require.main) === null || _a === void 0 ? void 0 : _a.filename);
+const appDir = process.cwd();
 // CRITICAL - Sharp caches files which prevents deletion with EBUSY error, because they are "used".
 sharp_1.default.cache(false);
 /*files.forEach(file => {

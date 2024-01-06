@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react';
 import { Post } from './[category]';
 import { fetchJwt } from '@/lib/utils/userUtils';
-import { apiUrl, avatarLink, formatSecondsAgo, postImageLink, titleToUrl } from '@/lib/utils/helperUtils';
+import { CSMap, apiUrl, avatarLink, formatSecondsAgo, postImageLink, titleToUrl } from '@/lib/utils/helperUtils';
 import { ChevronDown, XLg } from 'react-bootstrap-icons';
 import GridLoader from 'react-spinners/GridLoader';
 import { useGStatus } from '@/context/globalContext';
@@ -79,14 +79,6 @@ export default function Home() {
         setProfileLoading(false);
       });
   }, [userData])
-
-  // Current status map for id and value
-  const CSMap = {
-    1: 'Cevap bekliyor',
-    2: 'Anlaşıldı',
-    3: 'Tamamlandı',
-    5: 'Onay bekliyor'
-  };
 
   // Check update menus in case one is active, needed for document click
   const updateMenusActive = useRef<boolean>(false);

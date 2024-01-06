@@ -31,11 +31,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
-const path = require('path');
-const appDir = path.dirname((_a = require.main) === null || _a === void 0 ? void 0 : _a.filename);
+const appDir = process.cwd();
 const userUtils_1 = require("../utils/userUtils");
 const helperUtils_1 = require("../utils/helperUtils");
 const pool = require('../db/db');
@@ -126,10 +124,10 @@ const deleteUnapprovedPostsPromise = (userBanned, accountId, postId) => __awaite
     }));
 });
 exports.waitingApproval = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b, _c;
+    var _a, _b;
     try {
         // Verify and decode the token, check admin role
-        const jwt = (_c = (_b = req.headers) === null || _b === void 0 ? void 0 : _b.authorization) === null || _c === void 0 ? void 0 : _c.split(' ')[1];
+        const jwt = (_b = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
         const userId = (0, userUtils_1.verifyJwt)(jwt);
         if (!userId)
             return res.status(401).send('Not authorized');
@@ -162,10 +160,10 @@ exports.waitingApproval = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.adminUpdatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d, _e;
+    var _c, _d;
     try {
         // Verify and decode the token, check admin role
-        const jwt = (_e = (_d = req.headers) === null || _d === void 0 ? void 0 : _d.authorization) === null || _e === void 0 ? void 0 : _e.split(' ')[1];
+        const jwt = (_d = (_c = req.headers) === null || _c === void 0 ? void 0 : _c.authorization) === null || _d === void 0 ? void 0 : _d.split(' ')[1];
         const adminId = (0, userUtils_1.verifyJwt)(jwt);
         if (!adminId)
             return res.status(401).send('Not authorized');
@@ -300,10 +298,10 @@ exports.rejectPost = async (req: Request, res: Response) => {
 }
 */
 exports.getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f, _g;
+    var _e, _f;
     try {
         // Verify and decode the token, check admin role
-        const jwt = (_g = (_f = req.headers) === null || _f === void 0 ? void 0 : _f.authorization) === null || _g === void 0 ? void 0 : _g.split(' ')[1];
+        const jwt = (_f = (_e = req.headers) === null || _e === void 0 ? void 0 : _e.authorization) === null || _f === void 0 ? void 0 : _f.split(' ')[1];
         const adminId = (0, userUtils_1.verifyJwt)(jwt);
         if (!adminId)
             return res.status(401).send('Not authorized');
@@ -345,10 +343,10 @@ exports.getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.banUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _h, _j;
+    var _g, _h;
     try {
         // Verify and decode the token, check admin role
-        const jwt = (_j = (_h = req.headers) === null || _h === void 0 ? void 0 : _h.authorization) === null || _j === void 0 ? void 0 : _j.split(' ')[1];
+        const jwt = (_h = (_g = req.headers) === null || _g === void 0 ? void 0 : _g.authorization) === null || _h === void 0 ? void 0 : _h.split(' ')[1];
         const adminId = (0, userUtils_1.verifyJwt)(jwt);
         if (!adminId)
             return res.status(401).send('Not authorized');
@@ -374,10 +372,10 @@ exports.banUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.liftBan = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _k, _l;
+    var _j, _k;
     try {
         // Verify and decode the token, check admin role
-        const jwt = (_l = (_k = req.headers) === null || _k === void 0 ? void 0 : _k.authorization) === null || _l === void 0 ? void 0 : _l.split(' ')[1];
+        const jwt = (_k = (_j = req.headers) === null || _j === void 0 ? void 0 : _j.authorization) === null || _k === void 0 ? void 0 : _k.split(' ')[1];
         const adminId = (0, userUtils_1.verifyJwt)(jwt);
         if (!adminId)
             return res.status(401).send('Not authorized');

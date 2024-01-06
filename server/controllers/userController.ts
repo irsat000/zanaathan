@@ -3,8 +3,7 @@
 const bcrypt = require('bcrypt');
 import { Request, Response } from 'express';
 import * as fs from 'fs';
-const path = require('path');
-const appDir = path.dirname(require.main?.filename);
+const appDir = process.cwd();
 const { OAuth2Client } = require('google-auth-library');
 import { isNullOrEmpty } from '../utils/helperUtils';
 import { createJwt, verifyJwt, JWT } from '../utils/userUtils';

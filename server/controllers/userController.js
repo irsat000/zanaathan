@@ -31,12 +31,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt = require('bcrypt');
 const fs = __importStar(require("fs"));
-const path = require('path');
-const appDir = path.dirname((_a = require.main) === null || _a === void 0 ? void 0 : _a.filename);
+const appDir = process.cwd();
 const { OAuth2Client } = require('google-auth-library');
 const helperUtils_1 = require("../utils/helperUtils");
 const userUtils_1 = require("../utils/userUtils");
