@@ -345,20 +345,32 @@ exports.updatePostStatus = (req: Request, res: Response) => {
         const postId = req.params.postId;
         if (!postId) res.status(400).json({ error: 'Bad request' });
 
-        // Update post current status if authorized(using AccountId)
-        const query = `
-            UPDATE job_posting 
-            SET CurrentStatusId = ? 
-            WHERE AccountId = ? AND Id = ?;
-        `;
-        pool.query(query, [body.newStatusId, userId, postId], (qErr: any, results: any) => {
+        // Check previous status and prevent unauthorization
+        const query = `SELECT CurrentStatusId FROM job_posting WHERE AccountId = ? AND Id = ?;`;
+        pool.query(query, [userId, postId], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
             }
-            if (results.affectedRows === 0) {
+            // results.length === 0: Not the owner of the post
+            // 4: Onay bekliyor(waiting approval)
+            // 5: Kaldırıldı (deleted)
+            if (results.length === 0 || ![1, 2, 3].includes(results[0].CurrentStatusId)) {
                 return res.status(401).send('Not authorized');
             }
-            return res.status(200).json({ message: 'Success!' });
+
+            // Update post current status
+            const query = `
+                UPDATE job_posting 
+                SET CurrentStatusId = ? 
+                WHERE Id = ?;
+            `;
+            pool.query(query, [body.newStatusId, userId, postId], (qErr: any, results: any) => {
+                if (qErr) {
+                    return res.status(500).json({ error: 'Query error' });
+                }
+
+                return res.status(200).json({ message: 'Success!' });
+            });
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });

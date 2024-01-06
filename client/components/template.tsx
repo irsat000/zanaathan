@@ -190,11 +190,9 @@ const Template: React.FC<{
 											e.target.src = "/user.webp";
 											e.target.onerror = null;
 										}} />
-									: <Image
-										src={'/user.webp'}
-										alt={'Profil fotoğrafı yok'}
-										width={0}
-										height={0} />}
+									: <img
+										src="/user.webp"
+										alt={'Profil fotoğrafı yok'} />}
 							</Link>
 							<Link href={'/profil'} className='dr-profile-button'>
 								<span className='dr-username'>{userData.fullName ?? userData.username}</span>
@@ -279,11 +277,9 @@ const Template: React.FC<{
 												e.target.src = "/user.webp";
 												e.target.onerror = null;
 											}} />
-										: <Image
-											src={'/user.webp'}
-											alt={'Profil fotoğrafı yok'}
-											width={0}
-											height={0} />}
+										: <img
+											src="/user.webp"
+											alt={'Profil fotoğrafı yok'} />}
 								</button>
 								<div className={`user-menu ${userMenuActive ? 'active' : ''}`} ref={userMenuRef}>
 									<div className='user-menu-close'>

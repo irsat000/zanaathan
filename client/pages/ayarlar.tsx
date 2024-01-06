@@ -240,11 +240,9 @@ export default function Home() {
                                             width={0}
                                             height={0}
                                         /> :
-                                        <Image
-                                            src={'/image-not-found.webp'}
+                                        <img
+                                            src="/image-not-found.webp"
                                             alt={'Profil fotoğrafı yok'}
-                                            width={0}
-                                            height={0}
                                             className='no-image'
                                         />
                                     }

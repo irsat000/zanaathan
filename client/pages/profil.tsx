@@ -260,11 +260,9 @@ export default function Home() {
                       e.target.src = "/user.webp";
                       e.target.onerror = null;
                     }} />
-                  : <Image
-                    src={'/user.webp'}
-                    alt={'Profil fotoğrafı yok'}
-                    width={0}
-                    height={0} />}
+                  : <img
+                    src="/user.webp"
+                    alt={'Profil fotoğrafı yok'} />}
               </div>
               <div className="user-name-email">
                 <span className='name'>
@@ -360,7 +358,7 @@ export default function Home() {
                             />
                             :
                             <div className="image-error">
-                              <Image src={'/image-not-found.webp'} alt="No image" />
+                              <img src="/image-not-found.webp" alt="No image" />
                             </div>
                           }
                         </div>

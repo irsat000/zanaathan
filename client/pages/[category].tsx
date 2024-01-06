@@ -453,7 +453,7 @@ export default function Category() {
                         />
                         :
                         <div className="image-error">
-                          <Image src={'/image-not-found.webp'} alt="No image" />
+                          <img src="/image-not-found.webp" alt="No image" />
                         </div>
                       }
                     </div>

@@ -88,11 +88,9 @@ const PUserEditModal: React.FC<{
                             unoptimized={true}
                             width={0}
                             height={0} />
-                        : <Image
-                            src={'/user.webp'}
-                            alt={'Profil fotoğrafı yok'}
-                            width={0}
-                            height={0} />}
+                        : <img
+                            src="/user.webp"
+                            alt={'Profil fotoğrafı yok'} />}
                 </div>
                 <span className='name'>
                     {editedUser?.FullName
