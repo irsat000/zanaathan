@@ -161,14 +161,14 @@ exports.adminUpdatePost = async (req: Request, res: Response) => {
 
                 return res.status(200).json({ message: 'Success' });
             });
-        } else if (action === 'reject') {
+        } else if (action === 'reject' || action === 'delete') {
             // Get reject parameters
+            let banDuration = 0;
             const body: {
                 banDuration: string
             } = req.body;
-            if (!body) {
-                return res.status(400).json({ error: 'Bad request' });
-            }
+            if (body) banDuration = +body.banDuration;
+
 
             // Check job posting and get the account id
             const query = `SELECT AccountId FROM job_posting WHERE Id = ?;`;
@@ -183,12 +183,12 @@ exports.adminUpdatePost = async (req: Request, res: Response) => {
                 const postOwnerId = results[0].AccountId;
 
                 // Delete the unapproved post(s)
-                const success = await deleteUnapprovedPostsPromise(+body.banDuration > 0, postOwnerId, postId);
+                const success = await deleteUnapprovedPostsPromise(+banDuration > 0, postOwnerId, postId);
 
                 // Ban the account
-                if (+body.banDuration > 0) {
+                if (+banDuration > 0) {
                     const reason = `Gönderinizde yasaklanmanızı gerektiren bir problem tesbit ettik.`;
-                    const liftDate = await banUserPromise(+body.banDuration, reason, postOwnerId, adminId);
+                    const liftDate = await banUserPromise(+banDuration, reason, postOwnerId, adminId);
                     if (!liftDate) {
                         return res.status(500).json({ message: 'Failed to ban' });
                     }
