@@ -1,5 +1,5 @@
 
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { isNullOrEmpty, isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
 import * as fs from 'fs';
 import { verifyJwt } from '../utils/userUtils';
@@ -13,8 +13,7 @@ const getFirstSubCategoryId = async (category: string): Promise<number | null> =
     return new Promise((resolve, reject) => {
         pool.query(`SELECT Id FROM sub_category WHERE CategoryId = ? LIMIT 1;`, [category], (qErr: any, results: any) => {
             if (qErr) {
-                // Todo: Log error
-                resolve(null);
+                return resolve(null);
             }
             resolve(results[0].Id);
         });
@@ -202,8 +201,64 @@ interface CreatePost {
     subCategory: string; // Id
     district: string; // Id
 }
+// Extend the Request type
+interface CreatePostRequest extends Request {
+    args?: {
+        userId: number;
+    } & CreatePost;
+}
 
-exports.createPost = (req: Request, res: Response) => {
+exports.createPostValidation = (req: CreatePostRequest, res: Response, next: NextFunction) => {
+    // Verify and decode the token
+    const jwt = req.headers?.authorization?.split(' ')[1];
+    const userId = verifyJwt(jwt);
+    if (!userId) {
+        return res.status(401).send('Not authorized');
+    }
+
+    // Get inputs
+    const body: CreatePost = req.body;
+    const title = sanatizeInputString(body.title);
+    const description = body.description.trim();
+    const category = body.category;
+    let subCategory = body.subCategory;
+    const district = body.district;
+
+    // Validate the inputs
+    if (!req.body || title.trim().length < 5 || title.trim().length > 255
+        || description.trim().length < 50 || description.trim().length > 2000
+        || (!isPositiveNumeric(subCategory) && !isPositiveNumeric(category)) || !isPositiveNumeric(district)
+    ) {
+        return res.status(400).json({ error: 'Bad payload' });
+    }
+
+    // Check if the user finished the daily quota of post creation (3)
+    const query = `SELECT Count(*) as Count FROM job_posting WHERE AccountId = ? AND CreatedAt >= NOW() - INTERVAL 1 DAY;`;
+    pool.query(query, [userId], (qErr: any, results: any) => {
+        if (qErr) {
+            return res.status(500).json({ error: 'Query error' });
+        }
+        if (results[0].Count > 2) {
+            // 3 posts per day limit
+            return res.status(403).json({ error: 'Can only create 3 posts per day' });
+        }
+
+        // Double it and give it to the next person
+        req.args = {
+            userId,
+            title,
+            description,
+            category,
+            subCategory,
+            district
+        }
+
+        // If the data is valid, move on to the next middleware
+        next();
+    })
+}
+
+exports.createPost = (req: CreatePostRequest, res: Response) => {
     try {
         // Get uploaded file list
         // Filtered in multer instance
@@ -222,31 +277,6 @@ exports.createPost = (req: Request, res: Response) => {
             );
         }
 
-        // Verify and decode the token
-        const jwt = req.headers?.authorization?.split(' ')[1];
-        const userId = verifyJwt(jwt);
-        if (!userId) {
-            deleteUploadedOnError();
-            return res.status(401).send('Not authorized');
-        }
-
-        // Get inputs
-        const body: CreatePost = req.body;
-        const title = sanatizeInputString(body.title);
-        const description = body.description.trim();
-        const category = body.category;
-        let subCategory = body.subCategory;
-        const district = body.district;
-
-        // Validate the inputs
-        if (!req.body || title.trim().length < 5 || title.trim().length > 255
-            || description.trim().length < 50 || description.trim().length > 2000
-            || (!isPositiveNumeric(subCategory) && !isPositiveNumeric(category)) || !isPositiveNumeric(district)
-        ) {
-            deleteUploadedOnError();
-            return res.status(400).json({ error: 'Bad payload' });
-        }
-
         // Shortens the error handling
         const handleError = (connection: any) => {
             try {
@@ -261,6 +291,14 @@ exports.createPost = (req: Request, res: Response) => {
                 return res.status(500).json({ error: 'Database error' });
             }
         };
+
+        // Get args from validation middleware
+        if (!req.args) {
+            deleteUploadedOnError();
+            return res.status(500).json({ error: 'Middleware problem' });
+        }
+        const { userId, title, description, category, district } = req.args;
+        let subCategory = req.args.subCategory;
 
         // Get connection for transaction and rollback
         pool.getConnection(async (connErr: any, connection: any) => {

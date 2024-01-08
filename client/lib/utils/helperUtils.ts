@@ -160,24 +160,27 @@ export const processImage = async (pic: File, index: number) => {
   const img = new Image();
   img.src = URL.createObjectURL(pic);
 
-  return new Promise<File | null>((resolve) => {
-    img.onload = () => {
-      // Create a brand new canvas and fill it with same sizes
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        resolve(null);
-        return;
-      }
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0, img.width, img.height);
+  return new Promise<File>((resolve) => {
+    try {
+      img.onload = () => {
+        // Create a brand new canvas and fill it with same sizes
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          return resolve(pic);
+        }
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
 
-      // Convert to blob, then file and resolve
-      canvas.toBlob((blob) => {
-        resolve(blob ? new File([blob], `img${index}.webp`, { type: 'image/webp' }) : null);
-      }, 'image/webp');
-    };
+        // Convert to blob, then file and resolve
+        canvas.toBlob((blob) => {
+          resolve(blob ? new File([blob], `img${index}.webp`, { type: 'image/webp' }) : pic);
+        }, 'image/webp');
+      };
+    } catch (error) {
+      resolve(pic);
+    }
   });
 };
 

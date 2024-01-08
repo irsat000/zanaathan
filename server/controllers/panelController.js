@@ -48,7 +48,7 @@ const checkAdminRole = (userId) => __awaiter(void 0, void 0, void 0, function* (
         pool.query(query, [userId], (qErr, results) => {
             if (qErr) {
                 // Todo: Log error
-                resolve(false);
+                return resolve(false);
             }
             resolve(results[0].Count > 0);
         });
@@ -62,7 +62,7 @@ const banUserPromise = (banDuration, reason, targetId, adminId) => __awaiter(voi
     return yield new Promise((resolve, reject) => {
         pool.query(query, [banDuration, reason, targetId, adminId], (qErr, results) => {
             if (qErr) {
-                resolve(null);
+                return resolve(null);
             }
             // Calculate the lift date using banDuration
             const liftDate = new Date();
@@ -78,7 +78,7 @@ const deleteUnapprovedPostsPromise = (userBanned, accountId, postId) => __awaite
     return yield new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
         // Make sure post id exists in case user is not banned
         if (!userBanned && !postId) {
-            resolve(false);
+            return resolve(false);
         }
         // Update post(s) to set current status to 4 (deleted)
         const filterType = userBanned ? 'CurrentStatusId = 5 AND AccountId' : 'Id';
@@ -86,7 +86,7 @@ const deleteUnapprovedPostsPromise = (userBanned, accountId, postId) => __awaite
         const query = `UPDATE job_posting SET CurrentStatusId = 4 WHERE ${filterType} = ?;`;
         pool.query(query, [filterId], (qErr, results) => {
             if (qErr) {
-                resolve(false);
+                return resolve(false);
             }
             // FOR IMAGES
             let queryPostImages = ` FROM job_posting_images JPI`;
@@ -99,14 +99,14 @@ const deleteUnapprovedPostsPromise = (userBanned, accountId, postId) => __awaite
             // Get images of the post(s) if there are any
             pool.query('SELECT JPI.Body' + queryPostImages, [filterId], (qErr, imageResults) => __awaiter(void 0, void 0, void 0, function* () {
                 if (qErr) {
-                    resolve(false);
+                    return resolve(false);
                 }
                 // Delete all these images
                 if (imageResults.length > 0) {
                     // Delete from database
                     pool.query('DELETE JPI' + queryPostImages, [filterId], (qErr, results) => {
                         if (qErr) {
-                            resolve(false);
+                            return resolve(false);
                         }
                         // Delete from storage
                         imageResults.forEach((obj) => {
@@ -115,7 +115,7 @@ const deleteUnapprovedPostsPromise = (userBanned, accountId, postId) => __awaite
                                 fs.unlinkSync(path);
                             }
                         });
-                        resolve(true);
+                        return resolve(true);
                     });
                 }
                 resolve(true);

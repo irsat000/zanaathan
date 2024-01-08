@@ -14,7 +14,7 @@ router.get('/get-cities', (0, helperUtils_1.rateLimiter)(), postController.getCi
 // To get districts of a specific city
 router.get('/get-districts', (0, helperUtils_1.rateLimiter)(), postController.getDistricts);
 // To create a new post
-router.post('/create-post', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 10 }), imageController_1.uploadPostImage, postController.createPost);
+router.post('/create-post', (0, helperUtils_1.rateLimiter)({ minute: 30, max: 5 }), imageController_1.uploadPostImage, postController.createPostValidation, postController.createPost);
 // To update post status by post owner
 router.put('/update-post-status/:postId', (0, helperUtils_1.rateLimiter)({ minute: 15, max: 15 }), postController.updatePostStatus);
 module.exports = router;

@@ -170,7 +170,15 @@ export default function NewPost() {
       });
       return;
     }
-    else if (processedImages.some(img => img!.size > 1000 * 1000 * 5)) {
+    // If image size reduction failed, get the replace with the old one
+    // NEEDS A FIX, A LIBRARY WOULD BE BETTER FOR SIZE REDUCTION
+    for (let i = 0; i < processedImages.length; i++) {
+      if (processedImages[i].size > formData.selectedImages[i].size) {
+        processedImages[i] = formData.selectedImages[i];
+      }
+    }
+    // Check if any image is bigger than 5 mb
+    if (processedImages.some(img => img.size > 1000 * 1000 * 5)) {
       handleGStatus('informationModal', {
         type: 'error',
         text: '5 MB altı fotoğraflar yüklenebilir.'
@@ -178,7 +186,7 @@ export default function NewPost() {
       return;
     };
     // Check if the images contain inappropriate content
-    const inappropriate = await checkUnallowed(formData.selectedImages)
+    const inappropriate = await checkUnallowed(processedImages as File[])
     if (inappropriate) {
       handleGStatus('informationModal', {
         type: 'error',
@@ -195,7 +203,7 @@ export default function NewPost() {
     multiPartFormData.append('category', formData.category);
     multiPartFormData.append('subCategory', formData.subCategory);
     multiPartFormData.append('district', formData.district);
-    processedImages.forEach(picFile => multiPartFormData.append('postImages', picFile!));
+    processedImages.forEach(picFile => multiPartFormData.append('postImages', picFile));
 
     // Check jwt
     const jwt = fetchJwt();
@@ -221,6 +229,8 @@ export default function NewPost() {
         let errorMessage = 'Bağlantıda hata.'
         if (res.status === 400) {
           errorMessage = 'Form verisi geçersiz, gönderi oluşturulamadı.'
+        } else if (res.status === 403) {
+          errorMessage = `Günde en fazla 3 gönderi oluşturabilirsiniz.`
         } else if (res.status === 413) {
           errorMessage = `En az bir fotoğraf çok büyük.`
         } else if (res.status === 417) {

@@ -22,7 +22,7 @@ interface SignupBody {
     password: string;
 }
 
-
+// Logs first time login date, IP and UserAgent
 const logClient = async (userId: number, req: Request): Promise<boolean> => {
     const ip = req.header('x-forwarded-for') || req.ip;
     const userAgent = req.get('User-Agent');
@@ -31,18 +31,32 @@ const logClient = async (userId: number, req: Request): Promise<boolean> => {
         return false;
     }
 
+    // Check if same exists
+    const checkQuery = `
+        SELECT COUNT(*) as Count FROM sign_in_log WHERE IpAddress = ? AND UserAgent = ? AND AccountId = ?;
+    `;
     // Log sign-in
-    const query = `
+    const loggingQuery = `
         INSERT INTO sign_in_log (IpAddress, UserAgent, Date, AccountId)
-        VALUES (?, ?, NOW(), ?)
+        VALUES (?, ?, NOW(), ?);
     `;
 
     return new Promise((resolve, reject) => {
-        pool.query(query, [ip, userAgent, userId], (qErr: any, results: any) => {
+        pool.query(checkQuery, [ip, userAgent, userId], (qErr: any, results: any) => {
             if (qErr) {
-                resolve(false);
+                return resolve(false);
             }
-            resolve(true);
+
+            if (results[0].Count > 0) {
+                return resolve(true);
+            }
+
+            pool.query(loggingQuery, [ip, userAgent, userId], (qErr: any, results: any) => {
+                if (qErr) {
+                    return resolve(false);
+                }
+                resolve(true);
+            });
         });
     });
 }
@@ -161,7 +175,7 @@ exports.signup = (req: Request, res: Response) => {
         const checkExistingQuery = 'SELECT * FROM account WHERE Username = ? OR (Email = ? AND IsEmailValid = 1)';
         pool.query(checkExistingQuery, [username, email], (qErr: any, results: any) => {
             if (qErr) {
-                return res.status(500).json({ error: 'Query error' });
+                return res.status(500).json({ error: 'Query error 1' });
             }
             if (results.length > 0) {
                 return res.status(409).json({ error: 'Username in use or email has verified account' });
@@ -181,7 +195,7 @@ exports.signup = (req: Request, res: Response) => {
             `;
             pool.query(signUpQuery, [username, fullName, email, 0, hash], async (qErr: any, results: any) => {
                 if (qErr) {
-                    return res.status(500).json({ error: 'Query error' });
+                    return res.status(500).json({ error: 'Query error 2' });
                 }
 
                 // Log
@@ -251,14 +265,14 @@ exports.authGoogle = (req: Request, res: Response) => {
                         MAX(CASE WHEN Ban.LiftDate > NOW() THEN Ban.LiftDate ELSE NULL END) AS BanLiftDate
                     FROM account A
                     LEFT JOIN account_role ON account_role.AccountId = A.Id
-                    LEFT JOIN role ON Role.Id = account_role.RoleId
+                    LEFT JOIN role ON role.Id = account_role.RoleId
                     LEFT JOIN user_bans Ban ON Ban.AccountId = A.Id
                     WHERE ExternalId = ? && OAuthProviderId = 1
                     GROUP BY A.Id;
                 `;
                 pool.query(checkQuery, [user.sub], async (qErr: any, results: any) => {
                     if (qErr) {
-                        return res.status(500).json({ error: 'Query error' });
+                        return res.status(500).json({ error: 'Query error 1' });
                     }
 
                     if (results.length > 0) {
@@ -308,7 +322,7 @@ exports.authGoogle = (req: Request, res: Response) => {
                         `;
                         pool.query(signUpQuery, [uniqueUsername, user.name, user.email, newAvatar, user.sub], async (qErr: any, results: any) => {
                             if (qErr) {
-                                return res.status(500).json({ error: 'Query error' });
+                                return res.status(500).json({ error: 'Query error 2' });
                             }
 
                             // Log

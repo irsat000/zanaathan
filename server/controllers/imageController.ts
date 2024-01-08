@@ -30,7 +30,7 @@ const postImageStorage = multer.diskStorage({
 export const uploadPostImage = (req: Request, res: Response, next: NextFunction) => {
     const multerMiddleware = multer({
         storage: postImageStorage,
-        limits: { fileSize: 1000 * 1000 * 5, files: 10 }, // 5 megabyte
+        limits: { fileSize: 1000 * 1000 * 5, files: 10 }, // 5 megabyte max each
         fileFilter: (req, file, cb) => {
             // Accept only images, excluding gif
             if (acceptedImgSet_1.includes(file.mimetype))
@@ -51,7 +51,7 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
                 // 10 image limit
                 return res.status(417).json({ error: 'Maximum of 10 files can be sent' });
             }
-            return next(multerError);
+            return res.status(500).json({ error: multerError });
         }
 
         // Get files

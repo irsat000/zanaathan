@@ -20,7 +20,7 @@ const checkAdminRole = async (userId: number): Promise<boolean> => {
         pool.query(query, [userId], (qErr: any, results: any) => {
             if (qErr) {
                 // Todo: Log error
-                resolve(false);
+                return resolve(false);
             }
             resolve(results[0].Count > 0);
         });
@@ -35,7 +35,7 @@ const banUserPromise = async (banDuration: number, reason: string, targetId: num
     return await new Promise<string | null>((resolve, reject) => {
         pool.query(query, [banDuration, reason, targetId, adminId], (qErr: any, results: any) => {
             if (qErr) {
-                resolve(null)
+                return resolve(null)
             }
 
             // Calculate the lift date using banDuration
@@ -54,7 +54,7 @@ const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: stri
     return await new Promise<boolean>(async (resolve, reject) => {
         // Make sure post id exists in case user is not banned
         if (!userBanned && !postId) {
-            resolve(false)
+            return resolve(false)
         }
         // Update post(s) to set current status to 4 (deleted)
         const filterType = userBanned ? 'CurrentStatusId = 5 AND AccountId' : 'Id'
@@ -62,7 +62,7 @@ const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: stri
         const query = `UPDATE job_posting SET CurrentStatusId = 4 WHERE ${filterType} = ?;`
         pool.query(query, [filterId], (qErr: any, results: any) => {
             if (qErr) {
-                resolve(false)
+                return resolve(false)
             }
 
             // FOR IMAGES
@@ -75,7 +75,7 @@ const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: stri
             // Get images of the post(s) if there are any
             pool.query('SELECT JPI.Body' + queryPostImages, [filterId], async (qErr: any, imageResults: any) => {
                 if (qErr) {
-                    resolve(false)
+                    return resolve(false)
                 }
 
                 // Delete all these images
@@ -83,7 +83,7 @@ const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: stri
                     // Delete from database
                     pool.query('DELETE JPI' + queryPostImages, [filterId], (qErr: any, results: any) => {
                         if (qErr) {
-                            resolve(false)
+                            return resolve(false)
                         }
 
                         // Delete from storage
@@ -94,7 +94,7 @@ const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: stri
                             }
                         })
 
-                        resolve(true)
+                        return resolve(true)
                     });
                 }
 

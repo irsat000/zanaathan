@@ -83,7 +83,7 @@ const uploadPostImage = (req, res, next) => {
                 // 10 image limit
                 return res.status(417).json({ error: 'Maximum of 10 files can be sent' });
             }
-            return next(multerError);
+            return res.status(500).json({ error: multerError });
         }
         // Get files
         const files = req.files;
