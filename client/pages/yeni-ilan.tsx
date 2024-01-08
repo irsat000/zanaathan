@@ -94,6 +94,9 @@ export default function NewPost() {
       ...formData,
       selectedImages: [...formData.selectedImages, ...newImages]
     });
+
+    // Reset the input field to prevent bugs
+    e.target.value = '';
   };
   // Change the dependencies of payload, city and category
   const handleExtraChange = (e: any) => {
@@ -280,7 +283,7 @@ export default function NewPost() {
           <div className="np-primary">
             <input className='np-title' type='text' name='title' placeholder='Başlık' onChange={handleFormChange} />
             <div className='description-container'>
-              <ReactQuill theme="snow" value={description} onChange={setDescription} className='np-description' />
+              <ReactQuill placeholder='Açıklama' theme="snow" value={description} onChange={setDescription} className='np-description' />
             </div>
             <NP_Thumbnails formData={formData} setFormData={setFormData} />
             <label className='np-image-upload'>
@@ -295,6 +298,7 @@ export default function NewPost() {
               <span className='text'>Fotoğraf Ekle</span>
             </label>
             <span className='image-upload-note'>Not: İlk sıradaki birincil fotoğraf olarak seçilir. Basılı tutup, sürükleyerek fotoğraf sırasını değiştirebilirsiniz.</span>
+            <span className='image-upload-note'>Not 2: Her biri 5 Megabyte&apos;ın altında olmak üzere en fazla 10 fotoğraf yükleyebilirsiniz.</span>
           </div>
           <div className="np-secondary">
             <select name='category' onChange={(e) => {
