@@ -630,6 +630,13 @@ body {
                     background-color: var(--button1-1);
                 }
             }
+            // Temporary
+            >button{
+                opacity: 0.4;
+                cursor: default;
+                background-color: rgba(0, 0, 0, 0.03);
+                pointer-events: none;
+            }
         }
 
         .oauth-legal-note {

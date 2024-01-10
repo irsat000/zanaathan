@@ -581,6 +581,12 @@ body select {
   border: 1px solid var(--button1-1);
   background-color: var(--button1-1);
 }
+.auth-modal-container .auth-modal .facebook-login-wrapper > button {
+  opacity: 0.4;
+  cursor: default;
+  background-color: rgba(0, 0, 0, 0.03);
+  pointer-events: none;
+}
 .auth-modal-container .auth-modal .oauth-legal-note {
   font-size: 0.7rem;
   font-weight: 300;

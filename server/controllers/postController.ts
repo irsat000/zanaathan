@@ -279,11 +279,11 @@ exports.createPostValidation = (req: CreatePostRequest, res: Response, next: Nex
                 subCategory,
                 district,
                 imageNameList
-            }
+            };
 
             // If the data is valid, move on to the next middleware
             next();
-        })
+        });
     } catch (error) {
         return res.status(500).json({ error });
     }

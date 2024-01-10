@@ -177,7 +177,7 @@ export default function PostDetails({
 	}
 
 	return (
-		<Template>
+		<Template title={postDetails?.Title}>
 			<div className='post-page'>
 				{categoryInfo.code && categoryInfo.name ?
 					<div className="breadcrumb-trail-container">

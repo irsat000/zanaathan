@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
 import * as fs from 'fs';
-import { acceptedImgSet_1, removeExtension } from '../utils/helperUtils';
+import { acceptedImgSet_1 } from '../utils/helperUtils';
 import sharp from 'sharp';
 const appDir = process.cwd();
 // CRITICAL - Sharp caches files which prevents deletion with EBUSY error, because they are "used".
@@ -17,7 +17,7 @@ sharp.cache(false);
 // Define storage for uploaded files
 const postImageStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // Set the directory where you want to store uploaded images
+        // Set the directory to store uploaded images
         cb(null, appDir + '/uploaded/post');
     },
     filename: function (req, file, cb) {

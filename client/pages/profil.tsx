@@ -214,7 +214,7 @@ export default function Home() {
         'Content-Type': 'application/json; charset=utf-8',
         Authorization: 'Bearer ' + jwt
       },
-      body: JSON.stringify({ contactInfo: contactInfoEdited })
+      body: JSON.stringify({ contactInfo: contactInfoEdited.slice(0, 5) })
     })
       .then(res => res.ok ? res.json() : Promise.reject(res))
       .then((data) => {

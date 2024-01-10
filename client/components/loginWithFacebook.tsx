@@ -68,6 +68,7 @@ const LoginWithFacebook: React.FC<{
             <LoginButton
                 onError={handleError}
                 onSuccess={handleSuccess}
+                disabled
             >
                 Facebook ile giriş
             </LoginButton>
