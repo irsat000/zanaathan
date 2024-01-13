@@ -51,7 +51,7 @@ sharp_1.default.cache(false);
 // Define storage for uploaded files
 const postImageStorage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
-        // Set the directory where you want to store uploaded images
+        // Set the directory to store uploaded images
         cb(null, appDir + '/uploaded/post');
     },
     filename: function (req, file, cb) {

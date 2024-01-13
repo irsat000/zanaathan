@@ -64,7 +64,7 @@ const LoginWithFacebook: React.FC<{
     }
 
     return (
-        <FacebookProvider appId="310085268503572">
+        <FacebookProvider appId="712646493958147">
             <LoginButton
                 onError={handleError}
                 onSuccess={handleSuccess}

@@ -321,9 +321,14 @@ export default function Category() {
     });
   }
 
+  // Get category title for better search engine results
+  let categoryTitle = categoryList.find(cate => cate.Code === category)?.Name;
+  if (categoryTitle) {
+    categoryTitle += categoryTitle === 'Diğer' ? ' ilanlar' : ' ilanları';
+  }
 
   return (
-    <Template>
+    <Template title={categoryTitle}>
       <div className={`filter-modal-container modal-container ${filterModalActive && 'active'}`} onMouseDown={handleFilterModalClose}>
         <div className="filter-modal" onMouseDown={(e) => {
           e.stopPropagation();

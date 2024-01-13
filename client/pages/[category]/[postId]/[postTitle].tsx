@@ -258,13 +258,15 @@ export default function PostDetails({
 								{postDetails.ContactInfo.map((info, i) =>
 									<span key={i} className='contact-information'>{info}</span>
 								)}
-								<div className='author-actions'>
-									<button className='message-request' onClick={() => handleMessageRequest(postDetails.A_Id)}>Mesaj Gönder</button>
-									{/* coming soon
+								{!postDetails.BanLiftDate ?
+									<div className='author-actions'>
+										<button className='message-request' onClick={() => handleMessageRequest(postDetails.A_Id)}>Mesaj Gönder</button>
+										{/* coming soon
 										<button className='report-button'>Şikayet et</button>*/}
-								</div>
+									</div>
+									: <></>}
 							</div>
-							<h2 className='title'>{postDetails.Title}</h2>
+							<h1 className='title'>{postDetails.Title}</h1>
 							<span className="date">{postDetails ? formatSecondsAgo(postDetails.SecondsAgo) : <></>}</span>
 							<span className='location'>{lowerCaseAllWordsExceptFirstLetters(postDetails.Location ?? "")}</span>
 						</div>

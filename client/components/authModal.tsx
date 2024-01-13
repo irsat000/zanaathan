@@ -190,9 +190,10 @@ const AuthModal = () => {
                 <div className="google-login-wrapper">
                     <LoginWithGoogle setAuthModalWarning={setAuthModalWarning} setAuthModalSuccess={setAuthModalSuccess} handleAuthModal={handleAuthModal} />
                 </div>
+                {/* maybe later
                 <div className="facebook-login-wrapper">
                     <LoginWithFacebook setAuthModalWarning={setAuthModalWarning} setAuthModalSuccess={setAuthModalSuccess} handleAuthModal={handleAuthModal} />
-                </div>
+                </div>*/}
                 <p className='oauth-legal-note'>3. parti ile hesap oluşturursanız <Link href='/politika' target='_blank'>Kullanım koşullarını</Link> ve <br /><Link href='/politika/gizlilik-politikasi' target='_blank'>Gizlilik Politikasını</Link> onaylamış sayılırsınız.</p>
                 {/*<span className='line-seperator'></span>
                 <span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>*/}

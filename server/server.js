@@ -213,14 +213,14 @@ app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 91 }),
         return res.send(sitemap);
     }
     try {
-        const smStream = new sitemap_1.SitemapStream({ hostname: 'http://localhost:3000/' });
+        const smStream = new sitemap_1.SitemapStream({ hostname: 'https://zanaathan.com/' });
         const pipeline = smStream.pipe((0, zlib_1.createGzip)());
         // pipe your entries or directly write them.
         smStream.write({ url: '/', changefreq: 'monthly', priority: 0.3 });
-        smStream.write({ url: '/politika', changefreq: 'monthly', priority: 0.2 });
-        smStream.write({ url: '/politika/gizlilik-politikasi', changefreq: 'monthly', priority: 0.2 });
-        smStream.write({ url: '/politika/cerez-politikasi', changefreq: 'monthly', priority: 0.2 });
-        smStream.write({ url: '/politika/fb-data-deletion', changefreq: 'monthly', priority: 0.2 });
+        /*smStream.write({ url: '/politika', changefreq: 'monthly', priority: 0.2 })
+        smStream.write({ url: '/politika/gizlilik-politikasi', changefreq: 'monthly', priority: 0.2 })
+        smStream.write({ url: '/politika/cerez-politikasi', changefreq: 'monthly', priority: 0.2 })
+        smStream.write({ url: '/politika/fb-data-deletion', changefreq: 'monthly', priority: 0.2 })*/
         // Get category list
         const codesQuery = `SELECT Code FROM category;`;
         pool.query(codesQuery, (qErr, results) => {

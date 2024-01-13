@@ -198,51 +198,12 @@ exports.getDistricts = (req, res) => {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
 };
+// Deletes the uploaded images when called
+const deleteUploadedOnError = (imageNameList) => {
+    imageNameList.forEach((file) => fs.existsSync(file.path) && fs.unlinkSync(file.path));
+};
 exports.createPostValidation = (req, res, next) => {
     var _a, _b;
-    // Verify and decode the token
-    const jwt = (_b = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
-    const userId = (0, userUtils_1.verifyJwt)(jwt);
-    if (!userId) {
-        return res.status(401).send('Not authorized');
-    }
-    // Get inputs
-    const body = req.body;
-    const title = (0, helperUtils_1.sanatizeInputString)(body.title);
-    const description = body.description.trim();
-    const category = body.category;
-    let subCategory = body.subCategory;
-    const district = body.district;
-    // Validate the inputs
-    if (!req.body || title.trim().length < 5 || title.trim().length > 255
-        || description.trim().length < 50 || description.trim().length > 2000
-        || (!(0, helperUtils_1.isPositiveNumeric)(subCategory) && !(0, helperUtils_1.isPositiveNumeric)(category)) || !(0, helperUtils_1.isPositiveNumeric)(district)) {
-        return res.status(400).json({ error: 'Bad payload' });
-    }
-    // Check if the user finished the daily quota of post creation (3)
-    const query = `SELECT Count(*) as Count FROM job_posting WHERE AccountId = ? AND CreatedAt >= NOW() - INTERVAL 1 DAY;`;
-    pool.query(query, [userId], (qErr, results) => {
-        if (qErr) {
-            return res.status(500).json({ error: 'Query error' });
-        }
-        if (results[0].Count > 2) {
-            // 3 posts per day limit
-            return res.status(403).json({ error: 'Can only create 3 posts per day' });
-        }
-        // Double it and give it to the next person
-        req.args = {
-            userId,
-            title,
-            description,
-            category,
-            subCategory,
-            district
-        };
-        // If the data is valid, move on to the next middleware
-        next();
-    });
-};
-exports.createPost = (req, res) => {
     try {
         // Get uploaded file list
         // Filtered in multer instance
@@ -253,17 +214,69 @@ exports.createPost = (req, res) => {
                 path: file.path // Full directory path
             };
         }) : [];
-        // Deletes the uploaded images when called
-        const deleteUploadedOnError = () => {
-            imageNameList.forEach((file) => fs.existsSync(file.path) && fs.unlinkSync(file.path));
-        };
+        // Verify and decode the token
+        const jwt = (_b = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
+        const userId = (0, userUtils_1.verifyJwt)(jwt);
+        if (!userId) {
+            deleteUploadedOnError(imageNameList);
+            return res.status(401).send('Not authorized');
+        }
+        // Get inputs
+        const body = req.body;
+        const title = (0, helperUtils_1.sanatizeInputString)(body.title);
+        const description = body.description.trim();
+        const category = body.category;
+        let subCategory = body.subCategory;
+        const district = body.district;
+        // Validate the inputs
+        if (!req.body || title.trim().length < 5 || title.trim().length > 255
+            || description.trim().length < 50 || description.trim().length > 2000
+            || (!(0, helperUtils_1.isPositiveNumeric)(subCategory) && !(0, helperUtils_1.isPositiveNumeric)(category)) || !(0, helperUtils_1.isPositiveNumeric)(district)) {
+            deleteUploadedOnError(imageNameList);
+            return res.status(400).json({ error: 'Bad payload' });
+        }
+        // Check if the user finished the daily quota of post creation (3)
+        const query = `SELECT Count(*) as Count FROM job_posting WHERE AccountId = ? AND CreatedAt >= NOW() - INTERVAL 1 DAY;`;
+        pool.query(query, [userId], (qErr, results) => {
+            if (qErr) {
+                deleteUploadedOnError(imageNameList);
+                return res.status(500).json({ error: 'Query error' });
+            }
+            if (results[0].Count > 2) {
+                // 3 posts per day limit
+                deleteUploadedOnError(imageNameList);
+                return res.status(403).json({ error: 'Can only create 3 posts per day' });
+            }
+            // Double it and give it to the next person
+            req.args = {
+                userId,
+                title,
+                description,
+                category,
+                subCategory,
+                district,
+                imageNameList
+            };
+            // If the data is valid, move on to the next middleware
+            next();
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error });
+    }
+};
+exports.createPost = (req, res) => {
+    try {
+        // Get args from validation middleware
+        const { userId, title, description, category, district, imageNameList } = req.args;
+        let subCategory = req.args.subCategory;
         // Shortens the error handling
         const handleError = (connection) => {
             try {
                 // Release connection
                 connection.release();
                 // Delete uploaded images on error
-                deleteUploadedOnError();
+                deleteUploadedOnError(imageNameList);
             }
             catch (error) {
                 // Do nothing
@@ -273,13 +286,6 @@ exports.createPost = (req, res) => {
                 return res.status(500).json({ error: 'Database error' });
             }
         };
-        // Get args from validation middleware
-        if (!req.args) {
-            deleteUploadedOnError();
-            return res.status(500).json({ error: 'Middleware problem' });
-        }
-        const { userId, title, description, category, district } = req.args;
-        let subCategory = req.args.subCategory;
         // Get connection for transaction and rollback
         pool.getConnection((connErr, connection) => __awaiter(void 0, void 0, void 0, function* () {
             if (connErr)
