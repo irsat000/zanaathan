@@ -237,7 +237,9 @@ CREATE TABLE `notification` (
     `NotificationTypeId` INT NULL,
     `AccountId` INT NOT NULL,
     `IsSeen` BIT NOT NULL,
+    `PostId` INT NULL,
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_Notification_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`),
     CONSTRAINT `FK_Notification_NotificationType` FOREIGN KEY (`NotificationTypeId`) REFERENCES `notification_type`(`Id`)
 );
+

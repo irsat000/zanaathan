@@ -697,6 +697,84 @@ body {
     }
 }
 
+.notification-modal-container {
+    padding-top: 10vh;
+    padding-bottom: 50px;
+
+    .notification-modal {
+        animation: fade-in 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px 20px 20px;
+        background-color: var(--primary-bg-color);
+        position: relative;
+        border-radius: 10px;
+        max-width: 260px;
+        -webkit-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+        box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+
+        .notification-content {
+            display: flex;
+            flex-direction: column;
+
+            .post-expiration-question {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                h4 {
+                    font-weight: 400;
+                    font-size: 1.2rem;
+                    font-family: 'Poppins', sans-serif;
+                    padding: 0;
+                }
+
+                p {
+                    font-size: 1.1rem;
+                    font-weight: 300;
+                }
+            }
+
+            .post-expiration-actions {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+                gap: 8px;
+                margin: 24px 0 8px;
+
+                button {
+                    border: none;
+                    border-radius: 6px;
+                    padding: 8px 18px;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    font-family: 'Fira Sans', sans-serif;
+                    font-weight: 300;
+                    color: #ffffff;
+                }
+
+                .negative {
+                    background-color: var(--button3-1);
+
+                    &:hover {
+                        background-color: var(--button3-2);
+                    }
+                }
+
+                .positive {
+                    background-color: var(--button2-1);
+
+                    &:hover {
+                        background-color: var(--button2-2);
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 .drawer-container.active {
@@ -1800,6 +1878,13 @@ footer {
     }
 }
 
+// Most phones
+@media (min-width: 340px) {
+    .notification-modal-container .notification-modal {
+        max-width: 320px;
+    }
+}
+
 // Small devices (landscape phones, 576px and up)
 @media (min-width: 576px) {
     .admin-modal-container .admin-modal {
@@ -1807,6 +1892,10 @@ footer {
     }
 
     .auth-modal-container .auth-modal {
+        max-width: 360px;
+    }
+
+    .notification-modal-container .notification-modal {
         max-width: 360px;
     }
 }
@@ -1919,6 +2008,10 @@ footer {
                 display: block;
             }
         }
+    }
+
+    .notification-modal-container .notification-modal {
+        max-width: 600px;
     }
 
     header>.header-container {

@@ -1,10 +1,11 @@
 
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { Bell, ChatDots, CheckCircle, List, PersonPlus, PlusSquare, XCircle, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
+import notificationTypes from '@/assets/site/notificationTypes.json'
 import AuthModal from './authModal'
 import { useUser } from '@/context/userContext'
 import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
@@ -14,6 +15,7 @@ import { AuthModalState, useGStatus } from '@/context/globalContext'
 import { avatarLink } from '@/lib/utils/helperUtils'
 import { HashLoader } from 'react-spinners'
 import Router from 'next/router'
+import NotificationModal from './notificationModal'
 
 
 interface SearchRecommendation {
@@ -21,6 +23,12 @@ interface SearchRecommendation {
 	link: string;
 }
 
+export type NotificationType = 'postExpiration';
+export interface UserNotification {
+	type: NotificationType,
+	isSeen: boolean,
+	extra: any
+}
 
 const Template: React.FC<{
 	children: ReactNode,
@@ -39,8 +47,37 @@ const Template: React.FC<{
 	// User contacts context
 	const { userContacts, setUserContacts } = useContacts();
 	// General status context
-	const { gStatus, setGStatus, handleGStatus } = useGStatus();
-
+	const { gStatus, handleGStatus } = useGStatus();
+	// User's notifications 
+	const [notifications, setNotifications] = useState<UserNotification[]>([
+		{
+			type: "postExpiration",
+			isSeen: Math.random() > 0.5 ? true : false,
+			extra: {
+				postId: 1,
+				postTitle: "Klimam bozuldu, soğutuyor ama ısıtmıyor.",
+				postCreatedAt: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
+			}
+		},
+		{
+			type: "postExpiration",
+			isSeen: Math.random() > 0.5 ? true : false,
+			extra: {
+				postId: 2,
+				postTitle: "100 metrekare evime boya yapılacak.",
+				postCreatedAt: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
+			}
+		},
+		{
+			type: "postExpiration",
+			isSeen: Math.random() > 0.5 ? true : false,
+			extra: {
+				postId: 3,
+				postTitle: "1. kattaki evime demir parmaklık takılacak.",
+				postCreatedAt: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
+			}
+		}
+	]);
 
 	// User context
 	const { userData, setUserData } = useUser();
@@ -69,7 +106,8 @@ const Template: React.FC<{
 
 	const [drawerActive, setDrawerActive] = useState(false); // Drawer for mobile
 	const [userMenuActive, setUserMenuActive] = useState(false); // User menu drop down
-	const [notificationBoxActive, setNotificationBoxActive] = useState(false); // Notification box
+	const [notificationBoxActive, setNotificationBoxActive] = useState(false); // Notification list box
+	const [activeNotificationIndex, setActiveNotificationIndex] = useState<number | null>(null); // Notification details modal on/off and index info
 
 	// Will close the drawer and open auth modal
 	const handleLoginModal = (type: AuthModalState) => {
@@ -165,6 +203,9 @@ const Template: React.FC<{
 			<div className='page-content'>
 				{userData ? <Chatbot /> : <></>}
 				<AuthModal />
+				{activeNotificationIndex !== null && notifications[activeNotificationIndex]
+					? <NotificationModal activeNotificationIndex={activeNotificationIndex} setActiveNotificationIndex={setActiveNotificationIndex} notification={notifications[activeNotificationIndex]} />
+					: <></>}
 				{gStatus.informationModal ?
 					<div className={`information-modal-container modal-container ${gStatus.informationModal ? 'active' : ''}`}
 						onClick={() => handleGStatus('informationModal', null)}>
@@ -177,7 +218,6 @@ const Template: React.FC<{
 										: gStatus.informationModal.type === 'loading'
 											? <HashLoader color="#36d7b7" />
 											: <></>}
-
 							</div>
 							<span dangerouslySetInnerHTML={{ __html: gStatus.informationModal.text }} />
 							<button type='button' className='okay-button' onClick={() => handleGStatus('informationModal', null)}>Tamam</button>
@@ -276,27 +316,15 @@ const Template: React.FC<{
 										</button>
 										<div className={`notification-container ${notificationBoxActive ? 'active' : ''}`}>
 											<h3 className='notification-box-header'>Bildirimler</h3>
-											<div className='notification-item'>
-												<span className="unread active"></span>
-												<div className="notification-details">
-													<h4>Example title</h4>
-													<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, aspernatur nisi doloribus aperiam facilis exercitationem temporibus placeat quis recusandae soluta suscipit tenetur obcaecati necessitatibus modi rerum laboriosam. Qui, eius non?</p>
+											{notifications.map((not, index) =>
+												<div className='notification-item' onClick={() => { console.log(index, notifications[index]); setActiveNotificationIndex(index) }}>
+													<span className={`unread ${not.isSeen ? '' : 'active'}`}></span>
+													<div className="notification-details">
+														<h4>{notificationTypes[not.type].title}</h4>
+														<p>{notificationTypes[not.type].description}</p>
+													</div>
 												</div>
-											</div>
-											<div className='notification-item'>
-												<span className="unread active"></span>
-												<div className="notification-details">
-													<h4>Example title 2</h4>
-													<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed perspiciatis qui quam similique magnam dignissimos quibusdam eligendi. Reiciendis in animi amet, suscipit quidem quas laboriosam nobis, aliquam, ea facere natus?</p>
-												</div>
-											</div>
-											<div className='notification-item'>
-												<span className="unread"></span>
-												<div className="notification-details">
-													<h4>Example title 3</h4>
-													<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam architecto, quas dolore nulla beatae, voluptas eveniet iste aspernatur odio voluptatibus itaque distinctio consequuntur deleniti aperiam laboriosam, omnis corrupti? Nulla, itaque.</p>
-												</div>
-											</div>
+											)}
 										</div>
 									</div>
 								</div>

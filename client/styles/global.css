@@ -616,6 +616,72 @@ body select {
   text-decoration: underline;
 }
 
+.notification-modal-container {
+  padding-top: 10vh;
+  padding-bottom: 50px;
+}
+.notification-modal-container .notification-modal {
+  animation: fade-in 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px 20px;
+  background-color: var(--primary-bg-color);
+  position: relative;
+  border-radius: 10px;
+  max-width: 260px;
+  box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+}
+.notification-modal-container .notification-modal .notification-content {
+  display: flex;
+  flex-direction: column;
+}
+.notification-modal-container .notification-modal .notification-content .post-expiration-question {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.notification-modal-container .notification-modal .notification-content .post-expiration-question h4 {
+  font-weight: 400;
+  font-size: 1.2rem;
+  font-family: "Poppins", sans-serif;
+  padding: 0;
+}
+.notification-modal-container .notification-modal .notification-content .post-expiration-question p {
+  font-size: 1.1rem;
+  font-weight: 300;
+}
+.notification-modal-container .notification-modal .notification-content .post-expiration-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 8px;
+  margin: 24px 0 8px;
+}
+.notification-modal-container .notification-modal .notification-content .post-expiration-actions button {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  color: #ffffff;
+}
+.notification-modal-container .notification-modal .notification-content .post-expiration-actions .negative {
+  background-color: var(--button3-1);
+}
+.notification-modal-container .notification-modal .notification-content .post-expiration-actions .negative:hover {
+  background-color: var(--button3-2);
+}
+.notification-modal-container .notification-modal .notification-content .post-expiration-actions .positive {
+  background-color: var(--button2-1);
+}
+.notification-modal-container .notification-modal .notification-content .post-expiration-actions .positive:hover {
+  background-color: var(--button2-2);
+}
+
 .drawer-container.active {
   display: block;
 }
@@ -1552,11 +1618,19 @@ footer .copyright p {
   font-weight: 300;
 }
 
+@media (min-width: 340px) {
+  .notification-modal-container .notification-modal {
+    max-width: 320px;
+  }
+}
 @media (min-width: 576px) {
   .admin-modal-container .admin-modal {
     max-width: 360px;
   }
   .auth-modal-container .auth-modal {
+    max-width: 360px;
+  }
+  .notification-modal-container .notification-modal {
     max-width: 360px;
   }
 }
@@ -1636,6 +1710,9 @@ footer .copyright p {
   }
   .auth-modal-container .auth-modal .oauth-legal-note br {
     display: block;
+  }
+  .notification-modal-container .notification-modal {
+    max-width: 600px;
   }
   header > .header-container {
     height: 80px;
