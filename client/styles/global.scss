@@ -630,8 +630,9 @@ body {
                     background-color: var(--button1-1);
                 }
             }
+
             // Temporary
-            >button{
+            >button {
                 opacity: 0.4;
                 cursor: default;
                 background-color: rgba(0, 0, 0, 0.03);
@@ -1405,8 +1406,7 @@ header>.header-container {
             gap: 12px;
             align-items: center;
 
-            a,
-            button {
+            .shortcut-button {
                 all: unset;
                 display: flex;
                 font-size: 1.4rem;
@@ -1416,6 +1416,103 @@ header>.header-container {
 
                 &:hover {
                     transform: scale(1.05);
+                }
+            }
+
+            .notification-wrapper {
+                position: relative;
+
+                .notification-container.active {
+                    display: flex;
+                }
+
+                .notification-container {
+                    display: none;
+                    position: absolute;
+                    top: 36px;
+                    right: 0;
+                    min-width: 400px;
+                    max-width: 30vw;
+                    max-height: 300px;
+                    flex-direction: column;
+                    z-index: 195;
+                    background-color: var(--primary-bg-color);
+                    border: 1px solid var(--primary-light-border);
+                    border-radius: 10px;
+                    overflow-y: auto;
+                    overscroll-behavior: none;
+                    -webkit-box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.2);
+                    -moz-box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.2);
+                    box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.2);
+
+                    .notification-box-header {
+                        font-size: 1.3rem;
+                        font-weight: 500;
+                        font-family: 'Poppins', sans-serif;
+                        padding: 13px 10px 10px;
+                        border-bottom: 1px solid var(--primary-light-border);
+                    }
+
+                    .notification-item {
+                        display: flex;
+                        flex-direction: row;
+                        cursor: pointer;
+                        padding-right: 28px;
+
+                        &:hover {
+                            background-color: rgba(192, 203, 255, 0.1);
+                        }
+
+                        &:last-child .notification-details {
+                            border-bottom: unset;
+                        }
+
+                        .unread {
+                            opacity: 0;
+                            border-radius: 50%;
+                            background-color: #b669fb;
+                            height: 8px;
+                            width: 8px;
+                            flex-shrink: 0;
+                            margin: 15px 10px 0 10px;
+                        }
+
+                        .unread.active {
+                            opacity: 1;
+                        }
+
+                        .notification-details {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 2px;
+                            padding: 6px 0 10px;
+                            border-bottom: 1px solid var(--primary-light-border);
+
+                            h4 {
+                                font-size: 1rem;
+                                font-weight: 400;
+                                font-family: 'Poppins', sans-serif;
+                                max-height: 36px;
+                                overflow: hidden;
+                                display: -webkit-box;
+                                -webkit-box-orient: vertical;
+                                -webkit-line-clamp: 2;
+                                text-overflow: ellipsis;
+                            }
+
+                            p {
+                                font-size: 0.9rem;
+                                font-weight: 300;
+                                font-family: 'Fira sans', sans-serif;
+                                max-height: 80px;
+                                overflow: hidden;
+                                display: -webkit-box;
+                                -webkit-box-orient: vertical;
+                                -webkit-line-clamp: 3;
+                                text-overflow: ellipsis;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1866,6 +1963,21 @@ footer {
 
         .chatbot-body {
             width: 600px;
+        }
+    }
+
+    header>.header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container {
+        max-height: 400px;
+
+        .notification-item .notification-details {
+            h4 {
+                font-size: 1.1rem;
+            }
+
+            p {
+                font-size: 1rem;
+                max-height: 90px;
+            }
         }
     }
 }

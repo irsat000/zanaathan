@@ -12,13 +12,26 @@ INSERT INTO `contact_type`(`Id`, `Body`) VALUES(5, 'İnstagram');
 INSERT INTO `oauth_provider`(`Id`, `Body`) VALUES(1, 'Google');
 INSERT INTO `oauth_provider`(`Id`, `Body`) VALUES(2, 'Facebook');
 
+INSERT INTO `notification_type`(`Id`, `Code`, `Title`, `Description`)
+	VALUES(1, 'postExpiration',
+	'İlanınız işlem bekliyor',
+    'Lütfen ilanınızın son durumu hakkında bizi bilgilendirin. Bu bildirime tıklayın.');
 
-
+/*--*/
 INSERT INTO `current_status`(`Id`, `Body`) VALUES(1, 'Cevap bekliyor');
 INSERT INTO `current_status`(`Id`, `Body`) VALUES(2, 'Anlaşıldı');
 INSERT INTO `current_status`(`Id`, `Body`) VALUES(3, 'Tamamlandı');
 INSERT INTO `current_status`(`Id`, `Body`) VALUES(4, 'Kaldırıldı');
 INSERT INTO `current_status`(`Id`, `Body`) VALUES(5, 'Onay bekliyor');
+
+INSERT INTO `expiration_status`(`Id`, `Body`) VALUES(1, 'Warning');
+INSERT INTO `expiration_status`(`Id`, `Body`) VALUES(2, 'Extended');
+/*--*/
+INSERT INTO `role`(`Id`, `RoleCode`) VALUES(1, 'developer');
+INSERT INTO `role`(`Id`, `RoleCode`) VALUES(2, 'admin');
+INSERT INTO `role`(`Id`, `RoleCode`) VALUES(3, 'moderator');
+
+
 
 
 SET SQL_SAFE_UPDATES = 0;
@@ -32,31 +45,28 @@ select * from current_status;
 
 
 
-INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(1, 'developer');
-INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(2, 'admin');
-INSERT INTO `Role`(`Id`, `RoleCode`) VALUES(3, 'moderator');
 
 
-INSERT INTO `Admin`(`Username`, `Password`, `RoleId`) VALUES('', '', 2);
+INSERT INTO `admin`(`Username`, `Password`, `RoleId`) VALUES('', '', 2);
 
 
 
 
 
-INSERT INTO `Category`(`Id`, `Code`) VALUES(1, 'elektrik');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(2, 'isitma-ve-sogutma');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(3, 'ahsap');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(4, 'metal-kaynak');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(5, 'sihhi-tesisat');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(6, 'ev-tadilati');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(7, 'boya-badana');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(8, 'beyaz-esya-tamiri');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(9, 'elektronik-onarimi');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(30, 'temizlik');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(31, 'bag-bahce');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(32, 'nakliye-ve-tasima');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(50, 'hurda-satis');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(60, 'diger');
+INSERT INTO `category`(`Id`, `Code`) VALUES(1, 'elektrik');
+INSERT INTO `category`(`Id`, `Code`) VALUES(2, 'isitma-ve-sogutma');
+INSERT INTO `category`(`Id`, `Code`) VALUES(3, 'ahsap');
+INSERT INTO `category`(`Id`, `Code`) VALUES(4, 'metal-kaynak');
+INSERT INTO `category`(`Id`, `Code`) VALUES(5, 'sihhi-tesisat');
+INSERT INTO `category`(`Id`, `Code`) VALUES(6, 'ev-tadilati');
+INSERT INTO `category`(`Id`, `Code`) VALUES(7, 'boya-badana');
+INSERT INTO `category`(`Id`, `Code`) VALUES(8, 'beyaz-esya-tamiri');
+INSERT INTO `category`(`Id`, `Code`) VALUES(9, 'elektronik-onarimi');
+INSERT INTO `category`(`Id`, `Code`) VALUES(30, 'temizlik');
+INSERT INTO `category`(`Id`, `Code`) VALUES(31, 'bag-bahce');
+INSERT INTO `category`(`Id`, `Code`) VALUES(32, 'nakliye-ve-tasima');
+INSERT INTO `category`(`Id`, `Code`) VALUES(50, 'hurda-satis');
+INSERT INTO `category`(`Id`, `Code`) VALUES(60, 'diger');
 
 INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(10, 'Elektrik', 1);
 INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(20, 'Isıtma ve Soğutma', 2);
@@ -81,18 +91,18 @@ INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(600, 'Diğer', 60)
 
 
 
-INSERT INTO `Category`(`Id`, `Code`) VALUES(1, 'boya-badana');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(2, 'sihhi-tesisat');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(3, 'nakliye-ve-tasima');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(4, 'elektrik');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(5, 'marangozluk');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(6, 'temizlik');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(7, 'insaat-ve-tadilat');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(8, 'sogutma-ve-isitma');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(9, 'bahce-bakimi');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(10, 'beyaz-esya-tamiri');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(11, 'elektronik-onarimi');
-INSERT INTO `Category`(`Id`, `Code`) VALUES(12, 'diger');
+INSERT INTO `category`(`Id`, `Code`) VALUES(1, 'boya-badana');
+INSERT INTO `category`(`Id`, `Code`) VALUES(2, 'sihhi-tesisat');
+INSERT INTO `category`(`Id`, `Code`) VALUES(3, 'nakliye-ve-tasima');
+INSERT INTO `category`(`Id`, `Code`) VALUES(4, 'elektrik');
+INSERT INTO `category`(`Id`, `Code`) VALUES(5, 'marangozluk');
+INSERT INTO `category`(`Id`, `Code`) VALUES(6, 'temizlik');
+INSERT INTO `category`(`Id`, `Code`) VALUES(7, 'insaat-ve-tadilat');
+INSERT INTO `category`(`Id`, `Code`) VALUES(8, 'sogutma-ve-isitma');
+INSERT INTO `category`(`Id`, `Code`) VALUES(9, 'bahce-bakimi');
+INSERT INTO `category`(`Id`, `Code`) VALUES(10, 'beyaz-esya-tamiri');
+INSERT INTO `category`(`Id`, `Code`) VALUES(11, 'elektronik-onarimi');
+INSERT INTO `category`(`Id`, `Code`) VALUES(12, 'diger');
 # UPDATE `Category` SET `Code` = '' WHERE Id = 0;
 
 # Boya Badana

@@ -1220,17 +1220,98 @@ header > .header-container .user-container .shortcut-wrapper {
   gap: 12px;
   align-items: center;
 }
-header > .header-container .user-container .shortcut-wrapper a,
-header > .header-container .user-container .shortcut-wrapper button {
+header > .header-container .user-container .shortcut-wrapper .shortcut-button {
   all: unset;
   display: flex;
   font-size: 1.4rem;
   cursor: pointer;
   padding: 6px;
 }
-header > .header-container .user-container .shortcut-wrapper a:hover,
-header > .header-container .user-container .shortcut-wrapper button:hover {
+header > .header-container .user-container .shortcut-wrapper .shortcut-button:hover {
   transform: scale(1.05);
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper {
+  position: relative;
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container.active {
+  display: flex;
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container {
+  display: none;
+  position: absolute;
+  top: 36px;
+  right: 0;
+  min-width: 400px;
+  max-width: 30vw;
+  max-height: 300px;
+  flex-direction: column;
+  z-index: 195;
+  background-color: var(--primary-bg-color);
+  border: 1px solid var(--primary-light-border);
+  border-radius: 10px;
+  overflow-y: auto;
+  overscroll-behavior: none;
+  box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.2);
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-box-header {
+  font-size: 1.3rem;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
+  padding: 13px 10px 10px;
+  border-bottom: 1px solid var(--primary-light-border);
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item {
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  padding-right: 28px;
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item:hover {
+  background-color: rgba(192, 203, 255, 0.1);
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item:last-child .notification-details {
+  border-bottom: unset;
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .unread {
+  opacity: 0;
+  border-radius: 50%;
+  background-color: #b669fb;
+  height: 8px;
+  width: 8px;
+  flex-shrink: 0;
+  margin: 15px 10px 0 10px;
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .unread.active {
+  opacity: 1;
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .notification-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 0 10px;
+  border-bottom: 1px solid var(--primary-light-border);
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .notification-details h4 {
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+  max-height: 36px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+}
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .notification-details p {
+  font-size: 0.9rem;
+  font-weight: 300;
+  font-family: "Fira sans", sans-serif;
+  max-height: 80px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  text-overflow: ellipsis;
 }
 header > .header-container .user-container .user-menu-button {
   all: unset;
@@ -1587,6 +1668,16 @@ footer .copyright p {
   }
   .chatbot-container .chatbot .chatbot-body {
     width: 600px;
+  }
+  header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container {
+    max-height: 400px;
+  }
+  header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .notification-details h4 {
+    font-size: 1.1rem;
+  }
+  header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .notification-details p {
+    font-size: 1rem;
+    max-height: 90px;
   }
 }
 @media (min-width: 1200px) {

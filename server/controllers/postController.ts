@@ -329,7 +329,7 @@ exports.createPost = (req: CreatePostRequest, res: Response) => {
                 subCategory = newId!.toString();
             }
 
-            const query = "INSERT INTO job_posting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 5, ?);";
+            const query = "INSERT INTO job_posting(Title, CreatedAt, LastStatusUpdate, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), NOW(), ?, ?, ?, 5, ?);";
             connection.query(query, [title, description, district, subCategory, userId], (qErr: any, results: any) => {
                 if (qErr) connection.rollback(() => handleError(connection));
 
@@ -408,7 +408,7 @@ exports.updatePostStatus = (req: Request, res: Response) => {
             // Update post current status
             const query = `
                 UPDATE job_posting 
-                SET CurrentStatusId = ? 
+                SET CurrentStatusId = ?, LastStatusUpdate = NOW()
                 WHERE Id = ?;
             `;
             pool.query(query, [body.newStatusId, userId, postId], (qErr: any, results: any) => {

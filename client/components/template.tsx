@@ -2,7 +2,7 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { ChatDots, CheckCircle, List, PersonPlus, PlusSquare, XCircle, XLg } from 'react-bootstrap-icons'
+import { Bell, ChatDots, CheckCircle, List, PersonPlus, PlusSquare, XCircle, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import AuthModal from './authModal'
@@ -69,6 +69,7 @@ const Template: React.FC<{
 
 	const [drawerActive, setDrawerActive] = useState(false); // Drawer for mobile
 	const [userMenuActive, setUserMenuActive] = useState(false); // User menu drop down
+	const [notificationBoxActive, setNotificationBoxActive] = useState(false); // Notification box
 
 	// Will close the drawer and open auth modal
 	const handleLoginModal = (type: AuthModalState) => {
@@ -78,23 +79,25 @@ const Template: React.FC<{
 		handleGStatus('authModalActive', type);
 	}
 
-	// Handle clicking outside user-menu
-	const userMenuRef = useRef<HTMLDivElement>(null);
+	// Handle clicking outside
 	useEffect(() => {
 		const handleDocumentClick = (e: any) => {
-			// Check if the click target is outside of the user-menu dropdown div and user-menu button
-			if (userMenuActive && !userMenuRef.current?.contains(e.target) && !e.target.closest('.user-menu-button')) {
+			// Check if the click target is outside of the relevant elements
+			if (userMenuActive && !e.target.closest('.user-menu') && !e.target.closest('.user-menu-button')) {
 				setUserMenuActive(false);
+			}
+			if (notificationBoxActive && !e.target.closest('.notification-wrapper')) {
+				setNotificationBoxActive(false);
 			}
 		};
 
 		// Record clicks
-		document.addEventListener("click", handleDocumentClick);
+		document.addEventListener("mousedown", handleDocumentClick);
 
 		return () => {
-			document.removeEventListener("click", handleDocumentClick);
+			document.removeEventListener("mousedown", handleDocumentClick);
 		};
-	}, [userMenuActive]);
+	}, [userMenuActive, notificationBoxActive]);
 
 	// Search feature
 	const [searchBar, setSearchBar] = useState('');
@@ -259,18 +262,43 @@ const Template: React.FC<{
 						<div className="user-container">
 							{userData ? <>
 								<div className="shortcut-wrapper">
-									<Link href={'/yeni-ilan'}>
+									<Link href={'/yeni-ilan'} className='shortcut-button'>
 										<PlusSquare />
 									</Link>
-									<button className='open-chatbot-button' onClick={() => handleGStatus('chatbotActive', !gStatus.chatbotActive)}>
+									<button className='open-chatbot-button shortcut-button' onClick={() => handleGStatus('chatbotActive', !gStatus.chatbotActive)}>
 										<div className={`icon-wrap ${hasNotification ? 'icon-alert' : ''}`}>
 											<ChatDots />
 										</div>
 									</button>
-									{/* coming soon
-									<button onClick={() => alert("Hi!")}>
-										<Bell />
-									</button>*/}
+									<div className="notification-wrapper">
+										<button className='shortcut-button' onClick={() => setNotificationBoxActive(!notificationBoxActive)}>
+											<Bell />
+										</button>
+										<div className={`notification-container ${notificationBoxActive ? 'active' : ''}`}>
+											<h3 className='notification-box-header'>Bildirimler</h3>
+											<div className='notification-item'>
+												<span className="unread active"></span>
+												<div className="notification-details">
+													<h4>Example title</h4>
+													<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, aspernatur nisi doloribus aperiam facilis exercitationem temporibus placeat quis recusandae soluta suscipit tenetur obcaecati necessitatibus modi rerum laboriosam. Qui, eius non?</p>
+												</div>
+											</div>
+											<div className='notification-item'>
+												<span className="unread active"></span>
+												<div className="notification-details">
+													<h4>Example title 2</h4>
+													<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed perspiciatis qui quam similique magnam dignissimos quibusdam eligendi. Reiciendis in animi amet, suscipit quidem quas laboriosam nobis, aliquam, ea facere natus?</p>
+												</div>
+											</div>
+											<div className='notification-item'>
+												<span className="unread"></span>
+												<div className="notification-details">
+													<h4>Example title 3</h4>
+													<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam architecto, quas dolore nulla beatae, voluptas eveniet iste aspernatur odio voluptatibus itaque distinctio consequuntur deleniti aperiam laboriosam, omnis corrupti? Nulla, itaque.</p>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 								<button type='button' className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>
 									{userData.avatar
@@ -290,7 +318,7 @@ const Template: React.FC<{
 											src="/user.webp"
 											alt={'Profil fotoğrafı yok'} />}
 								</button>
-								<div className={`user-menu ${userMenuActive ? 'active' : ''}`} ref={userMenuRef}>
+								<div className={`user-menu ${userMenuActive ? 'active' : ''}`}>
 									<div className='user-menu-close'>
 										<button type='button' onClick={() => setUserMenuActive(false)}><XLg /></button>
 									</div>

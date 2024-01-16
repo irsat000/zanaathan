@@ -60,7 +60,7 @@ CREATE TABLE `oauth_provider` (
     PRIMARY KEY (`Id`)
 );
 
-CREATE TABLE `Account` (
+CREATE TABLE `account` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `Username` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
     `FullName` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -71,7 +71,7 @@ CREATE TABLE `Account` (
     `ExternalId` VARCHAR(128) NULL,
     `OAuthProviderId` INT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Account_oauth_provider` FOREIGN KEY (`OAuthProviderId`) REFERENCES `oauth_provider`(`Id`)
+    CONSTRAINT `FK_Account_OAuthProvider` FOREIGN KEY (`OAuthProviderId`) REFERENCES `oauth_provider`(`Id`)
 );
 
 CREATE TABLE `contact_type` (
@@ -86,11 +86,11 @@ CREATE TABLE `contact_information` (
     `AccountId` INT NOT NULL,
     `ContactTypeId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_contact_information_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_contact_information_contact_type` FOREIGN KEY (`ContactTypeId`) REFERENCES `contact_type`(`Id`)
+    CONSTRAINT `FK_ContactInformation_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`),
+    CONSTRAINT `FK_ContactInformation_ContactType` FOREIGN KEY (`ContactTypeId`) REFERENCES `contact_type`(`Id`)
 );
 
-CREATE TABLE `Message` (
+CREATE TABLE `message` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `Body` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     `CreatedAt` DATETIME NOT NULL,
@@ -98,22 +98,22 @@ CREATE TABLE `Message` (
     `ReceiverId` INT NOT NULL,
     `SenderId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Message_Receiver` FOREIGN KEY (`ReceiverId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_Message_Sender` FOREIGN KEY (`SenderId`) REFERENCES `Account`(`Id`)
+    CONSTRAINT `FK_Message_Receiver` FOREIGN KEY (`ReceiverId`) REFERENCES `account`(`Id`),
+    CONSTRAINT `FK_Message_Sender` FOREIGN KEY (`SenderId`) REFERENCES `account`(`Id`)
 );
 
-CREATE TABLE `MNotification` (
+CREATE TABLE `mnotification` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `ReceiverId` INT NOT NULL,
     `SenderId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_MNotification_Receiver` FOREIGN KEY (`ReceiverId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_MNotification_Sender` FOREIGN KEY (`SenderId`) REFERENCES `Account`(`Id`)
+    CONSTRAINT `FK_MNotification_Receiver` FOREIGN KEY (`ReceiverId`) REFERENCES `account`(`Id`),
+    CONSTRAINT `FK_MNotification_Sender` FOREIGN KEY (`SenderId`) REFERENCES `account`(`Id`)
 );
 
 
 
-CREATE TABLE `Category` (
+CREATE TABLE `category` (
 	`Id` INT NOT NULL,
     `Code` VARCHAR(255) NOT NULL UNIQUE,
     PRIMARY KEY (`Id`)
@@ -124,7 +124,7 @@ CREATE TABLE `sub_category` (
     `Name` VARCHAR(255) NOT NULL,
     `CategoryId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_sub_category_Category` FOREIGN KEY (`CategoryId`) REFERENCES `Category`(`Id`)
+    CONSTRAINT `FK_SubCategory_Category` FOREIGN KEY (`CategoryId`) REFERENCES `category`(`Id`)
 );
 
 CREATE TABLE `current_status` (
@@ -137,16 +137,17 @@ CREATE TABLE `job_posting` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
     `Title` VARCHAR(255) NOT NULL,
     `CreatedAt` DATETIME NOT NULL,
+    `LastStatusUpdate` DATETIME NOT NULL,
     `Description` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     `DistrictId` INT NOT NULL,
     `SubCategoryId` INT NOT NULL,
     `CurrentStatusId` INT NOT NULL,
     `AccountId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_job_posting_District` FOREIGN KEY (`DistrictId`) REFERENCES `District`(`Id`),
-    CONSTRAINT `FK_job_posting_sub_category` FOREIGN KEY (`SubCategoryId`) REFERENCES `sub_category`(`Id`),
-    CONSTRAINT `FK_job_posting_current_status` FOREIGN KEY (`CurrentStatusId`) REFERENCES `current_status`(`Id`),
-    CONSTRAINT `FK_job_posting_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`)
+    CONSTRAINT `FK_JobPosting_District` FOREIGN KEY (`DistrictId`) REFERENCES `district`(`Id`),
+    CONSTRAINT `FK_JobPosting_SubCategory` FOREIGN KEY (`SubCategoryId`) REFERENCES `sub_category`(`Id`),
+    CONSTRAINT `FK_JobPosting_CurrentStatus` FOREIGN KEY (`CurrentStatusId`) REFERENCES `current_status`(`Id`),
+    CONSTRAINT `FK_JobPosting_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`)
 );
 
 CREATE TABLE `job_posting_images` (
@@ -155,12 +156,25 @@ CREATE TABLE `job_posting_images` (
     `ImgIndex` INT NOT NULL,
     `JobPostingId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_job_posting_images_job_posting` FOREIGN KEY (`JobPostingId`) REFERENCES `job_posting`(`Id`)
+    CONSTRAINT `FK_JobPostingImages_JobPosting` FOREIGN KEY (`JobPostingId`) REFERENCES `job_posting`(`Id`)
 );
 
-USE ZanaatHan;
-DROP TABLE `job_posting_images`;
-DROP TABLE `job_posting`;
+CREATE TABLE `expiration_status` (
+	`Id` INT NOT NULL,
+    `Body` VARCHAR(64) NOT NULL, /* Warning | Extended */
+    PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `job_posting_expiration` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `ExpirationStatusId` INT NOT NULL,
+    `JobPostingId` INT NOT NULL,
+    `LastUpdate` DATETIME NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_JobPostingExpiration_ExpirationStatus` FOREIGN KEY (`ExpirationStatusId`) REFERENCES `expiration_status`(`Id`),
+    CONSTRAINT `FK_JobPostingExpiration_JobPosting` FOREIGN KEY (`JobPostingId`) REFERENCES `job_posting`(`Id`)
+);
+
 
 
 
@@ -169,14 +183,11 @@ CREATE TABLE `user_block` (
     `AccountId` INT NOT NULL,
     `TargetId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_user_block_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_user_block_Target` FOREIGN KEY (`TargetId`) REFERENCES `Account`(`Id`)
+    CONSTRAINT `FK_UserBlock_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`),
+    CONSTRAINT `FK_UserBlock_Target` FOREIGN KEY (`TargetId`) REFERENCES `account`(`Id`)
 );
 
-
-
-
-CREATE TABLE `Role` (
+CREATE TABLE `role` (
 	`Id` INT NOT NULL,
     `RoleCode` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     PRIMARY KEY (`Id`)
@@ -187,10 +198,9 @@ CREATE TABLE `account_role` (
     `AccountId` INT NOT NULL,
     `RoleId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_account_role_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_account_role_Role` FOREIGN KEY (`RoleId`) REFERENCES `Role`(`Id`)
+    CONSTRAINT `FK_AccountRole_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`),
+    CONSTRAINT `FK_AccountRole_Role` FOREIGN KEY (`RoleId`) REFERENCES `role`(`Id`)
 );
-
 
 CREATE TABLE `user_bans` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
@@ -200,16 +210,8 @@ CREATE TABLE `user_bans` (
     `AccountId` INT NOT NULL,
     `AdminId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_BannedAccount_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`),
-    CONSTRAINT `FK_BannedAccount_Admin` FOREIGN KEY (`AdminId`) REFERENCES `Account`(`Id`)
-);
-
-
-CREATE TABLE `Notification` (
-	`Id` INT NOT NULL AUTO_INCREMENT,
-    `AccountId` INT NOT NULL,
-    PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Notification_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`)
+    CONSTRAINT `FK_BannedAccount_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`),
+    CONSTRAINT `FK_BannedAccount_Admin` FOREIGN KEY (`AdminId`) REFERENCES `account`(`Id`)
 );
 
 CREATE TABLE `sign_in_log` (
@@ -219,5 +221,23 @@ CREATE TABLE `sign_in_log` (
     `Date` DATETIME NOT NULL,
     `AccountId` INT NOT NULL,
     PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_sign_in_log_Account` FOREIGN KEY (`AccountId`) REFERENCES `Account`(`Id`)
+    CONSTRAINT `FK_SignInLog_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`)
+);
+
+CREATE TABLE `notification_type` (
+	`Id` INT NOT NULL,
+	`Code` VARCHAR(255) NOT NULL,
+    `Title` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+    `Description` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+    PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `notification` (
+	`Id` INT NOT NULL AUTO_INCREMENT,
+    `NotificationTypeId` INT NULL,
+    `AccountId` INT NOT NULL,
+    `IsSeen` BIT NOT NULL,
+    PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Notification_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`),
+    CONSTRAINT `FK_Notification_NotificationType` FOREIGN KEY (`NotificationTypeId`) REFERENCES `notification_type`(`Id`)
 );
