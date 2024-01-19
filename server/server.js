@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require('express');
+const schedule = require('node-schedule');
 //const https = require('https');
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
@@ -260,6 +261,101 @@ app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 91 }),
         return res.status(500).end();
     }
 });
+/*
+Daily check for expired posts. The logic;
+Get posts with last status update earlier than previous 7 days and waiting answer post status
+    -if job_posting_expiration has no data
+        +create exp data with "warning" status
+        +create notification data for account id with post id in it
+    -if exp data is 7 earlier than previous 7 days and status is "warning"
+        +change post status to "tamamlandı(completed)"
+        (optional) +create notification saying the post is updated
+    -if exp data is 7 earlier than previous 7 days and status is "extended"
+        +update exp data with "warning" status
+        +create notification data for account id with post id in it
+
+ExpirationStatusId;
+1: "Warning"
+2: "Extended"
+*/
+const checkJobPostingExpiration = () => {
+    try {
+        const query = `
+            SELECT Id, AccountId FROM job_posting
+            WHERE LastStatusUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY)
+            AND CurrentStatusId = 1;
+        `;
+        pool.query(query, (qErr, results) => {
+            if (qErr) {
+                throw qErr;
+            }
+            results.forEach((post) => {
+                const query = `
+                    SELECT
+                        MAX(CASE WHEN LastUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) AS ActionRequired,
+                        MAX(ExpirationStatusId) AS ExpirationStatusId
+                    FROM job_posting_expiration
+                    WHERE JobPostingId = ${post.Id};
+                `;
+                pool.query(query, (qErr, results) => {
+                    if (qErr) {
+                        throw qErr;
+                    }
+                    if (results.length === 0) {
+                        // No expiration status, create one and send notification
+                        const query = `
+                            INSERT INTO job_posting_expiration(ExpirationStatusId, JobPostingId, LastUpdate)
+                            VALUES(1, ${post.Id}, NOW());
+
+                            INSERT INTO notification(NotificationTypeId, AccountId, IsSeen, PostId, CreatedAt)
+                            VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
+                        `;
+                        pool.query(query, (qErr, results) => {
+                            if (qErr) {
+                                throw qErr;
+                            }
+                        });
+                    }
+                    else if (results[0].ActionRequired && results[0].ExpirationStatusId === 1) {
+                        // Status is "Warning", the user didn't comply respond, set to completed
+                        const query = `
+                            UPDATE job_posting SET CurrentStatusId = 1 WHERE Id = ${post.Id};
+                        `;
+                        pool.query(query, (qErr, results) => {
+                            if (qErr) {
+                                throw qErr;
+                            }
+                        });
+                    }
+                    else if (results[0].ActionRequired && results[0].ExpirationStatusId === 2) {
+                        // Status is "Extended", the user wanted 7 more days and it has ended.
+                        // Update this status and send notification again
+                        const query = `
+                            UPDATE job_posting_expiration
+                            SET ExpirationStatusId = 1
+                            WHERE AccountId = ${post.AccountId};
+
+                            INSERT INTO notification(NotificationTypeId, AccountId, IsSeen, PostId, CreatedAt)
+                            VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
+                        `;
+                        pool.query(query, (qErr, results) => {
+                            if (qErr) {
+                                throw qErr;
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    }
+    catch (error) {
+        console.error("Error in daily expiration check:", error);
+    }
+};
+// Daily = 0 0 * * *
+schedule.scheduleJob('0 0 * * *', () => {
+    checkJobPostingExpiration();
+});
 // Check status
 app.get("/", (0, helperUtils_1.rateLimiter)(), (req, res) => {
     res.send('online');
@@ -279,3 +375,15 @@ app.get("/api/dbtest", (0, helperUtils_1.rateLimiter)(), (req, res) => {
 httpServer.listen(PORT, () => {
     console.log(`Server started on port :${PORT}`);
 });
+function queryAsync(query) {
+    return new Promise((resolve, reject) => {
+        pool.query(query, (error, results) => {
+            if (error) {
+                reject(error);
+            }
+            else {
+                resolve(results);
+            }
+        });
+    });
+}

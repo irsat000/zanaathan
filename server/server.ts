@@ -1,4 +1,5 @@
 const express = require('express');
+const schedule = require('node-schedule');
 //const https = require('https');
 import { createServer } from 'http';
 import { Server } from 'socket.io';
@@ -62,16 +63,6 @@ app.use('/api', panelRoutes);
 
 // Database pool
 const pool = require('./db/db');
-
-
-
-
-
-
-
-
-
-
 
 
 const socketUserMap: Map<string, number> = new Map();
@@ -300,6 +291,107 @@ app.get('/sitemap.xml', rateLimiter({ minute: 10, max: 91 }), (req: Request, res
     }
 })
 
+/*
+Daily check for expired posts. The logic;
+Get posts with last status update earlier than previous 7 days and waiting answer post status
+    -if job_posting_expiration has no data
+        +create exp data with "warning" status
+        +create notification data for account id with post id in it
+    -if exp data is 7 earlier than previous 7 days and status is "warning"
+        +change post status to "tamamlandı(completed)"
+        (optional) +create notification saying the post is updated
+    -if exp data is 7 earlier than previous 7 days and status is "extended"
+        +update exp data with "warning" status
+        +create notification data for account id with post id in it
+
+ExpirationStatusId;
+1: "Warning"
+2: "Extended"
+*/
+const checkJobPostingExpiration = () => {
+    try {
+        const query = `
+            SELECT Id, AccountId FROM job_posting
+            WHERE LastStatusUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY)
+            AND CurrentStatusId = 1;
+        `;
+        pool.query(query, (qErr: any, results: { Id: number, AccountId: number }[]) => {
+            if (qErr) {
+                throw qErr;
+            }
+            results.forEach((post) => {
+                const query = `
+                    SELECT
+                        MAX(CASE WHEN LastUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) AS ActionRequired,
+                        MAX(ExpirationStatusId) AS ExpirationStatusId
+                    FROM job_posting_expiration
+                    WHERE JobPostingId = ${post.Id};
+                `;
+                pool.query(query, (qErr: any, results: { ActionRequired: boolean, ExpirationStatusId: 1 | 2 }[]) => {
+                    if (qErr) {
+                        throw qErr;
+                    }
+
+                    if (results.length === 0) {
+                        // No expiration status, create one and send notification
+                        const query = `
+                            INSERT INTO job_posting_expiration(ExpirationStatusId, JobPostingId, LastUpdate)
+                            VALUES(1, ${post.Id}, NOW());
+
+                            INSERT INTO notification(NotificationTypeId, AccountId, IsSeen, PostId, CreatedAt)
+                            VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
+                        `;
+                        pool.query(query, (qErr: any, results: any) => {
+                            if (qErr) {
+                                throw qErr;
+                            }
+                        });
+                    }
+                    else if (results[0].ActionRequired && results[0].ExpirationStatusId === 1) {
+                        // Status is "Warning", the user didn't comply respond, set to completed
+                        const query = `
+                            UPDATE job_posting SET CurrentStatusId = 1 WHERE Id = ${post.Id};
+                        `;
+                        pool.query(query, (qErr: any, results: any) => {
+                            if (qErr) {
+                                throw qErr;
+                            }
+                        });
+                    }
+                    else if (results[0].ActionRequired && results[0].ExpirationStatusId === 2) {
+                        // Status is "Extended", the user wanted 7 more days and it has ended.
+                        // Update this status and send notification again
+                        const query = `
+                            UPDATE job_posting_expiration
+                            SET ExpirationStatusId = 1
+                            WHERE AccountId = ${post.AccountId};
+
+                            INSERT INTO notification(NotificationTypeId, AccountId, IsSeen, PostId, CreatedAt)
+                            VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
+                        `;
+                        pool.query(query, (qErr: any, results: any) => {
+                            if (qErr) {
+                                throw qErr;
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    } catch (error) {
+        console.error("Error in daily expiration check:", error);
+    }
+}
+// Daily = 0 0 * * *
+schedule.scheduleJob('0 0 * * *', () => {
+    checkJobPostingExpiration();
+});
+
+
+
+
+
+
 
 
 
@@ -331,3 +423,22 @@ app.get("/api/dbtest", rateLimiter(), (req: Request, res: Response) => {
 httpServer.listen(PORT, () => {
     console.log(`Server started on port :${PORT}`);
 });
+
+
+
+
+
+
+
+
+function queryAsync(query: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+        pool.query(query, (error: any, results: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
