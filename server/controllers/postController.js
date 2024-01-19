@@ -305,7 +305,7 @@ exports.createPost = (req, res) => {
                 // Re-assign sub category with a valid one
                 subCategory = newId.toString();
             }
-            const query = "INSERT INTO job_posting(Title, CreatedAt, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), ?, ?, ?, 5, ?);";
+            const query = "INSERT INTO job_posting(Title, CreatedAt, LastStatusUpdate, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), NOW(), ?, ?, ?, 5, ?);";
             connection.query(query, [title, description, district, subCategory, userId], (qErr, results) => {
                 if (qErr)
                     connection.rollback(() => handleError(connection));
@@ -379,7 +379,7 @@ exports.updatePostStatus = (req, res) => {
             // Update post current status
             const query = `
                 UPDATE job_posting 
-                SET CurrentStatusId = ? 
+                SET CurrentStatusId = ?, LastStatusUpdate = NOW()
                 WHERE Id = ?;
             `;
             pool.query(query, [body.newStatusId, userId, postId], (qErr, results) => {

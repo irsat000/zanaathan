@@ -235,7 +235,7 @@ exports.authGoogle = (req, res) => {
             return __awaiter(this, void 0, void 0, function* () {
                 const ticket = yield googleOAuthClient.verifyIdToken({
                     idToken: body.credentials.credential,
-                    audience: "714554272496-8aan1i53sdgkp9o9s78mlnu5af214ipk.apps.googleusercontent.com" // Not from body
+                    audience: "714554272496-8aan1i53sdgkp9o9s78mlnu5af214ipk.apps.googleusercontent.com" // Not from body, env var could be used
                 });
                 const payload = ticket.getPayload();
                 user.sub = payload['sub'];

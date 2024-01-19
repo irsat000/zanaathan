@@ -80,10 +80,11 @@ const deleteUnapprovedPostsPromise = (userBanned, accountId, postId) => __awaite
         if (!userBanned && !postId) {
             return resolve(false);
         }
-        // Update post(s) to set current status to 4 (deleted)
+        // Update the user's post(s) to set current status to 4 (deleted)
+        // If user is banned, get all of their unapproved posts and delete, otherwise just get the relevant post only
         const filterType = userBanned ? 'CurrentStatusId = 5 AND AccountId' : 'Id';
         const filterId = userBanned ? accountId : postId;
-        const query = `UPDATE job_posting SET CurrentStatusId = 4 WHERE ${filterType} = ?;`;
+        const query = `UPDATE job_posting SET CurrentStatusId = 4, LastStatusUpdate = NOW() WHERE ${filterType} = ?;`;
         pool.query(query, [filterId], (qErr, results) => {
             if (qErr) {
                 return resolve(false);
@@ -133,7 +134,7 @@ exports.waitingApproval = (req, res) => __awaiter(void 0, void 0, void 0, functi
             return res.status(401).send('Not authorized');
         if ((yield checkAdminRole(userId)) === false)
             return res.status(401).json({ error: 'Not authorized' });
-        // Get posts that waiting for approval
+        // Get posts that are waiting for approval
         const query = `
                 SELECT
                     JP.Id,
@@ -173,7 +174,7 @@ exports.adminUpdatePost = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const postId = req.params.postId;
         const action = req.params.action;
         if (action === 'approve' || action === 'complete') {
-            const query = `UPDATE job_posting SET CurrentStatusId = ${action === 'approve' ? '1' : '3'} WHERE Id = ?;`;
+            const query = `UPDATE job_posting SET CurrentStatusId = ${action === 'approve' ? '1' : '3'}, LastStatusUpdate = NOW() WHERE Id = ?;`;
             pool.query(query, [postId], (qErr, results) => {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error' });

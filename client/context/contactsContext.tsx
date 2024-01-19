@@ -21,7 +21,10 @@ export interface ThreadMessage {
 }
 
 const ContactsContext = React.createContext
-    <{ userContacts: UserContact[], setUserContacts: React.Dispatch<React.SetStateAction<UserContact[]>> }>({
+    <{
+        userContacts: UserContact[],
+        setUserContacts: React.Dispatch<React.SetStateAction<UserContact[]>>
+    }>({
         userContacts: [],
         setUserContacts: () => { },
     });

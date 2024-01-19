@@ -1,22 +1,22 @@
 
-CREATE TABLE `City`
+CREATE TABLE `city`
 (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`Id`)
 );
  
-CREATE TABLE `District` (
+CREATE TABLE `district` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(255) NOT NULL,
   `CityId` INT NOT NULL,
   PRIMARY KEY (id),
-  CONSTRAINT `FK_District_City` FOREIGN KEY (`CityId`) REFERENCES `City`(`Id`)
+  CONSTRAINT `FK_District_City` FOREIGN KEY (`CityId`) REFERENCES `city`(`Id`)
 );
  
  
  
-INSERT INTO `City`
+INSERT INTO `city`
 (
   `Name`
 )
@@ -112,7 +112,7 @@ VALUES
 
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALADAĞ',1),
 ('CEYHAN',1),
 ('ÇUKUROVA',1),
@@ -130,7 +130,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YÜREĞİR',1);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BESNİ',2),
 ('ÇELİKHAN',2),
 ('GERGER',2),
@@ -142,7 +142,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TUT',2);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BAŞMAKÇI',3),
 ('BAYAT',3),
 ('BOLVADİN',3),
@@ -163,7 +163,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ŞUHUT',3);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('DİYADİN',4),
 ('DOĞUBAYAZIT',4),
 ('ELEŞKİRT',4),
@@ -174,7 +174,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TUTAK',4);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AĞAÇÖREN',68),
 ('ESKİL',68),
 ('GÜLAĞAÇ',68),
@@ -185,7 +185,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('SULTANHANI',68);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('GÖYNÜCEK',5),
 ('GÜMÜŞHACIKÖY',5),
 ('HAMAMÖZÜ',5),
@@ -195,7 +195,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TAŞOVA',5);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKYURT',6),
 ('ALTINDAĞ',6),
 ('AYAŞ',6),
@@ -223,7 +223,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YENİMAHALLE',6);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKSEKİ',7),
 ('AKSU',7),
 ('ALANYA',7),
@@ -245,7 +245,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('SERİK',7);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ÇILDIR',75),
 ('DAMAL',75),
 ('GÖLE',75),
@@ -254,7 +254,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('POSOF',75);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ARDANUÇ',8),
 ('ARHAVİ',8),
 ('BORÇKA',8),
@@ -266,7 +266,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YUSUFELİ',8);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BOZDOĞAN',9),
 ('BUHARKENT',9),
 ('ÇİNE',9),
@@ -286,7 +286,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YENİPAZAR',9);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALTIEYLÜL',10),
 ('AYVALIK',10),
 ('BALYA',10),
@@ -309,14 +309,14 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('SUSURLUK',10);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AMASRA',74),
 ('KURUCAŞİLE',74),
 ('MERKEZ',74),
 ('ULUS',74);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BEŞİRİ',72),
 ('GERCÜŞ',72),
 ('HASANKEYF',72),
@@ -325,13 +325,13 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('SASON',72);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AYDINTEPE',69),
 ('DEMİRÖZÜ',69),
 ('MERKEZ',69);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BOZÜYÜK',11),
 ('GÖLPAZARI',11),
 ('İNHİSAR',11),
@@ -342,7 +342,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YENİPAZAR',11);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ADAKLI',12),
 ('GENÇ',12),
 ('KARLIOVA',12),
@@ -353,7 +353,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YEDİSU',12);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ADİLCEVAZ',13),
 ('AHLAT',13),
 ('GÜROYMAK',13),
@@ -363,7 +363,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TATVAN',13);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('DÖRTDİVAN',14),
 ('GEREDE',14),
 ('GÖYNÜK',14),
@@ -375,7 +375,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YENİÇAĞA',14);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AĞLASUN',15),
 ('ALTINYAYLA',15),
 ('BUCAK',15),
@@ -389,7 +389,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YEŞİLOVA',15);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BÜYÜKORHAN',16),
 ('GEMLİK',16),
 ('GÜRSU',16),
@@ -409,7 +409,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YILDIRIM',16);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AYVACIK',17),
 ('BAYRAMİÇ',17),
 ('BİGA',17),
@@ -424,7 +424,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YENİCE',17);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ATKARACALAR',18),
 ('BAYRAMÖREN',18),
 ('ÇERKEŞ',18),
@@ -439,7 +439,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YAPRAKLI',18);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALACA',19),
 ('BAYAT',19),
 ('BOĞAZKALE',19),
@@ -456,7 +456,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('UĞURLUDAĞ',19);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ACIPAYAM',20),
 ('BABADAĞ',20),
 ('BAKLAN',20),
@@ -478,7 +478,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TAVAS',20);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BAĞLAR',21),
 ('BİSMİL',21),
 ('ÇERMİK',21),
@@ -498,7 +498,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YENİŞEHİR',21);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKÇAKOCA',81),
 ('CUMAYERİ',81),
 ('ÇİLİMLİ',81),
@@ -509,7 +509,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YIĞILCA',81);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ENEZ',22),
 ('HAVSA',22),
 ('İPSALA',22),
@@ -521,7 +521,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('UZUNKÖPRÜ',22);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AĞIN',23),
 ('ALACAKAYA',23),
 ('ARICAK',23),
@@ -535,7 +535,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('SİVRİCE',23);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ÇAYIRLI',24),
 ('İLİÇ',24),
 ('KEMAH',24),
@@ -547,7 +547,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ÜZÜMLÜ',24);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AŞKALE',25),
 ('AZİZİYE',25),
 ('ÇAT',25),
@@ -570,7 +570,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YAKUTİYE',25);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALPU',26),
 ('BEYLİKOVA',26),
 ('ÇİFTELER',26),
@@ -587,7 +587,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TEPEBAŞI',26);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ARABAN',27),
 ('İSLAHİYE',27),
 ('KARKAMIŞ',27),
@@ -599,7 +599,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YAVUZELİ',27);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALUCRA',28),
 ('BULANCAK',28),
 ('ÇAMOLUK',28),
@@ -618,7 +618,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YAĞLIDERE',28);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('KELKİT',29),
 ('KÖSE',29),
 ('KÜRTÜN',29),
@@ -627,7 +627,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TORUL',29);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ÇUKURCA',30),
 ('DERECİK',30),
 ('MERKEZ',30),
@@ -635,7 +635,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YÜKSEKOVA',30);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALTINÖZÜ',31),
 ('ANTAKYA',31),
 ('ARSUZ',31),
@@ -653,14 +653,14 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YAYLADAĞI',31);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ARALIK',76),
 ('KARAKOYUNLU',76),
 ('MERKEZ',76),
 ('TUZLUCA',76);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKSU',32),
 ('ATABEY',32),
 ('EĞİRDİR',32),
@@ -676,7 +676,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YENİŞARBADEMLİ',32);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ADALAR',34),
 ('ARNAVUTKÖY',34),
 ('ATAŞEHİR',34),
@@ -718,7 +718,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ZEYTİNBURNU',34);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALİAĞA',35),
 ('BALÇOVA',35),
 ('BAYINDIR',35),
@@ -751,7 +751,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('URLA',35);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AFŞİN',46),
 ('ANDIRIN',46),
 ('ÇAĞLAYANCERİT',46),
@@ -765,7 +765,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TÜRKOĞLU',46);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('EFLANİ',78),
 ('ESKİPAZAR',78),
 ('MERKEZ',78),
@@ -774,7 +774,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YENİCE',78);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AYRANCI',70),
 ('BAŞYAYLA',70),
 ('ERMENEK',70),
@@ -783,7 +783,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('SARIVELİLER',70);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKYAKA',36),
 ('ARPAÇAY',36),
 ('DİGOR',36),
@@ -795,7 +795,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ABANA',37),
 ('AĞLI',37),
 ('ARAÇ',37),
@@ -818,7 +818,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TOSYA',37);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKKIŞLA',38),
 ('BÜNYAN',38),
 ('DEVELİ',38),
@@ -837,7 +837,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YEŞİLHİSAR',38);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BAHŞILI',71),
 ('BALIŞEYH',71),
 ('ÇELEBİ',71),
@@ -849,7 +849,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YAHŞİHAN',71);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BABAESKİ',39),
 ('DEMİRKÖY',39),
 ('KOFÇAZ',39),
@@ -860,7 +860,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('VİZE',39);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKÇAKENT',40),
 ('AKPINAR',40),
 ('BOZTEPE',40),
@@ -870,14 +870,14 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('MUCUR',40);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ELBEYLİ',79),
 ('MERKEZ',79),
 ('MUSABEYLİ',79),
 ('POLATELİ',79);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BAŞİSKELE',41),
 ('ÇAYIROVA',41),
 ('DARICA',41),
@@ -892,7 +892,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('KÖRFEZ',41);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AHIRLI',42),
 ('AKÖREN',42),
 ('AKŞEHİR',42),
@@ -926,7 +926,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YUNAK',42);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALTINTAŞ',43),
 ('ASLANAPA',43),
 ('ÇAVDARHİSAR',43),
@@ -942,7 +942,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TAVŞANLI',43);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKÇADAĞ',44),
 ('ARAPGİR',44),
 ('ARGUVAN',44),
@@ -958,7 +958,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YEŞİLYURT',44);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AHMETLİ',45),
 ('AKHİSAR',45),
 ('ALAŞEHİR',45),
@@ -978,7 +978,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YUNUSEMRE',45);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ARTUKLU',47),
 ('DARGEÇİT',47),
 ('DERİK',47),
@@ -991,7 +991,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YEŞİLLİ',47);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKDENİZ',33),
 ('ANAMUR',33),
 ('AYDINCIK',33),
@@ -1007,7 +1007,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YENİŞEHİR',33);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BODRUM',48),
 ('DALAMAN',48),
 ('DATÇA',48),
@@ -1023,7 +1023,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YATAĞAN',48);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BULANIK',49),
 ('HASKÖY',49),
 ('KORKUT',49),
@@ -1032,7 +1032,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('VARTO',49);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ACIGÖL',50),
 ('AVANOS',50),
 ('DERİNKUYU',50),
@@ -1043,7 +1043,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ÜRGÜP',50);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALTUNHİSAR',51),
 ('BOR',51),
 ('ÇAMARDI',51),
@@ -1052,7 +1052,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ULUKIŞLA',51);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKKUŞ',52),
 ('ALTINORDU',52),
 ('AYBASTI',52),
@@ -1074,7 +1074,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ÜNYE',52);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BAHÇE',80),
 ('DÜZİÇİ',80),
 ('HASANBEYLİ',80),
@@ -1084,7 +1084,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TOPRAKKALE',80);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ARDEŞEN',53),
 ('ÇAMLIHEMŞİN',53),
 ('ÇAYELİ',53),
@@ -1099,7 +1099,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('PAZAR',53);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ADAPAZARI',54),
 ('AKYAZI',54),
 ('ARİFİYE',54),
@@ -1118,7 +1118,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TARAKLI',54);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('19 MAYIS',55),
 ('ALAÇAM',55),
 ('ASARCIK',55),
@@ -1138,7 +1138,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YAKAKENT',55);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BAYKAN',56),
 ('ERUH',56),
 ('KURTALAN',56),
@@ -1148,7 +1148,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TİLLO',56);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AYANCIK',57),
 ('BOYABAT',57),
 ('DİKMEN',57),
@@ -1160,7 +1160,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TÜRKELİ',57);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKINCILAR',58),
 ('ALTINYAYLA',58),
 ('DİVRİĞİ',58),
@@ -1180,7 +1180,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ZARA',58);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKÇAKALE',63),
 ('BİRECİK',63),
 ('BOZOVA',63),
@@ -1196,7 +1196,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('VİRANŞEHİR',63);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BEYTÜŞŞEBAP',73),
 ('CİZRE',73),
 ('GÜÇLÜKONAK',73),
@@ -1206,7 +1206,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ULUDERE',73);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ÇERKEZKÖY',59),
 ('ÇORLU',59),
 ('ERGENE',59),
@@ -1220,7 +1220,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ŞARKÖY',59);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALMUS',60),
 ('ARTOVA',60),
 ('BAŞÇİFTLİK',60),
@@ -1235,7 +1235,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ZİLE',60);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKÇAABAT',61),
 ('ARAKLI',61),
 ('ARSİN',61),
@@ -1256,7 +1256,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YOMRA',61);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ÇEMİŞGEZEK',62),
 ('HOZAT',62),
 ('MAZGİRT',62),
@@ -1267,7 +1267,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('PÜLÜMÜR',62);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BANAZ',64),
 ('EŞME',64),
 ('KARAHALLI',64),
@@ -1276,7 +1276,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('ULUBEY',64);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('BAHÇESARAY',65),
 ('BAŞKALE',65),
 ('ÇALDIRAN',65),
@@ -1292,7 +1292,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TUŞBA',65);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALTINOVA',77),
 ('ARMUTLU',77),
 ('ÇINARCIK',77),
@@ -1301,7 +1301,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('TERMAL',77);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('AKDAĞMADENİ',66),
 ('AYDINCIK',66),
 ('BOĞAZLIYAN',66),
@@ -1318,7 +1318,7 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('YERKÖY',66);
 
  
-INSERT INTO `District`(`Name`, `CityId`) VALUES 
+INSERT INTO `district`(`Name`, `CityId`) VALUES 
 ('ALAPLI',67),
 ('ÇAYCUMA',67),
 ('DEVREK',67),
@@ -1327,3 +1327,10 @@ INSERT INTO `District`(`Name`, `CityId`) VALUES
 ('KİLİMLİ',67),
 ('KOZLU',67),
 ('MERKEZ',67);
+
+
+
+
+
+DELETE FROM `district` WHERE CityId NOT IN (10, 16, 34);
+DELETE FROM `city` WHERE Id NOT IN (10, 16, 34);

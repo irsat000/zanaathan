@@ -16,18 +16,12 @@ import { avatarLink } from '@/lib/utils/helperUtils'
 import { HashLoader } from 'react-spinners'
 import Router from 'next/router'
 import NotificationModal from './notificationModal'
+import { useNotifications } from '@/context/notificationsContext'
 
 
 interface SearchRecommendation {
 	text: string;
 	link: string;
-}
-
-export type NotificationType = 'postExpiration';
-export interface UserNotification {
-	type: NotificationType,
-	isSeen: boolean,
-	extra: any
 }
 
 const Template: React.FC<{
@@ -48,36 +42,8 @@ const Template: React.FC<{
 	const { userContacts, setUserContacts } = useContacts();
 	// General status context
 	const { gStatus, handleGStatus } = useGStatus();
-	// User's notifications 
-	const [notifications, setNotifications] = useState<UserNotification[]>([
-		{
-			type: "postExpiration",
-			isSeen: Math.random() > 0.5 ? true : false,
-			extra: {
-				postId: 1,
-				postTitle: "Klimam bozuldu, soğutuyor ama ısıtmıyor.",
-				postCreatedAt: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
-			}
-		},
-		{
-			type: "postExpiration",
-			isSeen: Math.random() > 0.5 ? true : false,
-			extra: {
-				postId: 2,
-				postTitle: "100 metrekare evime boya yapılacak.",
-				postCreatedAt: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
-			}
-		},
-		{
-			type: "postExpiration",
-			isSeen: Math.random() > 0.5 ? true : false,
-			extra: {
-				postId: 3,
-				postTitle: "1. kattaki evime demir parmaklık takılacak.",
-				postCreatedAt: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
-			}
-		}
-	]);
+	// User's notifications
+	const { notifications, setNotifications } = useNotifications();
 
 	// User context
 	const { userData, setUserData } = useUser();
@@ -124,7 +90,9 @@ const Template: React.FC<{
 			if (userMenuActive && !e.target.closest('.user-menu') && !e.target.closest('.user-menu-button')) {
 				setUserMenuActive(false);
 			}
-			if (notificationBoxActive && !e.target.closest('.notification-wrapper')) {
+			if (notificationBoxActive
+				&& !e.target.closest('.notification-wrapper')
+				&& !e.target.closest('.notification-modal-container')) {
 				setNotificationBoxActive(false);
 			}
 		};
@@ -184,10 +152,14 @@ const Template: React.FC<{
 	// Check chat notification
 	const hasNotification = userContacts.some(c => c.NotificationCount > 0);
 
+	let pageTitle: string = "ZanaatHan - "
+	if (title) pageTitle += title;
+	else pageTitle += 'İş ilanı ver, ustalarla tanış, serbest çalış';
+
 	return (
 		<>
 			<Head>
-				<title>ZanaatHan - {title ?? 'İş ilanı ver, ustalarla tanış, serbest çalış'}</title>
+				<title>{pageTitle}</title>
 				<meta name="description" content="İş ilanı verin veya serbest çalışmaya başlayın. Ustalarla konuşup anlaşın. Kombi tamiri, ev tadilatı, boya badana, hurda satışı ve dahası." />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
@@ -317,7 +289,16 @@ const Template: React.FC<{
 										<div className={`notification-container ${notificationBoxActive ? 'active' : ''}`}>
 											<h3 className='notification-box-header'>Bildirimler</h3>
 											{notifications.map((not, index) =>
-												<div className='notification-item' onClick={() => { console.log(index, notifications[index]); setActiveNotificationIndex(index) }}>
+												<div className='notification-item' key={index} onClick={() => {
+													// Reveal notification content
+													setActiveNotificationIndex(index);
+													// Update seen status if not seen
+													if (!not.isSeen) {
+														const updated = [...notifications];
+														updated[index].isSeen = true;
+														setNotifications(updated);
+													}
+												}}>
 													<span className={`unread ${not.isSeen ? '' : 'active'}`}></span>
 													<div className="notification-details">
 														<h4>{notificationTypes[not.type].title}</h4>

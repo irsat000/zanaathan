@@ -47,7 +47,6 @@ select * from current_status;
 
 
 
-INSERT INTO `admin`(`Username`, `Password`, `RoleId`) VALUES('', '', 2);
 
 
 
