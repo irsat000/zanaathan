@@ -281,7 +281,7 @@ Get posts with last status update earlier than previous 7 days and waiting answe
     -if expiration data is earlier than 7 days ago and status is "Warning"
         +change post status to "tamamlandı(completed)"
         +delete the existing post expiration data
-        (optional) +create notification saying the post is updated
+        (optional todo) +create notification saying the post is auto updated
     -if expiration data is earlier than 7 days ago and status is "Extended"
         +update exp data with "Warning" status
         +create notification data for account id with post id in it
