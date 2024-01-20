@@ -59,7 +59,8 @@ const Template: React.FC<{
 	const handleSignOut = () => {
 		setUserData(null);
 		removeJwtCookie();
-		setUserContacts([]);
+		setUserContacts(null);
+		setNotifications(null);
 		// If facebook is connected, logout from FB aswell
 		try {
 			window.FB.getLoginStatus(function (response: any) {
@@ -287,7 +288,7 @@ const Template: React.FC<{
 										<button className='shortcut-button' onClick={() => setNotificationBoxActive(!notificationBoxActive)}>
 											<Bell />
 										</button>
-										<Notifications {...{notificationBoxActive, notifications, setNotifications, setActiveNotificationIndex}} />
+										<Notifications {...{ notificationBoxActive, notifications, setNotifications, setActiveNotificationIndex }} />
 									</div>
 								</div>
 								<button type='button' className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>

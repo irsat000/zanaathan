@@ -1,11 +1,15 @@
 import React, { useContext, useState } from 'react';
+import notificationTypes from '@/assets/site/notificationTypes.json'
 
-
-export type NotificationType = 'postExpiration';
 export interface UserNotification {
-    type: NotificationType,
+    id: number,
+    type: keyof typeof notificationTypes,
     isSeen: boolean,
-    extra: any
+    extra: {
+        postId?: number,
+        postTitle?: string,
+        postCreatedAt?: string
+    }
 }
 
 
@@ -13,35 +17,7 @@ const NotificationsContext = React.createContext<{
     notifications: UserNotification[] | null;
     setNotifications: React.Dispatch<React.SetStateAction<UserNotification[] | null>>;
 }>({
-    notifications: [
-        {
-            type: "postExpiration",
-            isSeen: Math.random() > 0.5 ? true : false,
-            extra: {
-                postId: 1,
-                postTitle: "Klimam bozuldu, soğutuyor ama ısıtmıyor.",
-                postCreatedAt: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
-            }
-        },
-        {
-            type: "postExpiration",
-            isSeen: Math.random() > 0.5 ? true : false,
-            extra: {
-                postId: 2,
-                postTitle: "100 metrekare evime boya yapılacak.",
-                postCreatedAt: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
-            }
-        },
-        {
-            type: "postExpiration",
-            isSeen: Math.random() > 0.5 ? true : false,
-            extra: {
-                postId: 3,
-                postTitle: "1. kattaki evime demir parmaklık takılacak.",
-                postCreatedAt: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
-            }
-        }
-    ],
+    notifications: null,
     setNotifications: () => { },
 });
 

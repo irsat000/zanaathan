@@ -1326,6 +1326,13 @@ header > .header-container .user-container .shortcut-wrapper .notification-wrapp
   padding: 13px 10px 10px;
   border-bottom: 1px solid var(--primary-light-border);
 }
+header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .no-notification {
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+}
 header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item {
   display: flex;
   flex-direction: row;

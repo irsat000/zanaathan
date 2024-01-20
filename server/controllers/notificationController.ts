@@ -14,17 +14,20 @@ exports.getNotifications = (req: Request, res: Response) => {
         if (!userId) return res.status(401).send('Not authorized');
 
         const query = `
-            SELECT Id, NotificationTypeId, AccountId, IsSeen, CreatedAt, job_posting.Title as JobPostingTitle
-            FROM notification
-            LEFT JOIN job_posting ON notification.PostId = job_posting.Id
-            WHERE AccountId = ?
-            AND CreatedAt > DATE_SUB(NOW(), INTERVAL 1 MONTH)
-            ORDER BY CreatedAt
+            SELECT N.Id, NotificationTypeId, IsSeen, N.CreatedAt,
+                JP.Id as PostId,
+                JP.Title as PostTitle,
+                JP.CreatedAt as PostCreatedAt
+            FROM notification N
+            LEFT JOIN job_posting JP ON N.PostId = JP.Id
+            WHERE N.AccountId = ?
+            AND N.CreatedAt > DATE_SUB(NOW(), INTERVAL 1 MONTH)
+            ORDER BY N.CreatedAt
             LIMIT 15;
         `;
         pool.query(query, [userId], (qErr: any, results: any) => {
             if (qErr) {
-                return res.status(500).json({ error: 'Query error' });
+                return res.status(500).json({ error: 'Query error: ' + qErr });
             }
             return res.status(200).json({ notifications: results });
         });

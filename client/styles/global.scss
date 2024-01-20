@@ -1531,6 +1531,14 @@ header>.header-container {
                         border-bottom: 1px solid var(--primary-light-border);
                     }
 
+                    .no-notification {
+                        text-align: center;
+                        padding: 20px 10px;
+                        font-size: 1rem;
+                        font-weight: 400;
+                        font-family: 'Poppins', sans-serif;
+                    }
+
                     .notification-item {
                         display: flex;
                         flex-direction: row;
