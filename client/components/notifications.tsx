@@ -47,7 +47,6 @@ export const Notifications: React.FC<{
                 console.log("Couldn't fetch messages");
             });
     };
-
     // Fetch notifications once for the entire session
     // Optional TODO: If user wants, they can click on a refresh button and run fetchNotifications() freely
     useEffect(() => {
@@ -56,6 +55,26 @@ export const Notifications: React.FC<{
         fetchNotifications();
     }, [userData]);
 
+    // Fetch notifications
+    const updateNotificationSeen = async (notificationId: number): Promise<boolean> => {
+        // Check jwt
+        const jwt = fetchJwt();
+        if (!jwt) return false;
+        // Get the user's notifications
+        return await fetch(`${apiUrl}/notification-seen/${notificationId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${jwt}`
+            },
+        })
+            .then(res => res.ok ? true : Promise.reject(res))
+            .catch(err => {
+                console.log("Failed to set notification seen");
+                return false;
+            });
+    };
+
     return (
         <div className={`notification-container ${notificationBoxActive ? 'active' : ''}`}>
             <h3 className='notification-box-header'>Bildirimler</h3>
@@ -63,11 +82,16 @@ export const Notifications: React.FC<{
                 <div className='notification-item' key={index} onClick={() => {
                     // Reveal notification content
                     setActiveNotificationIndex(index);
-                    // Update seen status if not seen
                     if (!not.isSeen) {
-                        const updated = [...notifications];
-                        updated[index].isSeen = true;
-                        setNotifications(updated);
+                        // Update seen status on the server
+                        updateNotificationSeen(not.id).then(success => {
+                            if (success) {
+                                // Update seen status on the client
+                                const updated = [...notifications];
+                                updated[index].isSeen = true;
+                                setNotifications(updated);
+                            }
+                        })
                     }
                 }}>
                     <span className={`unread ${not.isSeen ? '' : 'active'}`}></span>
