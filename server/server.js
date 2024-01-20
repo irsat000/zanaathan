@@ -51,11 +51,13 @@ const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const panelRoutes = require('./routes/panelRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 app.use('/api', chatRoutes);
 app.use('/api', userRoutes);
 app.use('/api', postRoutes);
 app.use('/api', imageRoutes);
 app.use('/api', panelRoutes);
+app.use('/api', notificationRoutes);
 // Database pool
 const pool = require('./db/db');
 const socketUserMap = new Map();
@@ -277,6 +279,8 @@ Get posts with last status update earlier than previous 7 days and waiting answe
 ExpirationStatusId;
 1: "Warning"
 2: "Extended"
+NotificationTypeId;
+1: "postExpiration"
 */
 const checkJobPostingExpiration = () => {
     try {
@@ -354,7 +358,9 @@ const checkJobPostingExpiration = () => {
 };
 // Daily = 0 0 * * *
 schedule.scheduleJob('0 0 * * *', () => {
+    console.log("Daily check started");
     checkJobPostingExpiration();
+    console.log("Daily check finished");
 });
 // Check status
 app.get("/", (0, helperUtils_1.rateLimiter)(), (req, res) => {

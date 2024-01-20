@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { Bell, ChatDots, CheckCircle, List, PersonPlus, PlusSquare, XCircle, XLg } from 'react-bootstrap-icons'
 import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
-import notificationTypes from '@/assets/site/notificationTypes.json'
 import AuthModal from './authModal'
 import { useUser } from '@/context/userContext'
 import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
@@ -17,6 +16,7 @@ import { HashLoader } from 'react-spinners'
 import Router from 'next/router'
 import NotificationModal from './notificationModal'
 import { useNotifications } from '@/context/notificationsContext'
+import { Notifications } from './notifications'
 
 
 interface SearchRecommendation {
@@ -150,7 +150,8 @@ const Template: React.FC<{
 
 
 	// Check chat notification
-	const hasNotification = userContacts.some(c => c.NotificationCount > 0);
+	const hasMessageNotification = userContacts ? userContacts.some(c => c.NotificationCount > 0) : false;
+	const hasNotification = notifications ? notifications.some(n => n.isSeen === false) : false;
 
 	let pageTitle: string = "ZanaatHan - "
 	if (title) pageTitle += title;
@@ -175,7 +176,7 @@ const Template: React.FC<{
 			<div className='page-content'>
 				{userData ? <Chatbot /> : <></>}
 				<AuthModal />
-				{activeNotificationIndex !== null && notifications[activeNotificationIndex]
+				{activeNotificationIndex !== null && notifications && notifications[activeNotificationIndex]
 					? <NotificationModal activeNotificationIndex={activeNotificationIndex} setActiveNotificationIndex={setActiveNotificationIndex} notification={notifications[activeNotificationIndex]} />
 					: <></>}
 				{gStatus.informationModal ?
@@ -261,7 +262,7 @@ const Template: React.FC<{
 						<Link href='/' className="site-logo-wrapper">
 							{userData ?
 								<button className='open-chatbot-button' onClick={() => handleGStatus('chatbotActive', !gStatus.chatbotActive)}>
-									<div className={`icon-wrap ${hasNotification ? 'icon-alert' : ''}`}>
+									<div className={`icon-wrap ${hasMessageNotification ? 'icon-alert' : ''}`}>
 										<ChatDots />
 									</div>
 								</button> :
@@ -278,7 +279,7 @@ const Template: React.FC<{
 										<PlusSquare />
 									</Link>
 									<button className='open-chatbot-button shortcut-button' onClick={() => handleGStatus('chatbotActive', !gStatus.chatbotActive)}>
-										<div className={`icon-wrap ${hasNotification ? 'icon-alert' : ''}`}>
+										<div className={`icon-wrap ${hasMessageNotification ? 'icon-alert' : ''}`}>
 											<ChatDots />
 										</div>
 									</button>
@@ -286,27 +287,7 @@ const Template: React.FC<{
 										<button className='shortcut-button' onClick={() => setNotificationBoxActive(!notificationBoxActive)}>
 											<Bell />
 										</button>
-										<div className={`notification-container ${notificationBoxActive ? 'active' : ''}`}>
-											<h3 className='notification-box-header'>Bildirimler</h3>
-											{notifications.map((not, index) =>
-												<div className='notification-item' key={index} onClick={() => {
-													// Reveal notification content
-													setActiveNotificationIndex(index);
-													// Update seen status if not seen
-													if (!not.isSeen) {
-														const updated = [...notifications];
-														updated[index].isSeen = true;
-														setNotifications(updated);
-													}
-												}}>
-													<span className={`unread ${not.isSeen ? '' : 'active'}`}></span>
-													<div className="notification-details">
-														<h4>{notificationTypes[not.type].title}</h4>
-														<p>{notificationTypes[not.type].description}</p>
-													</div>
-												</div>
-											)}
-										</div>
+										<Notifications {...{notificationBoxActive, notifications, setNotifications, setActiveNotificationIndex}} />
 									</div>
 								</div>
 								<button type='button' className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>

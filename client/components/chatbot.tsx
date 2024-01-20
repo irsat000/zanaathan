@@ -30,7 +30,7 @@ const Chatbot: React.FC<{
 
     // Fetch thread list for messaging (PART OF THE TEMPLATE, MOUNTS ONCE)
     useEffect(() => {
-        if (!userData) return;
+        if (!userData || userContacts !== null) return;
         fetchUserContacts().then(data => {
             if (data) {
                 setUserContacts(data);
@@ -46,7 +46,7 @@ const Chatbot: React.FC<{
     // Function for fetching a thread's messages
     const fetchThreadMessages = async (contactId: number, method: 'initial' | 'all') => {
         // Check cache, if exist, no need for fetching because chat is updated in real-time
-        const cache = userContacts.find(contact => contact.ReceiverId === contactId);
+        const cache = userContacts ? userContacts.find(contact => contact.ReceiverId === contactId) : undefined;
         // If cache exists, and if either thread has no more messages or method is initial which means it doesn't care about hasMore
         if (cache && cache.CachedThread && (cache.ThreadHasMore === false || method === 'initial')) {
             return {
@@ -136,7 +136,8 @@ const Chatbot: React.FC<{
         // Set as 'will be animated'
         setAnimateMessageId(newMessage.Id);
         // Cache the new message
-        setUserContacts((prev: UserContact[]) => {
+        setUserContacts((prev) => {
+            if (!prev) return null; // Won't happen because by that time the user contacts would be fetched
             const updatedContacts = [...prev];
             // Get either current user's target contact or the contact that targeted current user
             const contactToUpdate = updatedContacts.find(contact => contact.ReceiverId === data.receiverId || contact.ReceiverId === newMessage.SenderId);
@@ -236,7 +237,7 @@ const Chatbot: React.FC<{
 
 
     // Get necessary render properties
-    const currentContact = userContacts.find(c => c.ReceiverId === gStatus.activeContact);
+    const currentContact = userContacts ? userContacts.find(c => c.ReceiverId === gStatus.activeContact) : undefined;
     const contactName = currentContact ? currentContact.ReceiverFullName ?? currentContact.ReceiverUsername : 'Kişi seçilmedi';
 
     // Handle new message by user, acts the same way for receiving since it's using web socket
@@ -287,8 +288,8 @@ const Chatbot: React.FC<{
     // - Could be merged with fetchThreadMessages but this is better for future
     const handleFetchThreadMessages = (activeContact: number, method: 'initial' | 'all') => {
         fetchThreadMessages(activeContact, method).then((thread) => {
-            const updatedContacts = [...userContacts];
-            const contact = updatedContacts.find(contact => contact.ReceiverId === gStatus.activeContact);
+            const updatedContacts = userContacts ? [...userContacts] : undefined;
+            const contact = updatedContacts ? updatedContacts.find(contact => contact.ReceiverId === gStatus.activeContact) : undefined;
             if (contact) {
                 // Get thread
                 contact.CachedThread = thread.messages ?? [];
@@ -310,7 +311,7 @@ const Chatbot: React.FC<{
                     }
                 }
                 // Get thread for the contact and update
-                setUserContacts(updatedContacts);
+                setUserContacts(updatedContacts!);
             }
         });
     };
@@ -329,7 +330,7 @@ const Chatbot: React.FC<{
     useEffect(() => {
         // Run when userContacts updates, like when data is cached and updated
         // Also when activeContact changes because it wouldn't run if cached data already exists, basically not detecting change
-        const activeContactThread = userContacts.find(c => c.ReceiverId === gStatus.activeContact)?.CachedThread;
+        const activeContactThread = userContacts ? userContacts.find(c => c.ReceiverId === gStatus.activeContact)?.CachedThread : undefined;
         if (activeContactThread) {
             setCurrentThread([...activeContactThread]);
         }
@@ -400,11 +401,11 @@ const Chatbot: React.FC<{
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
-                const updatedContacts = [...userContacts];
-                const contact = updatedContacts.find(contact => contact.ReceiverId === gStatus.activeContact);
+                const updatedContacts = userContacts ? [...userContacts] : undefined;
+                const contact = updatedContacts ? updatedContacts.find(contact => contact.ReceiverId === gStatus.activeContact) : undefined;
                 if (contact) {
                     contact.IsBlocked = !contact.IsBlocked;
-                    setUserContacts(updatedContacts);
+                    setUserContacts(updatedContacts!);
                 }
             })
             .catch((res) => {
@@ -425,7 +426,7 @@ const Chatbot: React.FC<{
                         {/*<button type='button' className='chatbot-add-user'>Yeni<PlusLg /></button>*/}
                     </div>
                     <div className="chatbot-contacts">
-                        {userContacts.length > 0 ? userContacts.map((contact, i) =>
+                        {userContacts && userContacts.length > 0 ? userContacts.map((contact, i) =>
                             <div key={i}
                                 className={`contact-item ${contact.ReceiverId === gStatus.activeContact ? 'active' : 'default'}`}
                                 onClick={() => {

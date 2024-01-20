@@ -1,8 +1,8 @@
+import { UserNotification } from '@/context/notificationsContext';
 import { apiUrl, formatDateString, toShortLocal } from '@/lib/utils/helperUtils';
 import Link from 'next/link';
 import { useRef, useState } from 'react'
 import { XLg } from 'react-bootstrap-icons';
-import { UserNotification } from './template';
 
 
 const NotificationModal: React.FC<{

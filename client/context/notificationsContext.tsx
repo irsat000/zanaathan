@@ -10,8 +10,8 @@ export interface UserNotification {
 
 
 const NotificationsContext = React.createContext<{
-    notifications: UserNotification[];
-    setNotifications: React.Dispatch<React.SetStateAction<UserNotification[]>>;
+    notifications: UserNotification[] | null;
+    setNotifications: React.Dispatch<React.SetStateAction<UserNotification[] | null>>;
 }>({
     notifications: [
         {
@@ -48,7 +48,7 @@ const NotificationsContext = React.createContext<{
 export const UserContext: React.FC<{
     children: React.ReactNode
 }> = ({ children }) => {
-    const [notifications, setNotifications] = useState<UserNotification[]>([]);
+    const [notifications, setNotifications] = useState<UserNotification[] | null>(null);
 
     return (
         <NotificationsContext.Provider value={{ notifications, setNotifications }}>
