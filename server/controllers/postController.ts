@@ -1,6 +1,6 @@
 
 import { NextFunction, Request, Response } from 'express';
-import { isNullOrEmpty, isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
+import { isPositiveNumeric, sanatizeInputString } from '../utils/helperUtils';
 import * as fs from 'fs';
 import { verifyJwt } from '../utils/userUtils';
 const appDir = process.cwd();
@@ -311,58 +311,58 @@ exports.createPost = (req: CreatePostRequest, res: Response) => {
         };
 
         // Get connection for transaction and rollback
-        pool.getConnection(async (connErr: any, connection: any) => {
+        pool.getConnection((connErr: any, connection: any) => {
             if (connErr) handleError(connection);
 
-            connection.beginTransaction((beginErr: any) => {
+            connection.beginTransaction(async (beginErr: any) => {
                 if (beginErr) handleError(connection);
-            });
 
-            // If sub category is not selected, get the default
-            // WILL ALWAYS GO IN HERE because sub categories are planned to exist later
-            if (!isPositiveNumeric(subCategory)) {
-                // Get the first sub category under the selected category
-                const newId = await getFirstSubCategoryId(category);
-                // Check error
-                if (newId == null) connection.rollback(() => handleError(connection));
-                // Re-assign sub category with a valid one
-                subCategory = newId!.toString();
-            }
-
-            const query = "INSERT INTO job_posting(Title, CreatedAt, LastStatusUpdate, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), NOW(), ?, ?, ?, 5, ?);";
-            connection.query(query, [title, description, district, subCategory, userId], (qErr: any, results: any) => {
-                if (qErr) connection.rollback(() => handleError(connection));
-
-                // Get post id
-                const postId = results.insertId as number;
-
-                // If no image is uploaded, finish it here
-                if (imageNameList.length === 0) {
-                    connection.commit((commitErr: any) => {
-                        if (commitErr) connection.rollback(() => handleError(connection));
-
-                        connection.release();
-                        return res.status(200).json({ postId });
-                    });
+                // If sub category is not selected, get the default
+                // WILL ALWAYS GO IN HERE because sub categories are planned to exist later
+                if (!isPositiveNumeric(subCategory)) {
+                    // Get the first sub category under the selected category
+                    const newId = await getFirstSubCategoryId(category);
+                    // Check error
+                    if (newId == null) connection.rollback(() => handleError(connection));
+                    // Re-assign sub category with a valid one
+                    subCategory = newId!.toString();
                 }
 
-                // Iterate image names to get necessary image insert queries
-                let imageQueries = '';
-                const imageParameters: (number | string)[] = [];
-                imageNameList.forEach((file, index) => {
-                    imageQueries += "INSERT INTO job_posting_images(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
-                    imageParameters.push(file.name, index, postId);
-                });
-                // Run the image queries in one go
-                connection.query(imageQueries, imageParameters, (qErr2: any) => {
-                    if (qErr2) connection.rollback(() => handleError(connection));
+                const query = "INSERT INTO job_posting(Title, CreatedAt, LastStatusUpdate, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), NOW(), ?, ?, ?, 5, ?);";
+                connection.query(query, [title, description, district, subCategory, userId], (qErr: any, results: any) => {
+                    if (qErr) connection.rollback(() => handleError(connection));
 
-                    // COMMIT
-                    connection.commit((commitErr: any) => {
-                        if (commitErr) connection.rollback(() => handleError(connection));
+                    // Get post id
+                    const postId = results.insertId as number;
 
-                        connection.release();
-                        return res.status(200).json({ postId });
+                    // If no image is uploaded, finish it here
+                    if (imageNameList.length === 0) {
+                        connection.commit((commitErr: any) => {
+                            if (commitErr) connection.rollback(() => handleError(connection));
+
+                            connection.release();
+                            return res.status(200).json({ postId });
+                        });
+                    }
+
+                    // Iterate image names to get necessary image insert queries
+                    let imageQueries = '';
+                    const imageParameters: (number | string)[] = [];
+                    imageNameList.forEach((file, index) => {
+                        imageQueries += "INSERT INTO job_posting_images(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
+                        imageParameters.push(file.name, index, postId);
+                    });
+                    // Run the image queries in one go
+                    connection.query(imageQueries, imageParameters, (qErr2: any) => {
+                        if (qErr2) connection.rollback(() => handleError(connection));
+
+                        // COMMIT
+                        connection.commit((commitErr: any) => {
+                            if (commitErr) connection.rollback(() => handleError(connection));
+
+                            connection.release();
+                            return res.status(200).json({ postId });
+                        });
                     });
                 });
             });
@@ -392,40 +392,30 @@ exports.updatePostStatus = (req: Request, res: Response) => {
         const postId = req.params.postId;
         if (!postId) res.status(400).json({ error: 'Bad request' });
 
-        // TODO: Can be done in single query, use where to get with account id, post id and status IN (1, 2, 3), if affected rows is 0, then unauthorized
-        // Check previous status and prevent unauthorization
-        const query = `SELECT CurrentStatusId FROM job_posting WHERE AccountId = ? AND Id = ?;`;
-        pool.query(query, [userId, postId], (qErr: any, results: any) => {
+        // Update post current status
+        // Also checks ownership and if the current status is allowed to be changed by users
+        const query = `
+            UPDATE job_posting
+            SET CurrentStatusId = ?, LastStatusUpdate = NOW()
+            WHERE Id = ? AND AccountId = ? AND CurrentStatusId IN (1, 2, 3);
+        `;
+        pool.query(query, [body.newStatusId, postId, userId], (qErr: any, results: any) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
             }
-            // results.length === 0: Not the owner of the post
-            // 4: Onay bekliyor(waiting approval)
-            // 5: Kaldırıldı (deleted)
-            if (results.length === 0 || ![1, 2, 3].includes(results[0].CurrentStatusId)) {
+            if (results.affectedRows > 0) {
+                return res.status(200).json({ message: 'Success!' });
+            }
+            else {
                 return res.status(401).send('Not authorized');
             }
-
-            // Update post current status
-            const query = `
-                UPDATE job_posting 
-                SET CurrentStatusId = ?, LastStatusUpdate = NOW()
-                WHERE Id = ?;
-            `;
-            pool.query(query, [body.newStatusId, userId, postId], (qErr: any, results: any) => {
-                if (qErr) {
-                    return res.status(500).json({ error: 'Query error' });
-                }
-
-                return res.status(200).json({ message: 'Success!' });
-            });
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
 }
 
-// todo: change puts with patches
+
 exports.delayPostExpiration = (req: Request, res: Response) => {
     try {
         const postId = req.params.postId;
@@ -437,7 +427,7 @@ exports.delayPostExpiration = (req: Request, res: Response) => {
         // Set expiration status id to 2 ("Extended")
         const query = `
             UPDATE job_posting_expiration
-            SET ExpirationStatusId = 2
+            SET ExpirationStatusId = 2, LastUpdate = NOW()
             WHERE AccountId = ? AND JobPostingId = ?;
         `;
         pool.query(query, [userId, postId], (qErr: any, results: any) => {

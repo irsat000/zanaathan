@@ -89,7 +89,7 @@ export default function ApprovingPosts() {
         if (!jwt) return
 
         fetch(`${apiUrl}/panel/update-post/approve/${postId}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 Authorization: 'Bearer ' + jwt
@@ -111,7 +111,7 @@ export default function ApprovingPosts() {
 
 
         fetch(`${apiUrl}/panel/update-post/reject/${post.Id}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 Authorization: 'Bearer ' + jwt

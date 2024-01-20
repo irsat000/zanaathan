@@ -70,7 +70,7 @@ export default function Home() {
         if (!jwt) return;
 
         fetch(`${apiUrl}/edit-profile`, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': `Bearer ${jwt}`
@@ -179,7 +179,7 @@ export default function Home() {
         if (!jwt) return;
 
         fetch(`${apiUrl}/delete-avatar`, {
-            method: "PUT",
+            method: "DELETE",
             headers: {
                 'Authorization': `Bearer ${jwt}`
             }

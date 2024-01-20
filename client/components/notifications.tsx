@@ -62,7 +62,7 @@ export const Notifications: React.FC<{
         if (!jwt) return false;
         // Get the user's notifications
         return await fetch(`${apiUrl}/notification-seen/${notificationId}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': `Bearer ${jwt}`

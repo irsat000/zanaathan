@@ -38,7 +38,7 @@ const AdminModal: React.FC<{
         // Update post from one flexible end point
         const action = postDetailsArgs.action === '1' ? 'delete' : 'complete'
         fetch(`${apiUrl}/panel/update-post/${action}/${args.postId}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 Authorization: 'Bearer ' + jwt

@@ -287,60 +287,60 @@ exports.createPost = (req, res) => {
             }
         };
         // Get connection for transaction and rollback
-        pool.getConnection((connErr, connection) => __awaiter(void 0, void 0, void 0, function* () {
+        pool.getConnection((connErr, connection) => {
             if (connErr)
                 handleError(connection);
-            connection.beginTransaction((beginErr) => {
+            connection.beginTransaction((beginErr) => __awaiter(void 0, void 0, void 0, function* () {
                 if (beginErr)
                     handleError(connection);
-            });
-            // If sub category is not selected, get the default
-            // WILL ALWAYS GO IN HERE because sub categories are planned to exist later
-            if (!(0, helperUtils_1.isPositiveNumeric)(subCategory)) {
-                // Get the first sub category under the selected category
-                const newId = yield getFirstSubCategoryId(category);
-                // Check error
-                if (newId == null)
-                    connection.rollback(() => handleError(connection));
-                // Re-assign sub category with a valid one
-                subCategory = newId.toString();
-            }
-            const query = "INSERT INTO job_posting(Title, CreatedAt, LastStatusUpdate, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), NOW(), ?, ?, ?, 5, ?);";
-            connection.query(query, [title, description, district, subCategory, userId], (qErr, results) => {
-                if (qErr)
-                    connection.rollback(() => handleError(connection));
-                // Get post id
-                const postId = results.insertId;
-                // If no image is uploaded, finish it here
-                if (imageNameList.length === 0) {
-                    connection.commit((commitErr) => {
-                        if (commitErr)
-                            connection.rollback(() => handleError(connection));
-                        connection.release();
-                        return res.status(200).json({ postId });
-                    });
-                }
-                // Iterate image names to get necessary image insert queries
-                let imageQueries = '';
-                const imageParameters = [];
-                imageNameList.forEach((file, index) => {
-                    imageQueries += "INSERT INTO job_posting_images(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
-                    imageParameters.push(file.name, index, postId);
-                });
-                // Run the image queries in one go
-                connection.query(imageQueries, imageParameters, (qErr2) => {
-                    if (qErr2)
+                // If sub category is not selected, get the default
+                // WILL ALWAYS GO IN HERE because sub categories are planned to exist later
+                if (!(0, helperUtils_1.isPositiveNumeric)(subCategory)) {
+                    // Get the first sub category under the selected category
+                    const newId = yield getFirstSubCategoryId(category);
+                    // Check error
+                    if (newId == null)
                         connection.rollback(() => handleError(connection));
-                    // COMMIT
-                    connection.commit((commitErr) => {
-                        if (commitErr)
+                    // Re-assign sub category with a valid one
+                    subCategory = newId.toString();
+                }
+                const query = "INSERT INTO job_posting(Title, CreatedAt, LastStatusUpdate, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), NOW(), ?, ?, ?, 5, ?);";
+                connection.query(query, [title, description, district, subCategory, userId], (qErr, results) => {
+                    if (qErr)
+                        connection.rollback(() => handleError(connection));
+                    // Get post id
+                    const postId = results.insertId;
+                    // If no image is uploaded, finish it here
+                    if (imageNameList.length === 0) {
+                        connection.commit((commitErr) => {
+                            if (commitErr)
+                                connection.rollback(() => handleError(connection));
+                            connection.release();
+                            return res.status(200).json({ postId });
+                        });
+                    }
+                    // Iterate image names to get necessary image insert queries
+                    let imageQueries = '';
+                    const imageParameters = [];
+                    imageNameList.forEach((file, index) => {
+                        imageQueries += "INSERT INTO job_posting_images(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
+                        imageParameters.push(file.name, index, postId);
+                    });
+                    // Run the image queries in one go
+                    connection.query(imageQueries, imageParameters, (qErr2) => {
+                        if (qErr2)
                             connection.rollback(() => handleError(connection));
-                        connection.release();
-                        return res.status(200).json({ postId });
+                        // COMMIT
+                        connection.commit((commitErr) => {
+                            if (commitErr)
+                                connection.rollback(() => handleError(connection));
+                            connection.release();
+                            return res.status(200).json({ postId });
+                        });
                     });
                 });
-            });
-        }));
+            }));
+        });
     }
     catch (error) {
         return res.status(500).json({ error });
@@ -364,38 +364,29 @@ exports.updatePostStatus = (req, res) => {
         const postId = req.params.postId;
         if (!postId)
             res.status(400).json({ error: 'Bad request' });
-        // TODO: Can be done in single query, use where to get with account id, post id and status IN (1, 2, 3), if affected rows is 0, then unauthorized
-        // Check previous status and prevent unauthorization
-        const query = `SELECT CurrentStatusId FROM job_posting WHERE AccountId = ? AND Id = ?;`;
-        pool.query(query, [userId, postId], (qErr, results) => {
+        // Update post current status
+        // Also checks ownership and if the current status is allowed to be changed by users
+        const query = `
+            UPDATE job_posting
+            SET CurrentStatusId = ?, LastStatusUpdate = NOW()
+            WHERE Id = ? AND AccountId = ? AND CurrentStatusId IN (1, 2, 3);
+        `;
+        pool.query(query, [body.newStatusId, postId, userId], (qErr, results) => {
             if (qErr) {
                 return res.status(500).json({ error: 'Query error' });
             }
-            // results.length === 0: Not the owner of the post
-            // 4: Onay bekliyor(waiting approval)
-            // 5: Kaldırıldı (deleted)
-            if (results.length === 0 || ![1, 2, 3].includes(results[0].CurrentStatusId)) {
+            if (results.affectedRows > 0) {
+                return res.status(200).json({ message: 'Success!' });
+            }
+            else {
                 return res.status(401).send('Not authorized');
             }
-            // Update post current status
-            const query = `
-                UPDATE job_posting 
-                SET CurrentStatusId = ?, LastStatusUpdate = NOW()
-                WHERE Id = ?;
-            `;
-            pool.query(query, [body.newStatusId, userId, postId], (qErr, results) => {
-                if (qErr) {
-                    return res.status(500).json({ error: 'Query error' });
-                }
-                return res.status(200).json({ message: 'Success!' });
-            });
         });
     }
     catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
 };
-// todo: change puts with patches
 exports.delayPostExpiration = (req, res) => {
     var _a, _b;
     try {
@@ -410,7 +401,7 @@ exports.delayPostExpiration = (req, res) => {
         // Set expiration status id to 2 ("Extended")
         const query = `
             UPDATE job_posting_expiration
-            SET ExpirationStatusId = 2
+            SET ExpirationStatusId = 2, LastUpdate = NOW()
             WHERE AccountId = ? AND JobPostingId = ?;
         `;
         pool.query(query, [userId, postId], (qErr, results) => {

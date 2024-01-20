@@ -16,6 +16,10 @@ INSERT INTO `notification_type`(`Id`, `Code`, `Title`, `Description`)
 	VALUES(1, 'postExpiration',
 	'İlanınız işlem bekliyor',
     'Lütfen ilanınızın son durumu hakkında bizi bilgilendirin. Bu bildirime tıklayın.');
+INSERT INTO `notification_type`(`Id`, `Code`, `Title`, `Description`)
+	VALUES(2, 'postAutoSetToCompleted',
+	'Bir ilanınız otomatik olarak yayından kaldırıldı',
+    '7 gün önce gönderdiğimiz bildirimden yanıt alamadık. Detaylar için tıklayınız.');
 
 /*--*/
 INSERT INTO `current_status`(`Id`, `Body`) VALUES(1, 'Cevap bekliyor');

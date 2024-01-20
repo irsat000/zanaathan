@@ -16,9 +16,9 @@ router.post('/auth-facebook', (0, helperUtils_1.rateLimiter)({ minute: 30, max: 
 // To get user info
 // - router.get('/get-user-info/:userId', userController.getUserInfo);
 // To let user change their profile
-router.put('/edit-profile', (0, helperUtils_1.rateLimiter)(), userController.editProfile);
+router.patch('/edit-profile', (0, helperUtils_1.rateLimiter)(), userController.editProfile);
 // To let user delete their avatar
-router.put('/delete-avatar', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 6 }), userController.deleteAvatar);
+router.delete('/delete-avatar', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 6 }), userController.deleteAvatar);
 // To let user change their avatar with a new one
 router.post('/set-new-avatar', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 6 }), imageController_1.uploadAvatar, userController.uploadAvatar);
 // To get user's profile
