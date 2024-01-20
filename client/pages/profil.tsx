@@ -12,7 +12,7 @@ import GridLoader from 'react-spinners/GridLoader';
 import { useGStatus } from '@/context/globalContext';
 import Router from 'next/router';
 
-type CurrentStatus = 1 | 2 | 3 | 5;
+export type CurrentStatus = 1 | 2 | 3 | 5;
 
 interface UserPost extends Post {
   CategoryCode: string;
@@ -111,28 +111,29 @@ export default function Home() {
     // Check jwt and get necessary items
     const jwt = fetchJwt();
     if (!jwt) return;
-    // Payload
-    const updatedItem = { newStatusId: value };
+    // Update
     fetch(`${apiUrl}/update-post-status/${postId}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        Authorization: 'Bearer ' + jwt
+        'Authorization': 'Bearer ' + jwt
       },
-      body: JSON.stringify(updatedItem)
+      body: JSON.stringify({ newStatusId: value })
     })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then((data) => {
-        // Update current status and close update menu on success
-        setPostList(prev => {
-          const updatedPostList = prev.map((p) => {
-            if (p.Id === postId) {
-              return { ...p, CurrentStatusId: value, UpdateMenuActive: false };
-            }
-            return p;
+      .then(res => {
+        if (res.ok) {
+          // Update current status and close update menu on success
+          setPostList(prev => {
+            const updatedPostList = prev.map((p) => {
+              if (p.Id === postId) {
+                return { ...p, CurrentStatusId: value, UpdateMenuActive: false };
+              }
+              return p;
+            });
+            return updatedPostList;
           });
-          return updatedPostList;
-        });
+        }
+        else Promise.reject(res);
       })
       .catch((res) => {
         handleGStatus('informationModal', {

@@ -327,18 +327,19 @@ const checkJobPostingExpiration = () => {
             results.forEach((post) => {
                 const query = `
                     SELECT
+                        Id,
                         MAX(CASE WHEN LastUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) AS ActionRequired,
-                        MAX(ExpirationStatusId) AS ExpirationStatusId
+                        MAX(ExpirationStatusId) AS ExpirationStatusId,
                     FROM job_posting_expiration
                     WHERE JobPostingId = ${post.Id};
                 `;
-                pool.query(query, (qErr: any, results: { ActionRequired: boolean, ExpirationStatusId: 1 | 2 }[]) => {
+                pool.query(query, (qErr: any, results: { Id: number, ActionRequired: boolean, ExpirationStatusId: 1 | 2 }[]) => {
                     if (qErr) {
                         throw qErr;
                     }
 
                     if (results.length === 0) {
-                        // No expiration status, create one and send notification
+                        // No expiration status, create one with 1/"Warning" and send a notification
                         const query = `
                             INSERT INTO job_posting_expiration(ExpirationStatusId, JobPostingId, LastUpdate)
                             VALUES(1, ${post.Id}, NOW());
@@ -353,9 +354,12 @@ const checkJobPostingExpiration = () => {
                         });
                     }
                     else if (results[0].ActionRequired && results[0].ExpirationStatusId === 1) {
-                        // Status is "Warning", the user didn't comply respond, set to completed
+                        // Status is "Warning", 7 days have passed, the user didn't respond, set to completed
+                        // Delete the expiration so that the server doesn't think user didn't respond to non-existent notification
                         const query = `
-                            UPDATE job_posting SET CurrentStatusId = 1 WHERE Id = ${post.Id};
+                            UPDATE job_posting SET CurrentStatusId = 3, LastStatusUpdate = NOW() WHERE Id = ${post.Id};
+
+                            DELETE job_posting_expiration WHERE Id = ${results[0].Id};
                         `;
                         pool.query(query, (qErr: any, results: any) => {
                             if (qErr) {
@@ -367,9 +371,9 @@ const checkJobPostingExpiration = () => {
                         // Status is "Extended", the user wanted 7 more days and it has ended.
                         // Update this status and send notification again
                         const query = `
-                            UPDATE job_posting_expiration
+                            UPDATE job_posting_expiration JPE
                             SET ExpirationStatusId = 1
-                            WHERE AccountId = ${post.AccountId};
+                            WHERE JPE.Id = ${results[0].Id};
 
                             INSERT INTO notification(NotificationTypeId, AccountId, IsSeen, PostId, CreatedAt)
                             VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());

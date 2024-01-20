@@ -392,6 +392,7 @@ exports.updatePostStatus = (req: Request, res: Response) => {
         const postId = req.params.postId;
         if (!postId) res.status(400).json({ error: 'Bad request' });
 
+        // TODO: Can be done in single query, use where to get with account id, post id and status IN (1, 2, 3), if affected rows is 0, then unauthorized
         // Check previous status and prevent unauthorization
         const query = `SELECT CurrentStatusId FROM job_posting WHERE AccountId = ? AND Id = ?;`;
         pool.query(query, [userId, postId], (qErr: any, results: any) => {
@@ -418,6 +419,37 @@ exports.updatePostStatus = (req: Request, res: Response) => {
 
                 return res.status(200).json({ message: 'Success!' });
             });
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+}
+
+// todo: change puts with patches
+exports.delayPostExpiration = (req: Request, res: Response) => {
+    try {
+        const postId = req.params.postId;
+        if (!isPositiveNumeric(postId)) return res.status(400).send('Bad request');
+        // Verify and decode the token
+        const jwt = req.headers?.authorization?.split(' ')[1];
+        const userId = verifyJwt(jwt);
+        if (!userId) return res.status(401).send('Not authorized');
+        // Set expiration status id to 2 ("Extended")
+        const query = `
+            UPDATE job_posting_expiration
+            SET ExpirationStatusId = 2
+            WHERE AccountId = ? AND JobPostingId = ?;
+        `;
+        pool.query(query, [userId, postId], (qErr: any, results: any) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+
+            if (results.affectedRows > 0) {
+                return res.status(200).json({ message: 'Success' });
+            } else {
+                return res.status(401).json({ error: "User doesn't own the post" });
+            }
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });

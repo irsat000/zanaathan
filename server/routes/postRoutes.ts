@@ -19,6 +19,8 @@ router.post('/create-post', rateLimiter({ minute: 30, max: 5 }),
     postController.createPostValidation,
     postController.createPost);
 // To update post status by post owner
-router.put('/update-post-status/:postId', rateLimiter({ minute: 15, max: 15 }), postController.updatePostStatus);
+router.patch('/update-post-status/:postId', rateLimiter({ minute: 15, max: 15 }), postController.updatePostStatus);
+// Delay post expiration date
+router.patch('/delay-post-expiration/:postId', rateLimiter({ minute: 15, max: 15 }), postController.delayPostExpiration);
 
 module.exports = router;

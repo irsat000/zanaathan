@@ -364,6 +364,7 @@ exports.updatePostStatus = (req, res) => {
         const postId = req.params.postId;
         if (!postId)
             res.status(400).json({ error: 'Bad request' });
+        // TODO: Can be done in single query, use where to get with account id, post id and status IN (1, 2, 3), if affected rows is 0, then unauthorized
         // Check previous status and prevent unauthorization
         const query = `SELECT CurrentStatusId FROM job_posting WHERE AccountId = ? AND Id = ?;`;
         pool.query(query, [userId, postId], (qErr, results) => {
@@ -388,6 +389,40 @@ exports.updatePostStatus = (req, res) => {
                 }
                 return res.status(200).json({ message: 'Success!' });
             });
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'Server error: ' + error });
+    }
+};
+// todo: change puts with patches
+exports.delayPostExpiration = (req, res) => {
+    var _a, _b;
+    try {
+        const postId = req.params.postId;
+        if (!(0, helperUtils_1.isPositiveNumeric)(postId))
+            return res.status(400).send('Bad request');
+        // Verify and decode the token
+        const jwt = (_b = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
+        const userId = (0, userUtils_1.verifyJwt)(jwt);
+        if (!userId)
+            return res.status(401).send('Not authorized');
+        // Set expiration status id to 2 ("Extended")
+        const query = `
+            UPDATE job_posting_expiration
+            SET ExpirationStatusId = 2
+            WHERE AccountId = ? AND JobPostingId = ?;
+        `;
+        pool.query(query, [userId, postId], (qErr, results) => {
+            if (qErr) {
+                return res.status(500).json({ error: 'Query error' });
+            }
+            if (results.affectedRows > 0) {
+                return res.status(200).json({ message: 'Success' });
+            }
+            else {
+                return res.status(401).json({ error: "User doesn't own the post" });
+            }
         });
     }
     catch (error) {

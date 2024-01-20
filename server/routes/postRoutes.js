@@ -16,5 +16,7 @@ router.get('/get-districts', (0, helperUtils_1.rateLimiter)(), postController.ge
 // To create a new post
 router.post('/create-post', (0, helperUtils_1.rateLimiter)({ minute: 30, max: 5 }), imageController_1.uploadPostImage, postController.createPostValidation, postController.createPost);
 // To update post status by post owner
-router.put('/update-post-status/:postId', (0, helperUtils_1.rateLimiter)({ minute: 15, max: 15 }), postController.updatePostStatus);
+router.patch('/update-post-status/:postId', (0, helperUtils_1.rateLimiter)({ minute: 15, max: 15 }), postController.updatePostStatus);
+// Delay post expiration date
+router.patch('/delay-post-expiration/:postId', (0, helperUtils_1.rateLimiter)({ minute: 15, max: 15 }), postController.delayPostExpiration);
 module.exports = router;
