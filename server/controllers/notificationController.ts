@@ -13,8 +13,10 @@ exports.getNotifications = (req: Request, res: Response) => {
         const userId = verifyJwt(jwt);
         if (!userId) return res.status(401).send('Not authorized');
 
+        // Get notifications within the last 1 month and maximum of 15 of them
+        // IsSeen + 0 to convert the BIT into INT to prevent it being Buffer in Javascript
         const query = `
-            SELECT N.Id, NotificationTypeId, IsSeen, N.CreatedAt,
+            SELECT N.Id, NotificationTypeId, IsSeen + 0 as IsSeen, N.CreatedAt,
                 JP.Id as PostId,
                 JP.Title as PostTitle,
                 JP.CreatedAt as PostCreatedAt

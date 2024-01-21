@@ -28,21 +28,11 @@ const Template: React.FC<{
 	children: ReactNode,
 	title?: string
 }> = ({ children, title }) => {
-	// Get contacts for messaging
-	/*const first: UserContacts = {
-		ReceiverId: 5,
-		LastMessage: "string",
-		LastMessageDate: "string",
-		ReceiverAvatar: "string",
-		ReceiverFullName: "string",
-		ReceiverUsername: "string",
-		CachedThread: undefined
-	}*/
-	// User contacts context
+	// User's contacts context
 	const { userContacts, setUserContacts } = useContacts();
 	// General status context
 	const { gStatus, handleGStatus } = useGStatus();
-	// User's notifications
+	// User's notifications context
 	const { notifications, setNotifications } = useNotifications();
 
 	// User context
@@ -286,9 +276,11 @@ const Template: React.FC<{
 									</button>
 									<div className="notification-wrapper">
 										<button className='shortcut-button' onClick={() => setNotificationBoxActive(!notificationBoxActive)}>
-											<Bell />
+											<div className={`icon-wrap ${hasNotification ? 'icon-alert' : ''}`}>
+												<Bell />
+											</div>
 										</button>
-										<Notifications {...{ notificationBoxActive, notifications, setNotifications, setActiveNotificationIndex }} />
+										<Notifications {...{ notificationBoxActive, setActiveNotificationIndex }} />
 									</div>
 								</div>
 								<button type='button' className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>

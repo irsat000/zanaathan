@@ -392,23 +392,36 @@ exports.updatePostStatus = (req: Request, res: Response) => {
         const postId = req.params.postId;
         if (!postId) res.status(400).json({ error: 'Bad request' });
 
-        // Update post current status
-        // Also checks ownership and if the current status is allowed to be changed by users
+        // Delete job posting expiration data if there are any
         const query = `
-            UPDATE job_posting
-            SET CurrentStatusId = ?, LastStatusUpdate = NOW()
-            WHERE Id = ? AND AccountId = ? AND CurrentStatusId IN (1, 2, 3);
+            DELETE JPE
+            FROM job_posting_expiration as JPE
+            JOIN job_posting as JP ON JPE.JobPostingId = JP.Id
+            WHERE JP.AccountId = ? AND JPE.JobPostingId = ?;
         `;
-        pool.query(query, [body.newStatusId, postId, userId], (qErr: any, results: any) => {
+        pool.query(query, [userId, postId], (qErr: any, results: any) => {
             if (qErr) {
-                return res.status(500).json({ error: 'Query error' });
+                return res.status(500).json({ error: 'Query error 1' });
             }
-            if (results.affectedRows > 0) {
-                return res.status(200).json({ message: 'Success!' });
-            }
-            else {
-                return res.status(401).send('Not authorized');
-            }
+
+            // Update post current status
+            // Also checks ownership and if the current status is allowed to be changed by users
+            const query = `
+                UPDATE job_posting
+                SET CurrentStatusId = ?, LastStatusUpdate = NOW()
+                WHERE Id = ? AND AccountId = ? AND CurrentStatusId IN (1, 2, 3);
+            `;
+            pool.query(query, [body.newStatusId, postId, userId], (qErr: any, results: any) => {
+                if (qErr) {
+                    return res.status(500).json({ error: 'Query error 2' });
+                }
+                if (results.affectedRows > 0) {
+                    return res.status(200).json({ message: 'Success!' });
+                }
+                else {
+                    return res.status(401).send('Not authorized');
+                }
+            });
         });
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
@@ -426,13 +439,14 @@ exports.delayPostExpiration = (req: Request, res: Response) => {
         if (!userId) return res.status(401).send('Not authorized');
         // Set expiration status id to 2 ("Extended")
         const query = `
-            UPDATE job_posting_expiration
-            SET ExpirationStatusId = 2, LastUpdate = NOW()
-            WHERE AccountId = ? AND JobPostingId = ?;
+            UPDATE job_posting_expiration AS JPE
+            JOIN job_posting AS JP ON JPE.JobPostingId = JP.Id
+            SET JPE.ExpirationStatusId = 2, JPE.LastUpdate = NOW()
+            WHERE JP.AccountId = ? AND JPE.JobPostingId = ?;
         `;
         pool.query(query, [userId, postId], (qErr: any, results: any) => {
             if (qErr) {
-                return res.status(500).json({ error: 'Query error' });
+                return res.status(500).json({ error: 'Query error', qErr });
             }
 
             if (results.affectedRows > 0) {

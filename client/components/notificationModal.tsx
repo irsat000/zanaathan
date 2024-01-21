@@ -42,7 +42,7 @@ const NotificationModal: React.FC<{
                         text: 'Gönderiniz başarıyla güncellendi! Teşekkür ederiz.'
                     });
                 }
-                else Promise.reject(res);
+                else throw Error('Failed to update the post');
             })
             .catch((err) => {
                 handleGStatus('informationModal', {
@@ -73,7 +73,7 @@ const NotificationModal: React.FC<{
                         text: 'Bizi bilgilendirdiğiniz için teşekkür ederiz.'
                     });
                 }
-                else Promise.reject(res);
+                else throw Error('Failed to delay the post expiration');
             })
             .catch((err) => {
                 handleGStatus('informationModal', {

@@ -386,7 +386,7 @@ const checkJobPostingExpiration = () => {
     }
 };
 // Daily = 0 0 * * *
-schedule.scheduleJob('27 * * * *', () => {
+schedule.scheduleJob('0 0 * * *', () => {
     console.log("Daily check started");
     checkJobPostingExpiration();
     console.log("Daily check finished");

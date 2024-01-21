@@ -14,15 +14,16 @@ export interface UserNotification {
 }
 
 
-const NotificationsContext = React.createContext<{
-    notifications: UserNotification[] | null;
-    setNotifications: React.Dispatch<React.SetStateAction<UserNotification[] | null>>;
-}>({
-    notifications: null,
-    setNotifications: () => { },
-});
+const NotificationsContext = React.createContext
+    <{
+        notifications: UserNotification[] | null,
+        setNotifications: React.Dispatch<React.SetStateAction<UserNotification[] | null>>
+    }>({
+        notifications: null,
+        setNotifications: () => { },
+    });
 
-export const UserContext: React.FC<{
+export const NotificationsProvider: React.FC<{
     children: React.ReactNode
 }> = ({ children }) => {
     const [notifications, setNotifications] = useState<UserNotification[] | null>(null);
