@@ -302,11 +302,14 @@ Get posts with last status update earlier than previous 7 days and waiting answe
         +create notification data for account id with post id in it
     -if expiration data is earlier than 7 days ago and status is "Warning"
         +change post status to "tamamlandı(completed)"
-        +delete the existing post expiration data
+        +delete the post expiration data
         (optional todo) +create notification saying the post is auto updated
     -if expiration data is earlier than 7 days ago and status is "Extended"
-        +update exp data with "Warning" status
+        +update exp data with "Warning" status, repeating the warning in other words 
         +create notification data for account id with post id in it
+
+Note: Last update properties must be updated with NOW() and expiration data must be deleted
+    in relevant update functions for this to work without problem (e.g. Post current status updates)
 
 ExpirationStatusId;
 1: "Warning"
@@ -325,32 +328,31 @@ const checkJobPostingExpiration = () => {
             if (qErr) {
                 throw qErr;
             }
-            console.log('1')
+            //console.log('1')
             // Iterate over all the waiting posts and check if they require action
             results.forEach((post) => {
-                console.log('x')
+                //console.log('x')
                 const query = `
                     SELECT
-                        MAX(CASE WHEN LastUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) AS ActionRequired,
-                        MAX(ExpirationStatusId) AS ExpirationStatusId
+                        CASE WHEN LastUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END AS ActionRequired,
+                        ExpirationStatusId AS ExpirationStatusId
                     FROM job_posting_expiration
-                    WHERE JobPostingId = ${post.Id};
+                    WHERE JobPostingId = ${post.Id}
+                    LIMIT 1;
                 `;
                 pool.query(query, (qErr: any, results: { ActionRequired: boolean, ExpirationStatusId: 1 | 2 }[]) => {
                     if (qErr) {
                         throw qErr;
                     }
-                    console.log('2')
+                    //console.log('2')
                     // Get connection for transaction and rollback
                     pool.getConnection((connErr: any, conn: any) => {
                         if (connErr) throw connErr;
                         conn.beginTransaction(async (beginErr: any) => {
                             if (beginErr) throw beginErr;
-                            console.log('3')
+                            //console.log('3')
 
-                            // Due to MAX, results will have at least 1 length, with null values of ActionRequired and ExpirationStatusId
-                            // .ActionRequired is not necessary to find out if there is no result
-                            if (results[0].ActionRequired === null || results[0].ExpirationStatusId === null) {
+                            if (results.length === 0) {
                                 // No expiration status, create one with 1/"Warning" and send a notification
                                 const query = `
                                     INSERT INTO job_posting_expiration(ExpirationStatusId, JobPostingId, LastUpdate)
@@ -360,7 +362,7 @@ const checkJobPostingExpiration = () => {
                                     VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
                                 `;
                                 await transactionQueryAsync(query, conn);
-                                console.log('4-1')
+                                //console.log('4-1')
                             }
                             else if (results[0].ActionRequired && results[0].ExpirationStatusId === 1) {
                                 // Status is "Warning", 7 days have passed, the user didn't respond, set to completed
@@ -371,7 +373,7 @@ const checkJobPostingExpiration = () => {
                                     DELETE FROM job_posting_expiration WHERE JobPostingId = ${post.Id};
                                 `;
                                 await transactionQueryAsync(query, conn);
-                                console.log('4-2')
+                                //console.log('4-2')
                             }
                             else if (results[0].ActionRequired && results[0].ExpirationStatusId === 2) {
                                 // Status is "Extended", the user wanted 7 more days and it has ended.
@@ -385,7 +387,7 @@ const checkJobPostingExpiration = () => {
                                     VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
                                 `;
                                 await transactionQueryAsync(query, conn);
-                                console.log('4-3')
+                                //console.log('4-3')
                             }
 
                             // COMMIT
@@ -395,7 +397,7 @@ const checkJobPostingExpiration = () => {
                                     throw commitErr;
                                 }
                                 conn.release();
-                                console.log('5')
+                                //console.log('5')
                             });
                         });
                     });
@@ -408,9 +410,7 @@ const checkJobPostingExpiration = () => {
 }
 // Daily = 0 0 * * *
 schedule.scheduleJob('0 0 * * *', () => {
-    console.log("Daily check started")
     checkJobPostingExpiration();
-    console.log("Daily check finished")
 });
 
 

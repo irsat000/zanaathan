@@ -1584,6 +1584,12 @@ header>.header-container {
                                 -webkit-box-orient: vertical;
                                 -webkit-line-clamp: 2;
                                 text-overflow: ellipsis;
+
+                                span.date{
+                                    margin-left: 8px;
+                                    font-weight: 300;
+                                    font-size: 0.8rem;
+                                }
                             }
 
                             p {

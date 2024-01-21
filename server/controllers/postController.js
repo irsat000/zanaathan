@@ -425,7 +425,7 @@ exports.delayPostExpiration = (req, res) => {
                 return res.status(200).json({ message: 'Success' });
             }
             else {
-                return res.status(401).json({ error: "User doesn't own the post" });
+                return res.status(401).json({ error: "User doesn't own the post or the expiration status doesn't exist" });
             }
         });
     }

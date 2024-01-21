@@ -173,9 +173,15 @@ exports.adminUpdatePost = (req, res) => __awaiter(void 0, void 0, void 0, functi
         // Get post id and the action
         const postId = req.params.postId;
         const action = req.params.action;
+        // Approve the post or set to complete
+        // Also delete post expiration data to prevent unwanted daily check events
         if (action === 'approve' || action === 'complete') {
-            const query = `UPDATE job_posting SET CurrentStatusId = ${action === 'approve' ? '1' : '3'}, LastStatusUpdate = NOW() WHERE Id = ?;`;
-            pool.query(query, [postId], (qErr, results) => {
+            const query = `
+                UPDATE job_posting SET CurrentStatusId = ${action === 'approve' ? '1' : '3'}, LastStatusUpdate = NOW() WHERE Id = ?;
+
+                DELETE FROM job_posting_expiration WHERE JobPostingId = ?;
+            `;
+            pool.query(query, [postId, postId], (qErr, results) => {
                 if (qErr) {
                     return res.status(500).json({ error: 'Query error' });
                 }

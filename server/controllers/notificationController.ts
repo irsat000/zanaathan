@@ -24,7 +24,7 @@ exports.getNotifications = (req: Request, res: Response) => {
             LEFT JOIN job_posting JP ON N.PostId = JP.Id
             WHERE N.AccountId = ?
             AND N.CreatedAt > DATE_SUB(NOW(), INTERVAL 1 MONTH)
-            ORDER BY N.CreatedAt
+            ORDER BY N.CreatedAt DESC
             LIMIT 15;
         `;
         pool.query(query, [userId], (qErr: any, results: any) => {

@@ -1,7 +1,7 @@
 import { UserNotification, useNotifications } from "@/context/notificationsContext";
 import React, { useEffect } from "react";
 import notificationTypes from '@/assets/site/notificationTypes.json'
-import { apiUrl } from "@/lib/utils/helperUtils";
+import { apiUrl, toShortLocal } from "@/lib/utils/helperUtils";
 import { fetchJwt } from "@/lib/utils/userUtils";
 import { useUser } from "@/context/userContext";
 
@@ -35,7 +35,7 @@ export const Notifications: React.FC<{
                     id: not.Id,
                     type: not.NotificationTypeId.toString() as keyof typeof notificationTypes,
                     isSeen: not.IsSeen ? true : false,
-                    createdAt: new Date(not.CreatedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' }),
+                    createdAt: toShortLocal(not.CreatedAt),
                     extra: {
                         postId: not.PostId,
                         postTitle: not.PostTitle,
@@ -48,7 +48,7 @@ export const Notifications: React.FC<{
                 console.log("Couldn't fetch notifications", err);
             });
     };
-    
+
     // Fetch notifications once for the entire session
     // Optional TODO: If user wants, they can click on a refresh button and run fetchNotifications() freely
     useEffect(() => {
@@ -98,7 +98,7 @@ export const Notifications: React.FC<{
                 }}>
                     <span className={`unread ${not.isSeen ? '' : 'active'}`}></span>
                     <div className="notification-details">
-                        <h4>{notificationTypes[not.type].title}</h4>
+                        <h4>{notificationTypes[not.type].title}<span className="date">{not.createdAt}</span></h4>
                         <p>{notificationTypes[not.type].description}</p>
                     </div>
                 </div>
