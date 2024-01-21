@@ -73,11 +73,16 @@ const socketUserMap = new Map();
 const userSocketMap = new Map();
 // Web socket
 io.on('connection', (socket) => {
-    // console.log(`Client ${socket.id} connected`);
+    console.log(`Client ${socket.id} connected`);
     socket.on('setUserId', (jwt) => {
         const userId = (0, userUtils_1.verifyJwt)(jwt);
         if (!userId)
             return; //Not authorized
+        // Clean previous link if it exists
+        const prevUserId = socketUserMap.get(socket.id);
+        if (prevUserId) {
+            userSocketMap.delete(prevUserId);
+        }
         // Associate the user's ID with their socket ID
         socketUserMap.set(socket.id, userId);
         userSocketMap.set(userId, socket.id);
@@ -207,7 +212,7 @@ io.on('connection', (socket) => {
         }
     });
     socket.on('disconnect', () => {
-        // console.log('Client disconnected');
+        console.log('Client disconnected');
         // Delete pairs after disconnect
         const userId = socketUserMap.get(socket.id);
         if (userId) {

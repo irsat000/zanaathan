@@ -7,16 +7,18 @@ import Link from 'next/link'
 import categoryList from '@/assets/site/categories.json'
 import AuthModal from './authModal'
 import { useUser } from '@/context/userContext'
-import { readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
+import { fetchJwt, readJwtCookie, removeJwtCookie } from '@/lib/utils/userUtils'
 import Chatbot from './chatbot'
 import { useContacts } from '@/context/contactsContext'
 import { AuthModalState, useGStatus } from '@/context/globalContext'
-import { avatarLink } from '@/lib/utils/helperUtils'
+import { apiWebSocketUrl, avatarLink } from '@/lib/utils/helperUtils'
 import { HashLoader } from 'react-spinners'
 import Router from 'next/router'
 import NotificationModal from './notificationModal'
 import { useNotifications } from '@/context/notificationsContext'
 import { Notifications } from './notifications'
+import { useWebSocket } from '@/context/webSocketContext'
+import { io } from 'socket.io-client'
 
 
 interface SearchRecommendation {
@@ -34,6 +36,8 @@ const Template: React.FC<{
 	const { gStatus, handleGStatus } = useGStatus();
 	// User's notifications context
 	const { notifications, setNotifications } = useNotifications();
+	// WEB SOCKET context
+	const { webSocket } = useWebSocket();
 
 	// User context
 	const { userData, setUserData } = useUser();
@@ -44,6 +48,19 @@ const Template: React.FC<{
 			setUserData(info);
 		}
 	}, []);
+
+	// Associate user id and socket id on server 
+	useEffect(() => {
+		if (!webSocket || !userData || gStatus.userIdRegistered) return;
+
+		// Get jwt and associate the user id with socket id for real time messaging
+		const jwt = fetchJwt();
+		if (jwt) {
+			webSocket.emit('setUserId', jwt);
+			handleGStatus('userIdRegistered', true);
+		}
+	}, [webSocket, userData]);
+
 	// Logout function
 	// Empties the user context and removes the cookie
 	const handleSignOut = () => {
@@ -51,6 +68,7 @@ const Template: React.FC<{
 		removeJwtCookie();
 		setUserContacts(null);
 		setNotifications(null);
+		handleGStatus('userIdRegistered', false);
 		// If facebook is connected, logout from FB aswell
 		try {
 			window.FB.getLoginStatus(function (response: any) {
@@ -137,8 +155,6 @@ const Template: React.FC<{
 		// Update state
 		setSearchRecommendations(updated);
 	}
-
-
 
 	// Check chat notification
 	const hasMessageNotification = userContacts ? userContacts.some(c => c.NotificationCount > 0) : false;

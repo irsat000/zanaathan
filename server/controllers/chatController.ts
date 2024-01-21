@@ -22,7 +22,7 @@ exports.getContacts = (req: Request, res: Response) => {
                 ( SELECT Body
                     FROM message AS M2
                     WHERE (M2.SenderId = A.Id OR M2.ReceiverId = A.Id)
-                        AND M2.CreatedAt = MAX(M.CreatedAt)
+                        AND M2.CreatedAt = MAX(M.CreatedAt) LIMIT 1
                 ) AS LastMessage,
                 CASE WHEN COUNT(UB.TargetId) > 0 THEN true ELSE false END AS IsBlocked,
                 ( SELECT COUNT(*)
@@ -41,7 +41,7 @@ exports.getContacts = (req: Request, res: Response) => {
         `;
         pool.query(query, [userId, userId, userId, userId], (qErr: any, results: any) => {
             if (qErr) {
-                return res.status(500).json({ error: 'Query error' });
+                return res.status(500).json({ error: 'Query error', qErr });
             }
 
             return res.status(200).json({ contactList: results });

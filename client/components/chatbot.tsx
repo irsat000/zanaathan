@@ -8,6 +8,7 @@ import { fetchJwt, fetchUserContacts } from '@/lib/utils/userUtils';
 import { io, Socket } from 'socket.io-client';
 import { ThreadMessage, UserContact, useContacts } from '@/context/contactsContext';
 import { useGStatus } from '@/context/globalContext';
+import { useWebSocket } from '@/context/webSocketContext';
 
 
 const Chatbot: React.FC<{
@@ -16,6 +17,11 @@ const Chatbot: React.FC<{
     const { userContacts, setUserContacts } = useContacts();
     // General status context
     const { gStatus, handleGStatus } = useGStatus();
+    // User context
+    const { userData } = useUser();
+    // WEB SOCKET
+    const { webSocket } = useWebSocket();
+
     // Up to date gStatus.activeContact
     const activeContactRef = useRef<number | null>(null);
     activeContactRef.current = gStatus.activeContact;
@@ -23,8 +29,6 @@ const Chatbot: React.FC<{
     const chatbotActiveRef = useRef<boolean>(false);
     chatbotActiveRef.current = gStatus.chatbotActive;
 
-    // User context
-    const { userData } = useUser();
     // Message input
     const [messageInput, setMessageInput] = useState('');
 
@@ -182,36 +186,12 @@ const Chatbot: React.FC<{
         });
     };
 
-    // WEB SOCKET
-    const [socket, setSocket] = useState<Socket | null>(null);
-
+    // Receive both way message from web socket
     useEffect(() => {
-        // Create connection
-        const newSocket = io(apiWebSocketUrl!);
+        if (!webSocket || webSocket.listeners('message').length > 0) return;
 
-        // Connection opened
-        newSocket.on('connect', () => {
-            console.log("WS is active.");
-            // Store the WebSocket instance in a state for outside use
-            setSocket(newSocket);
-            // Get jwt and associate the user id with socket id for real time messaging
-            const jwt = fetchJwt();
-            if (!jwt) return;
-            newSocket.emit('setUserId', jwt);
-        });
-
-        // Connection closed
-        newSocket.on('disconnect', () => {
-            console.log("WS is closed.");
-            // Reset the socket in state
-            setSocket(null);
-        });
-
-        // Receive message emit
-        newSocket.on('message', (res) => {
-            // Check user login // Unnecessary because component mounts only when user is logged in.
-            //if (!userData) return;
-
+        // Receive chat message
+        webSocket.on('message', (res: any) => {
             const data = JSON.parse(res);
             // status: 'success' | 'error' | 'blocked'
 
@@ -229,12 +209,11 @@ const Chatbot: React.FC<{
             handleNewMessageFromSocket(data);
         });
 
-        // Unmount
         return () => {
-            newSocket.close();
+            // Clean up the message listeners
+            webSocket.off('message');
         };
-    }, []);
-
+    }, [webSocket]);
 
     // Get necessary render properties
     const currentContact = userContacts ? userContacts.find(c => c.ReceiverId === gStatus.activeContact) : undefined;
@@ -259,8 +238,8 @@ const Chatbot: React.FC<{
             return;
         }
         // Check WS connection
-        if (!socket) {
-            alert("Sunucuyla bağlantıda hata.")
+        if (!webSocket) {
+            alert("Sunucuyla bağlantı sağlanmamış.")
             return;
         }
         // Check block from this user
@@ -279,7 +258,7 @@ const Chatbot: React.FC<{
             jwt: jwt
         };
         // Send payload through connection
-        socket.emit('message', JSON.stringify(messageObject));
+        webSocket.emit('message', JSON.stringify(messageObject));
         // Reset message input after sending
         setMessageInput('');
     }
@@ -300,14 +279,14 @@ const Chatbot: React.FC<{
                     contact.NotificationCount = 0;
                     // Check jwt
                     const jwt = fetchJwt();
-                    if (jwt && socket) {
+                    if (jwt && webSocket) {
                         // Payload
                         const removeNotificationPayload = {
                             contact: gStatus.activeContact,
                             jwt: jwt
                         };
                         // Send payload through connection
-                        socket.emit('removeNotification', JSON.stringify(removeNotificationPayload));
+                        webSocket.emit('removeNotification', JSON.stringify(removeNotificationPayload));
                     }
                 }
                 // Get thread for the contact and update

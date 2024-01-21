@@ -6,7 +6,7 @@ const userController = require('../controllers/userController');
 
 
 // To login
-router.post('/sign-in', rateLimiter({ minute: 5, max: 4 }), userController.signin);
+router.post('/sign-in', rateLimiter({ minute: 5, max: 10 }), userController.signin);
 // To register
 router.post('/sign-up', rateLimiter({ minute: 30, max: 4 }), userController.signup);
 // To login or register with google

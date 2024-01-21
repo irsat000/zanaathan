@@ -6,7 +6,7 @@ const helperUtils_1 = require("../utils/helperUtils");
 const router = (0, express_1.Router)();
 const userController = require('../controllers/userController');
 // To login
-router.post('/sign-in', (0, helperUtils_1.rateLimiter)({ minute: 5, max: 4 }), userController.signin);
+router.post('/sign-in', (0, helperUtils_1.rateLimiter)({ minute: 5, max: 10 }), userController.signin);
 // To register
 router.post('/sign-up', (0, helperUtils_1.rateLimiter)({ minute: 30, max: 4 }), userController.signup);
 // To login or register with google
