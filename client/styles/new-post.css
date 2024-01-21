@@ -208,6 +208,9 @@
 .new-post-page .new-post-form .np-secondary select:focus {
   border-color: var(--focus-border);
 }
+.new-post-page .new-post-form .np-secondary select[name=subCategory] {
+  display: none;
+}
 .new-post-page .new-post-form .np-secondary .submit-button:disabled {
   opacity: 0.6;
   cursor: default;

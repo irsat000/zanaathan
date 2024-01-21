@@ -325,12 +325,14 @@ const checkJobPostingExpiration = () => {
             if (qErr) {
                 throw qErr;
             }
+            console.log('1')
             // Iterate over all the waiting posts and check if they require action
             results.forEach((post) => {
+                console.log('x')
                 const query = `
                     SELECT
                         MAX(CASE WHEN LastUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) AS ActionRequired,
-                        MAX(ExpirationStatusId) AS ExpirationStatusId,
+                        MAX(ExpirationStatusId) AS ExpirationStatusId
                     FROM job_posting_expiration
                     WHERE JobPostingId = ${post.Id};
                 `;
@@ -338,14 +340,17 @@ const checkJobPostingExpiration = () => {
                     if (qErr) {
                         throw qErr;
                     }
-
+                    console.log('2')
                     // Get connection for transaction and rollback
                     pool.getConnection((connErr: any, conn: any) => {
                         if (connErr) throw connErr;
                         conn.beginTransaction(async (beginErr: any) => {
                             if (beginErr) throw beginErr;
+                            console.log('3')
 
-                            if (results.length === 0) {
+                            // Due to MAX, results will have at least 1 length, with null values of ActionRequired and ExpirationStatusId
+                            // .ActionRequired is not necessary to find out if there is no result
+                            if (results[0].ActionRequired === null || results[0].ExpirationStatusId === null) {
                                 // No expiration status, create one with 1/"Warning" and send a notification
                                 const query = `
                                     INSERT INTO job_posting_expiration(ExpirationStatusId, JobPostingId, LastUpdate)
@@ -355,6 +360,7 @@ const checkJobPostingExpiration = () => {
                                     VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
                                 `;
                                 await transactionQueryAsync(query, conn);
+                                console.log('4-1')
                             }
                             else if (results[0].ActionRequired && results[0].ExpirationStatusId === 1) {
                                 // Status is "Warning", 7 days have passed, the user didn't respond, set to completed
@@ -362,9 +368,10 @@ const checkJobPostingExpiration = () => {
                                 const query = `
                                     UPDATE job_posting SET CurrentStatusId = 3, LastStatusUpdate = NOW() WHERE Id = ${post.Id};
         
-                                    DELETE job_posting_expiration WHERE JobPostingId = ${post.Id};
+                                    DELETE FROM job_posting_expiration WHERE JobPostingId = ${post.Id};
                                 `;
                                 await transactionQueryAsync(query, conn);
+                                console.log('4-2')
                             }
                             else if (results[0].ActionRequired && results[0].ExpirationStatusId === 2) {
                                 // Status is "Extended", the user wanted 7 more days and it has ended.
@@ -378,12 +385,17 @@ const checkJobPostingExpiration = () => {
                                     VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
                                 `;
                                 await transactionQueryAsync(query, conn);
+                                console.log('4-3')
                             }
 
                             // COMMIT
                             conn.commit((commitErr: any) => {
-                                if (commitErr) conn.rollback();
+                                if (commitErr) {
+                                    conn.rollback();
+                                    throw commitErr;
+                                }
                                 conn.release();
+                                console.log('5')
                             });
                         });
                     });
@@ -395,7 +407,7 @@ const checkJobPostingExpiration = () => {
     }
 }
 // Daily = 0 0 * * *
-schedule.scheduleJob('0 0 * * *', () => {
+schedule.scheduleJob('27 * * * *', () => {
     console.log("Daily check started")
     checkJobPostingExpiration();
     console.log("Daily check finished")

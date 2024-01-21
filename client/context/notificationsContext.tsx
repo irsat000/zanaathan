@@ -5,6 +5,7 @@ export interface UserNotification {
     id: number,
     type: keyof typeof notificationTypes,
     isSeen: boolean,
+    createdAt: string,
     extra: {
         postId?: number,
         postTitle?: string,

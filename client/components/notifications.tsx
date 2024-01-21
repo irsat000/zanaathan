@@ -34,24 +34,29 @@ export const Notifications: React.FC<{
                 ({
                     id: not.Id,
                     type: not.NotificationTypeId.toString() as keyof typeof notificationTypes,
-                    isSeen: not.IsSeen,
+                    isSeen: not.IsSeen ? true : false,
+                    createdAt: new Date(not.CreatedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' }),
                     extra: {
                         postId: not.PostId,
                         postTitle: not.PostTitle,
-                        postCreatedAt: not.PostCreatedAt.toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
+                        postCreatedAt: new Date(not.PostCreatedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
                     }
                 } as UserNotification));
                 setNotifications(sanitizedNotifications);
             })
-            .catch(res => {
-                console.log("Couldn't fetch messages");
+            .catch((err) => {
+                console.log("Couldn't fetch notifications", err);
             });
     };
+    useEffect(() => {
+        console.log("yo", notifications);
+    }, [notifications]);
+
     // Fetch notifications once for the entire session
     // Optional TODO: If user wants, they can click on a refresh button and run fetchNotifications() freely
     useEffect(() => {
         // Only if notifications are not fetched before
-        if (!userData || notifications !== null) return;
+        //if (!userData || notifications !== null) return;
         fetchNotifications();
     }, [userData]);
 

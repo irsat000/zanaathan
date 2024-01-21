@@ -249,6 +249,11 @@
                 }
             }
 
+            // Temporary
+            select[name="subCategory"] {
+                display: none;
+            }
+
             .submit-button:disabled {
                 opacity: 0.6;
                 cursor: default;
