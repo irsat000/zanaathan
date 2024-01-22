@@ -150,7 +150,7 @@ export default function PostDetails({
 			})
 			return
 		};
-		if (!postDetails) return; // To ignore warning, postDetails is not null in this function
+		if (!postDetails || !userContacts) return; // To ignore warning, they won't be null in this function
 
 		// Check if contact was established before
 		const receiverIdExists = userContacts.some(contact => contact.ReceiverId === targetId);

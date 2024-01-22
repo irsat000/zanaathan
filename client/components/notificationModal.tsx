@@ -96,7 +96,7 @@ const NotificationModal: React.FC<{
                             <div className="post-expiration-question">
                                 <p>{notification.extra.postCreatedAt} tarihinde oluşturduğunuz</p>
                                 <h4>{notification.extra.postTitle}</h4>
-                                <p>başlıklı gönderi tamamlandı mı, yoksa hâlâ cevap mı bekliyor? İşlem yapmadığınız takdirde bir hafta daha yayında kalıp sonrasında "Tamamlandı" olarak değiştirilecektir. Bu işlemi istediğiniz zaman profilinizden de yapabilirsiniz.</p>
+                                <p>başlıklı gönderi tamamlandı mı, yoksa hâlâ cevap mı bekliyor? İşlem yapmadığınız takdirde bir hafta daha yayında kalıp sonrasında &quot;Tamamlandı&quot; olarak değiştirilecektir. Bu işlemi istediğiniz zaman profilinizden de yapabilirsiniz.</p>
                             </div>
                             <div className="post-expiration-actions">
                                 <button type="button" className='negative' onClick={() => delayPostExpiration(notification.extra.postId!)}>Hâlâ bekliyor</button>

@@ -46,15 +46,17 @@ USE ZANAATHAN;
 
 SET SQL_SAFE_UPDATES = 0;
 DELETE FROM `job_posting_images`;
+DELETE FROM `job_posting_expiration`;
 DELETE FROM `job_posting`;
 DELETE FROM `account_role`;
 DELETE FROM `contact_information`;
-DELETE FROM `Message`;
-DELETE FROM `MNotification`;
+DELETE FROM `notification`;
+DELETE FROM `message`;
+DELETE FROM `mnotification`;
 DELETE FROM `sign_in_log`;
 DELETE FROM `user_bans`;
 DELETE FROM `user_block`;
-DELETE FROM `Account`;
+DELETE FROM `account`;
 SET SQL_SAFE_UPDATES = 1;
 
 
@@ -62,3 +64,6 @@ DELETE FROM `district` WHERE CityId NOT IN (10, 16, 34);
 DELETE FROM `city` WHERE Id NOT IN (10, 16, 34);
 
 
+
+
+INSERT INTO account_role(AccountId, RoleId) VALUES(x, 1);
