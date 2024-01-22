@@ -78,10 +78,20 @@ io.on('connection', (socket: any) => {
     socket.on('setUserId', (jwt: string) => {
         const userId = verifyJwt(jwt);
         if (!userId) return; //Not authorized
-        // Clean previous link if it exists
+        // Clean previous links if they exist
+        // from userSocketMap
+        const prevSocketId = userSocketMap.get(userId);
+        if (prevSocketId) {
+            if (socketUserMap.get(prevSocketId) === userId) {
+                socketUserMap.delete(prevSocketId)
+            }
+        }
+        // from socketUserMap
         const prevUserId = socketUserMap.get(socket.id);
         if (prevUserId) {
-            userSocketMap.delete(prevUserId)
+            if (userSocketMap.get(prevUserId) === socket.id) {
+                userSocketMap.delete(prevUserId)
+            }
         }
         // Associate the user's ID with their socket ID
         socketUserMap.set(socket.id, userId);
