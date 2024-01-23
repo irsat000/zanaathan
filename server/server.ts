@@ -28,7 +28,9 @@ const io = new Server(httpServer, {
                 'https://localhost:3000',
                 'http://localhost:3000',
                 'https://192.168.1.106:3000',
-                'http://192.168.1.106:3000'
+                'https://192.168.1.109:3000',
+                'https://192.168.1.110:3000',
+                'http://192.168.1.110:3000'
             ]
             : ['https://zanaathan.com',
                 'http://zanaathan.com']
@@ -43,7 +45,9 @@ app.use(cors({
             'https://localhost:3000',
             'http://localhost:3000',
             'https://192.168.1.106:3000',
-            'http://192.168.1.106:3000'
+            'https://192.168.1.109:3000',
+            'https://192.168.1.110:3000',
+            'http://192.168.1.110:3000'
         ]
         : ['https://zanaathan.com',
             'http://zanaathan.com'],
@@ -70,6 +74,13 @@ const pool = require('./db/db');
 
 const socketUserMap: Map<string, number> = new Map();
 const userSocketMap: Map<number, string> = new Map();
+
+/*setInterval(() => {
+    console.log({
+        socketUserMap,
+        userSocketMap
+    })
+}, 10000);*/
 
 // Web socket
 io.on('connection', (socket: any) => {

@@ -34,7 +34,9 @@ const io = new socket_io_1.Server(httpServer, {
                 'https://localhost:3000',
                 'http://localhost:3000',
                 'https://192.168.1.106:3000',
-                'http://192.168.1.106:3000'
+                'https://192.168.1.109:3000',
+                'https://192.168.1.110:3000',
+                'http://192.168.1.110:3000'
             ]
             : ['https://zanaathan.com',
                 'http://zanaathan.com']
@@ -48,7 +50,9 @@ app.use(cors({
             'https://localhost:3000',
             'http://localhost:3000',
             'https://192.168.1.106:3000',
-            'http://192.168.1.106:3000'
+            'https://192.168.1.109:3000',
+            'https://192.168.1.110:3000',
+            'http://192.168.1.110:3000'
         ]
         : ['https://zanaathan.com',
             'http://zanaathan.com'],
@@ -71,6 +75,12 @@ app.use('/api', notificationRoutes);
 const pool = require('./db/db');
 const socketUserMap = new Map();
 const userSocketMap = new Map();
+/*setInterval(() => {
+    console.log({
+        socketUserMap,
+        userSocketMap
+    })
+}, 10000);*/
 // Web socket
 io.on('connection', (socket) => {
     console.log(`Client ${socket.id} connected`);

@@ -216,6 +216,10 @@ body select {
   z-index: 1;
 }
 
+.modal-container.active {
+  display: flex;
+}
+
 .modal-container {
   z-index: 200;
   position: fixed;
@@ -247,10 +251,6 @@ body select {
 }
 .modal-container .close-modal-button:hover {
   box-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.3);
-}
-
-.modal-container.active {
-  display: flex;
 }
 
 .information-modal-container {
@@ -700,6 +700,7 @@ body select {
   -webkit-backdrop-filter: blur(3px);
           backdrop-filter: blur(3px);
   overflow: hidden;
+  overscroll-behavior: none;
 }
 @keyframes slide-drawer {
   from {
@@ -751,15 +752,19 @@ body select {
   display: flex;
   flex-direction: column;
 }
-.drawer-container .drawer .drawer-list > a {
+.drawer-container .drawer .drawer-list > a,
+.drawer-container .drawer .drawer-list > button {
   font-size: 1.6rem;
   padding: 12px 20px;
   border-top: 1px solid #dddddd;
+  text-align: right;
 }
-.drawer-container .drawer .drawer-list > a:last-child {
+.drawer-container .drawer .drawer-list > a:last-child,
+.drawer-container .drawer .drawer-list > button:last-child {
   border-bottom: 1px solid #dddddd;
 }
-.drawer-container .drawer .drawer-list > a:hover {
+.drawer-container .drawer .drawer-list > a:hover,
+.drawer-container .drawer .drawer-list > button:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 .drawer-container .drawer .dr-profile-button {
@@ -789,6 +794,120 @@ body select {
   background-color: var(--button3-1);
   transition: background-color 0.1s ease-in-out;
   font-family: "Poppins", sans-serif;
+}
+
+.notification-container.active {
+  display: flex;
+}
+
+.notification-container {
+  z-index: 195 !important;
+  background-color: unset !important;
+  overflow-y: hidden !important;
+  -webkit-backdrop-filter: unset !important;
+          backdrop-filter: unset !important;
+}
+.notification-container .notification-box {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-bg-color);
+  border: 1px solid var(--primary-light-border);
+  border-radius: 10px;
+  overflow-y: auto;
+  overscroll-behavior: none;
+  box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.2);
+}
+.notification-container .notification-box .notification-box-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 10px 10px;
+  border-bottom: 1px solid var(--primary-light-border);
+}
+.notification-container .notification-box .notification-box-header .notification-box-heading {
+  font-size: 1.3rem;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
+}
+.notification-container .notification-box .notification-box-header .close-notification-box-button {
+  display: flex;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  font-size: 1.4rem;
+}
+.notification-container .notification-box .no-notification {
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+}
+.notification-container .notification-box .notification-item {
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  padding-right: 28px;
+}
+.notification-container .notification-box .notification-item:hover {
+  background-color: rgba(192, 203, 255, 0.1);
+}
+.notification-container .notification-box .notification-item:last-child .notification-details {
+  border-bottom: unset;
+}
+.notification-container .notification-box .notification-item .unread {
+  opacity: 0;
+  border-radius: 50%;
+  background-color: #b669fb;
+  height: 8px;
+  width: 8px;
+  flex-shrink: 0;
+  margin: 15px 10px 0 10px;
+}
+.notification-container .notification-box .notification-item .unread.active {
+  opacity: 1;
+}
+.notification-container .notification-box .notification-item .notification-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 0 10px;
+  border-bottom: 1px solid var(--primary-light-border);
+}
+.notification-container .notification-box .notification-item .notification-details h4 {
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+  max-height: 36px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+}
+.notification-container .notification-box .notification-item .notification-details h4 span.date {
+  margin-left: 8px;
+  font-weight: 300;
+  font-size: 0.8rem;
+}
+.notification-container .notification-box .notification-item .notification-details p {
+  font-size: 0.9rem;
+  font-weight: 300;
+  font-family: "Fira sans", sans-serif;
+  max-height: 80px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  text-overflow: ellipsis;
 }
 
 .chatbot-container.active {
@@ -1296,101 +1415,6 @@ header > .header-container .user-container .shortcut-wrapper .shortcut-button {
 header > .header-container .user-container .shortcut-wrapper .shortcut-button:hover {
   transform: scale(1.05);
 }
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper {
-  position: relative;
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container.active {
-  display: flex;
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container {
-  display: none;
-  position: absolute;
-  top: 36px;
-  right: 0;
-  min-width: 400px;
-  max-width: 30vw;
-  max-height: 300px;
-  flex-direction: column;
-  z-index: 195;
-  background-color: var(--primary-bg-color);
-  border: 1px solid var(--primary-light-border);
-  border-radius: 10px;
-  overflow-y: auto;
-  overscroll-behavior: none;
-  box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.2);
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-box-header {
-  font-size: 1.3rem;
-  font-weight: 500;
-  font-family: "Poppins", sans-serif;
-  padding: 13px 10px 10px;
-  border-bottom: 1px solid var(--primary-light-border);
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .no-notification {
-  text-align: center;
-  padding: 20px 10px;
-  font-size: 1rem;
-  font-weight: 400;
-  font-family: "Poppins", sans-serif;
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item {
-  display: flex;
-  flex-direction: row;
-  cursor: pointer;
-  padding-right: 28px;
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item:hover {
-  background-color: rgba(192, 203, 255, 0.1);
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item:last-child .notification-details {
-  border-bottom: unset;
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .unread {
-  opacity: 0;
-  border-radius: 50%;
-  background-color: #b669fb;
-  height: 8px;
-  width: 8px;
-  flex-shrink: 0;
-  margin: 15px 10px 0 10px;
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .unread.active {
-  opacity: 1;
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .notification-details {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 6px 0 10px;
-  border-bottom: 1px solid var(--primary-light-border);
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .notification-details h4 {
-  font-size: 1rem;
-  font-weight: 400;
-  font-family: "Poppins", sans-serif;
-  max-height: 36px;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  text-overflow: ellipsis;
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .notification-details h4 span.date {
-  margin-left: 8px;
-  font-weight: 300;
-  font-size: 0.8rem;
-}
-header > .header-container .user-container .shortcut-wrapper .notification-wrapper .notification-container .notification-item .notification-details p {
-  font-size: 0.9rem;
-  font-weight: 300;
-  font-family: "Fira sans", sans-serif;
-  max-height: 80px;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  text-overflow: ellipsis;
-}
 header > .header-container .user-container .user-menu-button {
   all: unset;
   cursor: pointer;
@@ -1725,6 +1749,15 @@ footer .copyright p {
   }
   .notification-modal-container .notification-modal {
     max-width: 600px;
+  }
+  .notification-container .notification-box {
+    left: unset;
+    bottom: unset;
+    right: 130px;
+    top: 60px;
+    min-width: 400px;
+    max-width: 30vw;
+    max-height: 300px;
   }
   header > .header-container {
     height: 80px;

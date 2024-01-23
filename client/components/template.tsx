@@ -18,7 +18,6 @@ import NotificationModal from './notificationModal'
 import { useNotifications } from '@/context/notificationsContext'
 import { Notifications } from './notifications'
 import { useWebSocket } from '@/context/webSocketContext'
-import { io } from 'socket.io-client'
 
 
 interface SearchRecommendation {
@@ -98,11 +97,6 @@ const Template: React.FC<{
 			// Check if the click target is outside of the relevant elements
 			if (userMenuActive && !e.target.closest('.user-menu') && !e.target.closest('.user-menu-button')) {
 				setUserMenuActive(false);
-			}
-			if (notificationBoxActive
-				&& !e.target.closest('.notification-wrapper')
-				&& !e.target.closest('.notification-modal-container')) {
-				setNotificationBoxActive(false);
 			}
 		};
 
@@ -186,6 +180,7 @@ const Template: React.FC<{
 				{activeNotificationIndex !== null && notifications && notifications[activeNotificationIndex]
 					? <NotificationModal activeNotificationIndex={activeNotificationIndex} setActiveNotificationIndex={setActiveNotificationIndex} notification={notifications[activeNotificationIndex]} />
 					: <></>}
+				<Notifications {...{ notificationBoxActive, setNotificationBoxActive, setActiveNotificationIndex }} />
 				{gStatus.informationModal ?
 					<div className={`information-modal-container modal-container ${gStatus.informationModal ? 'active' : ''}`}
 						onClick={() => handleGStatus('informationModal', null)}>
@@ -233,6 +228,10 @@ const Template: React.FC<{
 							<div className="drawer-list">
 								<Link href={'/ayarlar'}>Ayarlar</Link>
 								<Link href={'/yeni-ilan'}>İlan oluştur</Link>
+								<button type='button' onClick={() => {
+									setDrawerActive(false);
+									setNotificationBoxActive(true);
+								}}>Bildirimler</button>
 								{userData.roles && userData.roles.length > 0 ?
 									<Link href={'/panel/onay-bekleyenler'}>Panel</Link>
 									: <></>}
@@ -290,14 +289,11 @@ const Template: React.FC<{
 											<ChatDots />
 										</div>
 									</button>
-									<div className="notification-wrapper">
-										<button className='shortcut-button' onClick={() => setNotificationBoxActive(!notificationBoxActive)}>
-											<div className={`icon-wrap ${hasNotification ? 'icon-alert' : ''}`}>
-												<Bell />
-											</div>
-										</button>
-										<Notifications {...{ notificationBoxActive, setActiveNotificationIndex }} />
-									</div>
+									<button className='open-notification-button shortcut-button' onClick={() => setNotificationBoxActive(!notificationBoxActive)}>
+										<div className={`icon-wrap ${hasNotification ? 'icon-alert' : ''}`}>
+											<Bell />
+										</div>
+									</button>
 								</div>
 								<button type='button' className='user-menu-button' onClick={() => setUserMenuActive(!userMenuActive)}>
 									{userData.avatar

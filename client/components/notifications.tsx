@@ -4,12 +4,14 @@ import notificationTypes from '@/assets/site/notificationTypes.json'
 import { apiUrl, toShortLocal } from "@/lib/utils/helperUtils";
 import { fetchJwt } from "@/lib/utils/userUtils";
 import { useUser } from "@/context/userContext";
+import { XLg } from "react-bootstrap-icons";
 
 
 export const Notifications: React.FC<{
     notificationBoxActive: boolean,
+    setNotificationBoxActive: React.Dispatch<React.SetStateAction<boolean>>,
     setActiveNotificationIndex: React.Dispatch<React.SetStateAction<number | null>>
-}> = ({ notificationBoxActive, setActiveNotificationIndex }) => {
+}> = ({ notificationBoxActive, setNotificationBoxActive, setActiveNotificationIndex }) => {
     // User context
     const { userData } = useUser();
     // User's notifications context
@@ -30,6 +32,27 @@ export const Notifications: React.FC<{
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
+                /*const nots: UserNotification[] = [{
+                    id: 1,
+                    type: "1",
+                    isSeen: false,
+                    createdAt: "20 Ocak 2024",
+                    extra: {
+                        postId: 4,
+                        postTitle: "Bu bir gönderinin başlığıdır.",
+                        postCreatedAt: "14 Ocak 2024"
+                    }
+                }, {
+                    id: 2,
+                    type: "1",
+                    isSeen: false,
+                    createdAt: "20 Ocak 2024",
+                    extra: {
+                        postId: 4,
+                        postTitle: "Bu ikinci bir gönderinin başlığıdır.",
+                        postCreatedAt: "14 Ocak 2024"
+                    }
+                }]*/
                 const sanitizedNotifications: UserNotification[] = data.notifications.map((not: any) =>
                 ({
                     id: not.Id,
@@ -78,31 +101,36 @@ export const Notifications: React.FC<{
     };
 
     return (
-        <div className={`notification-container ${notificationBoxActive ? 'active' : ''}`}>
-            <h3 className='notification-box-header'>Bildirimler</h3>
-            {notifications && notifications.length > 0 ? notifications.map((not, index) =>
-                <div className='notification-item' key={index} onClick={() => {
-                    // Reveal notification content
-                    setActiveNotificationIndex(index);
-                    if (!not.isSeen) {
-                        // Update seen status on the server
-                        updateNotificationSeen(not.id).then(success => {
-                            if (success) {
-                                // Update seen status on the client
-                                const updated = [...notifications];
-                                updated[index].isSeen = true;
-                                setNotifications(updated);
-                            }
-                        })
-                    }
-                }}>
-                    <span className={`unread ${not.isSeen ? '' : 'active'}`}></span>
-                    <div className="notification-details">
-                        <h4>{notificationTypes[not.type].title}<span className="date">{not.createdAt}</span></h4>
-                        <p>{notificationTypes[not.type].description}</p>
-                    </div>
+        <div className={`notification-container modal-container ${notificationBoxActive ? 'active' : ''}`} onClick={() => setNotificationBoxActive(false)}>
+            <div className="notification-box" onClick={(e) => e.stopPropagation()}>
+                <div className="notification-box-header">
+                    <h3 className='notification-box-heading'>Bildirimler</h3>
+                    <button type='button' className='close-notification-box-button' onClick={() => setNotificationBoxActive(false)}><XLg /></button>
                 </div>
-            ) : <div className="no-notification">Bildirim kutunuz boş.</div>}
+                {notifications && notifications.length > 0 ? notifications.map((not, index) =>
+                    <div className='notification-item' key={index} onClick={() => {
+                        // Reveal notification content
+                        setActiveNotificationIndex(index);
+                        if (!not.isSeen) {
+                            // Update seen status on the server
+                            updateNotificationSeen(not.id).then(success => {
+                                if (success) {
+                                    // Update seen status on the client
+                                    const updated = [...notifications];
+                                    updated[index].isSeen = true;
+                                    setNotifications(updated);
+                                }
+                            })
+                        }
+                    }}>
+                        <span className={`unread ${not.isSeen ? '' : 'active'}`}></span>
+                        <div className="notification-details">
+                            <h4>{notificationTypes[not.type].title}<span className="date">{not.createdAt}</span></h4>
+                            <p>{notificationTypes[not.type].description}</p>
+                        </div>
+                    </div>
+                ) : <div className="no-notification">Bildirim kutunuz boş.</div>}
+            </div>
         </div>
     )
 };
