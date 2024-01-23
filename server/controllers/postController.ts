@@ -250,7 +250,7 @@ exports.createPostValidation = (req: CreatePostRequest, res: Response, next: Nex
 
         // Validate the inputs
         if (!req.body || title.trim().length < 5 || title.trim().length > 255
-            || description.trim().length < 50 || description.trim().length > 2000
+            || description.trim().length < 10 || description.trim().length > 2000
             || (!isPositiveNumeric(subCategory) && !isPositiveNumeric(category)) || !isPositiveNumeric(district)
         ) {
             deleteUploadedOnError(imageNameList);

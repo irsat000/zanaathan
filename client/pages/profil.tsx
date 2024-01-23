@@ -106,7 +106,7 @@ export default function Home() {
     };
   }, []);
 
-  // Update the status of posts with "Cevap bekliyor | Anlaşıldı | Tamamlandı"
+  // Update the status of posts with "Usta bekliyor | Anlaşıldı | Tamamlandı"
   const updateStatus = (postId: number, value: CurrentStatus) => {
     // Check jwt and get necessary items
     const jwt = fetchJwt();

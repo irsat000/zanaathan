@@ -84,6 +84,13 @@
         "SubCategories": []
     },
     {
+        "Id": 33,
+        "Name": "El Sanatları",
+        "Code": "el-sanatlari",
+        "Image": "el-sanatlari.webp",
+        "SubCategories": []
+    },
+    {
         "Id": 50,
         "Name": "Hurda Satış",
         "Code": "hurda-satis",

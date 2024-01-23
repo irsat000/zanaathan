@@ -22,7 +22,7 @@ INSERT INTO `notification_type`(`Id`, `Code`, `Title`, `Description`)
     '7 gün önce gönderdiğimiz bildirimden yanıt alamadık. Detaylar için tıklayınız.');
 
 /*--*/
-INSERT INTO `current_status`(`Id`, `Body`) VALUES(1, 'Cevap bekliyor');
+INSERT INTO `current_status`(`Id`, `Body`) VALUES(1, 'Usta bekliyor');
 INSERT INTO `current_status`(`Id`, `Body`) VALUES(2, 'Anlaşıldı');
 INSERT INTO `current_status`(`Id`, `Body`) VALUES(3, 'Tamamlandı');
 INSERT INTO `current_status`(`Id`, `Body`) VALUES(4, 'Kaldırıldı');
@@ -68,6 +68,7 @@ INSERT INTO `category`(`Id`, `Code`) VALUES(9, 'elektronik-onarimi');
 INSERT INTO `category`(`Id`, `Code`) VALUES(30, 'temizlik');
 INSERT INTO `category`(`Id`, `Code`) VALUES(31, 'bag-bahce');
 INSERT INTO `category`(`Id`, `Code`) VALUES(32, 'nakliye-ve-tasima');
+INSERT INTO `category`(`Id`, `Code`) VALUES(33, 'el-sanatlari');
 INSERT INTO `category`(`Id`, `Code`) VALUES(50, 'hurda-satis');
 INSERT INTO `category`(`Id`, `Code`) VALUES(60, 'diger');
 
@@ -83,6 +84,7 @@ INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(90, 'Elektronik On
 INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(300, 'Temizlik', 30);
 INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(310, 'Bağ Bahçe', 31);
 INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(320, 'Nakliye ve Taşıma', 32);
+INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(330, 'El Sanatları', 33);
 INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(500, 'Hurda Satış', 50);
 INSERT INTO `sub_category`(`Id`, `Name`, `CategoryId`) VALUES(600, 'Diğer', 60);
 

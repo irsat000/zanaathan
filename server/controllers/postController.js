@@ -230,7 +230,7 @@ exports.createPostValidation = (req, res, next) => {
         const district = body.district;
         // Validate the inputs
         if (!req.body || title.trim().length < 5 || title.trim().length > 255
-            || description.trim().length < 50 || description.trim().length > 2000
+            || description.trim().length < 10 || description.trim().length > 2000
             || (!(0, helperUtils_1.isPositiveNumeric)(subCategory) && !(0, helperUtils_1.isPositiveNumeric)(category)) || !(0, helperUtils_1.isPositiveNumeric)(district)) {
             deleteUploadedOnError(imageNameList);
             return res.status(400).json({ error: 'Bad payload' });

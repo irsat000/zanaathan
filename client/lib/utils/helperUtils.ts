@@ -11,7 +11,7 @@ export const isNullOrEmpty = (value: any): boolean => {
 
 // Current status map for id and value
 export const CSMap = {
-  1: 'Cevap bekliyor',
+  1: 'Usta bekliyor',
   2: 'Anlaşıldı',
   3: 'Tamamlandı',
   5: 'Onay bekliyor'
