@@ -84,7 +84,7 @@ const userSocketMap: Map<number, string> = new Map();
 
 // Web socket
 io.on('connection', (socket: any) => {
-    console.log(`Client ${socket.id} connected`);
+    //console.log(`Client ${socket.id} connected`);
 
     socket.on('setUserId', (jwt: string) => {
         const userId = verifyJwt(jwt);
@@ -230,7 +230,7 @@ io.on('connection', (socket: any) => {
     });
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+        //console.log('Client disconnected');
         // Delete pairs after disconnect
         const userId = socketUserMap.get(socket.id);
         if (userId) {

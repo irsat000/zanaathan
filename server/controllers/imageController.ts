@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import { acceptedImgSet_1 } from '../utils/helperUtils';
 import sharp from 'sharp';
 const appDir = process.cwd();
-// CRITICAL - Sharp caches files which prevents deletion with EBUSY error, because they are "used".
+// CRITICAL - Sharp caches files, which prevents deletion with EBUSY error, because they are "used".
 sharp.cache(false);
 
 /*files.forEach(file => {
@@ -30,7 +30,7 @@ const postImageStorage = multer.diskStorage({
 export const uploadPostImage = (req: Request, res: Response, next: NextFunction) => {
     const multerMiddleware = multer({
         storage: postImageStorage,
-        limits: { fileSize: 1000 * 1000 * 5, files: 10 }, // 5 megabyte max each
+        limits: { fileSize: 1000 * 1000 * 5, files: 4 }, // 5 megabyte max each
         fileFilter: (req, file, cb) => {
             // Accept only images, excluding gif
             if (acceptedImgSet_1.includes(file.mimetype))
@@ -48,8 +48,8 @@ export const uploadPostImage = (req: Request, res: Response, next: NextFunction)
                 return res.status(413).json({ error: 'A file exceeded the 5 megabyte limit' });
             }
             else if (multerError.code === 'LIMIT_FILE_COUNT') {
-                // 10 image limit
-                return res.status(417).json({ error: 'Maximum of 10 files can be sent' });
+                // 4 image limit
+                return res.status(417).json({ error: 'Maximum of 4 files can be sent' });
             }
             return res.status(500).json({ error: multerError });
         }

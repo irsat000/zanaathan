@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false }); // ReactQuill doesn't work on server side, ssr is no good
 import 'react-quill/dist/quill.snow.css';
 import { useGStatus } from '@/context/globalContext'
-import { checkUnallowed } from '@/lib/utils/nsfwjsUtils'
+//import { checkUnallowed } from '@/lib/utils/nsfwjsUtils'
 import { checkProfanity } from '@/lib/utils/profanityUtils'
 import Router from 'next/router'
 
@@ -72,10 +72,10 @@ export default function NewPost() {
     if (!files) return;
 
     // Check if more than 10 files
-    if (files.length + formData.selectedImages.length > 10) {
+    if (files.length + formData.selectedImages.length > 4) {
       handleGStatus('informationModal', {
         type: 'error',
-        text: 'En fazla 10 fotoğraf yüklenebilir.'
+        text: 'En fazla 4 fotoğraf yüklenebilir.'
       })
       return;
     }
@@ -152,7 +152,7 @@ export default function NewPost() {
     // Image control loading info
     handleGStatus('informationModal', {
       type: 'loading',
-      text: 'Başlık, açıklama ve fotoğraflar kontrol edilirken bekleyiniz... 🤖'
+      text: 'İşleminiz devam ediyor, lütfen bekleyiniz...'
     });
     // Check if the title or description contains profanity
     if (checkProfanity([formData.title, description])) {
@@ -189,7 +189,8 @@ export default function NewPost() {
       return;
     };
     // Check if the images contain inappropriate content
-    const inappropriate = await checkUnallowed(processedImages as File[])
+    // TODO: Will be moved to the server side for both performance and malicious users
+    /*const inappropriate = await checkUnallowed(processedImages as File[])
     if (inappropriate) {
       handleGStatus('informationModal', {
         type: 'error',
@@ -197,7 +198,7 @@ export default function NewPost() {
       });
       return;
     }
-    handleGStatus('informationModal', null);
+    handleGStatus('informationModal', null);*/
 
     // Create multipart form data (necessary for image upload)
     const multiPartFormData = new FormData();
@@ -237,7 +238,7 @@ export default function NewPost() {
         } else if (res.status === 413) {
           errorMessage = `En az bir fotoğraf çok büyük.`
         } else if (res.status === 417) {
-          errorMessage = `En fazla 10 fotoğraf yüklenebilir.`
+          errorMessage = `En fazla 4 fotoğraf yüklenebilir.`
         } else if (res.status === 401) {
           errorMessage = `Giriş yapmanız gerekmektedir.`
         }
@@ -298,7 +299,7 @@ export default function NewPost() {
               <span className='text'>Fotoğraf Ekle</span>
             </label>
             <span className='image-upload-note'>Not: İlk sıradaki birincil fotoğraf olarak seçilir. Basılı tutup, sürükleyerek fotoğraf sırasını değiştirebilirsiniz.</span>
-            <span className='image-upload-note'>Not 2: Her biri 5 Megabyte&apos;ın altında olmak üzere en fazla 10 fotoğraf yükleyebilirsiniz.</span>
+            <span className='image-upload-note'>Not 2: Her biri 5 Megabyte&apos;ın altında olmak üzere en fazla 4 fotoğraf yükleyebilirsiniz.</span>
           </div>
           <div className="np-secondary">
             <select name='category' onChange={(e) => {
