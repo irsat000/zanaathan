@@ -20,7 +20,7 @@ router.patch('/edit-profile', rateLimiter(), userController.editProfile);
 // To let user delete their avatar
 router.delete('/delete-avatar', rateLimiter({ minute: 10, max: 6 }), userController.deleteAvatar);
 // To let user change their avatar with a new one
-router.post('/set-new-avatar', rateLimiter({ minute: 10, max: 6 }), uploadAvatar, userController.uploadAvatar);
+router.post('/set-new-avatar', rateLimiter({ minute: 30, max: 5 }), uploadAvatar, userController.uploadAvatar);
 // To get user's profile
 router.get('/get-user-profile/:userId', rateLimiter(), userController.getUserProfile);
 // To let user update their contact information

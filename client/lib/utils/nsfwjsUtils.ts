@@ -1,4 +1,6 @@
+import * as tf from '@tensorflow/tfjs'
 import * as nsfwjs from 'nsfwjs'
+tf.enableProdMode()
 import { imageDataFromFile } from './helperUtils'
 
 

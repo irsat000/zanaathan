@@ -188,8 +188,8 @@ exports.signup = (req, res) => {
             }
             // Run the query
             const signUpQuery = `
-                INSERT INTO account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
-                VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL);
+                INSERT INTO account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId, CreatedAt)
+                VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL, NOW());
             `;
             pool.query(signUpQuery, [username, fullName, email, 0, hash], (qErr, results) => __awaiter(void 0, void 0, void 0, function* () {
                 if (qErr) {
@@ -299,8 +299,8 @@ exports.authGoogle = (req, res) => {
                     }
                     // Run the query
                     const signUpQuery = `
-                            INSERT INTO account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
-                            VALUES (?, ?, ?, 1, NULL, ?, ?, 1);
+                            INSERT INTO account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId, CreatedAt)
+                            VALUES (?, ?, ?, 1, NULL, ?, ?, 1, NOW());
                         `;
                     pool.query(signUpQuery, [uniqueUsername, user.name, user.email, newAvatar, user.sub], (qErr, results) => __awaiter(void 0, void 0, void 0, function* () {
                         if (qErr) {
@@ -396,8 +396,8 @@ exports.authFacebook = (req, res) => {
                     }
                     // Run the query
                     const signUpQuery = `
-                            INSERT INTO account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId)
-                            VALUES (?, ?, ?, 1, NULL, ?, ?, 2);
+                            INSERT INTO account (Username, FullName, Email, IsEmailValid, Password, Avatar, ExternalId, OAuthProviderId, CreatedAt)
+                            VALUES (?, ?, ?, 1, NULL, ?, ?, 2, NOW());
                         `;
                     pool.query(signUpQuery, [uniqueUsername, data.name, data.email, newAvatar, data.id], (qErr, results) => __awaiter(void 0, void 0, void 0, function* () {
                         if (qErr) {

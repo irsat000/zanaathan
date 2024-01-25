@@ -40,9 +40,23 @@ const multer_1 = __importDefault(require("multer"));
 const fs = __importStar(require("fs"));
 const helperUtils_1 = require("../utils/helperUtils");
 const sharp_1 = __importDefault(require("sharp"));
+const path_1 = __importDefault(require("path"));
+const nsfwjs = require('nsfwjs');
 const appDir = process.cwd();
 // CRITICAL - Sharp caches files, which prevents deletion with EBUSY error, because they are "used".
 sharp_1.default.cache(false);
+// Define nsfwjs model once
+let nsfwjsModel;
+function loadNsfwModel() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            nsfwjsModel = yield nsfwjs.load();
+        }
+        catch (error) {
+            console.error('Error loading NSFW model:', error);
+        }
+    });
+}
 /*files.forEach(file => {
     if (fs.existsSync(file.path)) {
         fs.unlinkSync(file.path);
@@ -52,7 +66,7 @@ sharp_1.default.cache(false);
 const postImageStorage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
         // Set the directory to store uploaded images
-        cb(null, appDir + '/uploaded/post');
+        cb(null, path_1.default.join(appDir, 'uploaded', 'post'));
     },
     filename: function (req, file, cb) {
         // Define the filename for the uploaded image
@@ -124,7 +138,7 @@ exports.uploadPostImage = uploadPostImage;
 const avatarStorage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
         // Set the directory where you want to store uploaded images
-        cb(null, appDir + '/uploaded/avatar');
+        cb(null, path_1.default.join(appDir, 'uploaded', 'avatar'));
     },
     filename: function (req, file, cb) {
         // Define the filename for the uploaded image
@@ -173,9 +187,13 @@ const uploadAvatar = (req, res, next) => {
                 .toColorspace('srgb')
                 .flatten()
                 .toFormat('webp')
-                .toBuffer();
+                .toBuffer({ resolveWithObject: true });
+            // Check for unallowed content
+            // Deactivated because everything is detected as drawing
+            //const problematic = await checkUnallowed(sanitizedImage.data, { width: sanitizedImage.info.width, height: sanitizedImage.info.height });
+            //if (problematic) return res.status(400).json({ error: 'Unallowed content detected' });
             // Overwrite the existing file
-            yield fs.promises.writeFile(image.path, sanitizedImage);
+            yield fs.promises.writeFile(image.path, sanitizedImage.data);
         }
         catch (err) {
             removeUploaded();
@@ -186,6 +204,32 @@ const uploadAvatar = (req, res, next) => {
     }));
 };
 exports.uploadAvatar = uploadAvatar;
+// Check if images have NSFW content using NSFWJS library
+function checkUnallowed(data, args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            // Load the model if not already loaded
+            if (!nsfwjsModel) {
+                yield loadNsfwModel();
+            }
+            // Create image data object
+            const imageData = { data: new Uint8Array(data), width: args.width, height: args.height };
+            // Classify the image
+            const predictions = yield nsfwjsModel.classify(imageData);
+            // If problematic, return true and the caller function will return unallowed content detected
+            const problematic = predictions.some((prediction) => ((prediction.className === 'Porn'
+                || prediction.className === 'Hentai')
+                && prediction.probability > 0.8) || (prediction.className === 'Sexy' && prediction.probability > 0.8));
+            //console.log(predictions, problematic);
+            return problematic;
+        }
+        catch (error) {
+            // Upon error, log it and allow the user to upload
+            console.log(error);
+            return null;
+        }
+    });
+}
 /*
 // Create an instance of multer
 export const uploadAvatar = multer({
@@ -214,7 +258,7 @@ export const uploadAvatar = multer({
 // /api/post-image/[name].[ext]
 exports.servePostImage = (req, res) => {
     const imageName = req.params.imageName;
-    const imagePath = appDir + `/uploaded/post/${imageName}`;
+    const imagePath = path_1.default.join(appDir, 'uploaded', 'post', imageName);
     // Serve if file exists
     if (fs.existsSync(imagePath)) {
         return res.sendFile(imagePath);
@@ -227,7 +271,7 @@ exports.servePostImage = (req, res) => {
 // /api/avatar/[name].[ext]
 exports.serveAvatar = (req, res) => {
     const imageName = req.params.imageName;
-    const imagePath = appDir + `/uploaded/avatar/${imageName}`;
+    const imagePath = path_1.default.join(appDir, 'uploaded', 'avatar', imageName);
     // Serve if file exists
     if (fs.existsSync(imagePath)) {
         return res.sendFile(imagePath);

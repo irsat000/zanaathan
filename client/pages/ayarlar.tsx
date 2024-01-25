@@ -152,6 +152,11 @@ export default function Home() {
         })
             .then(res => res.ok ? res.json() : Promise.reject(res))
             .then((data) => {
+                // Success message
+                handleGStatus('informationModal', {
+                    type: 'success',
+                    text: 'Fotoğrafınız başarıyla değiştirildi.'
+                })
                 // store jwt in cookies
                 storeJwt(data.JWT);
                 // set user data in user context
@@ -164,6 +169,12 @@ export default function Home() {
                 } else if (res.status === 401) {
                     // For expired jwt
                     errorMessage = `Giriş yapmanız gerekmektedir.`
+                } else if (res.status === 400) {
+                    // For unallowed content
+                    errorMessage = `Uygunsuz içerikli fotoğraf tesbit edildi.`
+                } else if (res.status === 429) {
+                    // Rate limit
+                    errorMessage = `Çok fazla denemede bulundunuz. 30 dakika sonra tekrar işlem yapabilirsiniz.`
                 }
                 handleGStatus('informationModal', {
                     type: 'error',
