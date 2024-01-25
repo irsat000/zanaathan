@@ -855,7 +855,9 @@ body {
                 font-size: 1.6rem;
                 padding: 12px 20px;
                 border-top: 1px solid #dddddd;
-                text-align: right;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
 
                 &:last-child {
                     border-bottom: 1px solid #dddddd;
@@ -863,6 +865,14 @@ body {
 
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.05);
+                }
+
+                .alert {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background-color: #e05353;
+                    margin-right: auto;
                 }
             }
         }

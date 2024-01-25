@@ -74,7 +74,6 @@ CREATE TABLE `account` (
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_Account_OAuthProvider` FOREIGN KEY (`OAuthProviderId`) REFERENCES `oauth_provider`(`Id`)
 );
-ALTER TABLE account ADD COLUMN `CreatedAt` DATETIME NOT NULL DEFAULT NOW();
 
 CREATE TABLE `contact_type` (
 	`Id` INT NOT NULL,

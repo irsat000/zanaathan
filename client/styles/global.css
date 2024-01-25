@@ -757,7 +757,9 @@ body select {
   font-size: 1.6rem;
   padding: 12px 20px;
   border-top: 1px solid #dddddd;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 .drawer-container .drawer .drawer-list > a:last-child,
 .drawer-container .drawer .drawer-list > button:last-child {
@@ -766,6 +768,14 @@ body select {
 .drawer-container .drawer .drawer-list > a:hover,
 .drawer-container .drawer .drawer-list > button:hover {
   background-color: rgba(0, 0, 0, 0.05);
+}
+.drawer-container .drawer .drawer-list > a .alert,
+.drawer-container .drawer .drawer-list > button .alert {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #e05353;
+  margin-right: auto;
 }
 .drawer-container .drawer .dr-profile-button {
   display: flex;

@@ -231,7 +231,7 @@ const Template: React.FC<{
 								<button type='button' onClick={() => {
 									setDrawerActive(false);
 									setNotificationBoxActive(true);
-								}}>Bildirimler</button>
+								}}>{hasNotification ? <span className='alert'></span> : <></>} Bildirimler</button>
 								{userData.roles && userData.roles.length > 0 ?
 									<Link href={'/panel/onay-bekleyenler'}>Panel</Link>
 									: <></>}
