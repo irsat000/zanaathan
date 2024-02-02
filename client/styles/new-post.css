@@ -35,6 +35,9 @@
   font-size: 1.1rem;
   padding: 8px 14px;
 }
+.new-post-page .new-post-form .np-primary .note {
+  font-weight: 300;
+}
 .new-post-page .new-post-form .np-primary .description-container {
   display: flex;
 }

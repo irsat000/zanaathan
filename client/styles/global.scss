@@ -1780,6 +1780,21 @@ header>.header-container {
             }
         }
 
+        .new-post-shortcut {
+            color: #5ba3e7;
+            font-size: 1.3rem;
+            font-family: 'Righteous', sans-serif;
+            transition: transform 0.1s ease-in-out;
+
+            &:hover {
+                text-decoration: underline;
+            }
+
+            &:active {
+                transform: scale(0.95);
+            }
+        }
+
         .user-auth-buttons {
             display: flex;
             flex-direction: row;

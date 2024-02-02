@@ -217,10 +217,11 @@ exports.createPostValidation = (req, res, next) => {
         // Verify and decode the token
         const jwt = (_b = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
         const userId = (0, userUtils_1.verifyJwt)(jwt);
-        if (!userId) {
+        // For now, we allow anonymous posts
+        /*if (!userId) {
             deleteUploadedOnError(imageNameList);
             return res.status(401).send('Not authorized');
-        }
+        }*/
         // Get inputs
         const body = req.body;
         const title = (0, helperUtils_1.sanatizeInputString)(body.title);
@@ -235,19 +236,7 @@ exports.createPostValidation = (req, res, next) => {
             deleteUploadedOnError(imageNameList);
             return res.status(400).json({ error: 'Bad payload' });
         }
-        // Check if the user finished the daily quota of post creation (3)
-        const query = `SELECT Count(*) as Count FROM job_posting WHERE AccountId = ? AND CreatedAt >= NOW() - INTERVAL 1 DAY;`;
-        pool.query(query, [userId], (qErr, results) => {
-            if (qErr) {
-                deleteUploadedOnError(imageNameList);
-                return res.status(500).json({ error: 'Query error' });
-            }
-            if (results[0].Count > 2) {
-                // 3 posts per day limit
-                deleteUploadedOnError(imageNameList);
-                return res.status(403).json({ error: 'Can only create 3 posts per day' });
-            }
-            // Double it and give it to the next person
+        if (!userId) {
             req.args = {
                 userId,
                 title,
@@ -259,91 +248,120 @@ exports.createPostValidation = (req, res, next) => {
             };
             // If the data is valid, move on to the next middleware
             next();
-        });
+        }
+        else {
+            // Check if the user finished the daily quota of post creation (3)
+            const query = `SELECT Count(*) as Count FROM job_posting WHERE AccountId = ? AND CreatedAt >= NOW() - INTERVAL 1 DAY;`;
+            pool.query(query, [userId], (qErr, results) => {
+                if (qErr) {
+                    deleteUploadedOnError(imageNameList);
+                    return res.status(500).json({ error: 'Query error' });
+                }
+                if (results[0].Count > 999) {
+                    // 3 posts per day limit
+                    deleteUploadedOnError(imageNameList);
+                    return res.status(403).json({ error: 'Can only create 3 posts per day' });
+                }
+                // Double it and give it to the next person
+                req.args = {
+                    userId,
+                    title,
+                    description,
+                    category,
+                    subCategory,
+                    district,
+                    imageNameList
+                };
+                // If the data is valid, move on to the next middleware
+                next();
+            });
+        }
     }
     catch (error) {
         return res.status(500).json({ error });
     }
 };
 exports.createPost = (req, res) => {
+    // Get args from validation middleware
+    const { userId, title, description, category, district, imageNameList } = req.args;
+    let subCategory = req.args.subCategory;
+    // For easy release
+    let connection;
     try {
-        // Get args from validation middleware
-        const { userId, title, description, category, district, imageNameList } = req.args;
-        let subCategory = req.args.subCategory;
-        // Shortens the error handling
-        const handleError = (connection) => {
-            try {
-                // Release connection
-                connection.release();
-                // Delete uploaded images on error
-                deleteUploadedOnError(imageNameList);
-            }
-            catch (error) {
-                // Do nothing
-            }
-            finally {
-                // Return to client
-                return res.status(500).json({ error: 'Database error' });
-            }
-        };
         // Get connection for transaction and rollback
-        pool.getConnection((connErr, connection) => {
-            if (connErr)
-                handleError(connection);
-            connection.beginTransaction((beginErr) => __awaiter(void 0, void 0, void 0, function* () {
-                if (beginErr)
-                    handleError(connection);
+        pool.getConnection((err, conn) => {
+            if (err)
+                throw err;
+            // Assign connection
+            connection = conn;
+            connection.beginTransaction((err) => __awaiter(void 0, void 0, void 0, function* () {
+                if (err)
+                    throw err;
                 // If sub category is not selected, get the default
                 // WILL ALWAYS GO IN HERE because sub categories are planned to exist later
                 if (!(0, helperUtils_1.isPositiveNumeric)(subCategory)) {
                     // Get the first sub category under the selected category
                     const newId = yield getFirstSubCategoryId(category);
                     // Check error
-                    if (newId == null)
-                        connection.rollback(() => handleError(connection));
-                    // Re-assign sub category with a valid one
-                    subCategory = newId.toString();
+                    if (newId != null) {
+                        // Re-assign sub category with a valid one
+                        subCategory = newId.toString();
+                    }
+                    else {
+                        // Log error
+                        connection.rollback(() => {
+                            throw "Error when trying to get the temporary Sub Category from Category Id.";
+                        });
+                    }
                 }
+                // Create the post
                 const query = "INSERT INTO job_posting(Title, CreatedAt, LastStatusUpdate, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), NOW(), ?, ?, ?, 5, ?);";
-                connection.query(query, [title, description, district, subCategory, userId], (qErr, results) => {
-                    if (qErr)
-                        connection.rollback(() => handleError(connection));
+                connection.query(query, [title, description, district, subCategory, userId || 'NULL'], (err, results) => {
+                    if (err)
+                        connection.rollback(() => { throw err; });
                     // Get post id
                     const postId = results.insertId;
                     // If no image is uploaded, finish it here
                     if (imageNameList.length === 0) {
-                        connection.commit((commitErr) => {
-                            if (commitErr)
-                                connection.rollback(() => handleError(connection));
+                        connection.commit((err) => {
+                            if (err)
+                                connection.rollback(() => { throw err; });
                             connection.release();
                             return res.status(200).json({ postId });
                         });
                     }
-                    // Iterate image names to get necessary image insert queries
-                    let imageQueries = '';
-                    const imageParameters = [];
-                    imageNameList.forEach((file, index) => {
-                        imageQueries += "INSERT INTO job_posting_images(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
-                        imageParameters.push(file.name, index, postId);
-                    });
-                    // Run the image queries in one go
-                    connection.query(imageQueries, imageParameters, (qErr2) => {
-                        if (qErr2)
-                            connection.rollback(() => handleError(connection));
-                        // COMMIT
-                        connection.commit((commitErr) => {
-                            if (commitErr)
-                                connection.rollback(() => handleError(connection));
-                            connection.release();
-                            return res.status(200).json({ postId });
+                    else {
+                        // Iterate image names to get necessary image insert queries
+                        let imageQueries = '';
+                        const imageParameters = [];
+                        imageNameList.forEach((file, index) => {
+                            imageQueries += "INSERT INTO job_posting_images(Body, ImgIndex, JobPostingId) VALUES (?, ?, ?);";
+                            imageParameters.push(file.name, index, postId);
                         });
-                    });
+                        // Run the image queries in one go
+                        connection.query(imageQueries, imageParameters, (err) => {
+                            if (err)
+                                connection.rollback(() => { throw err; });
+                            // COMMIT
+                            connection.commit((err) => {
+                                if (err)
+                                    connection.rollback(() => { throw err; });
+                                connection.release();
+                                return res.status(200).json({ postId });
+                            });
+                        });
+                    }
                 });
             }));
         });
     }
     catch (error) {
-        return res.status(500).json({ error });
+        // Release the db connection
+        connection.release();
+        // Delete uploaded images on error
+        deleteUploadedOnError(imageNameList);
+        console.error("Problem!", error);
+        return res.status(500).json({ error: "Server-side error" });
     }
 };
 exports.updatePostStatus = (req, res) => {

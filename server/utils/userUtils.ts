@@ -31,7 +31,7 @@ export const createJwt = (Info: JWT): string => {
 export const verifyJwt = (token: string | null | undefined): number | null => {
     try {
         // Check string
-        if (isNullOrEmpty(token)) return null;
+        if (isNullOrEmpty(token) || token === "undefined") return null;
         // Verify token
         const decoded = jwt.verify(token, "tempJwtSecretKey");
         // Token is valid, get the user id

@@ -358,13 +358,16 @@ const checkJobPostingExpiration = () => {
                             //console.log('3')
                             if (results.length === 0) {
                                 // No expiration status, create one with 1/"Warning" and send a notification
-                                const query = `
+                                let query = `
                                     INSERT INTO job_posting_expiration(ExpirationStatusId, JobPostingId, LastUpdate)
                                     VALUES(1, ${post.Id}, NOW());
-        
-                                    INSERT INTO notification(NotificationTypeId, AccountId, IsSeen, PostId, CreatedAt)
-                                    VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
                                 `;
+                                if (post.AccountId) {
+                                    query += `
+                                        INSERT INTO notification(NotificationTypeId, AccountId, IsSeen, PostId, CreatedAt)
+                                        VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
+                                    `;
+                                }
                                 yield transactionQueryAsync(query, conn);
                                 //console.log('4-1')
                             }
@@ -382,14 +385,17 @@ const checkJobPostingExpiration = () => {
                             else if (results[0].ActionRequired && results[0].ExpirationStatusId === 2) {
                                 // Status is "Extended", the user wanted 7 more days and it has ended.
                                 // Update this status and send notification again
-                                const query = `
+                                let query = `
                                     UPDATE job_posting_expiration
                                     SET ExpirationStatusId = 1, LastUpdate = NOW()
                                     WHERE JobPostingId = ${post.Id};
-        
-                                    INSERT INTO notification(NotificationTypeId, AccountId, IsSeen, PostId, CreatedAt)
-                                    VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
                                 `;
+                                if (post.AccountId) {
+                                    query += `
+                                        INSERT INTO notification(NotificationTypeId, AccountId, IsSeen, PostId, CreatedAt)
+                                        VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
+                                    `;
+                                }
                                 yield transactionQueryAsync(query, conn);
                                 //console.log('4-3')
                             }
@@ -413,9 +419,10 @@ const checkJobPostingExpiration = () => {
     }
 };
 // Daily = 0 0 * * *
-schedule.scheduleJob('0 0 * * *', () => {
+// DISABLED AT THE EARLY STAGES OF THE WEBSITE
+/*schedule.scheduleJob('0 0 * * *', () => {
     checkJobPostingExpiration();
-});
+});*/
 // Check status
 app.get("/", (0, helperUtils_1.rateLimiter)(), (req, res) => {
     res.send('online');

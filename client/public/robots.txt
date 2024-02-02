@@ -1,12 +1,6 @@
-//robots.txt
-
-# Block all crawlers for /panel
 User-agent: *
 Disallow: /panel
 Disallow: /yeni-ilan
 Disallow: /profil
 Disallow: /ayarlar
-
-# Allow all crawlers
-User-agent: *
 Allow: /

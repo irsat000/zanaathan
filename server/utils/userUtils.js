@@ -24,7 +24,7 @@ const verifyJwt = (token) => {
     var _a;
     try {
         // Check string
-        if ((0, helperUtils_1.isNullOrEmpty)(token))
+        if ((0, helperUtils_1.isNullOrEmpty)(token) || token === "undefined")
             return null;
         // Verify token
         const decoded = jwt.verify(token, "tempJwtSecretKey");

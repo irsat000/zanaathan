@@ -15,6 +15,7 @@ import { useGStatus } from '@/context/globalContext'
 //import { checkUnallowed } from '@/lib/utils/nsfwjsUtils'
 import { checkProfanity } from '@/lib/utils/profanityUtils'
 import Router from 'next/router'
+import { useUser } from '@/context/userContext'
 
 
 export interface NPFormData {
@@ -33,14 +34,17 @@ interface SubCategory {
 export default function NewPost() {
   // Use global context
   const { handleGStatus } = useGStatus();
+  // User context
+  const { userData } = useUser();
 
+  // Allow anonymous for now
   // Redirect to index if user did not log in
-  useEffect(() => {
+  /*useEffect(() => {
     const info = readJwtCookie();
     if (!info) {
       Router.push('/')
     }
-  }, []);
+  }, []);*/
 
   // Create post payload
   const [formData, setFormData] = useState<NPFormData>({
@@ -188,8 +192,8 @@ export default function NewPost() {
       });
       return;
     };
+
     // Check if the images contain inappropriate content
-    // TODO: Will be moved to the server side for both performance and malicious users
     /*const inappropriate = await checkUnallowed(processedImages as File[])
     if (inappropriate) {
       handleGStatus('informationModal', {
@@ -211,7 +215,7 @@ export default function NewPost() {
 
     // Check jwt
     const jwt = fetchJwt();
-    if (!jwt) return;
+    // if (!jwt) return; // Allow anonymous upload for now
 
     // LOADING
     setCreatingPost(true);
@@ -266,15 +270,6 @@ export default function NewPost() {
     setSubCategories([]);
   };
 
-  // Drag starts and sets the dragged object's index
-  /*const handleDragStart = (index: number) => {
-    setDraggedIndex(index);
-  };*/
-
-  // Sets the index that's hovered upon to find where it's dropped
-  /*const handleDragEnter = throttle((index: number) => {
-    setHoverIndex(index);
-  }, 200);*/
 
   return (
     <Template>
@@ -283,6 +278,10 @@ export default function NewPost() {
         <form className="new-post-form" onSubmit={handleNewPostSubmit}>
           <div className="np-primary">
             <input className='np-title' type='text' name='title' placeholder='Başlık' onChange={handleFormChange} />
+            {!userData ?
+              <span className='note'>(Kayıt olmadan yaptığınız gönderilerde iletişim bilgilerinizi açıklamaya yazınız.)</span>
+              :
+              <span className='note'>(Hesabınıza iletişim seçeneği eklemediyseniz iletişim bilgilerinizi açıklamaya yazabilirsiniz.)</span>}
             <div className='description-container'>
               <ReactQuill placeholder='Açıklama' theme="snow" value={description} onChange={setDescription} className='np-description' />
             </div>

@@ -5,21 +5,21 @@ import * as fs from 'fs';
 import { acceptedImgSet_1 } from '../utils/helperUtils';
 import sharp from 'sharp';
 import path from 'path';
-const nsfwjs = require('nsfwjs');
+//const nsfwjs = require('nsfwjs');
 const appDir = process.cwd();
 // CRITICAL - Sharp caches files, which prevents deletion with EBUSY error, because they are "used".
 sharp.cache(false);
 
 
 // Define nsfwjs model once
-let nsfwjsModel: any;
+/*let nsfwjsModel: any;
 async function loadNsfwModel() {
     try {
         nsfwjsModel = await nsfwjs.load();
     } catch (error) {
         console.error('Error loading NSFW model:', error);
     }
-}
+}*/
 
 
 /*files.forEach(file => {
@@ -184,7 +184,7 @@ export const uploadAvatar = (req: Request, res: Response, next: NextFunction) =>
 };
 
 // Check if images have NSFW content using NSFWJS library
-async function checkUnallowed(data: Buffer, args: { width: number, height: number }) {
+/*async function checkUnallowed(data: Buffer, args: { width: number, height: number }) {
     try {
         // Load the model if not already loaded
         if (!nsfwjsModel) {
@@ -208,7 +208,7 @@ async function checkUnallowed(data: Buffer, args: { width: number, height: numbe
         return null;
     }
 }
-
+*/
 
 
 

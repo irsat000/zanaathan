@@ -241,6 +241,7 @@ const Template: React.FC<{
 							<div className="drawer-list">
 								<a onClick={() => handleLoginModal('signin')}>Giriş yap</a>
 								<a onClick={() => handleLoginModal('signup')}>Kayıt ol</a>
+								<Link href={'/yeni-ilan'}>İlan oluştur</Link>
 							</div>
 						</>}
 					</div>
@@ -330,6 +331,7 @@ const Template: React.FC<{
 									<button type='button' className='sign-out-button' onClick={handleSignOut}>Çıkış yap</button>
 								</div>
 							</> : <>
+								<Link href={'/yeni-ilan'} className='new-post-shortcut'>Yeni ilan</Link>
 								<div className="user-auth-buttons">
 									<button type='button' className='signin-button' onClick={() => handleGStatus('authModalActive', 'signin')}>Giriş yap</button>
 									<button type='button' className='signup-button' onClick={() => handleGStatus('authModalActive', 'signup')}><PersonPlus /></button>

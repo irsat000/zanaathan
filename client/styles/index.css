@@ -68,6 +68,9 @@
   position: relative;
   overflow: hidden;
 }
+.index-page .intro .intro-content .intro-buttons .intro-button-1:active {
+  transform: scale(0.95);
+}
 .index-page .intro .intro-content .intro-buttons .intro-button-1::before {
   content: "";
   position: absolute;

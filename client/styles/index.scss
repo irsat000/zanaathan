@@ -77,6 +77,10 @@ html[data-colorset-1] {}
                     position: relative;
                     overflow: hidden;
 
+                    &:active {
+                        transform: scale(0.95);
+                    }
+
                     &::before {
                         content: "";
                         position: absolute;

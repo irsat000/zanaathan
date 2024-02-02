@@ -141,6 +141,7 @@ const AuthModal = () => {
             .catch((res) => {
                 if (res.status === 400) setAuthModalWarning('Form bilgileri yetersiz');
                 else if (res.status === 409) setAuthModalWarning('Bu kullanıcı adı ya da eposta kullanılıyor');
+                else if (res.status === 429) setAuthModalWarning('Çok fazla istek gönderilemez, kısa bir süre bekleyin');
                 else setAuthModalWarning('Bağlantıda hata');
             });
     }

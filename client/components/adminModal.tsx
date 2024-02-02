@@ -77,9 +77,7 @@ const AdminModal: React.FC<{
                             <select
                                 name="optionalBan"
                                 value={postDetailsArgs.optionalBan}
-                                onChange={(e) => {
-                                    handlePostDetailsArgsChange(e.target.value)
-                                }}
+                                onChange={handlePostDetailsArgsChange}
                             >
                                 <option value="0">Kullanıcıyı Yasakla?</option>
                                 <option value="1">1 gün</option>

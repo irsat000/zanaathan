@@ -143,13 +143,16 @@ CREATE TABLE `job_posting` (
     `DistrictId` INT NOT NULL,
     `SubCategoryId` INT NOT NULL,
     `CurrentStatusId` INT NOT NULL,
-    `AccountId` INT NOT NULL,
+    `AccountId` INT NULL,
     PRIMARY KEY (`Id`),
     CONSTRAINT `FK_JobPosting_District` FOREIGN KEY (`DistrictId`) REFERENCES `district`(`Id`),
     CONSTRAINT `FK_JobPosting_SubCategory` FOREIGN KEY (`SubCategoryId`) REFERENCES `sub_category`(`Id`),
     CONSTRAINT `FK_JobPosting_CurrentStatus` FOREIGN KEY (`CurrentStatusId`) REFERENCES `current_status`(`Id`),
     CONSTRAINT `FK_JobPosting_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`)
 );
+use zanaathan;
+alter table job_posting modify column AccountId INT NULL;
+
 
 CREATE TABLE `job_posting_images` (
 	`Id` INT NOT NULL AUTO_INCREMENT,

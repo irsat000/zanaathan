@@ -27,12 +27,14 @@ const Home = () => {
               Zanaat Han, tamir tadilat ilanı verme ve usta arama sürecini kolaylaştırarak aradığınız nitelikte ustaya ulaşabilmenizi sağlamak amacıyla oluşturulmuştur. Siz ilanınızı verin, ustalar sizi bulsun.
             </p>
             <div className="intro-buttons">
-              <Link href='/yeni-ilan' className='intro-button-1' onClick={(e) => {
+              <Link href='/yeni-ilan' className='intro-button-1'>Yeni ilan oluştur <Plus className='icon' /></Link>
+              {/* When we disable post creation without account
+              onClick={(e) => {
                 if (!userData) {
                   e.preventDefault()
                   handleGStatus('authModalActive', 'signin')
                 }
-              }}>Yeni ilan oluştur <Plus className='icon' /></Link>
+              }}*/}
               {/* coming soon
               <button className='intro-button-2'>İş ara</button>*/}
             </div>

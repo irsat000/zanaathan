@@ -1542,6 +1542,18 @@ header > .header-container .user-container .user-menu .sign-out-button {
 header > .header-container .user-container .user-menu .sign-out-button:hover {
   background-color: var(--button3-2);
 }
+header > .header-container .user-container .new-post-shortcut {
+  color: #5ba3e7;
+  font-size: 1.3rem;
+  font-family: "Righteous", sans-serif;
+  transition: transform 0.1s ease-in-out;
+}
+header > .header-container .user-container .new-post-shortcut:hover {
+  text-decoration: underline;
+}
+header > .header-container .user-container .new-post-shortcut:active {
+  transform: scale(0.95);
+}
 header > .header-container .user-container .user-auth-buttons {
   display: flex;
   flex-direction: row;

@@ -50,12 +50,14 @@ const banUserPromise = async (banDuration: number, reason: string, targetId: num
 
 // Deletes an individual post, its images and the images from the storage
 // If user is banned, it deletes all the unapproved job postings of the person
-const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: string, postId?: string): Promise<boolean> => {
+const deleteUnapprovedPostsPromise = async (userBanned: boolean, accountId: number | null, postId?: number): Promise<boolean> => {
     return await new Promise<boolean>(async (resolve, reject) => {
         // Make sure post id exists in case user is not banned
         if (!userBanned && !postId) {
             return resolve(false)
         }
+        // Make sure user ban is disregarded if the post has no account as an owner
+        if (!accountId) userBanned = false;
         // Update the user's post(s) to set current status to 4 (deleted)
         // If user is banned, get all of their unapproved posts and delete, otherwise just get the relevant post only
         const filterType = userBanned ? 'CurrentStatusId = 5 AND AccountId' : 'Id'
@@ -187,17 +189,20 @@ exports.adminUpdatePost = async (req: Request, res: Response) => {
                     return res.status(404).json({ error: 'Post not found' });
                 }
 
-                const postOwnerId = results[0].AccountId;
+                const postOwnerId: number | null = results[0].AccountId;
 
                 // Delete the unapproved post(s)
-                const success = await deleteUnapprovedPostsPromise(+banDuration > 0, postOwnerId, postId);
+                const success = await deleteUnapprovedPostsPromise(+banDuration > 0, postOwnerId, +postId);
 
-                // Ban the account
-                if (+banDuration > 0) {
-                    const reason = `Gönderinizde yasaklanmanızı gerektiren bir problem tesbit ettik.`;
-                    const liftDate = await banUserPromise(+banDuration, reason, postOwnerId, adminId);
-                    if (!liftDate) {
-                        return res.status(500).json({ message: 'Failed to ban' });
+                // Check ban options if there is a post owner
+                if (postOwnerId) {
+                    // Ban the account if ban duration (days) is selected from input
+                    if (+banDuration > 0) {
+                        const reason = `Gönderinizde yasaklanmanızı gerektiren bir problem tesbit ettik.`;
+                        const liftDate = await banUserPromise(+banDuration, reason, postOwnerId, adminId);
+                        if (!liftDate) {
+                            return res.status(500).json({ message: 'Failed to ban' });
+                        }
                     }
                 }
 
@@ -363,7 +368,7 @@ exports.banUser = async (req: Request, res: Response) => {
         const liftDate = await banUserPromise(+body.banDuration, 'Hesabınız yasaklandı.', +target, adminId)
 
         if (liftDate) {
-            await deleteUnapprovedPostsPromise(true, target)
+            await deleteUnapprovedPostsPromise(true, +target)
             return res.status(200).json({ message: 'Success', banLiftDate: liftDate });
         }
         else

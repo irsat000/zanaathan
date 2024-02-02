@@ -41,22 +41,19 @@ const fs = __importStar(require("fs"));
 const helperUtils_1 = require("../utils/helperUtils");
 const sharp_1 = __importDefault(require("sharp"));
 const path_1 = __importDefault(require("path"));
-const nsfwjs = require('nsfwjs');
+//const nsfwjs = require('nsfwjs');
 const appDir = process.cwd();
 // CRITICAL - Sharp caches files, which prevents deletion with EBUSY error, because they are "used".
 sharp_1.default.cache(false);
 // Define nsfwjs model once
-let nsfwjsModel;
-function loadNsfwModel() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            nsfwjsModel = yield nsfwjs.load();
-        }
-        catch (error) {
-            console.error('Error loading NSFW model:', error);
-        }
-    });
-}
+/*let nsfwjsModel: any;
+async function loadNsfwModel() {
+    try {
+        nsfwjsModel = await nsfwjs.load();
+    } catch (error) {
+        console.error('Error loading NSFW model:', error);
+    }
+}*/
 /*files.forEach(file => {
     if (fs.existsSync(file.path)) {
         fs.unlinkSync(file.path);
@@ -205,31 +202,31 @@ const uploadAvatar = (req, res, next) => {
 };
 exports.uploadAvatar = uploadAvatar;
 // Check if images have NSFW content using NSFWJS library
-function checkUnallowed(data, args) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // Load the model if not already loaded
-            if (!nsfwjsModel) {
-                yield loadNsfwModel();
-            }
-            // Create image data object
-            const imageData = { data: new Uint8Array(data), width: args.width, height: args.height };
-            // Classify the image
-            const predictions = yield nsfwjsModel.classify(imageData);
-            // If problematic, return true and the caller function will return unallowed content detected
-            const problematic = predictions.some((prediction) => ((prediction.className === 'Porn'
+/*async function checkUnallowed(data: Buffer, args: { width: number, height: number }) {
+    try {
+        // Load the model if not already loaded
+        if (!nsfwjsModel) {
+            await loadNsfwModel();
+        }
+        // Create image data object
+        const imageData = { data: new Uint8Array(data), width: args.width, height: args.height };
+        // Classify the image
+        const predictions = await nsfwjsModel.classify(imageData);
+        // If problematic, return true and the caller function will return unallowed content detected
+        const problematic = predictions.some((prediction: any) =>
+            ((prediction.className === 'Porn'
                 || prediction.className === 'Hentai')
-                && prediction.probability > 0.8) || (prediction.className === 'Sexy' && prediction.probability > 0.8));
-            //console.log(predictions, problematic);
-            return problematic;
-        }
-        catch (error) {
-            // Upon error, log it and allow the user to upload
-            console.log(error);
-            return null;
-        }
-    });
+                && prediction.probability > 0.8) || (prediction.className === 'Sexy' && prediction.probability > 0.8)
+        );
+        //console.log(predictions, problematic);
+        return problematic;
+    } catch (error) {
+        // Upon error, log it and allow the user to upload
+        console.log(error);
+        return null;
+    }
 }
+*/
 /*
 // Create an instance of multer
 export const uploadAvatar = multer({
