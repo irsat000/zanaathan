@@ -1523,6 +1523,7 @@ header>.header-container {
 
     .site-logo-wrapper {
         order: 0;
+        white-space: nowrap;
 
         span {
             font-family: 'Cinzel', serif;
@@ -1781,6 +1782,7 @@ header>.header-container {
         }
 
         .new-post-shortcut {
+            white-space: nowrap;
             color: #5ba3e7;
             font-size: 1.3rem;
             font-family: 'Righteous', sans-serif;
@@ -1849,7 +1851,7 @@ header>.header-container {
 main {
     display: flex;
     flex-direction: column;
-    min-height: 500px; // TEMP
+    min-height: 100vh;
 
     .breadcrumb-trail-container {
         align-self: flex-start;

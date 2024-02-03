@@ -68,7 +68,7 @@ const AdminLogin = () => {
                 <form className="login-form" onSubmit={handleLoginFormSubmit}>
                     <h3>Admin Girişi</h3>
                     <input type="text" name="username" placeholder="Admin adı" onChange={handleLoginFormChange} />
-                    <input type="text" name="password" placeholder="Şifre" onChange={handleLoginFormChange} />
+                    <input type="password" name="password" placeholder="Şifre" onChange={handleLoginFormChange} />
                     <button type="submit">Giriş</button>
                     {authModalSuccess ?
                         <span className='success-text'>{authModalSuccess}</span>

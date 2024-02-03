@@ -1326,6 +1326,7 @@ header > .header-container {
 }
 header > .header-container .site-logo-wrapper {
   order: 0;
+  white-space: nowrap;
 }
 header > .header-container .site-logo-wrapper span {
   font-family: "Cinzel", serif;
@@ -1543,6 +1544,7 @@ header > .header-container .user-container .user-menu .sign-out-button:hover {
   background-color: var(--button3-2);
 }
 header > .header-container .user-container .new-post-shortcut {
+  white-space: nowrap;
   color: #5ba3e7;
   font-size: 1.3rem;
   font-family: "Righteous", sans-serif;
@@ -1599,7 +1601,7 @@ header > .header-container .user-container .user-auth-buttons .signup-button:hov
 main {
   display: flex;
   flex-direction: column;
-  min-height: 500px;
+  min-height: 100vh;
 }
 main .breadcrumb-trail-container {
   align-self: flex-start;

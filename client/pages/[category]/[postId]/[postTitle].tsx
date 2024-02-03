@@ -3,7 +3,7 @@ import Template from '@/components/template'
 import { useContacts } from '@/context/contactsContext';
 import { useGStatus } from '@/context/globalContext';
 import { useUser } from '@/context/userContext';
-import { apiUrl, formatSecondsAgo, postImageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters } from '@/lib/utils/helperUtils';
+import { apiUrl, formatSecondsAgo, postImageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters, avatarLink } from '@/lib/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
@@ -193,9 +193,10 @@ export default function PostDetails({
 					</div>
 					: <></>}
 				{postDetails ? <>
-					<div className="post-container">
-						<div className="gallery-container">
-							{postDetails.Images.filter((img) => img && !img.ImageError).length > 0 ? <>
+					<h1 className='title'>{postDetails.Title}</h1>
+					<div className="gallery-container">
+						{postDetails.Images.filter((img) => img && !img.ImageError).length > 0 ?
+							<>
 								<div className="gallery-main">
 									{postDetails.Images.map((img, i) => img && !img.ImageError ?
 										<Image
@@ -242,33 +243,56 @@ export default function PostDetails({
 											: null
 										)}
 									</div>
-								</div></>
-								:
+								</div>
+							</>
+							:
+							<>
 								<div className="gallery-no-image">
 									<img src="/image-not-found.webp" alt="No image" />
 								</div>
-							}
-						</div>
-						<div className='post-details'>
+							</>
+						}
+					</div>
+					<div className='post-details'>
+						{postDetails.A_Id ?
 							<div className='author-container'>
 								{postDetails.BanLiftDate ?
 									<span className="ban-warning">-Bu kullanıcı yasaklıdır-</span>
 									: <></>}
-								<h2 className='author-name'>{postDetails.A_FullName ?? postDetails.A_Username}</h2>
+								<div className="author-primary">
+									{postDetails.A_Avatar
+										? <Image
+											loader={() => avatarLink(postDetails.A_Avatar!)}
+											src={avatarLink(postDetails.A_Avatar)}
+											alt={'Profil fotoğrafı'}
+											priority={false}
+											unoptimized={true}
+											width={0}
+											height={0}
+											onError={(e: any) => {
+												e.target.src = "/user.webp";
+												e.target.onerror = null;
+											}} />
+										: <img
+											src="/user.webp"
+											alt={'Profil fotoğrafı yok'} />}
+									<h2 className='author-name'>{postDetails.A_FullName ?? postDetails.A_Username}</h2>
+									{!postDetails.BanLiftDate ?
+										<div className='author-actions'>
+											<button className='message-request' onClick={() => handleMessageRequest(postDetails.A_Id)}>Mesaj Gönder</button>
+											{/* coming soon
+										<button className='report-button'>Şikayet et</button>*/}
+										</div>
+										: <></>}
+								</div>
 								{postDetails.ContactInfo.map((info, i) =>
 									<span key={i} className='contact-information'>{info}</span>
 								)}
-								{!postDetails.BanLiftDate ?
-									<div className='author-actions'>
-										<button className='message-request' onClick={() => handleMessageRequest(postDetails.A_Id)}>Mesaj Gönder</button>
-										{/* coming soon
-										<button className='report-button'>Şikayet et</button>*/}
-									</div>
-									: <></>}
 							</div>
-							<h1 className='title'>{postDetails.Title}</h1>
-							<span className="date">{postDetails ? formatSecondsAgo(postDetails.SecondsAgo) : <></>}</span>
+							: <></>}
+						<div className='post-extra'>
 							<span className='location'>{lowerCaseAllWordsExceptFirstLetters(postDetails.Location ?? "")}</span>
+							<span className="date">{postDetails ? formatSecondsAgo(postDetails.SecondsAgo) : <></>}</span>
 						</div>
 					</div>
 					<div className='post-description'>
