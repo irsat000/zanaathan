@@ -242,7 +242,7 @@ io.on('connection', (socket) => {
     });
 });
 let sitemap;
-app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 91 }), (req, res) => {
+app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 100 }), (req, res) => {
     res.header('Content-Type', 'application/xml');
     res.header('Content-Encoding', 'gzip');
     // if we have a cached entry send it
@@ -254,10 +254,6 @@ app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 91 }),
         const pipeline = smStream.pipe((0, zlib_1.createGzip)());
         // pipe your entries or directly write them.
         smStream.write({ url: '/', changefreq: 'monthly', priority: 0.3 });
-        /*smStream.write({ url: '/politika', changefreq: 'monthly', priority: 0.2 })
-        smStream.write({ url: '/politika/gizlilik-politikasi', changefreq: 'monthly', priority: 0.2 })
-        smStream.write({ url: '/politika/cerez-politikasi', changefreq: 'monthly', priority: 0.2 })
-        smStream.write({ url: '/politika/fb-data-deletion', changefreq: 'monthly', priority: 0.2 })*/
         // Get category list
         const codesQuery = `SELECT Code FROM category;`;
         pool.query(codesQuery, (qErr, results) => {
@@ -265,7 +261,7 @@ app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 91 }),
                 throw qErr;
             }
             // Get dynamic urls
-            const categoryUrls = results.map((c) => ({ url: `/${c.Code}`, changefreq: 'daily', priority: 0.5 }));
+            const categoryUrls = results.map((c) => ({ url: `/${c.Code}`, changefreq: 'daily', priority: 0.7 }));
             // Get posts for creating urls
             const postsQuery = `
                 SELECT JP.Id, SUBSTRING(JP.Title, 1, 71) as Title, category.Code as CategoryCode
@@ -279,7 +275,7 @@ app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 91 }),
                     throw qErr;
                 }
                 // Get dynamic urls
-                const postUrls = results.map((p) => ({ url: `/${p.CategoryCode}/${p.Id}/${(0, helperUtils_1.titleToUrl)(p.Title)}`, changefreq: 'weekly', priority: 0.7 }));
+                const postUrls = results.map((p) => ({ url: `/${p.CategoryCode}/${p.Id}/${(0, helperUtils_1.titleToUrl)(p.Title)}`, changefreq: 'daily', priority: 0.7 }));
                 // Write dynamic url
                 stream_1.Readable.from([...categoryUrls, ...postUrls]).pipe(smStream);
                 (0, sitemap_1.streamToPromise)(pipeline).then(sm => {
@@ -304,6 +300,7 @@ Get posts with last status update earlier than previous 7 days and waiting answe
         +create exp data with "Warning" status
         +create notification data for account id with post id in it
     -if expiration data is earlier than 7 days ago and status is "Warning"
+    -if expiration data is earlier than 14 days and status is "GuestPost"
         +change post status to "tamamlandı(completed)"
         +delete the post expiration data
         (optional todo) +create notification saying the post is auto updated
@@ -317,10 +314,12 @@ Note: Last update properties must be updated with NOW() and expiration data must
 ExpirationStatusId;
 1: "Warning"
 2: "Extended"
+3: "GuestPost"
 NotificationTypeId;
 1: "postExpiration"
 */
 const checkJobPostingExpiration = () => {
+    let connection;
     try {
         const query = `
             SELECT Id, AccountId FROM job_posting
@@ -337,24 +336,30 @@ const checkJobPostingExpiration = () => {
                 //console.log('x')
                 const query = `
                     SELECT
-                        CASE WHEN LastUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END AS ActionRequired,
+                        CASE 
+                            WHEN ExpirationStatusId = 3 AND LastUpdate < DATE_SUB(NOW(), INTERVAL 14 DAY) THEN 1
+                            WHEN LastUpdate < DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1
+                            ELSE 0
+                        END AS ActionRequired,
                         ExpirationStatusId AS ExpirationStatusId
                     FROM job_posting_expiration
                     WHERE JobPostingId = ${post.Id}
                     LIMIT 1;
                 `;
-                pool.query(query, (qErr, results) => {
-                    if (qErr) {
-                        throw qErr;
+                pool.query(query, (err, results) => {
+                    if (err) {
+                        throw err;
                     }
                     //console.log('2')
                     // Get connection for transaction and rollback
                     pool.getConnection((connErr, conn) => {
                         if (connErr)
                             throw connErr;
-                        conn.beginTransaction((beginErr) => __awaiter(void 0, void 0, void 0, function* () {
-                            if (beginErr)
-                                throw beginErr;
+                        // Assign connection
+                        connection = conn;
+                        connection.beginTransaction((err) => __awaiter(void 0, void 0, void 0, function* () {
+                            if (err)
+                                throw err;
                             //console.log('3')
                             if (results.length === 0) {
                                 // No expiration status, create one with 1/"Warning" and send a notification
@@ -368,18 +373,22 @@ const checkJobPostingExpiration = () => {
                                         VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
                                     `;
                                 }
-                                yield transactionQueryAsync(query, conn);
+                                yield transactionQueryAsync(query, connection);
                                 //console.log('4-1')
                             }
-                            else if (results[0].ActionRequired && results[0].ExpirationStatusId === 1) {
+                            else if (results[0].ActionRequired
+                                && (results[0].ExpirationStatusId === 1 || results[0].ExpirationStatusId === 3)) {
                                 // Status is "Warning", 7 days have passed, the user didn't respond, set to completed
                                 // Delete the expiration so that the server doesn't think user didn't respond to non-existent notification
+                                // or
+                                // Status is "GuestPost", 14 days have passed, this was a guest posting, auto completion was required
+                                // Delete the expiration for clean up
                                 const query = `
                                     UPDATE job_posting SET CurrentStatusId = 3, LastStatusUpdate = NOW() WHERE Id = ${post.Id};
         
                                     DELETE FROM job_posting_expiration WHERE JobPostingId = ${post.Id};
                                 `;
-                                yield transactionQueryAsync(query, conn);
+                                yield transactionQueryAsync(query, connection);
                                 //console.log('4-2')
                             }
                             else if (results[0].ActionRequired && results[0].ExpirationStatusId === 2) {
@@ -396,16 +405,16 @@ const checkJobPostingExpiration = () => {
                                         VALUES(1, ${post.AccountId}, 0, ${post.Id}, NOW());
                                     `;
                                 }
-                                yield transactionQueryAsync(query, conn);
+                                yield transactionQueryAsync(query, connection);
                                 //console.log('4-3')
                             }
                             // COMMIT
-                            conn.commit((commitErr) => {
-                                if (commitErr) {
-                                    conn.rollback();
-                                    throw commitErr;
+                            connection.commit((err) => {
+                                if (err) {
+                                    connection.rollback();
+                                    throw err;
                                 }
-                                conn.release();
+                                connection.release();
                                 //console.log('5')
                             });
                         }));
@@ -415,14 +424,14 @@ const checkJobPostingExpiration = () => {
         });
     }
     catch (error) {
+        connection.release();
         console.error("Error in daily expiration check:", error);
     }
 };
 // Daily = 0 0 * * *
-// DISABLED AT THE EARLY STAGES OF THE WEBSITE
-/*schedule.scheduleJob('0 0 * * *', () => {
+schedule.scheduleJob('0 0 * * *', () => {
     checkJobPostingExpiration();
-});*/
+});
 // Check status
 app.get("/", (0, helperUtils_1.rateLimiter)(), (req, res) => {
     res.send('online');

@@ -341,11 +341,18 @@ exports.createPost = (req: CreatePostRequest, res: Response) => {
 
                 // Create the post
                 const query = "INSERT INTO job_posting(Title, CreatedAt, LastStatusUpdate, Description, DistrictId, SubCategoryId, CurrentStatusId, AccountId) VALUES (?, NOW(), NOW(), ?, ?, ?, 5, ?);";
-                connection.query(query, [title, description, district, subCategory, userId || 'NULL'], (err: any, results: any) => {
+                connection.query(query, [title, description, district, subCategory, userId || 'NULL'], async (err: any, results: any) => {
                     if (err) connection.rollback(() => { throw err });
 
                     // Get post id
                     const postId = results.insertId as number;
+
+                    // If it's guest posting, then schedule auto complete (3 is GuestPost)
+                    if (!userId) {
+                        const query = `INSERT INTO job_posting_expiration(ExpirationStatusId, JobPostingId, LastUpdate)
+                            VALUES(3, ${postId}, NOW());`;
+                        await transactionQueryAsync(query, connection);
+                    }
 
                     // If no image is uploaded, finish it here
                     if (imageNameList.length === 0) {
@@ -493,4 +500,30 @@ exports.asdf = (req: Request, res: Response) => {
     } catch (error) {
         return res.status(500).json({ error: 'Server error: ' + error });
     }
+}
+
+
+
+function transactionQueryAsync(query: string, conn: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+        conn.query(query, (error: any, results: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+function queryAsync(query: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+        pool.query(query, (error: any, results: any) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
 }

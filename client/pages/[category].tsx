@@ -436,7 +436,7 @@ export default function Category({
         <div className="breadcrumb-trail-container">
           <Link href={'/'}>Anasayfa</Link>
           <span><ChevronRight /></span>
-          <h1><Link href={'/' + categoryInfo.code}>{categoryInfo.name}</Link></h1>
+          <Link href={'/' + categoryInfo.code}><h1>{categoryInfo.name}</h1></Link>
         </div>
         <div className='listing-options'>
           <button className='filter-button' onClick={() => setFilterModalActive(true)}>Filtrele</button>

@@ -30,6 +30,7 @@ INSERT INTO `current_status`(`Id`, `Body`) VALUES(5, 'Onay bekliyor');
 
 INSERT INTO `expiration_status`(`Id`, `Body`) VALUES(1, 'Warning');
 INSERT INTO `expiration_status`(`Id`, `Body`) VALUES(2, 'Extended');
+INSERT INTO `expiration_status`(`Id`, `Body`) VALUES(3, 'GuestPost');
 /*--*/
 INSERT INTO `role`(`Id`, `RoleCode`) VALUES(1, 'developer');
 INSERT INTO `role`(`Id`, `RoleCode`) VALUES(2, 'admin');

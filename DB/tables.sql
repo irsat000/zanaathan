@@ -150,9 +150,6 @@ CREATE TABLE `job_posting` (
     CONSTRAINT `FK_JobPosting_CurrentStatus` FOREIGN KEY (`CurrentStatusId`) REFERENCES `current_status`(`Id`),
     CONSTRAINT `FK_JobPosting_Account` FOREIGN KEY (`AccountId`) REFERENCES `account`(`Id`)
 );
-use zanaathan;
-alter table job_posting modify column AccountId INT NULL;
-
 
 CREATE TABLE `job_posting_images` (
 	`Id` INT NOT NULL AUTO_INCREMENT,
