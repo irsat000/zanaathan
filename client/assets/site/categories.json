@@ -4,104 +4,149 @@
         "Name": "Elektrik",
         "Code": "elektrik",
         "Image": "elektrik.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 2,
         "Name": "Isıtma ve Soğutma",
         "Code": "isitma-ve-sogutma",
         "Image": "isitma-ve-sogutma.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 3,
         "Name": "Ahşap",
         "Code": "ahsap",
         "Image": "ahsap.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 4,
         "Name": "Metal ve Kaynak",
         "Code": "metal-kaynak",
         "Image": "metal-kaynak.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 5,
         "Name": "Sıhhi Tesisat",
         "Code": "sihhi-tesisat",
         "Image": "sihhi-tesisat.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 6,
         "Name": "Ev Tadilatı",
         "Code": "ev-tadilati",
         "Image": "ev-tadilati.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 7,
         "Name": "Boya Badana",
         "Code": "boya-badana",
         "Image": "boya-badana.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 8,
         "Name": "Beyaz Eşya Tamiri",
         "Code": "beyaz-esya-tamiri",
         "Image": "beyaz-esya-tamiri.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 9,
         "Name": "Elektronik Onarımı",
         "Code": "elektronik-onarimi",
         "Image": "elektronik-onarimi.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 30,
         "Name": "Temizlik",
         "Code": "temizlik",
         "Image": "temizlik.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 31,
         "Name": "Bağ Bahçe",
         "Code": "bag-bahce",
         "Image": "bag-bahce.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 32,
         "Name": "Nakliye ve Taşıma",
         "Code": "nakliye-ve-tasima",
         "Image": "nakliye-ve-tasima.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 33,
         "Name": "El Sanatları",
         "Code": "el-sanatlari",
         "Image": "el-sanatlari.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 50,
         "Name": "Hurda Satış",
         "Code": "hurda-satis",
         "Image": "hurda-satis.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     },
     {
         "Id": 60,
         "Name": "Diğer",
         "Code": "diger",
         "Image": "diger.webp",
-        "SubCategories": []
+        "SubCategories": [],
+        "Tags": [
+            ""
+        ]
     }
 ]

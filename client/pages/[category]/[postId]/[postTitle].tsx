@@ -103,7 +103,7 @@ export default function PostDetails({
 		name: string | null
 	}>({ code: null, name: null });
 	useEffect(() => {
-		if (!category) return;
+		if (!router.isReady) return;
 		// Get name by searching with code in category list from categories.json file
 		// and assign both to categoryInfo
 		const categoryObj = categoryList.find(cate => cate.Code === category);
@@ -112,7 +112,7 @@ export default function PostDetails({
 			const name = categoryObj.Name;
 			setCategoryInfo({ code, name });
 		}
-	}, [category]);
+	}, [router.isReady]);
 
 	// Details for the current post
 	const [postDetails, setPostDetails] = useState<PostDetails | null>(_postDetails);

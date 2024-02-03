@@ -298,6 +298,32 @@
     }
 }
 
+.category-tags-section {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    h2 {
+        font-weight: 300;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.5rem;
+    }
+
+    ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 6px;
+
+        li {
+            padding: 4px 9px;
+            border-radius: 6px;
+            font-weight: 300;
+            color: #ffffff;
+            background-color: #a0a0a0;
+        }
+    }
+}
 
 
 

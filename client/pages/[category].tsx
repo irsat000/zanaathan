@@ -10,6 +10,7 @@ import { CSMap, apiUrl, formatSecondsAgo, postImageLink, titleToUrl } from '@/li
 import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/lib/utils/fetchUtils'
 import GridLoader from 'react-spinners/GridLoader'
 import { useGStatus } from '@/context/globalContext'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 export interface Post {
   Id: number;
@@ -20,7 +21,24 @@ export interface Post {
   ImageError: undefined | boolean;
 }
 
-export default function Category() {
+
+export const getServerSideProps = (async (context) => {
+  // Get category from the path
+  const category = context.query.category as string;
+  try {
+    // Pass data to the page via props
+    return { props: { _category: category } }
+  } catch (error) {
+    // Pass data to the page via props
+    return { props: { _category: category } }
+  }
+}) satisfies GetServerSideProps<{ _category: string }>
+
+
+
+export default function Category({
+  _category,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   // Get category and query strings from path
   const router = useRouter();
   const { category, subc, city, district, sortby, page } = router.query;
@@ -43,9 +61,7 @@ export default function Category() {
 
   // Get category info by category code
   useEffect(() => {
-    // Will be undefined at first, dependency array will make sure it runs properly
-    if (!category) return;
-
+    if (!router.query) return;
     // Get name by searching with code in category list from categories.json file
     // and assign both to categoryInfo
     const categoryObj = categoryList.find(cate => cate.Code === category);
@@ -60,6 +76,7 @@ export default function Category() {
       Router.push('/404')
       return
     }
+    // Dependency array reason; Update with query
   }, [router.query]);
 
   // Filter data options
@@ -77,6 +94,8 @@ export default function Category() {
 
   // Set params from query to states
   useEffect(() => {
+    if (!router.query) return;
+
     const subcategoryQuery = Array.isArray(subc)
       ? subc.map(s => parseInt(s, 10))
       : typeof subc === 'string'
@@ -95,6 +114,7 @@ export default function Category() {
     });
 
     setActivePage(pageQuery);
+    // Dependency array reason; Update with query
   }, [router.query])
 
   // Fetch posts
@@ -327,6 +347,9 @@ export default function Category() {
     categoryTitle += categoryTitle === 'Diğer' ? ' ilanlar' : ' ilanları';
   }
 
+  // Get the tags of this specific category
+  const categoryTags = categoryList.find(cate => cate.Code === category);
+
   return (
     <Template title={categoryTitle}>
       <div className={`filter-modal-container modal-container ${filterModalActive && 'active'}`} onMouseDown={handleFilterModalClose}>
@@ -413,7 +436,7 @@ export default function Category() {
         <div className="breadcrumb-trail-container">
           <Link href={'/'}>Anasayfa</Link>
           <span><ChevronRight /></span>
-          <Link href={'/' + categoryInfo.code}>{categoryInfo.name}</Link>
+          <h1><Link href={'/' + categoryInfo.code}>{categoryInfo.name}</Link></h1>
         </div>
         <div className='listing-options'>
           <button className='filter-button' onClick={() => setFilterModalActive(true)}>Filtrele</button>
@@ -499,6 +522,36 @@ export default function Category() {
               : <></>}
           </div>
           : <></>}
+        {router.isReady ?
+          <div className="category-tags-section">
+            <h2>Alakalı anahtar kelimeler</h2>
+            <ul className="relevant-keywords">
+              {categoryTags && categoryTags.Tags.map((tag, index) =>
+                <li className='tag' key={index}>{tag}</li>
+              )}
+              <li className="tag">Kombi</li>
+              <li className="tag">Kombi anakart tamiri</li>
+              <li className="tag">Kombi bozuldu</li>
+              <li className="tag">Klima arızası</li>
+              <li className="tag">Klima ısıtmıyor</li>
+              <li className="tag">Şömine arızası</li>
+              <li className="tag">Klima montajı</li>
+              <li className="tag">Kombi</li>
+              <li className="tag">Kombi anakart tamiri</li>
+              <li className="tag">Kombi bozuldu</li>
+              <li className="tag">Klima arızası</li>
+              <li className="tag">Klima ısıtmıyor</li>
+              <li className="tag">Şömine arızası</li>
+              <li className="tag">Klima montajı</li>
+              <li className="tag">Kombi</li>
+              <li className="tag">Kombi anakart tamiri</li>
+              <li className="tag">Kombi bozuldu</li>
+              <li className="tag">Klima arızası</li>
+              <li className="tag">Klima ısıtmıyor</li>
+              <li className="tag">Şömine arızası</li>
+              <li className="tag">Klima montajı</li>
+            </ul>
+          </div> : <></>}
       </div>
     </Template>
   )

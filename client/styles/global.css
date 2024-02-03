@@ -1623,6 +1623,9 @@ main .breadcrumb-trail-container a {
 main .breadcrumb-trail-container a:hover {
   background-color: #ededed;
 }
+main .breadcrumb-trail-container h1 {
+  all: unset;
+}
 
 footer {
   margin-top: 100px;
