@@ -25,7 +25,7 @@ export const createJwt = (Info: JWT): string => {
     if (Info.roles) {
         data.roles = Info.roles;
     }
-    return jwt.sign(data, "tempJwtSecretKey");
+    return jwt.sign(data, process.env.JWT_SECRET ?? "tempJwtSecretKey");
 }
 
 export const verifyJwt = (token: string | null | undefined): number | null => {
@@ -33,7 +33,7 @@ export const verifyJwt = (token: string | null | undefined): number | null => {
         // Check string
         if (isNullOrEmpty(token) || token === "undefined") return null;
         // Verify token
-        const decoded = jwt.verify(token, "tempJwtSecretKey");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET ?? "tempJwtSecretKey");
         // Token is valid, get the user id
         return decoded.sub ?? null;
     } catch (error: any) {

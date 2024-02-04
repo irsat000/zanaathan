@@ -522,34 +522,13 @@ export default function Category({
               : <></>}
           </div>
           : <></>}
-        {router.isReady ?
+        {router.isReady && categoryTags && categoryTags.Tags.length > 0 ?
           <div className="category-tags-section">
             <h2>Alakalı anahtar kelimeler</h2>
             <ul className="relevant-keywords">
-              {categoryTags && categoryTags.Tags.map((tag, index) =>
+              {categoryTags.Tags.map((tag, index) =>
                 <li className='tag' key={index}>{tag}</li>
               )}
-              <li className="tag">Kombi</li>
-              <li className="tag">Kombi anakart tamiri</li>
-              <li className="tag">Kombi bozuldu</li>
-              <li className="tag">Klima arızası</li>
-              <li className="tag">Klima ısıtmıyor</li>
-              <li className="tag">Şömine arızası</li>
-              <li className="tag">Klima montajı</li>
-              <li className="tag">Kombi</li>
-              <li className="tag">Kombi anakart tamiri</li>
-              <li className="tag">Kombi bozuldu</li>
-              <li className="tag">Klima arızası</li>
-              <li className="tag">Klima ısıtmıyor</li>
-              <li className="tag">Şömine arızası</li>
-              <li className="tag">Klima montajı</li>
-              <li className="tag">Kombi</li>
-              <li className="tag">Kombi anakart tamiri</li>
-              <li className="tag">Kombi bozuldu</li>
-              <li className="tag">Klima arızası</li>
-              <li className="tag">Klima ısıtmıyor</li>
-              <li className="tag">Şömine arızası</li>
-              <li className="tag">Klima montajı</li>
             </ul>
           </div> : <></>}
       </div>

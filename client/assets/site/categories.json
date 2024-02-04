@@ -5,9 +5,7 @@
         "Code": "elektrik",
         "Image": "elektrik.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 2,
@@ -15,9 +13,7 @@
         "Code": "isitma-ve-sogutma",
         "Image": "isitma-ve-sogutma.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 3,
@@ -25,9 +21,7 @@
         "Code": "ahsap",
         "Image": "ahsap.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 4,
@@ -35,9 +29,7 @@
         "Code": "metal-kaynak",
         "Image": "metal-kaynak.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 5,
@@ -45,9 +37,7 @@
         "Code": "sihhi-tesisat",
         "Image": "sihhi-tesisat.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 6,
@@ -55,9 +45,7 @@
         "Code": "ev-tadilati",
         "Image": "ev-tadilati.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 7,
@@ -65,9 +53,7 @@
         "Code": "boya-badana",
         "Image": "boya-badana.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 8,
@@ -75,9 +61,7 @@
         "Code": "beyaz-esya-tamiri",
         "Image": "beyaz-esya-tamiri.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 9,
@@ -85,9 +69,7 @@
         "Code": "elektronik-onarimi",
         "Image": "elektronik-onarimi.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 30,
@@ -95,9 +77,7 @@
         "Code": "temizlik",
         "Image": "temizlik.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 31,
@@ -105,9 +85,7 @@
         "Code": "bag-bahce",
         "Image": "bag-bahce.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 32,
@@ -115,9 +93,7 @@
         "Code": "nakliye-ve-tasima",
         "Image": "nakliye-ve-tasima.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 33,
@@ -125,9 +101,7 @@
         "Code": "el-sanatlari",
         "Image": "el-sanatlari.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 50,
@@ -135,9 +109,7 @@
         "Code": "hurda-satis",
         "Image": "hurda-satis.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     },
     {
         "Id": 60,
@@ -145,8 +117,6 @@
         "Code": "diger",
         "Image": "diger.webp",
         "SubCategories": [],
-        "Tags": [
-            ""
-        ]
+        "Tags": []
     }
 ]

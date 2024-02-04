@@ -215,7 +215,7 @@ export default function NewPost() {
 
     // Check jwt
     const jwt = fetchJwt();
-    // if (!jwt) return; // Allow anonymous upload for now
+    // if (!jwt) return; // Allow anonymous upload
 
     // LOADING
     setCreatingPost(true);
@@ -225,13 +225,19 @@ export default function NewPost() {
       headers: { 'Authorization': `Bearer ${jwt}` },
       body: multiPartFormData
     })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then((data) => {
-        handleGStatus('informationModal', {
-          type: 'success',
-          text: 'Başarılı! Gönderi onaylandıktan sonra yayınlanacaktır.'
-        })
-        setCreatingPost(false);
+      .then(res => {
+        if (res.ok) {
+          let successMessage = "Başarılı! Gönderi onaylandıktan sonra yayınlanacaktır.";
+          if (!userData) {
+            successMessage = "Başarılı! Gönderiniz onaylandıktan sonra yayınlanacak ve 14 gün sonra tamamlandı olarak güncellenecektir. Bir hesap ile bu süreyi dilediğiniz kadar uzatabilirsiniz."
+          }
+          handleGStatus('informationModal', {
+            type: 'success',
+            text: successMessage
+          })
+          setCreatingPost(false);
+        }
+        else Promise.reject(res);
       })
       .catch((res) => {
         let errorMessage = 'Bağlantıda hata.'
