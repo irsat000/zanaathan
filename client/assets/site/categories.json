@@ -5,7 +5,20 @@
         "Code": "elektrik",
         "Image": "elektrik.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "elektrik arıza",
+            "elk arıza",
+            "elektrik kesintisi",
+            "elektrikçi",
+            "elektrikçiler",
+            "elektrik arıza telefon",
+            "elektrik arıza numara",
+            "elektrik tesisat",
+            "en yakın elektrikçi",
+            "acil elektrikçi",
+            "elektrik ustası",
+            "elektrik tamircisi"
+        ]
     },
     {
         "Id": 2,
@@ -13,7 +26,22 @@
         "Code": "isitma-ve-sogutma",
         "Image": "isitma-ve-sogutma.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "kombi servis",
+            "demirdöküm servis",
+            "vaillant servis",
+            "baymak servis",
+            "eca servis",
+            "buderus servis",
+            "klima servis",
+            "kombi tamir",
+            "kombi arıza",
+            "kombi bakım",
+            "kalorifer petek temizleme",
+            "petek boruları",
+            "klima tamir",
+            "klima montaj"
+        ]
     },
     {
         "Id": 3,
@@ -21,7 +49,13 @@
         "Code": "ahsap",
         "Image": "ahsap.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "ahşap masa",
+            "ahşap sandalye",
+            "ahşap mobilya",
+            "ahşap sehpa",
+            "ahşap yatak"
+        ]
     },
     {
         "Id": 4,
@@ -29,7 +63,17 @@
         "Code": "metal-kaynak",
         "Image": "metal-kaynak.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "merdiven korkuluk",
+            "balkon korkuluk",
+            "balkon demiri",
+            "pencere korkuluk",
+            "kalay",
+            "demir parmaklık",
+            "demir merdiven",
+            "kaynak ustası",
+            "demir ustası"
+        ]
     },
     {
         "Id": 5,
@@ -37,7 +81,23 @@
         "Code": "sihhi-tesisat",
         "Image": "sihhi-tesisat.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "su kaçağı tespiti",
+            "su tesisat",
+            "su tesisatçısı",
+            "su tesisatçıları",
+            "tesisatçı",
+            "su kaçak tespit fiyatları",
+            "su kaçağı bulma",
+            "petek boruları",
+            "klozet tamir",
+            "tıkanıklık açma",
+            "lavabo açma",
+            "mutfak gideri açma",
+            "tuvalet gider açma",
+            "banyo gideri açma",
+            "gider tıkanıklığı"
+        ]
     },
     {
         "Id": 6,
@@ -45,7 +105,19 @@
         "Code": "ev-tadilati",
         "Image": "ev-tadilati.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "dış cephe kaplama",
+            "dış cephe boyası",
+            "dış cephe mantolama",
+            "mobilya montaj",
+            "banyo yenileme",
+            "bahçe düzenleme",
+            "ev içi dekorasyon",
+            "bahçe peyzajı",
+            "çatı tamirat",
+            "mutfak yenileme",
+            "duvar tamiri"
+        ]
     },
     {
         "Id": 7,
@@ -53,7 +125,17 @@
         "Code": "boya-badana",
         "Image": "boya-badana.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "iç cephe boyama",
+            "dış cephe boyama",
+            "tavan boyama",
+            "tavan boyası",
+            "dış cephe boyası",
+            "iç cephe boyası",
+            "dış cephe boyaları renk",
+            "boya badana",
+            "boya badana ustası"
+        ]
     },
     {
         "Id": 8,
@@ -61,7 +143,20 @@
         "Code": "beyaz-esya-tamiri",
         "Image": "beyaz-esya-tamiri.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "beyaz eşya servisi",
+            "beyaz eşya tamircisi",
+            "buzdolabı servisi",
+            "buzdolabı tamiri",
+            "çamaşır makinesi tamiri",
+            "bulaşık makinesi tamiri",
+            "samsung beyaz eşya servisi",
+            "bosch çamaşır makinesi servisi",
+            "arçelik çamaşır makinesi servisi",
+            "arçelik buzdolabı servisi",
+            "profilo buzdolabı servisi",
+            "buzdolabı tamircileri"
+        ]
     },
     {
         "Id": 9,
@@ -69,7 +164,23 @@
         "Code": "elektronik-onarimi",
         "Image": "elektronik-onarimi.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "bilgisayar tamiri",
+            "telefon tamiri",
+            "telefon tamircisi",
+            "telefon tamirleri",
+            "televizyon tamiri",
+            "tv tamircisi",
+            "laptop tamiri",
+            "hoparlör tamiri",
+            "en yakın televizyon tamircisi",
+            "televizyon ekran tamiri",
+            "televizyon tamir servisi",
+            "ekran kartı tamiri",
+            "yazıcı tamiri",
+            "anakart tamiri",
+            "telefon servis"
+        ]
     },
     {
         "Id": 30,
@@ -77,7 +188,24 @@
         "Code": "temizlik",
         "Image": "temizlik.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "ev temizliği",
+            "temizlik şirketi",
+            "böcek ilaçlama",
+            "tahta kurusu",
+            "hamam böceği ilaçlama",
+            "halı temizlemek",
+            "koltuk temizleme",
+            "ev temizlik fiyatları",
+            "günlük temizlikçi",
+            "koltuk silme",
+            "deri koltuk temizleme",
+            "ev temizliği hizmeti",
+            "cam temizliği",
+            "ilaçlama şirketi",
+            "ev ilaçlama",
+            "fare ilaçlama"
+        ]
     },
     {
         "Id": 31,
@@ -85,7 +213,24 @@
         "Code": "bag-bahce",
         "Image": "bag-bahce.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "ağaç budama",
+            "bahçe çit",
+            "bahçe teli",
+            "tel çit",
+            "çit tel",
+            "panel çit",
+            "çimli çit",
+            "tel örgü",
+            "bahçe mobilya",
+            "bahçe aydınlatması",
+            "bahçe sulama sistemi",
+            "bahçe tasarımı",
+            "bahçe dizaynı",
+            "çim sulama sistemi",
+            "toprak analiz",
+            "jiletli tel"
+        ]
     },
     {
         "Id": 32,
@@ -93,7 +238,20 @@
         "Code": "nakliye-ve-tasima",
         "Image": "nakliye-ve-tasima.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "evden eve nakliyat",
+            "şehirler arası nakliyat",
+            "uluslararası evden eve nakliyat",
+            "eşya depolama",
+            "ofis taşıma",
+            "şehirlerarası nakliyat",
+            "nakliye fiyatları",
+            "evden eve nakliyat fiyatları",
+            "nakliye ücretleri",
+            "evden eve taşımacılık",
+            "ev depolama",
+            "eşya taşıma"
+        ]
     },
     {
         "Id": 33,
@@ -101,7 +259,19 @@
         "Code": "el-sanatlari",
         "Image": "el-sanatlari.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "takı tasarımı",
+            "ahşap oymacılığı",
+            "tasarım kolye",
+            "tasarım yüzük",
+            "takı taş",
+            "deri işleme",
+            "cam işleme",
+            "heykel yapımı",
+            "metal işleme",
+            "tasarım yüzük",
+            "özel tasarım kolye"
+        ]
     },
     {
         "Id": 50,
@@ -109,7 +279,20 @@
         "Code": "hurda-satis",
         "Image": "hurda-satis.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "hurda fiyatları",
+            "güncel hurda fiyatları",
+            "hurda demir fiyatları",
+            "demir hurdası fiyat",
+            "hurda bakır fiyatları",
+            "bakır hurda fiyat",
+            "aliminyum hurda fiyat",
+            "hurda altın fiyat",
+            "plastik hurda fiyat",
+            "plastik şişe hurda fiyat",
+            "sert plastik hurda fiyat",
+            "kağıt hurdası fiyat"
+        ]
     },
     {
         "Id": 60,
@@ -117,6 +300,16 @@
         "Code": "diger",
         "Image": "diger.webp",
         "SubCategories": [],
-        "Tags": []
+        "Tags": [
+            "lastik tamircisi",
+            "tamir",
+            "tamirci",
+            "usta",
+            "bozuk",
+            "oto lastik tamiri",
+            "apple onarım fiyatları",
+            "tamircileri",
+            "tamircisi"
+        ]
     }
 ]
