@@ -9,6 +9,7 @@ import { useGStatus } from '@/context/globalContext'
 
 // Must fetch here
 import introImage from '@/assets/site/intro.webp';
+import Head from 'next/head'
 const categoryImages = categoryList.map((cate) => require('@/assets/categoryImages/' + cate.Image));
 
 const Home = () => {
@@ -19,6 +20,9 @@ const Home = () => {
 
   return (
     <Template>
+      <Head>
+        <link rel="canonical" href={`https://zanaathan.com`} />
+      </Head>
       <div className='index-page'>
         <div className="intro">
           <div className="intro-content">

@@ -11,6 +11,7 @@ import { City, District, fetchAndCacheCities, fetchAndCacheDistricts } from '@/l
 import GridLoader from 'react-spinners/GridLoader'
 import { useGStatus } from '@/context/globalContext'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Head from 'next/head'
 
 export interface Post {
   Id: number;
@@ -352,6 +353,9 @@ export default function Category({
 
   return (
     <Template title={categoryTitle}>
+      <Head>
+        <link rel="canonical" href={`https://zanaathan.com/${_category}`} />
+      </Head>
       <div className={`filter-modal-container modal-container ${filterModalActive && 'active'}`} onMouseDown={handleFilterModalClose}>
         <div className="filter-modal" onMouseDown={(e) => {
           e.stopPropagation();

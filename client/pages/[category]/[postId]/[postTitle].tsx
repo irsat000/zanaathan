@@ -3,7 +3,7 @@ import Template from '@/components/template'
 import { useContacts } from '@/context/contactsContext';
 import { useGStatus } from '@/context/globalContext';
 import { useUser } from '@/context/userContext';
-import { apiUrl, formatSecondsAgo, postImageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters, avatarLink } from '@/lib/utils/helperUtils';
+import { apiUrl, formatSecondsAgo, postImageLink, isNullOrEmpty, lowerCaseAllWordsExceptFirstLetters, avatarLink, titleToUrl } from '@/lib/utils/helperUtils';
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
@@ -13,6 +13,7 @@ import categoryList from '@/assets/site/categories.json'
 import ReactHtmlParser from 'html-react-parser';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import AdminModal from '@/components/adminModal';
+import Head from 'next/head';
 
 
 
@@ -33,12 +34,13 @@ interface PostDetails {
 	ContactInfo: string[];
 	Location: string;
 	BanLiftDate: string | null;
+	Category: string;
 }
 
 
 export const getServerSideProps = (async (context) => {
 	try {
-		const { postId } = context.query;
+		const { postId, category } = context.query;
 		// Get post details
 		const res = await fetch(`${apiUrl}/get-post-details/${postId}`, {
 			method: "GET",
@@ -57,6 +59,7 @@ export const getServerSideProps = (async (context) => {
 		const sanatizedPostDetails = { ...data.postDetails };
 		sanatizedPostDetails.ContactInfo = contactInfoArray;
 		sanatizedPostDetails.Images = imagesArray;
+		sanatizedPostDetails.Category = category;
 
 		// Pass data to the page via props
 		return { props: { _postDetails: sanatizedPostDetails } }
@@ -95,9 +98,7 @@ export default function PostDetails({
 	}, [])
 
 	// Get category info by category code
-	// Get path
 	const router = useRouter();
-	const { category } = router.query;
 	const [categoryInfo, setCategoryInfo] = useState<{
 		code: string | null,
 		name: string | null
@@ -106,7 +107,7 @@ export default function PostDetails({
 		if (!router.isReady) return;
 		// Get name by searching with code in category list from categories.json file
 		// and assign both to categoryInfo
-		const categoryObj = categoryList.find(cate => cate.Code === category);
+		const categoryObj = categoryList.find(cate => cate.Code === _postDetails.Category);
 		if (categoryObj) {
 			const code = categoryObj.Code;
 			const name = categoryObj.Name;
@@ -178,6 +179,12 @@ export default function PostDetails({
 
 	return (
 		<Template title={postDetails?.Title}>
+			{postDetails ?
+				<Head>
+					<link rel="canonical" href={`https://zanaathan.com/${postDetails.Category}/${postDetails.Id}/${titleToUrl(postDetails.Title)}`} />
+				</Head>
+				: <></>
+			}
 			<div className='post-page'>
 				{categoryInfo.code && categoryInfo.name ?
 					<div className="breadcrumb-trail-container">
