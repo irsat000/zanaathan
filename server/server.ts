@@ -279,7 +279,7 @@ app.get('/sitemap.xml', rateLimiter({ minute: 10, max: 100 }), (req: Request, re
 
             // Get dynamic urls
             const categoryUrls: SiteMapObj[] = results.map((c: { Code: string }) =>
-                ({ url: `/${c.Code}`, changefreq: 'daily', priority: 0.7 }))
+                ({ url: `/${c.Code}/`, changefreq: 'daily', priority: 0.7 }))
 
             // Get posts for creating urls
             const postsQuery = `
@@ -296,7 +296,7 @@ app.get('/sitemap.xml', rateLimiter({ minute: 10, max: 100 }), (req: Request, re
 
                 // Get dynamic urls
                 const postUrls: SiteMapObj[] = results.map((p: PostForLink) =>
-                    ({ url: `/${p.CategoryCode}/${p.Id}/${titleToUrl(p.Title)}`, changefreq: 'daily', priority: 0.7 }))
+                    ({ url: `/${p.CategoryCode}/${p.Id}/${titleToUrl(p.Title)}/`, changefreq: 'daily', priority: 0.7 }))
 
                 // Write dynamic url
                 Readable.from([...categoryUrls, ...postUrls]).pipe(smStream)

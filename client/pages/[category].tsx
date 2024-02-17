@@ -353,9 +353,9 @@ export default function Category({
 
   return (
     <Template title={categoryTitle}>
-      <Head>
+      {/*<Head>
         <link rel="canonical" href={`https://zanaathan.com/${_category}`} />
-      </Head>
+      </Head>*/}
       <div className={`filter-modal-container modal-container ${filterModalActive && 'active'}`} onMouseDown={handleFilterModalClose}>
         <div className="filter-modal" onMouseDown={(e) => {
           e.stopPropagation();

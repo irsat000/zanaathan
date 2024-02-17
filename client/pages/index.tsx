@@ -20,9 +20,9 @@ const Home = () => {
 
   return (
     <Template>
-      <Head>
+      {/*<Head>
         <link rel="canonical" href={`https://zanaathan.com`} />
-      </Head>
+      </Head>*/}
       <div className='index-page'>
         <div className="intro">
           <div className="intro-content">
