@@ -261,7 +261,7 @@ app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 100 })
                 throw qErr;
             }
             // Get dynamic urls
-            const categoryUrls = results.map((c) => ({ url: `/${c.Code}/`, changefreq: 'daily', priority: 0.7 }));
+            const categoryUrls = results.map((c) => ({ url: `/${c.Code}`, changefreq: 'daily', priority: 0.7 }));
             // Get posts for creating urls
             const postsQuery = `
                 SELECT JP.Id, SUBSTRING(JP.Title, 1, 71) as Title, category.Code as CategoryCode
@@ -275,7 +275,7 @@ app.get('/sitemap.xml', (0, helperUtils_1.rateLimiter)({ minute: 10, max: 100 })
                     throw qErr;
                 }
                 // Get dynamic urls
-                const postUrls = results.map((p) => ({ url: `/${p.CategoryCode}/${p.Id}/${(0, helperUtils_1.titleToUrl)(p.Title)}/`, changefreq: 'daily', priority: 0.7 }));
+                const postUrls = results.map((p) => ({ url: `/${p.CategoryCode}/${p.Id}/${(0, helperUtils_1.titleToUrl)(p.Title)}`, changefreq: 'daily', priority: 0.7 }));
                 // Write dynamic url
                 stream_1.Readable.from([...categoryUrls, ...postUrls]).pipe(smStream);
                 (0, sitemap_1.streamToPromise)(pipeline).then(sm => {
