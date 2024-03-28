@@ -254,8 +254,7 @@ const Chatbot: React.FC<{
         const messageObject = {
             type: 'text',
             content: messageInput,
-            receiver: gStatus.activeContact,
-            jwt: jwt
+            receiver: gStatus.activeContact
         };
         // Send payload through connection
         webSocket.emit('message', JSON.stringify(messageObject));
@@ -277,13 +276,10 @@ const Chatbot: React.FC<{
                 if (contact.NotificationCount > 0) {
                     // Reset for instant visual and not needing to reload
                     contact.NotificationCount = 0;
-                    // Check jwt
-                    const jwt = fetchJwt();
-                    if (jwt && webSocket) {
+                    if (webSocket) {
                         // Payload
                         const removeNotificationPayload = {
-                            contact: gStatus.activeContact,
-                            jwt: jwt
+                            contact: gStatus.activeContact
                         };
                         // Send payload through connection
                         webSocket.emit('removeNotification', JSON.stringify(removeNotificationPayload));

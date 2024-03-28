@@ -2,7 +2,7 @@ const express = require('express');
 const schedule = require('node-schedule');
 //const https = require('https');
 import { createServer } from 'http';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 const cors = require('cors');
 import { Request, Response } from 'express';
 import { verifyJwt } from './utils/userUtils';
@@ -72,7 +72,7 @@ app.use('/api', notificationRoutes);
 const pool = require('./db/db');
 
 
-const socketUserMap: Map<string, number> = new Map();
+/*const socketUserMap: Map<string, number> = new Map();*/
 const userSocketMap: Map<number, string> = new Map();
 
 /*setInterval(() => {
@@ -83,162 +83,152 @@ const userSocketMap: Map<number, string> = new Map();
 }, 10000);*/
 
 // Web socket
-io.on('connection', (socket: any) => {
-    //console.log(`Client ${socket.id} connected`);
+interface CustomSocket extends Socket {
+    userId?: number;
+}
+io.use((socket: CustomSocket, next) => {
+    // Verify JWT token
+    const jwt = socket.handshake.auth.token;
+    const userId = verifyJwt(jwt);
+    if (userId) {
+        socket.userId = userId;
+        next();
+    }
+    else {
+        return next(new Error('Authentication error'));
+    }
+})
+    .on('connection', (socket: CustomSocket) => {
+        //console.log(`Client ${socket.id} connected`);
 
-    socket.on('setUserId', (jwt: string) => {
-        const userId = verifyJwt(jwt);
-        if (!userId) return; //Not authorized
-        // Clean previous links if they exist
-        // from userSocketMap
-        const prevSocketId = userSocketMap.get(userId);
-        if (prevSocketId) {
-            if (socketUserMap.get(prevSocketId) === userId) {
-                socketUserMap.delete(prevSocketId)
-            }
-        }
-        // from socketUserMap
-        const prevUserId = socketUserMap.get(socket.id);
-        if (prevUserId) {
-            if (userSocketMap.get(prevUserId) === socket.id) {
-                userSocketMap.delete(prevUserId)
-            }
-        }
-        // Associate the user's ID with their socket ID
-        socketUserMap.set(socket.id, userId);
-        userSocketMap.set(userId, socket.id);
-    });
-
-    socket.on('removeNotification', (data: string) => {
-        // Verify and parse
-        const parsed = JSON.parse(data);
-        const userId = verifyJwt(parsed.jwt);
-        if (!userId) return; //Not authorized
-
-        const query = `DELETE FROM mnotification WHERE SenderId = ? AND ReceiverId = ?;`;
-        pool.query(query, [parsed.contact, userId], (qErr: any, results: any) => {
-            if (qErr) return;
-        });
-    });
-
-    // Handle the chat message from the client
-    socket.on('message', (data: any) => {
-        try {
+        socket.on('removeNotification', (data: string) => {
+            const userId = socket.userId;
+            if (!userId) return;
             // Verify and parse
             const parsed = JSON.parse(data);
-            // Check empty
-            if (isNullOrEmpty(parsed.content)) return;
-            // Check authorization
-            const userId = verifyJwt(parsed.jwt);
-            if (!userId) return;
-            // Check target
-            const receiverId: number = parsed.receiver;
-            if (!isPositiveNumeric(receiverId) || userId === receiverId) return;
+            if (!parsed.contact) return; // Bad request
 
-            // Connections that we send real-time messages to
-            const connsToSendMessage: string[] = [];
-            const target_1 = userSocketMap.get(userId);
-            if (target_1) connsToSendMessage.push(target_1);
+            const query = `DELETE FROM mnotification WHERE SenderId = ? AND ReceiverId = ?;`;
+            pool.query(query, [parsed.contact, userId], (qErr: any, results: any) => {
+                if (qErr) return;
+            });
+        });
 
-            // Check block status between two users
-            const checkBlockQuery = `
-                SELECT COUNT(*) AS Count FROM user_block
-                WHERE (AccountId = ? AND TargetId = ?)
-                OR (AccountId = ? AND TargetId = ?);
-            `;
-            pool.query(checkBlockQuery, [userId, receiverId, receiverId, userId], (checkBlockQErr: any, results: any) => {
-                if (checkBlockQErr) {
-                    const errorMessage = {
-                        status: 'error',
-                        message: 'Failed to check block between users.'
-                    };
-                    // Send error message
-                    if (target_1) io.to(target_1).emit('message', JSON.stringify(errorMessage));
-                    return;
-                }
-                if (results[0].Count > 0) {
-                    // There is a block between users
-                    const blockedWarning = {
-                        status: 'blocked',
-                        message: 'There is a block between two users.'
-                    };
-                    // Send information
-                    if (target_1) io.to(target_1).emit('message', JSON.stringify(blockedWarning));
-                }
-                else {
-                    // No block, free to message
-                    const target_2 = userSocketMap.get(receiverId);
-                    if (target_2) connsToSendMessage.push(target_2);
+        // Handle the chat message from the client
+        socket.on('message', (data: any) => {
+            try {
+                const userId = socket.userId;
+                if (!userId) return;
+                // Verify and parse
+                const parsed = JSON.parse(data);
+                // Check empty
+                if (isNullOrEmpty(parsed.content)) return;
+                // Check target
+                const receiverId: number = parsed.receiver;
+                if (!isPositiveNumeric(receiverId) || userId === receiverId) return;
 
-                    // Create message in db
-                    const query = 'INSERT INTO message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES(?, NOW(), 0, ?, ?);';
-                    pool.query(query, [parsed.content, receiverId, userId], (qErr: any, results: any) => {
-                        if (qErr) {
-                            const errorMessage = {
-                                status: 'error',
-                                message: 'Failed to insert the message into the database.'
-                            };
-                            // Send error message
-                            if (target_1) io.to(target_1).emit('message', JSON.stringify(errorMessage));
-                            return;
-                        }
+                // Connections that we send real-time messages to
+                const connsToSendMessage: string[] = [];
+                const target_1 = userSocketMap.get(userId);
+                if (target_1) connsToSendMessage.push(target_1);
 
-                        // Get message from db
-                        const query2 = `
-                            SELECT M.Id AS Id, Body, SenderId, M.CreatedAt,
-                                A.Username, A.FullName, A.Avatar
-                            FROM message AS M
-                            LEFT JOIN account AS A ON A.Id = M.SenderId
-                            WHERE M.Id = ?;
-                        `;
-                        pool.query(query2, [results.insertId], (qErr2: any, results2: any) => {
-                            if (qErr2) {
+                // Check block status between two users
+                const checkBlockQuery = `
+                    SELECT COUNT(*) AS Count FROM user_block
+                    WHERE (AccountId = ? AND TargetId = ?)
+                    OR (AccountId = ? AND TargetId = ?);
+                `;
+                pool.query(checkBlockQuery, [userId, receiverId, receiverId, userId], (checkBlockQErr: any, results: any) => {
+                    if (checkBlockQErr) {
+                        const errorMessage = {
+                            status: 'error',
+                            message: 'Failed to check block between users.'
+                        };
+                        // Send error message
+                        if (target_1) io.to(target_1).emit('message', JSON.stringify(errorMessage));
+                        return;
+                    }
+                    if (results[0].Count > 0) {
+                        // There is a block between users
+                        const blockedWarning = {
+                            status: 'blocked',
+                            message: 'There is a block between two users.'
+                        };
+                        // Send information
+                        if (target_1) io.to(target_1).emit('message', JSON.stringify(blockedWarning));
+                    }
+                    else {
+                        // No block, free to message
+                        const target_2 = userSocketMap.get(receiverId);
+                        if (target_2) connsToSendMessage.push(target_2);
+
+                        // Create message in db
+                        const query = 'INSERT INTO message(Body, CreatedAt, IsDeleted, ReceiverId, SenderId) VALUES(?, NOW(), 0, ?, ?);';
+                        pool.query(query, [parsed.content, receiverId, userId], (qErr: any, results: any) => {
+                            if (qErr) {
                                 const errorMessage = {
                                     status: 'error',
-                                    message: 'Failed to fetch the inserted message.'
+                                    message: 'Failed to insert the message into the database.'
                                 };
                                 // Send error message
                                 if (target_1) io.to(target_1).emit('message', JSON.stringify(errorMessage));
                                 return;
                             }
 
-                            // Send message in real-time to associated users only
-                            const responseMessage = {
-                                status: 'success',
-                                message: results2[0],
-                                receiverId
-                            };
-                            connsToSendMessage.forEach((socketId) => {
-                                io.to(socketId).emit('message', JSON.stringify(responseMessage));
-                            });
+                            // Get message from db
+                            const query2 = `
+                                SELECT M.Id AS Id, Body, SenderId, M.CreatedAt,
+                                    A.Username, A.FullName, A.Avatar
+                                FROM message AS M
+                                LEFT JOIN account AS A ON A.Id = M.SenderId
+                                WHERE M.Id = ?;
+                            `;
+                            pool.query(query2, [results.insertId], (qErr2: any, results2: any) => {
+                                if (qErr2) {
+                                    const errorMessage = {
+                                        status: 'error',
+                                        message: 'Failed to fetch the inserted message.'
+                                    };
+                                    // Send error message
+                                    if (target_1) io.to(target_1).emit('message', JSON.stringify(errorMessage));
+                                    return;
+                                }
 
-                            // Create only if target_2(receiver) is offline
-                            if (!target_2) {
-                                // Create notification and send it to receiver
-                                const query3 = 'INSERT INTO mnotification(ReceiverId, SenderId) VALUES(?, ?);';
-                                pool.query(query3, [receiverId, userId], (qErr3: any, results3: any) => {
-                                    if (qErr3) return;
+                                // Send message in real-time to associated users only
+                                const responseMessage = {
+                                    status: 'success',
+                                    message: results2[0],
+                                    receiverId
+                                };
+                                connsToSendMessage.forEach((socketId) => {
+                                    io.to(socketId).emit('message', JSON.stringify(responseMessage));
                                 });
-                            }
-                        });
-                    });
-                }
-            });
-        } catch (error) {
-            // Logging
-        }
-    });
 
-    socket.on('disconnect', () => {
-        //console.log('Client disconnected');
-        // Delete pairs after disconnect
-        const userId = socketUserMap.get(socket.id);
-        if (userId) {
+                                // Create only if target_2(receiver) is offline
+                                if (!target_2) {
+                                    // Create notification and send it to receiver
+                                    const query3 = 'INSERT INTO mnotification(ReceiverId, SenderId) VALUES(?, ?);';
+                                    pool.query(query3, [receiverId, userId], (qErr3: any, results3: any) => {
+                                        if (qErr3) return;
+                                    });
+                                }
+                            });
+                        });
+                    }
+                });
+            } catch (error) {
+                // Logging
+            }
+        });
+
+        socket.on('disconnect', () => {
+            //console.log('Client disconnected');
+            // Delete pairs after disconnect
+            const userId = socket.userId;
+            if (!userId) return;
             userSocketMap.delete(userId);
-            socketUserMap.delete(socket.id);
-        }
+        });
     });
-});
 
 
 // Site map generation
@@ -451,11 +441,12 @@ const checkJobPostingExpiration = () => {
         console.error("Error in daily expiration check:", error);
     }
 }
+// Disabled for now
 // Daily = 0 0 * * *
-schedule.scheduleJob('0 0 * * *', () => {
+/*schedule.scheduleJob('0 0 * * *', () => {
     checkJobPostingExpiration();
 });
-
+*/
 
 
 
