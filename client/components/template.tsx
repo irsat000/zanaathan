@@ -48,18 +48,6 @@ const Template: React.FC<{
 		}
 	}, []);
 
-	// Associate user id and socket id on server 
-	useEffect(() => {
-		if (!webSocket || !userData || gStatus.userIdRegistered) return;
-
-		// Get jwt and associate the user id with socket id for real time messaging
-		const jwt = fetchJwt();
-		if (jwt) {
-			webSocket.emit('setUserId', jwt);
-			handleGStatus('userIdRegistered', true);
-		}
-	}, [webSocket, userData]);
-
 	// Logout function
 	// Empties the user context and removes the cookie
 	const handleSignOut = () => {
@@ -67,7 +55,6 @@ const Template: React.FC<{
 		removeJwtCookie();
 		setUserContacts(null);
 		setNotifications(null);
-		handleGStatus('userIdRegistered', false);
 		// If facebook is connected, logout from FB aswell
 		try {
 			window.FB.getLoginStatus(function (response: any) {

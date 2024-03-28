@@ -20,8 +20,14 @@ export const WebSocketProvider: React.FC<{
     const [webSocket, setWebSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
+        const jwt = fetchJwt();
+        if (!jwt) return;
         // Create connection
-        const newSocket = io(apiWebSocketUrl!);
+        const newSocket = io(apiWebSocketUrl!, {
+            auth: {
+                token: jwt
+            }
+        });
 
         // Connection opened
         newSocket.on('connect', () => {

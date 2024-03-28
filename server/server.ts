@@ -91,7 +91,8 @@ io.use((socket: CustomSocket, next) => {
     const jwt = socket.handshake.auth.token;
     const userId = verifyJwt(jwt);
     if (userId) {
-        socket.userId = userId;
+        socket.userId = userId; // Attach to the socket for future use
+        userSocketMap.set(userId, socket.id); // Save to map
         next();
     }
     else {

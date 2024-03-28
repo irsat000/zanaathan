@@ -12,8 +12,7 @@ export interface GStatus {
     chatbotActive: boolean; // Chatbot window on/off
     activeContact: number | null; // Switch between contacts. Default: null
     informationModal: InformationModal | null;
-    authModalActive: AuthModalState,
-    userIdRegistered: boolean
+    authModalActive: AuthModalState
 }
 
 const GStatusContext = React.createContext
@@ -26,8 +25,7 @@ const GStatusContext = React.createContext
             chatbotActive: false,
             activeContact: null,
             informationModal: null,
-            authModalActive: 'none',
-            userIdRegistered: false
+            authModalActive: 'none'
         },
         setGStatus: () => { },
         handleGStatus: () => { }
@@ -40,8 +38,7 @@ export const GStatusProvider: React.FC<{
         chatbotActive: false,
         activeContact: null,
         informationModal: null,
-        authModalActive: 'none',
-        userIdRegistered: false
+        authModalActive: 'none'
     });
 
     const handleGStatus = (propertyName: keyof GStatus, newValue: any) => {

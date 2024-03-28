@@ -73,46 +73,31 @@ app.use('/api', panelRoutes);
 app.use('/api', notificationRoutes);
 // Database pool
 const pool = require('./db/db');
-const socketUserMap = new Map();
+/*const socketUserMap: Map<string, number> = new Map();*/
 const userSocketMap = new Map();
-/*setInterval(() => {
-    console.log({
-        socketUserMap,
-        userSocketMap
-    })
-}, 10000);*/
-// Web socket
-io.on('connection', (socket) => {
+io.use((socket, next) => {
+    // Verify JWT token
+    const jwt = socket.handshake.auth.token;
+    const userId = (0, userUtils_1.verifyJwt)(jwt);
+    if (userId) {
+        socket.userId = userId; // Attach to the socket for future use
+        userSocketMap.set(userId, socket.id); // Save to map
+        next();
+    }
+    else {
+        return next(new Error('Authentication error'));
+    }
+})
+    .on('connection', (socket) => {
     //console.log(`Client ${socket.id} connected`);
-    socket.on('setUserId', (jwt) => {
-        const userId = (0, userUtils_1.verifyJwt)(jwt);
-        if (!userId)
-            return; //Not authorized
-        // Clean previous links if they exist
-        // from userSocketMap
-        const prevSocketId = userSocketMap.get(userId);
-        if (prevSocketId) {
-            if (socketUserMap.get(prevSocketId) === userId) {
-                socketUserMap.delete(prevSocketId);
-            }
-        }
-        // from socketUserMap
-        const prevUserId = socketUserMap.get(socket.id);
-        if (prevUserId) {
-            if (userSocketMap.get(prevUserId) === socket.id) {
-                userSocketMap.delete(prevUserId);
-            }
-        }
-        // Associate the user's ID with their socket ID
-        socketUserMap.set(socket.id, userId);
-        userSocketMap.set(userId, socket.id);
-    });
     socket.on('removeNotification', (data) => {
+        const userId = socket.userId;
+        if (!userId)
+            return;
         // Verify and parse
         const parsed = JSON.parse(data);
-        const userId = (0, userUtils_1.verifyJwt)(parsed.jwt);
-        if (!userId)
-            return; //Not authorized
+        if (!parsed.contact)
+            return; // Bad request
         const query = `DELETE FROM mnotification WHERE SenderId = ? AND ReceiverId = ?;`;
         pool.query(query, [parsed.contact, userId], (qErr, results) => {
             if (qErr)
@@ -122,14 +107,13 @@ io.on('connection', (socket) => {
     // Handle the chat message from the client
     socket.on('message', (data) => {
         try {
+            const userId = socket.userId;
+            if (!userId)
+                return;
             // Verify and parse
             const parsed = JSON.parse(data);
             // Check empty
             if ((0, helperUtils_1.isNullOrEmpty)(parsed.content))
-                return;
-            // Check authorization
-            const userId = (0, userUtils_1.verifyJwt)(parsed.jwt);
-            if (!userId)
                 return;
             // Check target
             const receiverId = parsed.receiver;
@@ -142,10 +126,10 @@ io.on('connection', (socket) => {
                 connsToSendMessage.push(target_1);
             // Check block status between two users
             const checkBlockQuery = `
-                SELECT COUNT(*) AS Count FROM user_block
-                WHERE (AccountId = ? AND TargetId = ?)
-                OR (AccountId = ? AND TargetId = ?);
-            `;
+                    SELECT COUNT(*) AS Count FROM user_block
+                    WHERE (AccountId = ? AND TargetId = ?)
+                    OR (AccountId = ? AND TargetId = ?);
+                `;
             pool.query(checkBlockQuery, [userId, receiverId, receiverId, userId], (checkBlockQErr, results) => {
                 if (checkBlockQErr) {
                     const errorMessage = {
@@ -187,12 +171,12 @@ io.on('connection', (socket) => {
                         }
                         // Get message from db
                         const query2 = `
-                            SELECT M.Id AS Id, Body, SenderId, M.CreatedAt,
-                                A.Username, A.FullName, A.Avatar
-                            FROM message AS M
-                            LEFT JOIN account AS A ON A.Id = M.SenderId
-                            WHERE M.Id = ?;
-                        `;
+                                SELECT M.Id AS Id, Body, SenderId, M.CreatedAt,
+                                    A.Username, A.FullName, A.Avatar
+                                FROM message AS M
+                                LEFT JOIN account AS A ON A.Id = M.SenderId
+                                WHERE M.Id = ?;
+                            `;
                         pool.query(query2, [results.insertId], (qErr2, results2) => {
                             if (qErr2) {
                                 const errorMessage = {
@@ -234,11 +218,10 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         //console.log('Client disconnected');
         // Delete pairs after disconnect
-        const userId = socketUserMap.get(socket.id);
-        if (userId) {
-            userSocketMap.delete(userId);
-            socketUserMap.delete(socket.id);
-        }
+        const userId = socket.userId;
+        if (!userId)
+            return;
+        userSocketMap.delete(userId);
     });
 });
 let sitemap;
@@ -428,10 +411,12 @@ const checkJobPostingExpiration = () => {
         console.error("Error in daily expiration check:", error);
     }
 };
+// Disabled for now
 // Daily = 0 0 * * *
-schedule.scheduleJob('0 0 * * *', () => {
+/*schedule.scheduleJob('0 0 * * *', () => {
     checkJobPostingExpiration();
 });
+*/
 // Check status
 app.get("/", (0, helperUtils_1.rateLimiter)(), (req, res) => {
     res.send('online');
