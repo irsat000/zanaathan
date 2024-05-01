@@ -179,12 +179,12 @@ export default function PostDetails({
 
 	return (
 		<Template title={postDetails?.Title}>
-			{/*postDetails ?
+			{postDetails ?
 				<Head>
 					<link rel="canonical" href={`https://zanaathan.com/${postDetails.Category}/${postDetails.Id}/${titleToUrl(postDetails.Title)}/`} />
+					<meta name="description" content={postDetails.Description.length < 20 ? postDetails.Title.substring(0, 160) : postDetails.Description.substring(0, 160)} />
 				</Head>
-				: <></>
-			*/}
+				: <></>}
 			<div className='post-page'>
 				{categoryInfo.code && categoryInfo.name ?
 					<div className="breadcrumb-trail-container">

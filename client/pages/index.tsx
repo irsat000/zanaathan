@@ -20,9 +20,9 @@ const Home = () => {
 
   return (
     <Template>
-      {/*<Head>
-        <link rel="canonical" href={`https://zanaathan.com`} />
-      </Head>*/}
+      <Head>
+        <meta name="description" content="İş ilanı verin veya serbest çalışmaya başlayın. Ustalarla konuşup anlaşın. Kombi tamiri, ev tadilatı, boya badana, hurda satışı ve dahası." />
+      </Head>
       <div className='index-page'>
         <div className="intro">
           <div className="intro-content">

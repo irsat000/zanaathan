@@ -149,13 +149,12 @@ const Template: React.FC<{
 		<>
 			<Head>
 				<title>{pageTitle}</title>
-				<meta name="description" content="İş ilanı verin veya serbest çalışmaya başlayın. Ustalarla konuşup anlaşın. Kombi tamiri, ev tadilatı, boya badana, hurda satışı ve dahası." />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
-				<meta
-					property="og:description"
-					content="İş ilanı ver, ustalarla tanış, serbest çalış"
-				/>
+				<meta property="og:title" content="ZanaatHan - Ustalar ve iş verenler için" />
+				<meta property="og:url" content="https://zanaathan.com/" />
+				<meta property="og:image" content="https://zanaathan.com/thumbnail.webp" />
+				<meta property="og:description" content="İş ilanı ver, ustalarla tanış, serbest çalış" />
 				{/*<meta
 					property="og:image"
 					content="later"
@@ -253,7 +252,7 @@ const Template: React.FC<{
 								</ul>
 							</div>
 						</div>
-						<Link href='/' className="site-logo-wrapper">
+						<Link href='/' rel='nofollow' className="site-logo-wrapper">
 							{userData ?
 								<button className='open-chatbot-button' onClick={() => handleGStatus('chatbotActive', !gStatus.chatbotActive)}>
 									<div className={`icon-wrap ${hasMessageNotification ? 'icon-alert' : ''}`}>
@@ -331,7 +330,7 @@ const Template: React.FC<{
 					{children}
 				</main>
 				<footer>
-					<h1>Zanaat Han</h1>
+					<h2>Zanaat Han</h2>
 					<div className="copyright">
 						<p>Telif Hakkı © 2024 - Tüm haklar saklıdır.</p>
 					</div>

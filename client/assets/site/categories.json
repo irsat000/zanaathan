@@ -18,7 +18,8 @@
             "acil elektrikçi",
             "elektrik ustası",
             "elektrik tamircisi"
-        ]
+        ],
+        "MetaDesc": "Elektrik sorunlarınızı çözecek uzmanı bulun. Arıza, kesinti, tesisat sorunları için en yakın elektrikçileri keşfedin ve güvenilir hizmet alın."
     },
     {
         "Id": 2,
@@ -41,7 +42,8 @@
             "petek boruları",
             "klima tamir",
             "klima montaj"
-        ]
+        ],
+        "MetaDesc": "Kombi, klima ve kaloriferleriniz için en iyi servisleri bulun. Arızaları tamir edin, bakımı yaptırın, montajı gerçekleştirin."
     },
     {
         "Id": 3,
@@ -55,7 +57,8 @@
             "ahşap mobilya",
             "ahşap sehpa",
             "ahşap yatak"
-        ]
+        ],
+        "MetaDesc": "Ahşap mobilyalarınız için ustaları bulun. Masadan sandalyeye, sehpadan yatağa, ihtiyacınız olan her şey burada. Özel mobilyalarınızı tasarlatın!"
     },
     {
         "Id": 4,
@@ -73,7 +76,8 @@
             "demir merdiven",
             "kaynak ustası",
             "demir ustası"
-        ]
+        ],
+        "MetaDesc": "Ev güvenliğinizi sağlayacak demir işleri için uzmanları bulun. Korkuluk, parmaklık, merdiven ve daha fazlası için en iyi kaynak ustaları burada!"
     },
     {
         "Id": 5,
@@ -97,7 +101,8 @@
             "tuvalet gider açma",
             "banyo gideri açma",
             "gider tıkanıklığı"
-        ]
+        ],
+        "MetaDesc": "Su tesisatıyla ilgili sorunlarınızı çözecek uzmanı bulun. Su kaçağı tespiti, tesisat tamiri, tıkanıklık açmak için en iyi hizmetleri keşfedin."
     },
     {
         "Id": 6,
@@ -117,7 +122,8 @@
             "çatı tamirat",
             "mutfak yenileme",
             "duvar tamiri"
-        ]
+        ],
+        "MetaDesc": "Ev ve bahçenizi yenileme zamanı geldi! Dış cephe kaplama, iç dekorasyon, bahçe düzenleme ve daha fazlası için uzmanları bulun. Ev yaşamınızı güzelleştirin!"
     },
     {
         "Id": 7,
@@ -135,7 +141,8 @@
             "dış cephe boyaları renk",
             "boya badana",
             "boya badana ustası"
-        ]
+        ],
+        "MetaDesc": "Ev veya işyerinizin boyama işleri için en iyi ustaları bulun. İç cephe, dış cephe, tavan boyama ve daha fazlası için uygun fiyatlarla hizmet alın."
     },
     {
         "Id": 8,
@@ -156,7 +163,8 @@
             "arçelik buzdolabı servisi",
             "profilo buzdolabı servisi",
             "buzdolabı tamircileri"
-        ]
+        ],
+        "MetaDesc": "Beyaz eşyalarınız için en iyi servisleri bulun. Buzdolabı, çamaşır makinesi, bulaşık makinesi ve daha fazlası için tamirat hizmetlerine göz atın."
     },
     {
         "Id": 9,
@@ -180,7 +188,8 @@
             "yazıcı tamiri",
             "anakart tamiri",
             "telefon servis"
-        ]
+        ],
+        "MetaDesc": "Cihazlarınızı onaracak uzmanı bulun. Bilgisayar, telefon, televizyon, yazıcı ve daha fazlası için en yakın tamirciyi keşfedin ve cihazlarınızı tamir ettirin."
     },
     {
         "Id": 30,
@@ -205,7 +214,8 @@
             "ilaçlama şirketi",
             "ev ilaçlama",
             "fare ilaçlama"
-        ]
+        ],
+        "MetaDesc": "Ev temizliği, böcek ilaçlama, halı ve koltuk temizliği için buraya. Günlük temizlikçilerden ilaçlama şirketlerine kadar ihtiyacınız olan her şey burada!"
     },
     {
         "Id": 31,
@@ -230,7 +240,8 @@
             "çim sulama sistemi",
             "toprak analiz",
             "jiletli tel"
-        ]
+        ],
+        "MetaDesc": "Bahçenizi düzenlemek için ihtiyacınız olan her şey burada! Ağaç budama, çit tel, bahçe mobilyaları, sulama sistemleri ve daha fazlası için uzmanları keşfedin."
     },
     {
         "Id": 32,
@@ -251,7 +262,8 @@
             "evden eve taşımacılık",
             "ev depolama",
             "eşya taşıma"
-        ]
+        ],
+        "MetaDesc": "Evinizi veya ofisinizi taşımak için en iyi nakliyat firmalarını bulun. Şehir içi, şehirler arası veya uluslararası taşımacılık hizmetleri için fiyatları karşılaştırın."
     },
     {
         "Id": 33,
@@ -271,7 +283,8 @@
             "metal işleme",
             "tasarım yüzük",
             "özel tasarım kolye"
-        ]
+        ],
+        "MetaDesc": "Kişisel tarzınızı yansıtan takılar ve el sanatları için uzmanları bulun. Ahşap oymacılığından cam işlemeye, özel tasarım takılara kadar her şey burada!"
     },
     {
         "Id": 50,
@@ -292,7 +305,8 @@
             "plastik şişe hurda fiyat",
             "sert plastik hurda fiyat",
             "kağıt hurdası fiyat"
-        ]
+        ],
+        "MetaDesc": "Hurda malzemelerin güncel fiyatlarını öğrenin. Hurda demir, bakır, alüminyum, altın, plastik ve kağıt fiyatları hakkında bilgi edinin."
     },
     {
         "Id": 60,
@@ -310,6 +324,7 @@
             "apple onarım fiyatları",
             "tamircileri",
             "tamircisi"
-        ]
+        ],
+        "MetaDesc": "Aradığınız her şey için tamircilere ulaşın. Lastik tamiri, elektronik cihaz onarımı ve daha fazlası için en iyi ustaları keşfedin."
     }
 ]
