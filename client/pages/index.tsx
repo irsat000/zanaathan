@@ -26,12 +26,12 @@ const Home = () => {
       <div className='index-page'>
         <div className="intro">
           <div className="intro-content">
-            <h2>Zanaat <span className='red'>Sanattır.</span><br />Zanaat Han&apos;a Hoşgeldiniz!</h2>
+            <h1>Zanaat <span className='red'>Sanattır.</span><br />Zanaat Han&apos;a Hoşgeldiniz!</h1>
             <p>
               Zanaat Han, tamir tadilat ilanı verme ve usta arama sürecini kolaylaştırarak aradığınız nitelikte ustaya ulaşabilmenizi sağlamak amacıyla oluşturulmuştur. Siz ilanınızı verin, ustalar sizi bulsun.
             </p>
             <div className="intro-buttons">
-              <Link href='/yeni-ilan' className='intro-button-1'>Yeni ilan oluştur <Plus className='icon' /></Link>
+              <Link href='/yeni-ilan' rel='nofollow' className='intro-button-1'>Yeni ilan oluştur <Plus className='icon' /></Link>
               {/* When we disable post creation without account
               onClick={(e) => {
                 if (!userData) {

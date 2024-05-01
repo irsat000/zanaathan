@@ -151,6 +151,7 @@ const Template: React.FC<{
 				<title>{pageTitle}</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
+				<meta property="og:type" content="website" />
 				<meta property="og:title" content="ZanaatHan - Ustalar ve iş verenler için" />
 				<meta property="og:url" content="https://zanaathan.com/" />
 				<meta property="og:image" content="https://zanaathan.com/thumbnail.webp" />
@@ -189,7 +190,7 @@ const Template: React.FC<{
 					<div className="drawer" onClick={(e) => { e.stopPropagation() }}>
 						<Link href={'/'} className='drawer-site-logo'>Zanaat Han</Link>
 						{userData ? <>
-							<Link href={'/profil'} className='user-image'>
+							<Link href={'/profil'} rel='nofollow' className='user-image'>
 								{userData.avatar
 									? <Image
 										loader={() => avatarLink(userData.avatar!)}
@@ -207,13 +208,13 @@ const Template: React.FC<{
 										src="/user.webp"
 										alt={'Profil fotoğrafı yok'} />}
 							</Link>
-							<Link href={'/profil'} className='dr-profile-button'>
+							<Link href={'/profil'} rel='nofollow' className='dr-profile-button'>
 								<span className='dr-username'>{userData.fullName ?? userData.username}</span>
 								<span className='dr-email'>{userData.email}</span>
 							</Link>
 							<div className="drawer-list">
-								<Link href={'/ayarlar'}>Ayarlar</Link>
-								<Link href={'/yeni-ilan'}>İlan oluştur</Link>
+								<Link href={'/ayarlar'} rel='nofollow'>Ayarlar</Link>
+								<Link href={'/yeni-ilan'} rel='nofollow'>İlan oluştur</Link>
 								<button type='button' onClick={() => {
 									setDrawerActive(false);
 									setNotificationBoxActive(true);
@@ -227,7 +228,7 @@ const Template: React.FC<{
 							<div className="drawer-list">
 								<a onClick={() => handleLoginModal('signin')}>Giriş yap</a>
 								<a onClick={() => handleLoginModal('signup')}>Kayıt ol</a>
-								<Link href={'/yeni-ilan'}>İlan oluştur</Link>
+								<Link href={'/yeni-ilan'} rel='nofollow'>İlan oluştur</Link>
 							</div>
 						</>}
 					</div>
@@ -268,7 +269,7 @@ const Template: React.FC<{
 						<div className="user-container">
 							{userData ? <>
 								<div className="shortcut-wrapper">
-									<Link href={'/yeni-ilan'} className='shortcut-button'>
+									<Link href={'/yeni-ilan'} rel='nofollow' className='shortcut-button'>
 										<PlusSquare />
 									</Link>
 									<button className='open-chatbot-button shortcut-button' onClick={() => handleGStatus('chatbotActive', !gStatus.chatbotActive)}>
@@ -309,7 +310,7 @@ const Template: React.FC<{
 										<span className='um-email'>{userData.email}</span>
 									</Link>
 									<ul className='user-menu-list'>
-										<li><Link href={'/ayarlar'}>Ayarlar</Link></li>
+										<li><Link href={'/ayarlar'} rel='nofollow'>Ayarlar</Link></li>
 										{userData.roles && userData.roles.length > 0 ?
 											<li><Link href={'/panel/onay-bekleyenler'}>Panel</Link></li>
 											: <></>}
@@ -317,7 +318,7 @@ const Template: React.FC<{
 									<button type='button' className='sign-out-button' onClick={handleSignOut}>Çıkış yap</button>
 								</div>
 							</> : <>
-								<Link href={'/yeni-ilan'} className='new-post-shortcut'>Yeni ilan</Link>
+								<Link href={'/yeni-ilan'} rel='nofollow' className='new-post-shortcut'>Yeni ilan</Link>
 								<div className="user-auth-buttons">
 									<button type='button' className='signin-button' onClick={() => handleGStatus('authModalActive', 'signin')}>Giriş yap</button>
 									<button type='button' className='signup-button' onClick={() => handleGStatus('authModalActive', 'signup')}><PersonPlus /></button>

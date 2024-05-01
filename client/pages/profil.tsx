@@ -264,7 +264,7 @@ export default function Home() {
                     : userData.username}
                 </span>
                 <span className='email'>{userData.email}</span>
-                <Link href={'/ayarlar'} className='edit-profile'>Düzenle</Link>
+                <Link href={'/ayarlar'} rel='nofollow' className='edit-profile'>Düzenle</Link>
               </div>
             </div>
             <div className={`contact-options ${contactEditMode ? 'edit-mode' : ''}`}>
