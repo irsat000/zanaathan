@@ -85,7 +85,7 @@ const CookiePolicy = () => {
                         istediğiniz zaman bu ayarları değiştirebilirsiniz. Daha ayrıntılı bilgi için Gizlilik Politikamıza
                         göz atabilir ya da bizlerle muhammedirsat000@gmail.com e-mail adresi üzerinden iletişime geçebilirsiniz.
                     </p>
-                    <p>Bu çerez politikası, <a href="https://sartlar.com">https://sartlar.com</a> aracılığıyla oluşturulmuştur.</p>
+                    <p>Bu çerez politikası, <a href="https://sartlar.com" rel='nofollow' target='_blank'>https://sartlar.com</a> aracılığıyla oluşturulmuştur.</p>
                 </div>
             </div>
         </Template>

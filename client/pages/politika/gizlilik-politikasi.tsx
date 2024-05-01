@@ -66,7 +66,7 @@ const PrivacyPolicy = () => {
                         varsayılacak olup, daha ayrıntılı bilgi için bizimle muhammedirsat000@gmail.com e-mail adresi üzerinden iletişime
                         geçmekten lütfen çekinmeyiniz.
                     </p>
-                    <p>Bu gizlilik politikası, <a href="https://sartlar.com">https://sartlar.com</a> aracılığıyla oluşturulmuştur.</p>
+                    <p>Bu gizlilik politikası, <a href="https://sartlar.com" rel='nofollow' target='_blank'>https://sartlar.com</a> aracılığıyla oluşturulmuştur.</p>
                 </div>
             </div>
         </Template>

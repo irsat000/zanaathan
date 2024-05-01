@@ -176,7 +176,7 @@ const AuthModal = () => {
                             checked={registerFormExtra.acceptLegal}
                             onChange={() => setRegisterFormExtra(prev => ({ ...prev, acceptLegal: !prev.acceptLegal }))}
                         />
-                        <span><Link href='/politika' target='_blank'>Kullanım koşullarını</Link> ve <Link href='/politika/gizlilik-politikasi' target='_blank'>Gizlilik Politikasını</Link><br />okudum ve onaylıyorum.</span>
+                        <span><Link href='/politika' rel='nofollow' target='_blank'>Kullanım koşullarını</Link> ve <Link href='/politika/gizlilik-politikasi' rel='nofollow' target='_blank'>Gizlilik Politikasını</Link><br />okudum ve onaylıyorum.</span>
                     </label>
                     <div className="register-button-container">
                         <button type='submit' className='submit-button'>Kayıt ol</button>
@@ -195,7 +195,7 @@ const AuthModal = () => {
                 <div className="facebook-login-wrapper">
                     <LoginWithFacebook setAuthModalWarning={setAuthModalWarning} setAuthModalSuccess={setAuthModalSuccess} handleAuthModal={handleAuthModal} />
                 </div>*/}
-                <p className='oauth-legal-note'>3. parti ile hesap oluşturursanız <Link href='/politika' target='_blank'>Kullanım koşullarını</Link> ve <br /><Link href='/politika/gizlilik-politikasi' target='_blank'>Gizlilik Politikasını</Link> onaylamış sayılırsınız.</p>
+                <p className='oauth-legal-note'>3. parti ile hesap oluşturursanız <Link href='/politika' rel='nofollow' target='_blank'>Kullanım koşullarını</Link> ve <br /><Link href='/politika/gizlilik-politikasi' target='_blank'>Gizlilik Politikasını</Link> onaylamış sayılırsınız.</p>
                 {/*<span className='line-seperator'></span>
                 <span className='signup-instead'>Hesabın yok mu? <Link href={'/kayit'}>Kayıt ol</Link></span>*/}
             </div>
