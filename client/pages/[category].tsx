@@ -24,61 +24,42 @@ export interface Post {
 
 
 export const getServerSideProps = (async (context) => {
-  // Get category from the path
+  // Find categoryObj
   const category = context.query.category as string;
-  try {
-    // Pass data to the page via props
-    return { props: { _category: category } }
-  } catch (error) {
-    // Pass data to the page via props
-    return { props: { _category: category } }
+  const categoryObj = categoryList.find(cate => cate.Code === category);
+  if (!categoryObj) {
+    // If categoryObj is null, redirect to 404 page
+    return {
+      redirect: {
+        destination: '/404',
+        permanent: false,
+      },
+    };
   }
-}) satisfies GetServerSideProps<{ _category: string }>
 
-
+  // Pass data to the page via props
+  return { props: { routerQuery: context.query, categoryObj } }
+}) satisfies GetServerSideProps<{ routerQuery: object, categoryObj: object }>
 
 export default function Category({
-  _category,
+  routerQuery,
+  categoryObj,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  // Get category and query strings from path
   const router = useRouter();
-  const { category, subc, city, district, sortby, page } = router.query;
+  // Get category and query strings from server side props
+  const { category, subc, city, district, sortby, page } = routerQuery as {
+    category: string,
+    subc?: string | string[],
+    city?: string,
+    district?: string,
+    sortby?: string,
+    page?: string
+  };
   // Active page
   const [activePage, setActivePage] = useState(1);
 
   // Use global context
   const { handleGStatus } = useGStatus();
-
-  // Information about current category
-  const [categoryInfo, setCategoryInfo] = useState<{
-    id: number | null,
-    code: string | null,
-    name: string | null,
-    subCates: Array<{
-      Id: number;
-      Name: string;
-    }>
-  }>({ id: null, code: null, name: null, subCates: [] });
-
-  // Get category info by category code
-  useEffect(() => {
-    if (!router.query) return;
-    // Get name by searching with code in category list from categories.json file
-    // and assign both to categoryInfo
-    const categoryObj = categoryList.find(cate => cate.Code === category);
-    if (categoryObj) {
-      const id = categoryObj.Id;
-      const code = categoryObj.Code;
-      const name = categoryObj.Name;
-      const subCates = categoryObj.SubCategories;
-      setCategoryInfo({ id, code, name, subCates });
-    } else {
-      // Send to 404
-      Router.push('/404')
-      return
-    }
-    // Dependency array reason; Update with query
-  }, [router.query]);
 
   // Filter data options
   const [filterData, setFilterData] = useState<{
@@ -95,17 +76,15 @@ export default function Category({
 
   // Set params from query to states
   useEffect(() => {
-    if (!router.query) return;
-
     const subcategoryQuery = Array.isArray(subc)
       ? subc.map(s => parseInt(s, 10))
       : typeof subc === 'string'
         ? [parseInt(subc, 10)]
         : [];
-    const cityQuery = city && typeof city === 'string' ? parseInt(city, 10) : 0;
-    const districtQuery = district && typeof district === 'string' ? parseInt(district, 10) : 0;
+    const cityQuery = typeof city === 'string' ? parseInt(city, 10) : 0;
+    const districtQuery = typeof district === 'string' ? parseInt(district, 10) : 0;
     const sortbyQuery = sortby === 'new' ? 'new' : 'old';
-    const pageQuery = page && typeof page === 'string' ? parseInt(page, 10) : 1;
+    const pageQuery = typeof page === 'string' ? parseInt(page, 10) : 1;
 
     setFilterData({
       subcategory: subcategoryQuery,
@@ -116,20 +95,20 @@ export default function Category({
 
     setActivePage(pageQuery);
     // Dependency array reason; Update with query
-  }, [router.query])
+  }, [subc, city, district, sortby, page])
 
   // Fetch posts
   const [postList, setPostList] = useState<Post[]>([]);
   const [postTotalCount, setPostTotalCount] = useState(0);
   const [postListLoading, setPostListLoading] = useState<boolean | null>(null);
   useEffect(() => {
-    if (!categoryInfo.id) return;
+    if (!categoryObj.Id) return;
     // Get parameters as a string, e.g. ?subc=1&city=5
     const queryParams = window.location.search;
     // LOADING
     setPostListLoading(true);
     // api url + get-posts + category id as path + query parameters
-    const fetchPostsUrl = `${apiUrl}/get-posts/${categoryInfo.id}${queryParams}`;
+    const fetchPostsUrl = `${apiUrl}/get-posts/${categoryObj.Id}${queryParams}`;
     fetch(fetchPostsUrl, {
       method: "GET",
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
@@ -148,7 +127,7 @@ export default function Category({
       .finally(() => {
         setPostListLoading(false);
       });
-  }, [categoryInfo, activePage])
+  }, [activePage])
 
   // Filter values
   const [filterModalActive, setFilterModalActive] = useState(false);
@@ -343,18 +322,13 @@ export default function Category({
   }
 
   // Get category title for better search engine results
-  let categoryTitle = categoryList.find(cate => cate.Code === category)?.Name;
-  if (categoryTitle) {
-    categoryTitle += categoryTitle === 'Diğer' ? ' ilanlar' : ' ilanları';
-  }
-
-  // Get the tags of this specific category
-  const categoryTags = categoryList.find(cate => cate.Code === category);
+  let categoryTitle = categoryObj.Name;
+  categoryTitle += categoryTitle === 'Diğer' ? ' ilanlar' : ' ilanları';
 
   return (
     <Template title={categoryTitle}>
       {<Head>
-        <meta name="description" content={categoryTags?.MetaDesc ?? _category} />
+        <meta name="description" content={categoryObj.MetaDesc} />
       </Head>}
       <div className={`filter-modal-container modal-container ${filterModalActive && 'active'}`} onMouseDown={handleFilterModalClose}>
         <div className="filter-modal" onMouseDown={(e) => {
@@ -365,10 +339,10 @@ export default function Category({
         }}>
           <button type='button' className='close-modal-button' onClick={handleFilterModalClose}><XLg /></button>
           <span className='modal-heading'>Filtrele</span>
-          {categoryInfo.subCates.length > 0 ? <>
+          {/*categoryObj.SubCategories.length > 0 ? <>
             <span className="f-heading">Alt Kategoriler</span>
             <div className="f-container">
-              {categoryInfo.subCates.map((c, i) => {
+              {categoryObj.SubCategories.map((c, i) => {
                 return <label key={i} className='checkbox-1'>
                   <input
                     type='checkbox'
@@ -379,7 +353,7 @@ export default function Category({
                 </label>;
               })}
             </div>
-          </> : <></>}
+            </> : <></>*/}
           <span className="f-heading">Bölge Seç</span>
           <div className="f-container">
             <div className={`select2 ${citySelectActive ? 'list-active' : ''}`}>
@@ -440,7 +414,7 @@ export default function Category({
         <div className="breadcrumb-trail-container">
           <Link href={'/'}>Anasayfa</Link>
           <span><ChevronRight /></span>
-          <Link href={'/' + categoryInfo.code}><h1>{categoryInfo.name}</h1></Link>
+          <Link href={'/' + categoryObj.Code}><h1>{categoryObj.Name}</h1></Link>
         </div>
         <div className='listing-options'>
           <button className='filter-button' onClick={() => setFilterModalActive(true)}>Filtrele</button>
@@ -461,7 +435,7 @@ export default function Category({
             <div className="listing">
               {postList.map((post, i) =>
                 <div className="post" key={post.Id}>
-                  <Link href={`/${categoryInfo.code}/${post.Id}/${titleToUrl(post.Title)}`} className='post-link'>
+                  <Link href={`/${categoryObj.Code}/${post.Id}/${titleToUrl(post.Title)}`} className='post-link'>
                     <div className="post-image-carousel">
                       {post.MainImage && !post.ImageError ?
                         <Image
@@ -526,11 +500,11 @@ export default function Category({
               : <></>}
           </div>
           : <></>}
-        {router.isReady && categoryTags && categoryTags.Tags.length > 0 ?
+        {router.isReady && categoryObj.Tags.length > 0 ?
           <div className="category-tags-section">
             <h2>Alakalı anahtar kelimeler</h2>
             <ul className="relevant-keywords">
-              {categoryTags.Tags.map((tag, index) =>
+              {categoryObj.Tags.map((tag, index) =>
                 <li className='tag' key={index}>{tag}</li>
               )}
             </ul>
