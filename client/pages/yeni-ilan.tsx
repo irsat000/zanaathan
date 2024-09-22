@@ -159,13 +159,13 @@ export default function NewPost() {
       text: 'İşleminiz devam ediyor, lütfen bekleyiniz...'
     });
     // Check if the title or description contains profanity
-    if (checkProfanity([formData.title, description])) {
+    /*if (checkProfanity([formData.title, description])) {
       handleGStatus('informationModal', {
         type: 'error',
         text: 'Başlıkta veya açıklamada uygunsuz kelime tesbit edildi.'
       });
       return;
-    }
+    }*/
     // Image processing for less traffic
     const imagePromises = formData.selectedImages.map(processImage);
     const processedImages = await Promise.all(imagePromises);
